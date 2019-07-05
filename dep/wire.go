@@ -3,11 +3,13 @@
 package dep
 
 import (
+	"tinyURL/app/graphql"
+	"tinyURL/fw"
+
 	"github.com/google/wire"
-	"tinyURL/app"
 )
 
-func InitializeApp() app.App {
-	wire.Build(app.NewApp)
-	return app.App{}
+func InitializeApp() fw.App {
+	wire.Build(fw.NewApp, fw.NewGraphGophers, graphql.NewTinyUrlGraphQl)
+	return fw.App{}
 }
