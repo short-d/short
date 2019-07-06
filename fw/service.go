@@ -22,6 +22,11 @@ func (s Service) Start(port int) {
 	}()
 }
 
+func (s Service) StartAndWait(port int) {
+	s.Start(port)
+	select {}
+}
+
 func (s Service) Stop() {
 	defer s.logger.Info(fmt.Sprintf("%s stopped", s.name))
 
