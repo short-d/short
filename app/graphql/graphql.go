@@ -5,20 +5,20 @@ import (
 	"tinyURL/fw"
 )
 
-type TinyUrlGraphQl struct {
+type TinyUrl struct {
 	resolver *resolver.Resolver
 }
 
-func (t TinyUrlGraphQl) GetSchema() string {
+func (t TinyUrl) GetSchema() string {
 	return schema
 }
 
-func (t TinyUrlGraphQl) GetResolver() interface{} {
+func (t TinyUrl) GetResolver() interface{} {
 	return t.resolver
 }
 
-func NewTinyUrlGraphQl() fw.GraphQl {
-	return &TinyUrlGraphQl{
+func NewTinyUrl() fw.GraphQlApi {
+	return &TinyUrl{
 		resolver: &resolver.Resolver{},
 	}
 }

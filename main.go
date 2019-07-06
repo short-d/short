@@ -3,6 +3,8 @@ package main
 import "tinyURL/dep"
 
 func main() {
-	app := dep.InitializeApp()
-	app.Start()
+	service := dep.InitGraphQlService("TinyUrl API")
+	service.Start(8080)
+
+	select {}
 }
