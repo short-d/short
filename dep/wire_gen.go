@@ -14,7 +14,7 @@ import (
 // Injectors from wire.go:
 
 func InitGraphQlService(name string) fw.Service {
-	logger := fw.NewLocalLogger()
+	logger := modern.NewLocalLogger()
 	graphQlApi := app.NewGraphQlApi()
 	server := modern.NewGraphGophers(logger, graphQlApi)
 	service := fw.NewService(name, server, logger)
