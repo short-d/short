@@ -6,15 +6,17 @@
 package dep
 
 import (
-	"tinyURL/app/graphql"
+	"tinyURL/app"
 	"tinyURL/fw"
+	"tinyURL/modern"
 )
 
 // Injectors from wire.go:
 
-func InitializeApp() fw.App {
-	graphQl := graphql.NewTinyUrlGraphQl()
-	server := fw.NewGraphGophers(graphQl)
-	app := fw.NewApp(server)
-	return app
+func InitGraphQlService(name string) fw.Service {
+	logger := fw.NewLocalLogger()
+	graphQlApi := app.NewGraphQlApi()
+	server := modern.NewGraphGophers(logger, graphQlApi)
+	service := fw.NewService(name, server, logger)
+	return service
 }
