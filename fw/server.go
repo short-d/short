@@ -1,5 +1,6 @@
 package fw
 
 type Server interface {
-	ListenAndServe(port int)
+	ListenAndServe(port int) error
+	Shutdown() error
 }
