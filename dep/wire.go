@@ -13,7 +13,7 @@ import (
 func InitGraphQlService(name string) fw.Service {
 	wire.Build(
 		fw.NewService,
-		fw.NewLocalLogger,
+		modern.NewLocalLogger,
 		modern.NewGraphGophers,
 		app.NewGraphQlApi)
 	return fw.Service{}

@@ -9,7 +9,7 @@ import (
 
 type GraphGophers struct {
 	logger fw.Logger
-	server *fw.HttpServer
+	server fw.Server
 }
 
 func (g GraphGophers) Shutdown() error {
@@ -27,7 +27,7 @@ func NewGraphGophers(logger fw.Logger, g fw.GraphQlApi) fw.Server {
 		Schema: schema,
 	}
 
-	server := fw.NewHttpServer(&relayHandler, logger)
+	server := NewHttpServer(&relayHandler, logger)
 
 	return GraphGophers{
 		logger: logger,
