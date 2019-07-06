@@ -45,4 +45,3 @@ func NewHttpServer(handler http.Handler, logger Logger) HttpServer {
 		handler: mux,
 	}
 }
-

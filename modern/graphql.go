@@ -1,9 +1,10 @@
 package modern
 
 import (
+	"tinyURL/fw"
+
 	"github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
-	"tinyURL/fw"
 )
 
 type GraphGophers struct {
