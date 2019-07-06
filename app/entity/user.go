@@ -6,5 +6,5 @@ type User struct {
 	Entity
 	Name           string
 	Email          string
-	LastLoggedInAt time.Time
+	LastLoggedInAt *time.Time
 }
