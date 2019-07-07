@@ -3,10 +3,10 @@ package resolver
 type Query struct {
 }
 
-type UrlAliasArgs struct {
+type UrlArgs struct {
 	Id string
 }
 
-func (q Query) UrlAlias(args *UrlAliasArgs) *UrlAlias {
-	return &UrlAlias{}
+func (q Query) Url(args *UrlArgs) *Url {
+	return &Url{}
 }

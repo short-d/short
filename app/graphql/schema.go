@@ -7,21 +7,21 @@ schema {
 }
 
 type Query {
-	urlAlias(id: String!): UrlAlias
+	url(id: String!): Url
 }
 
 type Mutation {
-	createUrlAlias(urlAlias: UrlAliasInput, userEmail: String): UrlAlias
+	createUrl(url: UrlInput, userEmail: String): Url
 }
 
-type UrlAlias {
+type Url {
 	id: String
 	originalUrl: String
 	customAlias: String
 	expirationDate: String
 }
 
-input UrlAliasInput {
+input UrlInput {
 	originalUrl: String
 	customAlias: String
 	expirationDate: String
