@@ -4,7 +4,7 @@ import "time"
 
 type Url struct {
 	Entity
-	Id          string
+	Alias          string
 	OriginalUrl string
 	ExpireAt    *time.Time
 	CreatedBy   User
