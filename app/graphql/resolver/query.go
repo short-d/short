@@ -4,7 +4,7 @@ type Query struct {
 }
 
 type UrlArgs struct {
-	Id string
+	Alias string
 }
 
 func (q Query) Url(args *UrlArgs) *Url {

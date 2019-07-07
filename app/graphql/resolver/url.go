@@ -3,7 +3,7 @@ package resolver
 type Url struct {
 }
 
-func (u Url) Id() *string {
+func (u Url) Alias() *string {
 	id := "1"
 	return &id
 }

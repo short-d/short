@@ -1,12 +1,13 @@
 package graphql
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"tinyURL/modern/mdtest"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestGraphQlApi(t *testing.T)  {
+func TestGraphQlApi(t *testing.T) {
 	graphqlApi := NewTinyUrl()
 	assert.True(t, mdtest.IsGraphQlApiValid(graphqlApi))
 }
