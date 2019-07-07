@@ -7,7 +7,7 @@ schema {
 }
 
 type Query {
-	url(alias String!): Url
+	url(alias: String!): Url
 }
 
 type Mutation {

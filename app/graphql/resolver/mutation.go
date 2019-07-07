@@ -10,7 +10,7 @@ type UrlInput struct {
 }
 
 type CreateUrlArgs struct {
-	Url  *UrlInput
+	Url       *UrlInput
 	UserEmail *string
 }
 
