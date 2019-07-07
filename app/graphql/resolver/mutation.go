@@ -3,17 +3,17 @@ package resolver
 type Mutation struct {
 }
 
-type UrlAliasInput struct {
+type UrlInput struct {
 	OriginalUrl    *string
 	CustomAlias    *string
 	ExpirationDate *string
 }
 
-type CreateUrlAliasArgs struct {
-	UrlAlias  *UrlAliasInput
+type CreateUrlArgs struct {
+	Url  *UrlInput
 	UserEmail *string
 }
 
-func (m Mutation) CreateUrlAlias(args *CreateUrlAliasArgs) *UrlAlias {
-	return &UrlAlias{}
+func (m Mutation) CreateUrl(args *CreateUrlArgs) *Url {
+	return &Url{}
 }

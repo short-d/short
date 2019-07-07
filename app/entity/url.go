@@ -2,7 +2,7 @@ package entity
 
 import "time"
 
-type UrlAlias struct {
+type Url struct {
 	Entity
 	Id          string
 	OriginalUrl string
