@@ -18,7 +18,7 @@ type Url {
 	alias: String
 	originalUrl: String
 	customAlias: String
-	ExpireAt: String
+	expireAt: String
 }
 
 input UrlInput {
