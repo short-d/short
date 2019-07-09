@@ -6,7 +6,7 @@ type Mutation struct {
 type UrlInput struct {
 	OriginalUrl    *string
 	CustomAlias    *string
-	ExpirationDate *string
+	ExpireAt *string
 }
 
 type CreateUrlArgs struct {
