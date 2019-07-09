@@ -7,7 +7,7 @@ schema {
 }
 
 type Query {
-	url(alias: String!): Url
+	url(alias: String!, expireAfter: String): Url
 }
 
 type Mutation {
@@ -17,7 +17,6 @@ type Mutation {
 type Url {
 	alias: String
 	originalUrl: String
-	customAlias: String
 	expireAt: String
 }
 
