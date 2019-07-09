@@ -1,20 +1,20 @@
 package usecase
 
 import (
-	"errors"
-	"fmt"
 	"time"
 	"tinyURL/app/entity"
 	"tinyURL/app/repo"
+
+	"github.com/pkg/errors"
 )
 
 type UrlRetriever struct {
 	urlRepo repo.Url
 }
 
-func NewUrlRetriever(urlRepo repo.Url) UrlRetriever{
+func NewUrlRetriever(urlRepo repo.Url) UrlRetriever {
 	return UrlRetriever{
-		urlRepo:urlRepo,
+		urlRepo: urlRepo,
 	}
 }
 
@@ -26,7 +26,7 @@ func (u UrlRetriever) GetUrlAfter(alias string, expiringAt time.Time) (entity.Ur
 	}
 
 	if url.ExpireAt != nil && expiringAt.After(*url.ExpireAt) {
-		return entity.Url{}, errors.New(fmt.Sprintf("url expired (alias=%s,expiringAt=%v)", alias, expiringAt))
+		return entity.Url{}, errors.Errorf("url expired (alias=%s,expiringAt=%v)", alias, expiringAt)
 	}
 
 	return url, nil

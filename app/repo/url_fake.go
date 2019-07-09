@@ -1,8 +1,9 @@
 package repo
 
 import (
-	"github.com/pkg/errors"
 	"tinyURL/app/entity"
+
+	"github.com/pkg/errors"
 )
 
 type UrlFake struct {
@@ -12,7 +13,7 @@ type UrlFake struct {
 func (u UrlFake) GetByAlias(alias string) (entity.Url, error) {
 	url, ok := u.urls[alias]
 
-	if  !ok {
+	if !ok {
 		return entity.Url{}, errors.Errorf("url not found (alias=%s)", alias)
 	}
 
@@ -21,7 +22,6 @@ func (u UrlFake) GetByAlias(alias string) (entity.Url, error) {
 
 func NewUrlFake(urls map[string]entity.Url) Url {
 	return UrlFake{
-		urls:urls,
+		urls: urls,
 	}
 }
-
