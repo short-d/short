@@ -18,7 +18,7 @@ func (u Url) CustomAlias() *string {
 	return &alias
 }
 
-func (u Url) ExpirationDate() *string {
+func (u Url) ExpireAt() *string {
 	date := "01/01/95"
 	return &date
 }
