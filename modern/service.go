@@ -1,13 +1,14 @@
-package fw
+package modern
 
 import (
 	"fmt"
+	"tinyURL/fw"
 )
 
 type Service struct {
 	name   string
-	server Server
-	logger Logger
+	server fw.Server
+	logger fw.Logger
 }
 
 func (s Service) Start(port int) {
@@ -36,7 +37,7 @@ func (s Service) Stop() {
 	}
 }
 
-func NewService(name string, server Server, logger Logger) Service {
+func NewService(name string, server fw.Server, logger fw.Logger) Service {
 	return Service{
 		name:   name,
 		server: server,
