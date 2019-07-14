@@ -8,6 +8,6 @@ import (
 )
 
 func TestGraphQlApi(t *testing.T) {
-	graphqlApi := NewTinyUrl()
+	graphqlApi := NewTinyUrl(mdtest.FakeLogger, mdtest.FakeTracer)
 	assert.True(t, mdtest.IsGraphQlApiValid(graphqlApi))
 }
