@@ -4,9 +4,9 @@ type Mutation struct {
 }
 
 type UrlInput struct {
-	OriginalUrl    *string
-	CustomAlias    *string
-	ExpirationDate *string
+	OriginalUrl *string
+	CustomAlias *string
+	ExpireAt    *string
 }
 
 type CreateUrlArgs struct {

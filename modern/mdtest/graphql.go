@@ -1,8 +1,9 @@
 package mdtest
 
 import (
-	"github.com/graph-gophers/graphql-go"
 	"tinyURL/fw"
+
+	"github.com/graph-gophers/graphql-go"
 )
 
 func IsGraphQlApiValid(api fw.GraphQlApi) bool {

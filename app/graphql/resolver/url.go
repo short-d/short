@@ -1,24 +1,26 @@
 package resolver
 
+import (
+	"tinyURL/app/entity"
+	"tinyURL/app/graphql/scalar"
+)
+
 type Url struct {
+	url entity.Url
 }
 
 func (u Url) Alias() *string {
-	id := "1"
-	return &id
+	return &u.url.Alias
 }
 
 func (u Url) OriginalUrl() *string {
-	url := "http://time4hacks.com"
-	return &url
+	return &u.url.OriginalUrl
 }
 
-func (u Url) CustomAlias() *string {
-	alias := "tiny"
-	return &alias
-}
+func (u Url) ExpireAt() *scalar.Time {
+	if u.url.ExpireAt == nil {
+		return nil
+	}
 
-func (u Url) ExpirationDate() *string {
-	date := "01/01/95"
-	return &date
+	return &scalar.Time{Time: *u.url.ExpireAt}
 }

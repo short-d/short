@@ -1,8 +1,11 @@
 package main
 
-import "tinyURL/dep"
+import (
+	"tinyURL/dep"
+	"tinyURL/modern"
+)
 
 func main() {
-	service := dep.InitGraphQlService("TinyUrl API")
+	service := dep.InitGraphQlService("TinyUrl API", modern.GraphQlPath("/graphql"))
 	service.StartAndWait(8080)
 }
