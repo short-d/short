@@ -2,9 +2,7 @@ package repo
 
 import (
 	"database/sql"
-	"fmt"
 	"tinyURL/app/entity"
-	"tinyURL/app/sqlfmt"
 
 	"github.com/pkg/errors"
 )
@@ -26,8 +24,6 @@ func NewUrlSql(db *sql.DB) UrlSql {
 func (u *UrlSql) GetByAlias(alias string) (entity.Url, error) {
 	row := u.db.QueryRow("SELECT * FROM Url WHERE alias=$1;", alias)
 
-	fmt.Println(row)
-
 	var originalUrl string
 	var expireAt string
 	var createdAt string
@@ -46,9 +42,9 @@ func (u *UrlSql) GetByAlias(alias string) (entity.Url, error) {
 	url := entity.Url{
 		Alias:       alias,
 		OriginalUrl: originalUrl,
-		ExpireAt:    sqlfmt.MustParseDatetime(expireAt),
-		CreatedAt:   sqlfmt.MustParseDatetime(createdAt),
-		UpdatedAt:   sqlfmt.MustParseDatetime(updatedAt),
+		ExpireAt:    MustParseDatetime(expireAt),
+		CreatedAt:   MustParseDatetime(createdAt),
+		UpdatedAt:   MustParseDatetime(updatedAt),
 	}
 
 	return url, nil

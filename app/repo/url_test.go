@@ -1,10 +1,8 @@
 package repo
 
 import (
-	"fmt"
 	"testing"
 	"tinyURL/app/entity"
-	"tinyURL/app/sqlfmt"
 	"tinyURL/app/table"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -21,6 +19,7 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 		expectedUrl entity.Url
 	}{
 		{
+			name: "alias not found",
 			tableRows: sqlmock.NewRows([]string{
 				table.Url.Alias,
 				table.Url.OriginalUrl,
@@ -32,6 +31,7 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			hasErr: true,
 		},
 		{
+			name: "found url",
 			tableRows: sqlmock.NewRows([]string{
 				table.Url.Alias,
 				table.Url.OriginalUrl,
@@ -56,9 +56,9 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			expectedUrl: entity.Url{
 				Alias:       "220uFicCJj",
 				OriginalUrl: "http://www.google.com",
-				ExpireAt:    sqlfmt.MustParseDatetime("2019-05-01 08:02:16"),
-				CreatedAt:   sqlfmt.MustParseDatetime("2017-05-01 08:02:16"),
-				UpdatedAt:   sqlfmt.MustParseDatetime("NULL"),
+				ExpireAt:    MustParseDatetime("2019-05-01 08:02:16"),
+				CreatedAt:   MustParseDatetime("2017-05-01 08:02:16"),
+				UpdatedAt:   MustParseDatetime("NULL"),
 			},
 		},
 	}
@@ -80,7 +80,6 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 				assert.NotNil(t, err)
 			} else {
 				assert.Nil(t, err)
-				fmt.Println(url)
 				assert.Equal(t, testCase.expectedUrl, url)
 			}
 		})
