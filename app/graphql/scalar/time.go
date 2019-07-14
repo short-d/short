@@ -9,6 +9,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+var _ fw.Scalar = &Time{}
+
 type Time struct {
 	time.Time
 }
@@ -45,8 +47,4 @@ func (t *Time) UnmarshalGraphQL(input interface{}) error {
 
 func (t Time) MarshalJSON() ([]byte, error) {
 	return json.Marshal(t.Time)
-}
-
-func NewTime() fw.Scalar {
-	return &Time{}
 }
