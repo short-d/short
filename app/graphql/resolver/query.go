@@ -45,6 +45,5 @@ func (q Query) Url(args *UrlArgs) (*Url, error) {
 		return nil, err
 	}
 
-	gUrl := NewUrl(url)
-	return &gUrl, nil
+	return &Url{url:url}, nil
 }
