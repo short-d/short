@@ -1,6 +1,9 @@
 package resolver
 
-import "tinyURL/app/entity"
+import (
+	"tinyURL/app/entity"
+	"tinyURL/app/graphql/scalar"
+)
 
 type Url struct {
 	url entity.Url
@@ -14,7 +17,10 @@ func (u Url) OriginalUrl() *string {
 	return &u.url.OriginalUrl
 }
 
-func (u Url) ExpireAt() *string {
-	timeStr := u.url.ExpireAt.String()
-	return &timeStr
+func (u Url) ExpireAt() *scalar.Time {
+	if u.url.ExpireAt == nil {
+		return nil
+	}
+
+	return &scalar.Time{Time: *u.url.ExpireAt}
 }
