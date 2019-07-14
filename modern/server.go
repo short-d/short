@@ -8,14 +8,16 @@ import (
 )
 
 type HttpServer struct {
-	handler http.Handler
-	server  *http.Server
+	mux    *http.ServeMux
+	server *http.Server
+	tracer fw.Tracer
+	logger fw.Logger
 }
 
 func (s *HttpServer) ListenAndServe(port int) error {
 	addr := fmt.Sprintf(":%d", port)
 
-	s.server = &http.Server{Addr: addr, Handler: s.handler}
+	s.server = &http.Server{Addr: addr, Handler: s.mux}
 	err := s.server.ListenAndServe()
 
 	if err == nil || err == http.ErrServerClosed {
@@ -29,15 +31,25 @@ func (s HttpServer) Shutdown() error {
 	return s.server.Shutdown(context.Background())
 }
 
-func NewHttpServer(handler http.Handler, logger fw.Logger) HttpServer {
+func (s HttpServer) HandleFunc(pattern string, handler http.Handler) {
+	s.mux.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+		finish := s.tracer.Begin()
+
+		r.Body = tap(r.Body, func(body string) {
+			s.logger.Info(fmt.Sprintf("HTTP: url=%s host=%s method=%s body=%s", r.URL, r.Host, r.Method, body))
+		})
+		handler.ServeHTTP(w, r)
+
+		finish(pattern)
+	})
+}
+
+func NewHttpServer(logger fw.Logger, tracer fw.Tracer) HttpServer {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
-		logger.Info(fmt.Sprintf("Request %v", r))
-		handler.ServeHTTP(w, r)
-	})
-
 	return HttpServer{
-		handler: mux,
+		mux:    mux,
+		tracer: tracer,
+		logger: logger,
 	}
 }
