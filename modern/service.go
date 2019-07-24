@@ -12,7 +12,7 @@ type Service struct {
 }
 
 func (s Service) Start(port int) {
-	defer s.logger.Info(fmt.Sprintf("%s service started", s.name))
+	defer s.logger.Info(fmt.Sprintf("%s started", s.name))
 
 	go func() {
 		err := s.server.ListenAndServe(port)
