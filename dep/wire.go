@@ -18,3 +18,13 @@ func InitGraphQlService(name string, graphqlPath modern.GraphQlPath) modern.Serv
 		app.NewGraphQlApi)
 	return modern.Service{}
 }
+
+func InitRoutingService(name string) modern.Service {
+	wire.Build(
+		modern.NewService,
+		modern.NewLocalLogger,
+		modern.NewLocalTracer,
+		modern.NewGorillaMux,
+		app.NewRoutes)
+	return modern.Service{}
+}
