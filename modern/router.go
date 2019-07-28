@@ -1,40 +1,101 @@
 package modern
 
 import (
-	"net/http"
-	"tinyURL/fw"
-
-	"github.com/gorilla/mux"
+	"fmt"
+	"github.com/pkg/errors"
+	"regexp"
+	"strings"
 )
 
-type GorillaMux struct {
-	logger fw.Logger
-	server fw.Server
+type Router struct {
 }
 
-func (g GorillaMux) Shutdown() error {
-	return g.server.Shutdown()
+type UriMatcher struct {
+	pattern *regexp.Regexp
+	paramNames  []string
 }
 
-func (g GorillaMux) ListenAndServe(port int) error {
-	return g.server.ListenAndServe(port)
-}
+type Params map[string]string
 
-func NewGorillaMux(logger fw.Logger, tracer fw.Tracer, routes fw.Routes) fw.Server {
-	router := mux.NewRouter()
+var pathSep = "/"
 
-	for path, handler := range routes {
-		router.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-			params := mux.Vars(r)
-			handler(w, r, params)
-		})
+func (m UriMatcher) IsMatch(path string) (bool, Params) {
+	matches := m.pattern.FindStringSubmatch(path)
+
+	if len(matches) < 1 {
+		return false, Params{}
 	}
 
-	server := NewHttpServer(logger, tracer)
-	server.HandleFunc("/", router)
+	matches = matches[1:]
 
-	return GorillaMux{
-		logger: logger,
-		server: &server,
+	if len(matches) != len(m.paramNames) {
+		return false, Params {}
 	}
+
+	params := Params{}
+
+	for idx, param := range matches {
+		paramName := m.paramNames[idx]
+		params[paramName] = param
+	}
+	return true, params
+}
+
+func (m UriMatcher) Params() []string {
+	return m.paramNames
+}
+
+var paramPattern = regexp.MustCompile("^:([^/]+)$")
+
+func extractParamName(paths []string) []string {
+	var paramNames = make([]string, 0)
+
+	for _, path := range paths {
+		if isParam(path) {
+			paramNames = append(paramNames, path[1:])
+		}
+	}
+
+	return paramNames
+}
+
+func getUriPattern(paths []string) *regexp.Regexp {
+	var newPaths []string
+
+	for _, path := range paths {
+		if isParam(path) {
+			newPaths = append(newPaths, "([^/]+)")
+			continue
+		}
+		newPaths = append(newPaths, path)
+	}
+
+	patternText := strings.Join(newPaths, pathSep)
+	patternText = fmt.Sprintf("^%s/?$", patternText)
+	return regexp.MustCompile(patternText)
+}
+
+func isParam(text string) bool {
+	return paramPattern.MatchString(text)
+}
+
+
+func NewUriMatcher(uriTemplate string) (UriMatcher, error) {
+	if len(uriTemplate) < 1 {
+		return UriMatcher{}, errors.New("uri is empty")
+	}
+
+	if !strings.HasPrefix(uriTemplate, pathSep) {
+		return UriMatcher{}, errors.New("uri has to start with /")
+	}
+
+	paths := strings.Split(uriTemplate, pathSep)
+
+	paramNames := extractParamName(paths)
+	uriPattern := getUriPattern(paths)
+
+	return UriMatcher{
+		pattern: uriPattern,
+		paramNames:  paramNames,
+	}, nil
 }
