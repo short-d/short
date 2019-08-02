@@ -89,7 +89,7 @@ func TestUriMatcher_Params(t *testing.T) {
 	}
 }
 
-func TestUriMatcher_Match(t *testing.T) {
+func TestUriExactMatcher_Match(t *testing.T) {
 	uriTemplate := "/users/:userId/articles/:articleId"
 	matcher, err := NewUriExactMatcher(uriTemplate)
 
