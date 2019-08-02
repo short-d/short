@@ -24,8 +24,8 @@ func InitGraphQlService(name string, graphqlPath modern.GraphQlPath) modern.Serv
 func InitRoutingService(name string) modern.Service {
 	logger := modern.NewLocalLogger()
 	tracer := modern.NewLocalTracer()
-	routes := app.NewRoutes(logger, tracer)
-	server := modern.NewGorillaMux(logger, tracer, routes)
+	v := app.NewRoutes(logger, tracer)
+	server := modern.NewCustomRouting(logger, tracer, v)
 	service := modern.NewService(name, server, logger)
 	return service
 }

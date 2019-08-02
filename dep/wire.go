@@ -24,7 +24,7 @@ func InitRoutingService(name string) modern.Service {
 		modern.NewService,
 		modern.NewLocalLogger,
 		modern.NewLocalTracer,
-		modern.NewGorillaMux,
+		modern.NewCustomRouting,
 		app.NewRoutes)
 	return modern.Service{}
 }
