@@ -7,7 +7,7 @@ import (
 	"tinyURL/fw"
 )
 
-func NewTinyUrl(logger fw.Logger, tracer fw.Tracer) []fw.Route {
+func NewTinyUrl(logger fw.Logger, tracer fw.Tracer, wwwRoot string) []fw.Route {
 	urlRepo := repo.NewUrlFake(map[string]entity.Url{
 		"220uFicCJj": {
 			Alias:       "220uFicCJj",
@@ -20,8 +20,6 @@ func NewTinyUrl(logger fw.Logger, tracer fw.Tracer) []fw.Route {
 	})
 
 	urlRetriever := usecase.NewUrlRetrieverRepo(tracer, urlRepo)
-
-	wwwRoot := "public"
 	fileHandle := NewServeFile(logger, tracer, wwwRoot)
 
 	return []fw.Route{

@@ -21,10 +21,10 @@ func InitGraphQlService(name string, graphqlPath modern.GraphQlPath) modern.Serv
 	return service
 }
 
-func InitRoutingService(name string) modern.Service {
+func InitRoutingService(name string, wwwRoot app.WwwRoot) modern.Service {
 	logger := modern.NewLocalLogger()
 	tracer := modern.NewLocalTracer()
-	v := app.NewRoutes(logger, tracer)
+	v := app.NewRoutes(logger, tracer, wwwRoot)
 	server := modern.NewCustomRouting(logger, tracer, v)
 	service := modern.NewService(name, server, logger)
 	return service

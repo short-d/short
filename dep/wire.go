@@ -19,7 +19,7 @@ func InitGraphQlService(name string, graphqlPath modern.GraphQlPath) modern.Serv
 	return modern.Service{}
 }
 
-func InitRoutingService(name string) modern.Service {
+func InitRoutingService(name string, wwwRoot app.WwwRoot) modern.Service {
 	wire.Build(
 		modern.NewService,
 		modern.NewLocalLogger,
