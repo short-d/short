@@ -1,7 +1,9 @@
 package repo
 
 import (
+	"fmt"
 	"testing"
+	"time"
 	"tinyURL/app/entity"
 	"tinyURL/app/table"
 
@@ -21,11 +23,11 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 		{
 			name: "alias not found",
 			tableRows: sqlmock.NewRows([]string{
-				table.Url.Alias,
-				table.Url.OriginalUrl,
-				table.Url.ExpireAt,
-				table.Url.CreatedAt,
-				table.Url.UpdatedAt,
+				table.Url.ColumnAlias,
+				table.Url.ColumnOriginalUrl,
+				table.Url.ColumnExpireAt,
+				table.Url.ColumnCreatedAt,
+				table.Url.ColumnUpdatedAt,
 			}),
 			alias:  "220uFicCJj",
 			hasErr: true,
@@ -33,32 +35,32 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 		{
 			name: "found url",
 			tableRows: sqlmock.NewRows([]string{
-				table.Url.Alias,
-				table.Url.OriginalUrl,
-				table.Url.ExpireAt,
-				table.Url.CreatedAt,
-				table.Url.UpdatedAt,
+				table.Url.ColumnAlias,
+				table.Url.ColumnOriginalUrl,
+				table.Url.ColumnExpireAt,
+				table.Url.ColumnCreatedAt,
+				table.Url.ColumnUpdatedAt,
 			}).AddRow(
 				"220uFicCJj",
 				"http://www.google.com",
-				"2019-05-01 08:02:16",
-				"2017-05-01 08:02:16",
-				"NULL",
+				mustParseSqlTime("2019-05-01 08:02:16"),
+				mustParseSqlTime("2017-05-01 08:02:16"),
+				nil,
 			).AddRow(
 				"yDOBcj5HIPbUAsw",
 				"http://www.facebook.com",
-				"2018-04-02 08:02:16",
-				"2017-05-01 08:02:16",
-				"NULL",
+				mustParseSqlTime("2018-04-02 08:02:16"),
+				mustParseSqlTime("2017-05-01 08:02:16"),
+				nil,
 			),
 			alias:  "220uFicCJj",
 			hasErr: false,
 			expectedUrl: entity.Url{
 				Alias:       "220uFicCJj",
 				OriginalUrl: "http://www.google.com",
-				ExpireAt:    MustParseDatetime("2019-05-01 08:02:16"),
-				CreatedAt:   MustParseDatetime("2017-05-01 08:02:16"),
-				UpdatedAt:   MustParseDatetime("NULL"),
+				ExpireAt:    mustParseSqlTime("2019-05-01 08:02:16"),
+				CreatedAt:   mustParseSqlTime("2017-05-01 08:02:16"),
+				UpdatedAt:   nil,
 			},
 		},
 	}
@@ -70,7 +72,8 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			assert.Nil(t, err)
 			defer db.Close()
 
-			mock.ExpectQuery("^SELECT .+ FROM Url WHERE alias=.+$").WillReturnRows(testCase.tableRows)
+			statement := fmt.Sprintf(`^SELECT .+ FROM "%s" WHERE "%s"=.+$`, table.Url.TableName, table.Url.ColumnAlias)
+			mock.ExpectQuery(statement).WillReturnRows(testCase.tableRows)
 
 			urlRepo := NewUrlSql(db)
 
@@ -84,5 +87,18 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			}
 		})
 	}
+}
 
+var dateTimeFmt = "2006-01-02 15:04:05"
+
+func mustParseSqlTime(dateTime string) *time.Time {
+	if dateTime == "NULL" {
+		return nil
+	}
+
+	dt, err := time.Parse(dateTimeFmt, dateTime)
+	if err != nil {
+		panic(err)
+	}
+	return &dt
 }

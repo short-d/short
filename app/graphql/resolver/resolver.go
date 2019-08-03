@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"database/sql"
 	"tinyURL/app/repo"
 	"tinyURL/app/usecase"
 	"tinyURL/fw"
@@ -11,7 +12,8 @@ type Resolver struct {
 	Mutation
 }
 
-func NewResolver(logger fw.Logger, tracer fw.Tracer, urlRepo repo.Url) Resolver {
+func NewResolver(logger fw.Logger, tracer fw.Tracer, db *sql.DB) Resolver {
+	urlRepo := repo.NewUrlSql(db)
 	urlRetriever := usecase.NewUrlRetrieverRepo(tracer, urlRepo)
 	return Resolver{
 		Query: NewQuery(logger, tracer, urlRetriever),
