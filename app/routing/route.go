@@ -9,7 +9,7 @@ import (
 
 func NewTinyUrl(logger fw.Logger, tracer fw.Tracer, wwwRoot string, db *sql.DB) []fw.Route {
 	urlRepo := repo.NewUrlSql(db)
-	urlRetriever := usecase.NewUrlRetrieverRepo(tracer, urlRepo)
+	urlRetriever := usecase.NewUrlRetrieverRepo(urlRepo)
 	fileHandle := NewServeFile(logger, tracer, wwwRoot)
 
 	return []fw.Route{

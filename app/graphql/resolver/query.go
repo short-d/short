@@ -27,17 +27,19 @@ type UrlArgs struct {
 }
 
 func (q Query) Url(args *UrlArgs) (*Url, error) {
+	trace := q.tracer.BeginTrace("Url")
+
 	var url entity.Url
 	var err error
 
 	if args.ExpireAfter == nil {
-		finish := q.tracer.Begin()
-		url, err = q.urlRetriever.GetUrl(args.Alias)
-		finish("usecase.UrlRetriever.GetUrl")
+		trace1 := trace.Next("GetUrl")
+		url, err = q.urlRetriever.GetUrl(trace1, args.Alias)
+		trace1.End()
 	} else {
-		finish := q.tracer.Begin()
-		url, err = q.urlRetriever.GetUrlAfter(args.Alias, args.ExpireAfter.Time)
-		finish("usecase.UrlRetriever.GetUrlAfter")
+		trace1 := trace.Next("GetUrlAfter")
+		url, err = q.urlRetriever.GetUrlAfter(trace1, args.Alias, args.ExpireAfter.Time)
+		trace1.End()
 	}
 
 	if err != nil {
@@ -45,5 +47,6 @@ func (q Query) Url(args *UrlArgs) (*Url, error) {
 		return nil, err
 	}
 
+	trace.End()
 	return &Url{url: url}, nil
 }
