@@ -1,0 +1,23 @@
+@import "font";
+
+$content-width: 1200px;
+
+header {
+  background-color: #20232a;
+  display: flex;
+  justify-content: center;
+  color: white;
+
+  .center {
+    width: $content-width;
+    display: flex;
+    padding: 10px 0;
+
+    .logo {
+      font-weight: $font-weight-semi-bold;
+      line-height: 30px;
+      font-size: 30px;
+      letter-spacing: 2px;
+    }
+  }
+}

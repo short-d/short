@@ -1,10 +1,14 @@
 import React from 'react';
-import './App.css';
+import './App.scss';
 
 function App() {
     return (
-        <div className="App">
-            Hello, world!
+        <div className='App'>
+            <header>
+                <div className={'center'}>
+                    <div className={'logo'}>SHORT</div>
+                </div>
+            </header>
         </div>
     );
 }
