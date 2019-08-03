@@ -1,5 +1,10 @@
 package fw
 
+type Trace interface {
+	End()
+	Next(name string) Trace
+}
+
 type Tracer interface {
-	Begin() func(string)
+	BeginTrace(name string) Trace
 }

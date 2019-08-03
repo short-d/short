@@ -10,26 +10,24 @@ import (
 )
 
 type UrlRetriever interface {
-	GetUrlAfter(alias string, expiringAt time.Time) (entity.Url, error)
-	GetUrl(alias string) (entity.Url, error)
+	GetUrlAfter(trace fw.Trace, alias string, expiringAt time.Time) (entity.Url, error)
+	GetUrl(trace fw.Trace, alias string) (entity.Url, error)
 }
 
 type UrlRetrieverRepo struct {
-	tracer  fw.Tracer
 	urlRepo repo.Url
 }
 
-func NewUrlRetrieverRepo(tracer fw.Tracer, urlRepo repo.Url) UrlRetriever {
+func NewUrlRetrieverRepo(urlRepo repo.Url) UrlRetriever {
 	return UrlRetrieverRepo{
-		tracer:  tracer,
 		urlRepo: urlRepo,
 	}
 }
 
-func (u UrlRetrieverRepo) GetUrlAfter(alias string, expiringAt time.Time) (entity.Url, error) {
-	finish := u.tracer.Begin()
-	url, err := u.GetUrl(alias)
-	finish("usecase.UrlRetriever.GetUrl")
+func (u UrlRetrieverRepo) GetUrlAfter(trace fw.Trace, alias string, expiringAt time.Time) (entity.Url, error) {
+	trace1 := trace.Next("GetUrl")
+	url, err := u.GetUrl(trace1, alias)
+	trace1.End()
 
 	if err != nil {
 		return entity.Url{}, err
@@ -46,10 +44,10 @@ func (u UrlRetrieverRepo) GetUrlAfter(alias string, expiringAt time.Time) (entit
 	return url, nil
 }
 
-func (u UrlRetrieverRepo) GetUrl(alias string) (entity.Url, error) {
-	finish := u.tracer.Begin()
+func (u UrlRetrieverRepo) GetUrl(trace fw.Trace, alias string) (entity.Url, error) {
+	trace1 := trace.Next("GetByAlias")
 	url, err := u.urlRepo.GetByAlias(alias)
-	finish("repo.Url.GetByAlias")
+	trace1.End()
 
 	if err != nil {
 		return entity.Url{}, err

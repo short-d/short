@@ -11,11 +11,13 @@ import (
 
 func NewOriginalUrl(logger fw.Logger, tracer fw.Tracer, urlRetriever usecase.UrlRetriever) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
+		trace := tracer.BeginTrace("OriginalUrl")
+
 		alias := params["alias"]
 
-		finish := tracer.Begin()
-		url, err := urlRetriever.GetUrlAfter(alias, time.Now())
-		finish("router.handler.NewUrlAlias")
+		trace1 := trace.Next("GetUrlAfter")
+		url, err := urlRetriever.GetUrlAfter(trace1, alias, time.Now())
+		trace1.End()
 
 		if err != nil {
 			http.Redirect(w, r, "/404", http.StatusSeeOther)
@@ -26,6 +28,7 @@ func NewOriginalUrl(logger fw.Logger, tracer fw.Tracer, urlRetriever usecase.Url
 		originUrl := url.OriginalUrl
 
 		http.Redirect(w, r, originUrl, http.StatusSeeOther)
+		trace.End()
 	}
 }
 

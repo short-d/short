@@ -33,14 +33,10 @@ func (s HttpServer) Shutdown() error {
 
 func (s HttpServer) HandleFunc(pattern string, handler http.Handler) {
 	s.mux.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
-		finish := s.tracer.Begin()
-
 		r.Body = tap(r.Body, func(body string) {
 			s.logger.Info(fmt.Sprintf("HTTP: url=%s host=%s method=%s body=%s", r.URL, r.Host, r.Method, body))
 		})
 		handler.ServeHTTP(w, r)
-
-		finish(pattern)
 	})
 }
 
