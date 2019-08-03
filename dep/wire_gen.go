@@ -6,25 +6,26 @@
 package dep
 
 import (
+	"database/sql"
 	"tinyURL/app"
 	"tinyURL/modern"
 )
 
 // Injectors from wire.go:
 
-func InitGraphQlService(name string, graphqlPath modern.GraphQlPath) modern.Service {
+func InitGraphQlService(name string, db *sql.DB, graphqlPath modern.GraphQlPath) modern.Service {
 	logger := modern.NewLocalLogger()
 	tracer := modern.NewLocalTracer()
-	graphQlApi := app.NewGraphQlApi(logger, tracer)
+	graphQlApi := app.NewGraphQlApi(logger, tracer, db)
 	server := modern.NewGraphGophers(graphqlPath, logger, tracer, graphQlApi)
 	service := modern.NewService(name, server, logger)
 	return service
 }
 
-func InitRoutingService(name string, wwwRoot app.WwwRoot) modern.Service {
+func InitRoutingService(name string, db *sql.DB, wwwRoot app.WwwRoot) modern.Service {
 	logger := modern.NewLocalLogger()
 	tracer := modern.NewLocalTracer()
-	v := app.NewRoutes(logger, tracer, wwwRoot)
+	v := app.NewRoutes(logger, tracer, db, wwwRoot)
 	server := modern.NewCustomRouting(logger, tracer, v)
 	service := modern.NewService(name, server, logger)
 	return service
