@@ -3,8 +3,8 @@ package scalar
 import (
 	"encoding/json"
 	"time"
-	"tinyURL/app/graphql/parser"
-	"tinyURL/fw"
+	"short/app/graphql/parser"
+	"short/fw"
 
 	"github.com/pkg/errors"
 )

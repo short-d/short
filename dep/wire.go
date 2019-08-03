@@ -4,8 +4,8 @@ package dep
 
 import (
 	"database/sql"
-	"tinyURL/app"
-	"tinyURL/modern"
+	"short/app"
+	"short/modern"
 
 	"github.com/google/wire"
 )
@@ -16,7 +16,6 @@ func InitGraphQlService(name string, db *sql.DB, graphqlPath modern.GraphQlPath)
 		modern.NewLocalLogger,
 		modern.NewLocalTracer,
 		modern.NewGraphGophers,
-
 		app.NewGraphQlApi)
 	return modern.Service{}
 }

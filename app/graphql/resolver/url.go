@@ -1,8 +1,8 @@
 package resolver
 
 import (
-	"tinyURL/app/entity"
-	"tinyURL/app/graphql/scalar"
+	"short/app/entity"
+	"short/app/graphql/scalar"
 )
 
 type Url struct {

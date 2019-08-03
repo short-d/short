@@ -2,12 +2,12 @@ package routing
 
 import (
 	"database/sql"
-	"tinyURL/app/repo"
-	"tinyURL/app/usecase"
-	"tinyURL/fw"
+	"short/app/repo"
+	"short/app/usecase"
+	"short/fw"
 )
 
-func NewTinyUrl(logger fw.Logger, tracer fw.Tracer, wwwRoot string, db *sql.DB) []fw.Route {
+func NewShort(logger fw.Logger, tracer fw.Tracer, wwwRoot string, db *sql.DB) []fw.Route {
 	urlRepo := repo.NewUrlSql(db)
 	urlRetriever := usecase.NewUrlRetrieverRepo(urlRepo)
 	fileHandle := NewServeFile(logger, tracer, wwwRoot)

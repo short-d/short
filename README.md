@@ -1,3 +1,3 @@
-# Tiny URL
+# Short
 
 URL shortening service

@@ -1,7 +1,7 @@
 package repo
 
 import (
-	"tinyURL/app/entity"
+	"short/app/entity"
 
 	"github.com/pkg/errors"
 )

@@ -1,6 +1,6 @@
 package mdtest
 
-import "tinyURL/fw"
+import "short/fw"
 
 type tracer struct {
 }

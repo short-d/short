@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"tinyURL/fw"
+	"short/fw"
 )
 
 type HttpServer struct {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 	"time"
-	"tinyURL/app/entity"
-	"tinyURL/app/table"
+	"short/app/entity"
+	"short/app/table"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
