@@ -5,3 +5,7 @@ $font-weight-medium: 500;
 $font-weight-semi-bold: 600;
 $font-weight-bold: 700;
 $font-weight-black: 900;
+
+@mixin default-font() {
+  font-family: 'Source Code Pro', monospace;
+}

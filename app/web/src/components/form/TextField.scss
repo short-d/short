@@ -1,0 +1,12 @@
+@import "../styles/color";
+@import "../styles/corner";
+
+.text-field {
+  border: 2px solid $color-primary;
+  box-sizing: border-box;
+  font-size: 20px;
+  outline: none;
+  @include round-corner;
+  padding: 8px 20px;
+  width: 100%;
+}

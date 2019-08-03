@@ -1,0 +1,23 @@
+@import "styles/font";
+@import "styles/dimension";
+
+header {
+  @include default-font();
+  background-color: #c2185b;
+  color: white;
+  display: flex;
+  justify-content: center;
+
+  .center {
+    display: flex;
+    padding: 10px 0;
+    width: $content-width;
+  }
+
+  #logo {
+    font-size: 30px;
+    font-weight: $font-weight-semi-bold;
+    letter-spacing: 2px;
+    line-height: 30px;
+  }
+}
