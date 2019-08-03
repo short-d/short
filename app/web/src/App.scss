@@ -1,23 +1,81 @@
 @import "font";
 
 $content-width: 1200px;
+$color-primary: #e91e63;
+
+@mixin round-corner {
+  border-radius: 4px;
+}
 
 header {
-  background-color: #20232a;
+  background-color: #c2185b;
+  color: white;
   display: flex;
   justify-content: center;
-  color: white;
 
   .center {
-    width: $content-width;
     display: flex;
     padding: 10px 0;
+    width: $content-width;
 
     .logo {
-      font-weight: $font-weight-semi-bold;
-      line-height: 30px;
       font-size: 30px;
+      font-weight: $font-weight-semi-bold;
       letter-spacing: 2px;
+      line-height: 30px;
     }
   }
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+
+  .center {
+    background-color: #fafafa;
+    border-radius: 4px;
+    padding: 20px;
+    width: $content-width;
+
+    .control {
+      display: flex;
+
+      &.create-short-link {
+        .text-field {
+          border: 2px solid $color-primary;
+          flex: 1;
+          font-size: 20px;
+          @include round-corner;
+          margin-right: 20px;
+          outline: none;
+          padding: 8px 20px;
+        }
+
+        button {
+          background-color: $color-primary;
+          border: none;
+          @include round-corner;
+          color: white;
+          font-size: 16px;
+          font-weight: $font-weight-semi-bold;
+          outline: none;
+          padding: 0 20px;
+
+          &:hover {
+            cursor: pointer;
+            opacity: 0.9;
+          }
+        }
+      }
+    }
+  }
+}
+
+.title {
+  color: #333333;
+  font-size: 26px;
+  font-weight: $font-weight-semi-bold;
+  margin-bottom: 20px;
+  padding-left: 10px;
 }
