@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
 	"tinyURL/app"
 	"tinyURL/dep"
 	"tinyURL/modern"
+
+	"github.com/spf13/cobra"
 )
 
 func Execute() {
@@ -16,11 +17,14 @@ func Execute() {
 	var password string
 	var dbName string
 
+	var migrationRoot string
+	var wwwRoot string
+
 	startCmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start TinyUrl service",
 		Run: func(cmd *cobra.Command, args []string) {
-			start(host, port, user, password, dbName)
+			start(host, port, user, password, dbName, migrationRoot, wwwRoot)
 		},
 	}
 
@@ -29,6 +33,9 @@ func Execute() {
 	startCmd.Flags().StringVar(&user, "user", "postgres", "username of database")
 	startCmd.Flags().StringVar(&password, "password", "password", "password of database")
 	startCmd.Flags().StringVar(&dbName, "db", "tinyurl", "name of database")
+
+	startCmd.Flags().StringVar(&migrationRoot, "migration", "app/db", "db migrations root directory")
+	startCmd.Flags().StringVar(&wwwRoot, "www", "app/web/build", "www root directory")
 
 	rootCmd := &cobra.Command{Use: "tinyurl"}
 	rootCmd.AddCommand(startCmd)
@@ -40,7 +47,7 @@ func Execute() {
 	}
 }
 
-func start(host string, port int, user string, password string, dbName string) {
+func start(host string, port int, user string, password string, dbName string, migrationRoot string, wwwRoot string) {
 	db, err := modern.NewPostgresDb(host, port, user, password, dbName)
 
 	if err != nil {
@@ -49,7 +56,7 @@ func start(host string, port int, user string, password string, dbName string) {
 
 	defer db.Close()
 
-	err = modern.MigratePostgres(db, "app/db")
+	err = modern.MigratePostgres(db, migrationRoot)
 	if err != nil {
 		panic(err)
 	}
@@ -57,6 +64,6 @@ func start(host string, port int, user string, password string, dbName string) {
 	service := dep.InitGraphQlService("TinyUrl GraphQL API", db, modern.GraphQlPath("/graphql"))
 	service.Start(8080)
 
-	service = dep.InitRoutingService("TinyUrl Routing API", db, app.WwwRoot("app/web/build"))
+	service = dep.InitRoutingService("TinyUrl Routing API", db, app.WwwRoot(wwwRoot))
 	service.StartAndWait(80)
 }
