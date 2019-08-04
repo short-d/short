@@ -1,8 +1,9 @@
-import {Url} from "../entity/Url";
-import {ApolloClient} from "apollo-client";
-import {createHttpLink} from "apollo-link-http";
-import {InMemoryCache} from "apollo-cache-inmemory";
-import gql from "graphql-tag";
+import {Url} from '../entity/Url';
+import {ApolloClient} from 'apollo-client';
+import {createHttpLink} from 'apollo-link-http';
+import {InMemoryCache} from 'apollo-cache-inmemory';
+import {FetchResult} from 'apollo-link';
+import gql from 'graphql-tag';
 
 export class UrlService {
     private gqlClient = new ApolloClient(
@@ -14,8 +15,8 @@ export class UrlService {
         }
     );
 
-    createShortLink(link: Url) {
-        let alias = link.alias === "" ? null : link.alias;
+    createShortLink(link: Url): Promise<Url> {
+        let alias = link.alias === '' ? null : link.alias;
 
         let variables = {
             urlInput: {
@@ -37,5 +38,6 @@ export class UrlService {
             variables: variables,
             mutation: mutation,
         })
+            .then((res: FetchResult<Url>) => res.data.createUrl);
     }
 }

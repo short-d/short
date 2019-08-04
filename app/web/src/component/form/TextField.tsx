@@ -1,4 +1,4 @@
-import React, {ChangeEvent, Component} from "react";
+import React, {ChangeEvent, Component} from 'react';
 import './TextField.scss';
 
 interface Props {
@@ -15,9 +15,9 @@ interface State {
 export class TextField extends Component<Props, State> {
     handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (!this.props.onChange) {
-            return
+            return;
         }
-        this.props.onChange(event.target.value)
+        this.props.onChange(event.target.value);
     };
 
     render = () => {
@@ -28,5 +28,5 @@ export class TextField extends Component<Props, State> {
                    onChange={this.handleChange}
                    placeholder={this.props.placeHolder}/>
         );
-    }
+    };
 }

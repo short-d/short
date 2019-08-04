@@ -3,13 +3,31 @@
 @import "styles/color";
 @import "styles/corner";
 
-.control {
-  display: flex;
+.app {
+  .control {
+    display: flex;
 
-  &.create-short-link {
-    .text-field-wrapper {
-      flex: 1;
-      margin-right: 20px;
+    &.create-short-link {
+      .text-field-wrapper {
+        flex: 1;
+        margin-right: 20px;
+      }
+    }
+  }
+
+  .short-link-notice {
+    font-size: 18px;
+    line-height: 1.5;
+    margin-top: 40px;
+
+    a {
+      color: inherit;
+      cursor: pointer;
+      font-weight: bolder;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

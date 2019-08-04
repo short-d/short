@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component} from 'react';
 import './Header.scss';
 
 export class Header extends Component {
@@ -9,6 +9,6 @@ export class Header extends Component {
                     <div id='logo'>Short</div>
                 </div>
             </header>
-        )
+        );
     }
 }
