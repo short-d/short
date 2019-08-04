@@ -1,7 +1,7 @@
 package mdtest
 
 import (
-	"tinyURL/fw"
+	"short/fw"
 
 	"github.com/graph-gophers/graphql-go"
 )

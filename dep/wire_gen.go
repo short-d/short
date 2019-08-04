@@ -7,8 +7,8 @@ package dep
 
 import (
 	"database/sql"
-	"tinyURL/app"
-	"tinyURL/modern"
+	"short/app"
+	"short/modern"
 )
 
 // Injectors from wire.go:

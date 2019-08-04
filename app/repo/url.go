@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-	"tinyURL/app/entity"
-	"tinyURL/app/table"
+	"short/app/entity"
+	"short/app/table"
 
 	"github.com/pkg/errors"
 )

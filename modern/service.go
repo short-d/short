@@ -2,7 +2,7 @@ package modern
 
 import (
 	"fmt"
-	"tinyURL/fw"
+	"short/fw"
 )
 
 type Service struct {

@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"tinyURL/app"
-	"tinyURL/dep"
-	"tinyURL/modern"
+	"short/app"
+	"short/dep"
+	"short/modern"
 
 	"github.com/spf13/cobra"
 )
@@ -22,7 +22,7 @@ func Execute() {
 
 	startCmd := &cobra.Command{
 		Use:   "start",
-		Short: "Start TinyUrl service",
+		Short: "Start service",
 		Run: func(cmd *cobra.Command, args []string) {
 			start(host, port, user, password, dbName, migrationRoot, wwwRoot)
 		},
@@ -32,12 +32,12 @@ func Execute() {
 	startCmd.Flags().IntVar(&port, "port", 5432, "port of db server")
 	startCmd.Flags().StringVar(&user, "user", "postgres", "username of database")
 	startCmd.Flags().StringVar(&password, "password", "password", "password of database")
-	startCmd.Flags().StringVar(&dbName, "db", "tinyurl", "name of database")
+	startCmd.Flags().StringVar(&dbName, "db", "short", "name of database")
 
 	startCmd.Flags().StringVar(&migrationRoot, "migration", "app/db", "db migrations root directory")
 	startCmd.Flags().StringVar(&wwwRoot, "www", "app/web/build", "www root directory")
 
-	rootCmd := &cobra.Command{Use: "tinyurl"}
+	rootCmd := &cobra.Command{Use: "short"}
 	rootCmd.AddCommand(startCmd)
 
 	err := rootCmd.Execute()
@@ -61,9 +61,9 @@ func start(host string, port int, user string, password string, dbName string, m
 		panic(err)
 	}
 
-	service := dep.InitGraphQlService("TinyUrl GraphQL API", db, modern.GraphQlPath("/graphql"))
+	service := dep.InitGraphQlService("GraphQL API", db, modern.GraphQlPath("/graphql"))
 	service.Start(8080)
 
-	service = dep.InitRoutingService("TinyUrl Routing API", db, app.WwwRoot(wwwRoot))
+	service = dep.InitRoutingService("Routing API", db, app.WwwRoot(wwwRoot))
 	service.StartAndWait(80)
 }

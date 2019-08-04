@@ -2,9 +2,9 @@ package resolver
 
 import (
 	"database/sql"
-	"tinyURL/app/repo"
-	"tinyURL/app/usecase"
-	"tinyURL/fw"
+	"short/app/repo"
+	"short/app/usecase"
+	"short/fw"
 )
 
 type Resolver struct {

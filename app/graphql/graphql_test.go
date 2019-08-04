@@ -2,7 +2,7 @@ package graphql
 
 import (
 	"testing"
-	"tinyURL/modern/mdtest"
+	"short/modern/mdtest"
 
 	"github.com/DATA-DOG/go-sqlmock"
 
@@ -15,6 +15,6 @@ func TestGraphQlApi(t *testing.T) {
 	assert.Nil(t, err)
 	defer db.Close()
 
-	graphqlApi := NewTinyUrl(mdtest.FakeLogger, mdtest.FakeTracer, db)
+	graphqlApi := NewShort(mdtest.FakeLogger, mdtest.FakeTracer, db)
 	assert.True(t, mdtest.IsGraphQlApiValid(graphqlApi))
 }

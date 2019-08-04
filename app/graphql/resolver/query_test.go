@@ -3,10 +3,10 @@ package resolver
 import (
 	"testing"
 	"time"
-	"tinyURL/app/entity"
-	"tinyURL/app/graphql/scalar"
-	"tinyURL/app/usecase"
-	"tinyURL/modern/mdtest"
+	"short/app/entity"
+	"short/app/graphql/scalar"
+	"short/app/usecase"
+	"short/modern/mdtest"
 
 	"github.com/stretchr/testify/assert"
 )

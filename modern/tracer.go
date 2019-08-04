@@ -3,7 +3,7 @@ package modern
 import (
 	"log"
 	"time"
-	"tinyURL/fw"
+	"short/fw"
 
 	uuid "github.com/satori/go.uuid"
 )

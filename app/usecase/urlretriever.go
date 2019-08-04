@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"time"
-	"tinyURL/app/entity"
-	"tinyURL/app/repo"
-	"tinyURL/fw"
+	"short/app/entity"
+	"short/app/repo"
+	"short/fw"
 
 	"github.com/pkg/errors"
 )

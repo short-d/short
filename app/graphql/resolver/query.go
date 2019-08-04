@@ -1,10 +1,10 @@
 package resolver
 
 import (
-	"tinyURL/app/entity"
-	"tinyURL/app/graphql/scalar"
-	"tinyURL/app/usecase"
-	"tinyURL/fw"
+	"short/app/entity"
+	"short/app/graphql/scalar"
+	"short/app/usecase"
+	"short/fw"
 )
 
 type Query struct {

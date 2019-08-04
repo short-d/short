@@ -2,7 +2,7 @@ package modern
 
 import (
 	"log"
-	"tinyURL/fw"
+	"short/fw"
 )
 
 type LocalLogger struct {

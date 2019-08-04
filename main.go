@@ -1,6 +1,6 @@
 package main
 
-import "tinyURL/cmd"
+import "short/cmd"
 
 func main() {
 	cmd.Execute()

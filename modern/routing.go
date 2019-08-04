@@ -2,8 +2,8 @@ package modern
 
 import (
 	"net/http"
-	"tinyURL/fw"
-	"tinyURL/modern/router"
+	"short/fw"
+	"short/modern/router"
 )
 
 type CustomRouting struct {

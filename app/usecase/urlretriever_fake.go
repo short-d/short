@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"tinyURL/app/entity"
-	"tinyURL/app/repo"
+	"short/app/entity"
+	"short/app/repo"
 )
 
 func NewUrlRetrieverFake(urls map[string]entity.Url) UrlRetriever {

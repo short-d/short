@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"tinyURL/app/usecase"
-	"tinyURL/fw"
+	"short/app/usecase"
+	"short/fw"
 )
 
 func NewOriginalUrl(logger fw.Logger, tracer fw.Tracer, urlRetriever usecase.UrlRetriever) fw.Handle {

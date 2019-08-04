@@ -3,9 +3,9 @@ package usecase
 import (
 	"testing"
 	"time"
-	"tinyURL/app/entity"
-	"tinyURL/app/repo"
-	"tinyURL/modern/mdtest"
+	"short/app/entity"
+	"short/app/repo"
+	"short/modern/mdtest"
 
 	"github.com/stretchr/testify/assert"
 )

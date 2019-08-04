@@ -2,25 +2,25 @@ package graphql
 
 import (
 	"database/sql"
-	"tinyURL/app/graphql/resolver"
-	"tinyURL/fw"
+	"short/app/graphql/resolver"
+	"short/fw"
 )
 
-type TinyUrl struct {
+type Short struct {
 	resolver *resolver.Resolver
 }
 
-func (t TinyUrl) GetSchema() string {
+func (t Short) GetSchema() string {
 	return schema
 }
 
-func (t TinyUrl) GetResolver() interface{} {
+func (t Short) GetResolver() interface{} {
 	return t.resolver
 }
 
-func NewTinyUrl(logger fw.Logger, tracer fw.Tracer, db *sql.DB) fw.GraphQlApi {
+func NewShort(logger fw.Logger, tracer fw.Tracer, db *sql.DB) fw.GraphQlApi {
 	r := resolver.NewResolver(logger, tracer, db)
-	return &TinyUrl{
+	return &Short{
 		resolver: &r,
 	}
 }
