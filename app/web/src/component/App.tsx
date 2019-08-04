@@ -4,7 +4,8 @@ import {Header} from "./Header";
 import {Section} from "./Section";
 import {TextField} from "./form/TextField";
 import {Button} from "./Button";
-import {Url} from "../entity/url";
+import {Url} from "../entity/Url";
+import {UrlService} from "../service/url.service";
 
 interface Props {
 }
@@ -14,6 +15,8 @@ interface State {
 }
 
 export class App extends Component<Props, State> {
+    urlService = new UrlService();
+
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -26,23 +29,23 @@ export class App extends Component<Props, State> {
 
     handlerOriginalUrlChange = (newValue: string) => {
         this.setState({
-            url: {
+            url: Object.assign({}, this.state.url, {
                 originalUrl: newValue
-            }
+            })
         });
 
     };
 
     handleAliasChange = (newValue: string) => {
         this.setState({
-            url: {
+            url: Object.assign({}, this.state.url, {
                 alias: newValue
-            }
+            })
         });
     };
 
     handleCreateShortLinkClick = () => {
-
+        this.urlService.createShortLink(this.state.url)
     };
 
     render = () => {
