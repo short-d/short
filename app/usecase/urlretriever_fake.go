@@ -7,5 +7,5 @@ import (
 
 func NewUrlRetrieverFake(urls map[string]entity.Url) UrlRetriever {
 	repoFake := repo.NewUrlFake(urls)
-	return NewUrlRetrieverRepo(repoFake)
+	return NewUrlRetrieverPersist(repoFake)
 }

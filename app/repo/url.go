@@ -3,19 +3,35 @@ package repo
 import (
 	"database/sql"
 	"fmt"
-	"time"
 	"short/app/entity"
 	"short/app/table"
+	"time"
 
 	"github.com/pkg/errors"
 )
 
 type Url interface {
 	GetByAlias(alias string) (entity.Url, error)
+	Create(url entity.Url) error
 }
 
 type UrlSql struct {
 	db *sql.DB
+}
+
+func (u *UrlSql) Create(url entity.Url) error {
+	statement := fmt.Sprintf(`
+INSERT INTO "%s" ("%s","%s","%s","%s","%s")
+VALUES ($1, $2, $3, $4, $5);`,
+		table.Url.TableName,
+		table.Url.ColumnAlias,
+		table.Url.ColumnOriginalUrl,
+		table.Url.ColumnExpireAt,
+		table.Url.ColumnCreatedAt,
+		table.Url.ColumnUpdatedAt,
+	)
+	_, err := u.db.Exec(statement, url.Alias, url.OriginalUrl, url.ExpireAt, url.CreatedAt, url.UpdatedAt)
+	return err
 }
 
 func NewUrlSql(db *sql.DB) Url {
@@ -25,7 +41,10 @@ func NewUrlSql(db *sql.DB) Url {
 }
 
 func (u *UrlSql) GetByAlias(alias string) (entity.Url, error) {
-	statement := fmt.Sprintf(`SELECT "%s","%s","%s","%s","%s" FROM "%s" WHERE "%s"=$1;`,
+	statement := fmt.Sprintf(`
+SELECT "%s","%s","%s","%s","%s" 
+FROM "%s" 
+WHERE "%s"=$1;`,
 		table.Url.ColumnAlias,
 		table.Url.ColumnOriginalUrl,
 		table.Url.ColumnExpireAt,

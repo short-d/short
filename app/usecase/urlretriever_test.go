@@ -1,11 +1,11 @@
 package usecase
 
 import (
-	"testing"
-	"time"
 	"short/app/entity"
 	"short/app/repo"
 	"short/modern/mdtest"
+	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -83,7 +83,7 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeRepo := repo.NewUrlFake(testCase.urls)
-			retriever := NewUrlRetrieverRepo(fakeRepo)
+			retriever := NewUrlRetrieverPersist(fakeRepo)
 			fakeTrace := mdtest.FakeTracer.BeginTrace("GetUrlAfter")
 			url, err := retriever.GetUrlAfter(fakeTrace, testCase.alias, testCase.expiringAt)
 
@@ -134,7 +134,7 @@ func TestUrlRetriever_GetUrl(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeRepo := repo.NewUrlFake(testCase.urls)
-			retriever := NewUrlRetrieverRepo(fakeRepo)
+			retriever := NewUrlRetrieverPersist(fakeRepo)
 			fakeTrace := mdtest.FakeTracer.BeginTrace("GetUrl")
 			url, err := retriever.GetUrl(fakeTrace, testCase.alias)
 

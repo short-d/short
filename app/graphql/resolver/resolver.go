@@ -14,8 +14,11 @@ type Resolver struct {
 
 func NewResolver(logger fw.Logger, tracer fw.Tracer, db *sql.DB) Resolver {
 	urlRepo := repo.NewUrlSql(db)
-	urlRetriever := usecase.NewUrlRetrieverRepo(urlRepo)
+	urlRetriever := usecase.NewUrlRetrieverPersist(urlRepo)
+	keyGen := usecase.NewKeyGenInMemory()
+	urlCreator := usecase.NewUrlCreatorPersist(urlRepo, keyGen)
 	return Resolver{
-		Query: NewQuery(logger, tracer, urlRetriever),
+		Query:    NewQuery(logger, tracer, urlRetriever),
+		Mutation: NewMutation(logger, tracer, urlCreator),
 	}
 }

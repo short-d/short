@@ -3,10 +3,10 @@ package routing
 import (
 	"fmt"
 	"net/http"
-	"strings"
-	"time"
 	"short/app/usecase"
 	"short/fw"
+	"strings"
+	"time"
 )
 
 func NewOriginalUrl(logger fw.Logger, tracer fw.Tracer, urlRetriever usecase.UrlRetriever) fw.Handle {

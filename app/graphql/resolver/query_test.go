@@ -1,12 +1,12 @@
 package resolver
 
 import (
-	"testing"
-	"time"
 	"short/app/entity"
 	"short/app/graphql/scalar"
 	"short/app/usecase"
 	"short/modern/mdtest"
+	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
