@@ -21,7 +21,7 @@ type Url {
 }
 
 input UrlInput {
-	originalUrl: String
+	originalUrl: String!
 	customAlias: String
 	expireAt: Time
 }
