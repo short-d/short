@@ -40,4 +40,8 @@ export class UrlService {
         })
             .then((res: FetchResult<Url>) => res.data.createUrl);
     }
+
+    aliasToLink(alias: string): string {
+        return `http://localhost/r/${alias}`;
+    }
 }
