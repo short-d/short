@@ -1,0 +1,34 @@
+@import "styles/dimension";
+@import "styles/font";
+
+$font-size : 18px;
+$font-color : #616161;
+
+footer {
+  @include default-font();
+
+  display         : flex;
+  justify-content : center;
+
+  .center {
+    font-size       : $font-size;
+    font-weight     : $font-weight-semi-bold;
+    line-height     : $font-size;
+    display         : flex;
+    justify-content : center;
+    width           : $content-width;
+    padding-top     : 20px;
+    color           : $font-color;
+    border-top      : 1px solid #EEE;
+
+    a {
+      font-weight     : $font-weight-bold;
+      text-decoration : none;
+      color           : $font-color;
+
+      &:hover {
+        text-decoration : underline;
+      }
+    }
+  }
+}
