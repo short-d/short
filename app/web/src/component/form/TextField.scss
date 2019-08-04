@@ -2,11 +2,11 @@
 @import "../styles/corner";
 
 .text-field {
-  border: 2px solid $color-primary;
-  box-sizing: border-box;
-  font-size: 20px;
-  outline: none;
+  font-size  : 20px;
+  box-sizing : border-box;
+  width      : 100%;
+  padding    : 8px 20px;
   @include round-corner;
-  padding: 8px 20px;
-  width: 100%;
+  border     : 2px solid $color-primary;
+  outline    : none;
 }
