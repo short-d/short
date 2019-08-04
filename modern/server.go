@@ -61,7 +61,6 @@ func enableCors(w http.ResponseWriter) http.ResponseWriter {
 
 func NewHttpServer(logger fw.Logger, tracer fw.Tracer) HttpServer {
 	mux := http.NewServeMux()
-
 	return HttpServer{
 		mux:    mux,
 		tracer: tracer,
