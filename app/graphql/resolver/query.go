@@ -26,7 +26,7 @@ type UrlArgs struct {
 }
 
 func (q Query) Url(args *UrlArgs) (*Url, error) {
-	trace := q.tracer.BeginTrace("Url")
+	trace := q.tracer.BeginTrace("Query.Url")
 
 	if args.ExpireAfter == nil {
 		trace1 := trace.Next("GetUrl")
