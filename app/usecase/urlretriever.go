@@ -1,10 +1,10 @@
 package usecase
 
 import (
-	"time"
 	"short/app/entity"
 	"short/app/repo"
 	"short/fw"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -14,17 +14,17 @@ type UrlRetriever interface {
 	GetUrl(trace fw.Trace, alias string) (entity.Url, error)
 }
 
-type UrlRetrieverRepo struct {
+type UrlRetrieverPersist struct {
 	urlRepo repo.Url
 }
 
-func NewUrlRetrieverRepo(urlRepo repo.Url) UrlRetriever {
-	return UrlRetrieverRepo{
+func NewUrlRetrieverPersist(urlRepo repo.Url) UrlRetriever {
+	return UrlRetrieverPersist{
 		urlRepo: urlRepo,
 	}
 }
 
-func (u UrlRetrieverRepo) GetUrlAfter(trace fw.Trace, alias string, expiringAt time.Time) (entity.Url, error) {
+func (u UrlRetrieverPersist) GetUrlAfter(trace fw.Trace, alias string, expiringAt time.Time) (entity.Url, error) {
 	trace1 := trace.Next("GetUrl")
 	url, err := u.GetUrl(trace1, alias)
 	trace1.End()
@@ -44,7 +44,7 @@ func (u UrlRetrieverRepo) GetUrlAfter(trace fw.Trace, alias string, expiringAt t
 	return url, nil
 }
 
-func (u UrlRetrieverRepo) GetUrl(trace fw.Trace, alias string) (entity.Url, error) {
+func (u UrlRetrieverPersist) GetUrl(trace fw.Trace, alias string) (entity.Url, error) {
 	trace1 := trace.Next("GetByAlias")
 	url, err := u.urlRepo.GetByAlias(alias)
 	trace1.End()
