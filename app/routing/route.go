@@ -13,7 +13,7 @@ func NewShort(logger fw.Logger, tracer fw.Tracer, wwwRoot string, db *sql.DB) []
 	fileHandle := NewServeFile(logger, tracer, wwwRoot)
 
 	return []fw.Route{
-		{Method: "GET", Path: "/api/redirect/:alias", Handle: NewOriginalUrl(logger, tracer, urlRetriever)},
+		{Method: "GET", Path: "/r/:alias", Handle: NewOriginalUrl(logger, tracer, urlRetriever)},
 		{Method: "GET", MatchPrefix: true, Path: "/", Handle: fileHandle},
 	}
 }
