@@ -25,7 +25,7 @@ type CreateUrlArgs struct {
 }
 
 func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
-	trace := m.tracer.BeginTrace("CreateUrl")
+	trace := m.tracer.BeginTrace("Mutation.CreateUrl")
 
 	url := entity.Url{
 		OriginalUrl: args.Url.OriginalUrl,
