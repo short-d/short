@@ -2,9 +2,9 @@ package scalar
 
 import (
 	"encoding/json"
-	"time"
 	"short/app/graphql/parser"
 	"short/fw"
+	"time"
 
 	"github.com/pkg/errors"
 )

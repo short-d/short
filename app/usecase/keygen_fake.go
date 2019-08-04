@@ -7,6 +7,6 @@ func (KeyGenFake) NewKey() string {
 	panic("implement me")
 }
 
-func NewKeyGenFake() KeyGenerator{
+func NewKeyGenFake() KeyGenerator {
 	return KeyGenFake{}
 }

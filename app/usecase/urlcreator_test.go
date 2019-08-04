@@ -1,12 +1,13 @@
 package usecase
 
 import (
-	"github.com/stretchr/testify/assert"
 	"short/app/entity"
 	"short/app/repo"
 	"short/modern/mdtest"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestUrlCreatorPersist_CreateUrl(t *testing.T) {

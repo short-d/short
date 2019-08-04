@@ -1,8 +1,8 @@
 package graphql
 
 import (
-	"testing"
 	"short/modern/mdtest"
+	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
 
