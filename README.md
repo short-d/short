@@ -2,7 +2,7 @@
 URL shortening service
 
 ## Preview
-![Home](doc/screenshot/home.png)
+![Home](doc/screenshot/home.v3.png)
 
 ## Prerequisites
 - Yarn v1.17.3
