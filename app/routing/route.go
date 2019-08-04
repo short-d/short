@@ -9,7 +9,7 @@ import (
 
 func NewShort(logger fw.Logger, tracer fw.Tracer, wwwRoot string, db *sql.DB) []fw.Route {
 	urlRepo := repo.NewUrlSql(db)
-	urlRetriever := usecase.NewUrlRetrieverRepo(urlRepo)
+	urlRetriever := usecase.NewUrlRetrieverPersist(urlRepo)
 	fileHandle := NewServeFile(logger, tracer, wwwRoot)
 
 	return []fw.Route{
