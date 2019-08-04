@@ -1,5 +1,5 @@
 # Short
-URL shortening service
+URL shortening service wriiten in Go and React
 
 ## Preview
 ![Home](doc/screenshot/home.v3.png)
