@@ -5,28 +5,32 @@
 
 .app {
   .control {
-    display: flex;
+    display : flex;
 
     &.create-short-link {
       .text-field-wrapper {
-        flex: 1;
-        margin-right: 20px;
+        flex         : 1;
+        margin-right : 20px;
       }
     }
   }
 
+  .main {
+    padding : 40px 0;
+  }
+
   .short-link-notice {
-    font-size: 18px;
-    line-height: 1.5;
-    margin-top: 40px;
+    font-size   : 18px;
+    line-height : 1.5;
+    margin-top  : 40px;
 
     a {
-      color: inherit;
-      cursor: pointer;
-      font-weight: bolder;
+      font-weight : bolder;
+      cursor      : pointer;
+      color       : inherit;
 
       &:hover {
-        text-decoration: underline;
+        text-decoration : underline;
       }
     }
   }

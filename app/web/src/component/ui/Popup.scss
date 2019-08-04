@@ -1,28 +1,28 @@
 .popup {
-  bottom: 0;
-  display: none;
-  left: 0;
-  position: fixed;
-  right: 0;
-  top: 0;
-  z-index: 1000;
+  position : fixed;
+  z-index  : 1000;
+  top      : 0;
+  right    : 0;
+  bottom   : 0;
+  left     : 0;
+  display  : none;
 
   &.shown {
-    display: block;
+    display : block;
   }
 
   .card {
-    background-color: white;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-    left: 50%;
-    position: fixed;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    position         : fixed;
+    top              : 50%;
+    left             : 50%;
+    transform        : translateX(-50%) translateY(-50%);
+    background-color : white;
+    box-shadow       : 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   }
 
   .mask {
-    background-color: rgba(0, 0, 0, 0.2);
-    height: 100%;
-    width: 100%;
+    width            : 100%;
+    height           : 100%;
+    background-color : rgba(0, 0, 0, 0.2);
   }
 }
