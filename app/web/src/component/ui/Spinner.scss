@@ -1,0 +1,70 @@
+$planet-color: #3ff9dc;
+$sun-color: #ffab91;
+
+$orbit-color: #ffffffa5;
+$orbit-width: 1px;
+
+.spinner {
+  height: 250px;
+  width: 250px;
+
+  .solar-system {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .orbit {
+    align-items: center;
+    border: $orbit-width solid $orbit-color;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+
+  .earth-orbit {
+    -webkit-animation: spin 12s linear 0s infinite;
+    height: 165px;
+    width: 165px;
+  }
+
+  .venus-orbit {
+    -webkit-animation: spin 7.4s linear 0s infinite;
+    height: 120px;
+    width: 120px;
+  }
+
+  .mercury-orbit {
+    -webkit-animation: spin 3s linear 0s infinite;
+    height: 90px;
+    width: 90px;
+  }
+
+  .planet {
+    background-color: $planet-color;
+    border-radius: 50%;
+    height: 10px;
+    position: absolute;
+    top: -5px;
+    width: 10px;
+  }
+
+  .sun {
+    background-color: $sun-color;
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(359deg);
+    }
+  }
+}
