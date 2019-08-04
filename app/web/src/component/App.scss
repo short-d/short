@@ -19,19 +19,7 @@
     padding : 40px 0;
   }
 
-  .short-link-notice {
-    font-size   : 18px;
-    line-height : 1.5;
+  .short-link-usage-wrapper {
     margin-top  : 40px;
-
-    a {
-      font-weight : bolder;
-      cursor      : pointer;
-      color       : inherit;
-
-      &:hover {
-        text-decoration : underline;
-      }
-    }
   }
 }

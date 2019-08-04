@@ -7,6 +7,8 @@ import {Button} from './Button';
 import {Url} from '../entity/Url';
 import {UrlService} from '../service/url.service';
 import {Footer} from './Footer';
+import {QrcodeService} from '../service/qrcode.service';
+import {ShortLinkUsage} from './ShortLinkUsage';
 
 interface Props {
 }
@@ -14,7 +16,7 @@ interface Props {
 interface State {
     editingUrl: Url
     createdUrl?: Url
-    baseUrl: string
+    qrCodeUrl?: string
 }
 
 export class App extends Component<Props, State> {
@@ -26,8 +28,7 @@ export class App extends Component<Props, State> {
             editingUrl: {
                 originalUrl: '',
                 alias: ''
-            },
-            baseUrl: 'http://localhost/r/'
+            }
         };
     }
 
@@ -51,9 +52,20 @@ export class App extends Component<Props, State> {
     handleCreateShortLinkClick = () => {
         this.urlService
             .createShortLink(this.state.editingUrl)
-            .then((url: Url) => this.setState({
-                createdUrl: url
-            }));
+            .then((url: Url) => {
+                this.setState({
+                    createdUrl: url
+                });
+
+                if (url.alias) {
+                    QrcodeService.newQrCode(this.urlService.aliasToLink(url.alias))
+                        .then((qrCodeUrl: string) => {
+                            this.setState({
+                                qrCodeUrl: qrCodeUrl
+                            });
+                        });
+                }
+            });
     };
 
     render = () => {
@@ -74,13 +86,14 @@ export class App extends Component<Props, State> {
                             </div>
                             <Button onClick={this.handleCreateShortLinkClick}>Create Short Link</Button>
                         </div>
-                        {this.state.createdUrl ?
-                            <div className={'short-link-notice'}>
-                                You can now paste&nbsp;
-                                <a target={'_blank'}
-                                   href={`${this.state.baseUrl}${this.state.createdUrl.alias}`}>{`${this.state.baseUrl}${this.state.createdUrl.alias}`}</a>
-                                &nbsp;in your browser to visit {this.state.createdUrl.originalUrl}.
-                            </div> :
+                        {this.state.createdUrl && this.state.qrCodeUrl ?
+                            <div className={'short-link-usage-wrapper'}>
+                                <ShortLinkUsage
+                                shortLink={this.urlService.aliasToLink(this.state.createdUrl.alias!)}
+                                originalUrl={this.state.createdUrl.originalUrl!}
+                                qrCodeUrl={this.state.qrCodeUrl}/>
+                            </div>
+                            :
                             false
                         }
                     </Section>
