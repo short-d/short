@@ -10,10 +10,17 @@ URL shortening service
 
 ## Getting Started
 
-1. Build frontend and backend
+1. Build App
 ```bash
 ./bin/build
 ```
+
+2. Start server
+```bash
+./build/short start --www build/web
+```
+
+3. Visit [http://localhost](http://localhost)
 
 ## Author
 Harry Liu - [byliuyang](https://github.com/byliuyang)
