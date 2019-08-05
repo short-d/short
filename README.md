@@ -2,7 +2,10 @@
 URL shortening service
 
 ## Preview
-![Home](doc/screenshot/home.v3.png)
+![Demo](doc/demo.gif)
+
+## Like `s/` extension?
+Get it [here](https://github.com/byliuyang/short-ext)!
 
 ## Prerequisites
 - Yarn v1.17.3
