@@ -3,7 +3,6 @@ package usecase
 import (
 	"short/app/entity"
 	"short/app/repo"
-	"short/modern/mdtest"
 	"testing"
 	"time"
 
@@ -17,6 +16,7 @@ func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
 		name        string
 		urls        urlMap
 		alias       string
+		url 	entity.Url
 		hasErr      bool
 		expectedUrl entity.Url
 	}{
@@ -28,17 +28,21 @@ func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
+			url: entity.Url{},
 			alias:       "220uFicCJj",
 			hasErr:      true,
-			expectedUrl: entity.Url{},
 		},
 		{
 			name:   "create alias successfully",
 			urls:   urlMap{},
 			alias:  "220uFicCJj",
+			url: entity.Url{
+				Alias:    "220uFicCJj",
+				ExpireAt: &now,
+			},
 			hasErr: false,
 			expectedUrl: entity.Url{
-				Alias:    "220uFicCJj",
+				Alias: "220uFicCJj",
 				ExpireAt: &now,
 			},
 		},
@@ -47,9 +51,11 @@ func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeRepo := repo.NewUrlFake(testCase.urls)
-			retriever := NewUrlRetrieverPersist(fakeRepo)
-			fakeTrace := mdtest.FakeTracer.BeginTrace("GetUrl")
-			url, err := retriever.GetUrl(fakeTrace, testCase.alias)
+			fakeKeyGen := NewKeyGenFake([]string{
+				testCase.alias,
+			})
+			creator := NewUrlCreatorPersist(fakeRepo, fakeKeyGen)
+			url, err := creator.CreateUrl(testCase.url)
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)
