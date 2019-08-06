@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+cd app/web
+yarn
+yarn build
+cd ../../
+mv app/web/build/* build/web
+rm -rf app/web/build

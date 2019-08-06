@@ -3,13 +3,4 @@
 rm -rf build
 mkdir -p build/web
 
-# Build web
-cd app/web
-yarn
-yarn build
-cd ../../
-mv app/web/build/* build/web
-rm -rf app/web/build
-
-# Build app
 go build -o build/short main.go
