@@ -3,3 +3,9 @@
 
 # Build
 build/
+
+# DB Data
+dbdata
+
+# Environmental variables
+.env
