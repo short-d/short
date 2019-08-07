@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+docker build --cache-from test-app -t test-app -f Dockerfile-test .
+docker run test-app
