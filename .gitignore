@@ -3,9 +3,7 @@
 
 # Build
 build/
-
-# DB Data
-dbdata
+public/
 
 # Environmental variables
 .env
