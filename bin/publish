@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
+docker push $DOCKER_HUB_USERNAME/short:latest
