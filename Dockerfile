@@ -13,4 +13,4 @@ RUN go mod verify
 
 COPY . .
 
-RUN ./bin/build
+RUN ["go", "build", "-o", "build/short", "main.go"]
