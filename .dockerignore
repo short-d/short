@@ -11,3 +11,6 @@ doc
 
 # Environmental variables
 .env
+
+# Build
+build
