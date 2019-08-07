@@ -33,7 +33,7 @@ func Execute() {
 	}
 
 	startCmd.Flags().StringVar(&migrationRoot, "migration", "app/db", "db migrations root directory")
-	startCmd.Flags().StringVar(&wwwRoot, "www", "build/web", "www root directory")
+	startCmd.Flags().StringVar(&wwwRoot, "www", "public", "www root directory")
 
 	rootCmd := &cobra.Command{Use: "short"}
 	rootCmd.AddCommand(startCmd)

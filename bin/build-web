@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
+rm -rf public
+mkdir -p public
+
 cd app/web
 yarn
 yarn build
 cd ../../
-mv app/web/build/* build/web
+mv app/web/build/* public/
 rm -rf app/web/build
