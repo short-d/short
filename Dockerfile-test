@@ -1,0 +1,20 @@
+FROM golang:1.12.7-alpine
+
+WORKDIR /app
+
+# Install build tools
+RUN apk add --no-cache git
+RUN apk add --no-cache bash
+RUN apk add --no-cache  gcc
+RUN apk add --no-cache libc-dev
+
+# Install dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Verify dependencies
+RUN go mod verify
+
+COPY . .
+
+CMD ["go", "test", "-v", "./..."]
