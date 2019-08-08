@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
-rm -rf public
-mkdir -p public
-
 cd app/web
 yarn
-yarn build
-cd ../../
-mv app/web/build/* public/
-rm -rf app/web/build
+CI=true yarn build
+mkdir ../../public
+mv build/* ../../public/

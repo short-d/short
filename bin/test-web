@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-docker build --cache-from test-web -t test-web -f Dockerfile-test-web .
-docker run test-web
