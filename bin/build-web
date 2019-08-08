@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-cd app/web
-yarn
-CI=true yarn build
-mkdir ../../public
-mv build/* ../../public/
