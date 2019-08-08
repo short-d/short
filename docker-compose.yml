@@ -15,7 +15,7 @@ services:
       - DB_NAME=${DB_NAME}
     command: [
       "./bin/wait-for-it", "-s", "-t", "0", "db:5432", "--",
-      "./build/short", "start", "--www", "${WWWROOT}"
+      "./build/short", "start", "--www", "public", "--migration", "app/db"
     ]
   db:
     image: postgres
@@ -26,5 +26,7 @@ services:
       - POSTGRES_DB=${DB_NAME}
     volumes:
       - db_data:/var/lib/postgresql/data
+    ports:
+      - 5400:5432
 volumes:
   db_data:
