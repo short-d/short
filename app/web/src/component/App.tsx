@@ -5,9 +5,9 @@ import {Section} from './Section';
 import {TextField} from './form/TextField';
 import {Button} from './Button';
 import {Url} from '../entity/Url';
-import {UrlService} from '../service/url.service';
+import {UrlService} from '../service/Url.service';
 import {Footer} from './Footer';
-import {QrcodeService} from '../service/qrcode.service';
+import {QrcodeService} from '../service/Qrcode.service';
 import {ShortLinkUsage} from './ShortLinkUsage';
 
 interface Props {
