@@ -40,7 +40,7 @@ steps:
       - name: docker
         path: /var/run/docker.sock
 
-  - name: push app to Docker Registry
+  - name: publish to Docker registry
     image: docker
     environment:
       DOCKERHUB_USERNAME:
