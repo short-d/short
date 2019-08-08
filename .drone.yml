@@ -1,0 +1,67 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: test web ui
+    image: docker
+    commands:
+      - docker build -t test-web -f Dockerfile-test-web .
+      - docker run test-web
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+
+  - name: test backend
+    image: docker
+    commands:
+      - docker build -t test-app -f Dockerfile-test .
+      - docker run test-app
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+
+  - name: build web ui
+    image: node:12.7.0-alpine
+    volumes:
+      - name: webdep
+        path: /drone/src/app/web/node_modules
+    commands:
+      - apk add --no-cache bash
+      - ./bin/build-web
+
+  - name: build backend
+    image: docker
+    environment:
+      DOCKER_IMAGE_PREFIX:
+        from_secret: DOCKER_IMAGE_PREFIX
+    commands:
+      - docker build -t $DOCKER_IMAGE_PREFIX/short .
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+
+  - name: push app to Docker Registry
+    image: docker
+    environment:
+      DOCKERHUB_USERNAME:
+        from_secret: DOCKERHUB_USERNAME
+      DOCKERHUB_PASSWORD:
+        from_secret: DOCKERHUB_PASSWORD
+      DOCKER_REGISTRY:
+        from_secret: DOCKER_REGISTRY
+      DOCKER_IMAGE_PREFIX:
+        from_secret: DOCKER_IMAGE_PREFIX
+    commands:
+      - docker login $DOCKER_REGISTRY -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - docker push $DOCKER_IMAGE_PREFIX/short:latest
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+
+volumes:
+  - name: docker
+    host:
+      path: /var/run/docker.sock
+  - name: webdep
+    host:
+      path: /drone/webdep
