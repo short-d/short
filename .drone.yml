@@ -27,7 +27,11 @@ steps:
         path: /drone/src/app/web/node_modules
     commands:
       - apk add --no-cache bash
-      - ./bin/build-web
+      - cd app/web
+      - yarn
+      - CI=true yarn build
+      - mkdir ../../public
+      - mv build/* ../../public/
 
   - name: build backend
     image: docker
@@ -57,7 +61,58 @@ steps:
     volumes:
       - name: docker
         path: /var/run/docker.sock
+  - name: upload docker-compose.yml
+    image: appleboy/drone-scp
+    settings:
+      host:
+        from_secret: SERVER_HOST
+      username:
+        from_secret: SERVER_USER
+      password:
+        from_secret: SERVER_PASSWORD
+      port: 22
+      command_timeout: 2m
+      target:
+        from_secret: DEST_DIR
+      source:
+        - docker-compose.yml
 
+  - name: deploy service
+    image: appleboy/drone-ssh
+    environment:
+      DOCKER_IMAGE_PREFIX:
+        from_secret: DOCKER_IMAGE_PREFIX
+      DEST_DIR:
+        from_secret: DEST_DIR
+      DB_USER:
+        from_secret: DB_USER
+      DB_PASSWORD:
+        from_secret: DB_PASSWORD
+      DB_NAME:
+        from_secret: DB_NAME
+      WEB_PORT:
+        from_secret: WEB_PORT
+      API_PORT:
+        from_secret: API_PORT
+    settings:
+      host:
+        from_secret: SERVER_HOST
+      username:
+        from_secret: SERVER_USER
+      password:
+        from_secret: SERVER_PASSWORD
+      port: 22
+      envs: [DOCKER_IMAGE_PREFIX, DEST_DIR, DB_USER, DB_PASSWORD, DB_NAME, WEB_PORT, API_PORT]
+      script:
+        - docker pull $DOCKER_IMAGE_PREFIX/short
+        - cd $DEST_DIR;
+          DOCKER_IMAGE_PREFIX=$DOCKER_IMAGE_PREFIX
+          DB_USER=$DB_USER
+          DB_PASSWORD=$DB_PASSWORD
+          DB_NAME=$DB_NAME
+          WEB_PORT=$WEB_PORT
+          API_PORT=$API_PORT
+          docker-compose up -d
 volumes:
   - name: docker
     host:
