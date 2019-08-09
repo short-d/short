@@ -33,8 +33,8 @@ steps:
       - mkdir ../../public
       - mv build/* ../../public/
     when:
-      event:
-        - pull_request
+      branch:
+        - master
 
   - name: build backend
     image: docker
@@ -44,8 +44,8 @@ steps:
       - name: docker
         path: /var/run/docker.sock
     when:
-      event:
-        - pull_request
+      branch:
+        - master
 
   - name: publish to Docker registry
     image: docker
