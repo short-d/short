@@ -7,6 +7,7 @@ import {faHeart} from '@fortawesome/free-solid-svg-icons';
 interface Props {
     authorName: string
     authorPortfolio: string
+    version: string
 }
 
 export class Footer extends Component<Props> {
@@ -14,8 +15,11 @@ export class Footer extends Component<Props> {
         return (
             <footer>
                 <div className={'center'}>
-                    Made with&nbsp;<FontAwesomeIcon icon={faHeart}/>&nbsp;by&nbsp;<a
-                    href={this.props.authorPortfolio}>{this.props.authorName}</a>
+                    <div className={'row'}>
+                        Made with&nbsp;<FontAwesomeIcon className={'heart'} icon={faHeart}/>&nbsp;by&nbsp;<a
+                        href={this.props.authorPortfolio}>{this.props.authorName}</a>
+                    </div>
+                    <div className={'row app-version'}>App version: {this.props.version}</div>
                 </div>
             </footer>
         );
