@@ -12,7 +12,9 @@ steps:
         path: /var/run/docker.sock
     when:
       branch:
-        exclude: production
+        exclude:
+          - master
+          - production
 
   - name: test backend
     image: docker
@@ -24,7 +26,9 @@ steps:
         path: /var/run/docker.sock
     when:
       branch:
-        exclude: production
+        exclude:
+          - master
+          - production
 
   - name: build web ui
     image: node:12.7.0-alpine
