@@ -36,7 +36,7 @@ steps:
       - name: webdep
         path: /drone/src/app/web/node_modules
     commands:
-      - apk add --no-cache bash
+      - apk add --no-cache bash git
       - cd app/web
       - yarn
       - CI=true yarn build
