@@ -10,6 +10,9 @@ steps:
     volumes:
       - name: docker
         path: /var/run/docker.sock
+    when:
+      branch:
+        exclude: production
 
   - name: test backend
     image: docker
@@ -19,6 +22,9 @@ steps:
     volumes:
       - name: docker
         path: /var/run/docker.sock
+    when:
+      branch:
+        exclude: production
 
   - name: build web ui
     image: node:12.7.0-alpine
