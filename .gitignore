@@ -3,3 +3,7 @@
 
 # Build
 build/
+public/
+
+# Environmental variables
+.env

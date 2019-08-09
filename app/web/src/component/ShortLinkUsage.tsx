@@ -16,13 +16,12 @@ export class ShortLinkUsage extends Component<Props> {
                     You can now paste&nbsp;
                     <a target={'_blank'}
                        href={this.props.shortLink}>
-                        {/*{this.urlService.aliasToLink(this.state.createdUrl.alias!)}*/}
                         {this.props.shortLink}
                     </a>
                     &nbsp;in your browser to visit {this.props.originalUrl}.
                 </div>
                 <div className={'qr-code'}>
-                    <img src={this.props.qrCodeUrl}/>
+                    <img alt={this.props.shortLink} src={this.props.qrCodeUrl}/>
                 </div>
             </div>
         );

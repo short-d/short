@@ -1,0 +1,32 @@
+version: '3'
+services:
+  app:
+    image: ${DOCKER_IMAGE_PREFIX}/short
+    ports:
+      - "${API_PORT}:8080"
+      - "${WEB_PORT}:80"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    command: [
+      "./bin/wait-for-it", "-s", "-t", "0", "db:5432", "--",
+      "./build/short", "start", "--www", "public", "--migration", "app/db"
+    ]
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - 5400:5432
+volumes:
+  db_data:

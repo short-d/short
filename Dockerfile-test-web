@@ -1,0 +1,13 @@
+FROM node:12.7.0-alpine
+
+WORKDIR /web
+
+# Install dependencies
+COPY app/web/package.json app/web/yarn.lock ./
+RUN yarn
+
+COPY app/web .
+
+ENV CI=true
+
+CMD ["yarn", "test"]
