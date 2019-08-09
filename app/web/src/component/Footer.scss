@@ -1,8 +1,10 @@
 @import "styles/dimension";
 @import "styles/font";
+@import "styles/color";
 
 $font-size : 18px;
 $font-color : #616161;
+$padding : 30px;
 
 footer {
   @include default-font();
@@ -11,15 +13,30 @@ footer {
   justify-content : center;
 
   .center {
-    font-size       : $font-size;
-    font-weight     : $font-weight-semi-bold;
-    line-height     : $font-size;
-    display         : flex;
-    justify-content : center;
-    width           : $content-width;
-    padding-top     : 20px;
-    color           : $font-color;
-    border-top      : 1px solid #EEE;
+    font-size      : $font-size;
+    font-weight    : $font-weight-semi-bold;
+    line-height    : $font-size;
+    display        : flex;
+    flex-direction : column;
+    align-content  : center;
+    width          : $content-width;
+    padding-top    : $padding;
+    color          : $font-color;
+    border-top     : 1px solid #EEE;
+    text-align     : center;
+
+    .row:not(:last-child) {
+      margin-bottom : 10px;
+    }
+
+    .app-version {
+      font-size : 14px;
+    }
+
+    .heart:hover {
+      color  : $color-primary;
+      cursor : pointer;
+    }
 
     a {
       font-weight     : $font-weight-bold;
@@ -31,4 +48,6 @@ footer {
       }
     }
   }
+
+  padding-bottom  : $padding;
 }

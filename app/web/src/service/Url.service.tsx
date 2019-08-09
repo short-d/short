@@ -4,12 +4,13 @@ import {createHttpLink} from 'apollo-link-http';
 import {InMemoryCache} from 'apollo-cache-inmemory';
 import {FetchResult} from 'apollo-link';
 import gql from 'graphql-tag';
+import {EnvService} from './Env.service';
 
 export class UrlService {
     private gqlClient = new ApolloClient(
         {
             link: createHttpLink({
-                uri: `${process.env.REACT_APP_GRAPHQL_API_BASE_URL}/graphql`
+                uri: `${EnvService.getVal('GRAPHQL_API_BASE_URL')}/graphql`
             }),
             cache: new InMemoryCache()
         }
@@ -42,6 +43,6 @@ export class UrlService {
     }
 
     aliasToLink(alias: string): string {
-        return `${process.env.REACT_APP_HTTP_API_BASE_URL}/r/${alias}`;
+        return `${EnvService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
     }
 }

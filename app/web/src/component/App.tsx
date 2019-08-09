@@ -9,6 +9,7 @@ import {UrlService} from '../service/Url.service';
 import {Footer} from './Footer';
 import {QrcodeService} from '../service/Qrcode.service';
 import {ShortLinkUsage} from './ShortLinkUsage';
+import {VersionService} from '../service/Version.service';
 
 interface Props {
 }
@@ -21,6 +22,7 @@ interface State {
 
 export class App extends Component<Props, State> {
     urlService = new UrlService();
+    appVersion = VersionService.getAppVersion();
 
     constructor(props: Props) {
         super(props);
@@ -98,7 +100,10 @@ export class App extends Component<Props, State> {
                         }
                     </Section>
                 </div>
-                <Footer authorName={'Harry'} authorPortfolio={'https://github.com/byliuyang'}/>
+                <Footer
+                    authorName={'Harry'}
+                    authorPortfolio={'https://github.com/byliuyang'}
+                    version={this.appVersion}/>
             </div>
         );
     };
