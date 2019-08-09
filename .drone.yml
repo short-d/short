@@ -32,17 +32,20 @@ steps:
       - CI=true yarn build
       - mkdir ../../public
       - mv build/* ../../public/
+    when:
+      event:
+        - pull_request
 
   - name: build backend
     image: docker
-    environment:
-      DOCKER_IMAGE_PREFIX:
-        from_secret: DOCKER_IMAGE_PREFIX
     commands:
-      - docker build -t $DOCKER_IMAGE_PREFIX/short .
+      - docker build -t short:latest .
     volumes:
       - name: docker
         path: /var/run/docker.sock
+    when:
+      event:
+        - pull_request
 
   - name: publish to Docker registry
     image: docker
@@ -57,10 +60,15 @@ steps:
         from_secret: DOCKER_IMAGE_PREFIX
     commands:
       - docker login $DOCKER_REGISTRY -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - docker tag short:latest $DOCKER_IMAGE_PREFIX/short:latest
       - docker push $DOCKER_IMAGE_PREFIX/short:latest
     volumes:
       - name: docker
         path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+
   - name: upload docker-compose.yml
     image: appleboy/drone-scp
     settings:
@@ -76,6 +84,9 @@ steps:
         from_secret: DEST_DIR
       source:
         - docker-compose.yml
+    when:
+      branch:
+        - production
 
   - name: deploy service
     image: appleboy/drone-ssh
@@ -113,6 +124,9 @@ steps:
           WEB_PORT=$WEB_PORT
           API_PORT=$API_PORT
           docker-compose up -d
+    when:
+      branch:
+        - production
 volumes:
   - name: docker
     host:
