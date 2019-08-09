@@ -9,7 +9,7 @@ export class UrlService {
     private gqlClient = new ApolloClient(
         {
             link: createHttpLink({
-                uri: 'http://localhost:8080/graphql'
+                uri: 'https://api-s.time4hacks.com/graphql'
             }),
             cache: new InMemoryCache()
         }
@@ -42,6 +42,6 @@ export class UrlService {
     }
 
     aliasToLink(alias: string): string {
-        return `http://localhost/r/${alias}`;
+        return `https://s.time4hacks.com/r/${alias}`;
     }
 }

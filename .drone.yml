@@ -1,0 +1,152 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: test web ui
+    image: docker
+    commands:
+      - docker build -t test-web -f Dockerfile-test-web .
+      - docker run test-web
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        exclude: production
+
+  - name: test backend
+    image: docker
+    commands:
+      - docker build -t test-app -f Dockerfile-test .
+      - docker run test-app
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        exclude: production
+
+  - name: build web ui
+    image: node:12.7.0-alpine
+    volumes:
+      - name: webdep
+        path: /drone/src/app/web/node_modules
+    commands:
+      - apk add --no-cache bash
+      - cd app/web
+      - yarn
+      - CI=true yarn build
+      - mkdir ../../public
+      - mv build/* ../../public/
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  - name: build backend
+    image: docker
+    commands:
+      - docker build -t short:latest .
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  - name: publish to Docker registry
+    image: docker
+    environment:
+      DOCKERHUB_USERNAME:
+        from_secret: DOCKERHUB_USERNAME
+      DOCKERHUB_PASSWORD:
+        from_secret: DOCKERHUB_PASSWORD
+      DOCKER_REGISTRY:
+        from_secret: DOCKER_REGISTRY
+      DOCKER_IMAGE_PREFIX:
+        from_secret: DOCKER_IMAGE_PREFIX
+    commands:
+      - docker login $DOCKER_REGISTRY -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - docker tag short:latest $DOCKER_IMAGE_PREFIX/short:latest
+      - docker push $DOCKER_IMAGE_PREFIX/short:latest
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  - name: upload docker-compose.yml
+    image: appleboy/drone-scp
+    settings:
+      host:
+        from_secret: SERVER_HOST
+      username:
+        from_secret: SERVER_USER
+      password:
+        from_secret: SERVER_PASSWORD
+      port: 22
+      command_timeout: 2m
+      target:
+        from_secret: DEST_DIR
+      source:
+        - docker-compose.yml
+    when:
+      branch:
+        - production
+      event:
+        - push
+
+  - name: deploy service
+    image: appleboy/drone-ssh
+    environment:
+      DOCKER_IMAGE_PREFIX:
+        from_secret: DOCKER_IMAGE_PREFIX
+      DEST_DIR:
+        from_secret: DEST_DIR
+      DB_USER:
+        from_secret: DB_USER
+      DB_PASSWORD:
+        from_secret: DB_PASSWORD
+      DB_NAME:
+        from_secret: DB_NAME
+      WEB_PORT:
+        from_secret: WEB_PORT
+      API_PORT:
+        from_secret: API_PORT
+    settings:
+      host:
+        from_secret: SERVER_HOST
+      username:
+        from_secret: SERVER_USER
+      password:
+        from_secret: SERVER_PASSWORD
+      port: 22
+      envs: [DOCKER_IMAGE_PREFIX, DEST_DIR, DB_USER, DB_PASSWORD, DB_NAME, WEB_PORT, API_PORT]
+      script:
+        - docker pull $DOCKER_IMAGE_PREFIX/short
+        - cd $DEST_DIR;
+          DOCKER_IMAGE_PREFIX=$DOCKER_IMAGE_PREFIX
+          DB_USER=$DB_USER
+          DB_PASSWORD=$DB_PASSWORD
+          DB_NAME=$DB_NAME
+          WEB_PORT=$WEB_PORT
+          API_PORT=$API_PORT
+          docker-compose up -d
+    when:
+      branch:
+        - production
+      event:
+        - push
+volumes:
+  - name: docker
+    host:
+      path: /var/run/docker.sock
+  - name: webdep
+    host:
+      path: /drone/webdep
