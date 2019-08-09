@@ -35,6 +35,8 @@ steps:
     when:
       branch:
         - master
+      event:
+        - push
 
   - name: build backend
     image: docker
@@ -46,6 +48,8 @@ steps:
     when:
       branch:
         - master
+      event:
+        - push
 
   - name: publish to Docker registry
     image: docker
@@ -68,6 +72,8 @@ steps:
     when:
       branch:
         - master
+      event:
+        - push
 
   - name: upload docker-compose.yml
     image: appleboy/drone-scp
@@ -87,6 +93,8 @@ steps:
     when:
       branch:
         - production
+      event:
+        - push
 
   - name: deploy service
     image: appleboy/drone-ssh
@@ -127,6 +135,8 @@ steps:
     when:
       branch:
         - production
+      event:
+        - push
 volumes:
   - name: docker
     host:
