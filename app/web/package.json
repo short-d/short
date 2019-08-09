@@ -15,9 +15,9 @@
     "qrcode": "^1.4.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts start",
+    "build": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts build",
+    "test": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
