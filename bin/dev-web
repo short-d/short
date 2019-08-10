@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+cd app/web
+yarn
+yarn start
+

@@ -3,15 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.21",
-    "@fortawesome/free-solid-svg-icons": "^5.10.1",
-    "@fortawesome/react-fontawesome": "^0.1.4",
     "apollo-cache-inmemory": "^1.6.2",
     "apollo-client": "^2.6.3",
+    "apollo-link": "^1.2.12",
     "apollo-link-http": "^1.5.15",
     "classnames": "^2.2.6",
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",
+    "material-design-icons": "^3.0.1",
     "qrcode": "^1.4.1"
   },
   "scripts": {

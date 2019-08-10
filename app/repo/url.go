@@ -11,12 +11,27 @@ import (
 )
 
 type Url interface {
+	IsAliasExist(alias string) bool
 	GetByAlias(alias string) (entity.Url, error)
 	Create(url entity.Url) error
 }
 
 type UrlSql struct {
 	db *sql.DB
+}
+
+func (u UrlSql) IsAliasExist(alias string) bool {
+	query := fmt.Sprintf(`
+SELECT %s 
+FROM "%s" 
+WHERE %s=$1;`,
+		table.Url.ColumnAlias,
+		table.Url.TableName,
+		table.Url.ColumnAlias,
+	)
+
+	err := u.db.QueryRow(query, alias).Scan()
+	return err != sql.ErrNoRows
 }
 
 func (u *UrlSql) Create(url entity.Url) error {

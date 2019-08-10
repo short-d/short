@@ -1,5 +1,5 @@
 # Short
-URL shortening service written in Go and React
+![Demo](promo/marquee.png)
 
 ## Preview
 ![Demo](doc/demo.gif)
