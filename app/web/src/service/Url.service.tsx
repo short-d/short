@@ -10,7 +10,11 @@ export class UrlService {
     private gqlClient = new ApolloClient(
         {
             link: createHttpLink({
+<<<<<<< HEAD
                 uri: `${EnvService.getVal('GRAPHQL_API_BASE_URL')}/graphql`
+=======
+                uri: `${process.env.REACT_APP_GRAPHQL_API_BASE_URL}/graphql`
+>>>>>>> 214d77e... Replace hard coded API base urls with environmental variables (#33) (#34)
             }),
             cache: new InMemoryCache()
         }
@@ -43,6 +47,10 @@ export class UrlService {
     }
 
     aliasToLink(alias: string): string {
+<<<<<<< HEAD
         return `${EnvService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
+=======
+        return `${process.env.REACT_APP_HTTP_API_BASE_URL}/r/${alias}`;
+>>>>>>> 214d77e... Replace hard coded API base urls with environmental variables (#33) (#34)
     }
 }
