@@ -16,7 +16,7 @@ func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
 		name        string
 		urls        urlMap
 		alias       string
-		url 	entity.Url
+		url         entity.Url
 		hasErr      bool
 		expectedUrl entity.Url
 	}{
@@ -28,21 +28,21 @@ func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			url: entity.Url{},
-			alias:       "220uFicCJj",
-			hasErr:      true,
+			url:    entity.Url{},
+			alias:  "220uFicCJj",
+			hasErr: true,
 		},
 		{
-			name:   "create alias successfully",
-			urls:   urlMap{},
-			alias:  "220uFicCJj",
+			name:  "create alias successfully",
+			urls:  urlMap{},
+			alias: "220uFicCJj",
 			url: entity.Url{
 				Alias:    "220uFicCJj",
 				ExpireAt: &now,
 			},
 			hasErr: false,
 			expectedUrl: entity.Url{
-				Alias: "220uFicCJj",
+				Alias:    "220uFicCJj",
 				ExpireAt: &now,
 			},
 		},

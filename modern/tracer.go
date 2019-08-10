@@ -2,8 +2,8 @@ package modern
 
 import (
 	"log"
-	"time"
 	"short/fw"
+	"time"
 
 	uuid "github.com/satori/go.uuid"
 )
