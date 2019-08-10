@@ -12,7 +12,6 @@ footer {
 
   display         : flex;
   justify-content : center;
-
   padding-bottom  : $padding;
 
   .center {
@@ -51,7 +50,6 @@ footer {
         height           : 100%;
         transition       : background-color 200ms $easeInOutQuart;
         transform        : rotate(45deg);
-
         background-color : $color;
 
         &:before, &:after {

@@ -14,9 +14,10 @@ export class Footer extends Component<Props> {
             <footer>
                 <div className={'center'}>
                     <div className={'row'}>
-                        Made with <i className={'heart'}>
-                        <div/>
-                    </i> by&nbsp;<a
+                        Made with
+                        <i className={'heart'}>
+                            <div/>
+                        </i> by&nbsp;<a
                         href={this.props.authorPortfolio}>{this.props.authorName}</a>
                     </div>
                     <div className={'row app-version'}>App version: {this.props.version}</div>

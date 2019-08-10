@@ -31,12 +31,7 @@ WHERE %s=$1;`,
 	)
 
 	err := u.db.QueryRow(query, alias).Scan()
-
-	if err == sql.ErrNoRows {
-		return false
-	}
-
-	return true
+	return err != sql.ErrNoRows
 }
 
 func (u *UrlSql) Create(url entity.Url) error {

@@ -74,12 +74,12 @@ func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
 		if err == nil {
 			return &Url{url: newUrl}, nil
 		}
+		m.logger.Error(err)
 
 		switch err.(type) {
 		case usecase.ErrAliasExist:
 			return &Url{}, ErrUrlAliasExist(customAlias)
 		default:
-			m.logger.Error(err)
 			return nil, ErrUnknown{}
 		}
 	}
