@@ -1,29 +1,32 @@
 @import "styles/dimension";
 @import "styles/font";
 @import "styles/color";
-
-$font-size : 18px;
-$font-color : #616161;
-$padding : 30px;
+@import "styles/easing";
 
 footer {
   @include default-font();
 
+  $font-size : 16px;
+  $font-color : #616161;
+  $padding : 30px;
+
   display         : flex;
   justify-content : center;
+
+  padding-bottom  : $padding;
 
   .center {
     font-size      : $font-size;
     font-weight    : $font-weight-semi-bold;
     line-height    : $font-size;
     display        : flex;
-    flex-direction : column;
     align-content  : center;
+    flex-direction : column;
     width          : $content-width;
     padding-top    : $padding;
+    text-align     : center;
     color          : $font-color;
     border-top     : 1px solid #EEE;
-    text-align     : center;
 
     .row:not(:last-child) {
       margin-bottom : 10px;
@@ -33,9 +36,57 @@ footer {
       font-size : 14px;
     }
 
+    i.heart {
+      $width : $font-size / 3 * 2;
+      $color : $font-color;
+
+      display      : inline-block;
+      width        : $width;
+      height       : $width;
+      margin-right : 10px;
+      margin-left  : 10px;
+
+      div {
+        width            : 100%;
+        height           : 100%;
+        transition       : background-color 200ms $easeInOutQuart;
+        transform        : rotate(45deg);
+
+        background-color : $color;
+
+        &:before, &:after {
+          display          : block;
+          width            : 100%;
+          height           : 100%;
+          content          : '';
+          transition       : inherit;
+          border-radius    : 50%;
+          background-color : $color;
+        }
+
+        &:before {
+          transform : translateX(-50%);
+        }
+
+        &:after {
+          transform : translateY(-150%);
+        }
+      }
+
+      &:hover {
+        div {
+          background-color : $color-primary;
+
+          &:before, &:after {
+            background-color : $color-primary;
+          }
+        }
+      }
+    }
+
     .heart:hover {
-      color  : $color-primary;
       cursor : pointer;
+      color  : $color-primary;
     }
 
     a {
@@ -48,6 +99,4 @@ footer {
       }
     }
   }
-
-  padding-bottom  : $padding;
 }
