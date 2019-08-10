@@ -24,6 +24,38 @@ type CreateUrlArgs struct {
 	UserEmail *string
 }
 
+type ErrCode string
+
+const (
+	ErrCodeUnknown           ErrCode = "unknown"
+	ErrCodeAliasAlreadyExist         = "aliasAlreadyExist"
+)
+
+type ErrUnknown struct{}
+
+func (e ErrUnknown) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code": ErrCodeUnknown,
+	}
+}
+
+func (e ErrUnknown) Error() string {
+	return "unknown err"
+}
+
+type ErrUrlAliasExist string
+
+func (e ErrUrlAliasExist) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code":  ErrCodeAliasAlreadyExist,
+		"alias": string(e),
+	}
+}
+
+func (e ErrUrlAliasExist) Error() string {
+	return "url alias already exists"
+}
+
 func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
 	trace := m.tracer.BeginTrace("Mutation.CreateUrl")
 
@@ -39,12 +71,17 @@ func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
 		newUrl, err := m.urlCreator.CreateUrlWithCustomAlias(url, customAlias)
 		trace1.End()
 
-		if err != nil {
-			m.logger.Error(err)
-			return nil, err
+		if err == nil {
+			return &Url{url: newUrl}, nil
 		}
 
-		return &Url{url: newUrl}, nil
+		switch err.(type) {
+		case usecase.ErrAliasExist:
+			return &Url{}, ErrUrlAliasExist(customAlias)
+		default:
+			m.logger.Error(err)
+			return nil, ErrUnknown{}
+		}
 	}
 
 	trace1 := trace.Next("CreateUrl")
