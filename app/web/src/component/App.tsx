@@ -5,11 +5,12 @@ import {Section} from './Section';
 import {TextField} from './form/TextField';
 import {Button} from './Button';
 import {Url} from '../entity/Url';
-import {UrlService} from '../service/Url.service';
+import {ErrUrl, UrlService} from '../service/Url.service';
 import {Footer} from './Footer';
 import {QrcodeService} from '../service/Qrcode.service';
 import {ShortLinkUsage} from './ShortLinkUsage';
 import {VersionService} from '../service/Version.service';
+import {Modal} from './ui/Modal';
 
 interface Props {
 }
@@ -18,18 +19,51 @@ interface State {
     editingUrl: Url
     createdUrl?: Url
     qrCodeUrl?: string
+    err: Err
+}
+
+interface Err {
+    name: string,
+    description: string
+}
+
+function getErr(errCode: ErrUrl): Err {
+    switch (errCode) {
+        case ErrUrl.AliasAlreadyExist:
+            return ({
+                name: 'Alias not available',
+                description: `
+                The alias you choose is not available, please choose a different one. 
+                Leaving custom alias field empty will automatically generate a available alias.
+                `
+            });
+        default:
+            return ({
+                name: 'Unknown error',
+                description: `
+                I am not aware of this error. 
+                Please email byliuyang11@gmail.com the screenshots and detailed steps to reproduce it so that I can investigate.
+                `
+            });
+    }
 }
 
 export class App extends Component<Props, State> {
     urlService = new UrlService();
     appVersion = VersionService.getAppVersion();
 
+    errModal = React.createRef<Modal>();
+
     constructor(props: Props) {
         super(props);
         this.state = {
             editingUrl: {
                 originalUrl: '',
-                alias: ''
+                alias: '',
+            },
+            err: {
+                name: '',
+                description: ''
             }
         };
     }
@@ -51,6 +85,10 @@ export class App extends Component<Props, State> {
         });
     };
 
+    handleOnErrModalCloseClick = () => {
+        this.errModal.current!.close();
+    };
+
     handleCreateShortLinkClick = () => {
         this.urlService
             .createShortLink(this.state.editingUrl)
@@ -66,6 +104,14 @@ export class App extends Component<Props, State> {
                                 qrCodeUrl: qrCodeUrl
                             });
                         });
+                }
+            })
+            .catch((errCodes: ErrUrl[]) => {
+                for (const errCode of errCodes) {
+                    this.setState({
+                        err: getErr(errCode)
+                    });
+                    this.errModal.current!.open();
                 }
             });
     };
@@ -91,9 +137,9 @@ export class App extends Component<Props, State> {
                         {this.state.createdUrl && this.state.qrCodeUrl ?
                             <div className={'short-link-usage-wrapper'}>
                                 <ShortLinkUsage
-                                shortLink={this.urlService.aliasToLink(this.state.createdUrl.alias!)}
-                                originalUrl={this.state.createdUrl.originalUrl!}
-                                qrCodeUrl={this.state.qrCodeUrl}/>
+                                    shortLink={this.urlService.aliasToLink(this.state.createdUrl.alias!)}
+                                    originalUrl={this.state.createdUrl.originalUrl!}
+                                    qrCodeUrl={this.state.qrCodeUrl}/>
                             </div>
                             :
                             false
@@ -104,6 +150,19 @@ export class App extends Component<Props, State> {
                     authorName={'Harry'}
                     authorPortfolio={'https://github.com/byliuyang'}
                     version={this.appVersion}/>
+                <Modal ref={this.errModal}>
+                    <div className={'err'}>
+                        <i className={'material-icons close'}
+                           title={'close'}
+                           onClick={this.handleOnErrModalCloseClick}>close</i>
+                        <div className={'title'}>
+                            {this.state.err.name}
+                        </div>
+                        <div className={'description'}>
+                            {this.state.err.description}
+                        </div>
+                    </div>
+                </Modal>
             </div>
         );
     };

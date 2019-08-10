@@ -5,6 +5,12 @@ import (
 	"short/app/repo"
 )
 
+type ErrAliasExist string
+
+func (e ErrAliasExist) Error() string {
+	return string(e)
+}
+
 type UrlCreator interface {
 	CreateUrl(url entity.Url) (entity.Url, error)
 	CreateUrlWithCustomAlias(url entity.Url, alias string) (entity.Url, error)
@@ -22,6 +28,10 @@ func (a UrlCreatorPersist) CreateUrl(url entity.Url) (entity.Url, error) {
 
 func (a UrlCreatorPersist) CreateUrlWithCustomAlias(url entity.Url, alias string) (entity.Url, error) {
 	url.Alias = alias
+
+	if a.urlRepo.IsAliasExist(alias) {
+		return entity.Url{}, ErrAliasExist("usecase: url alias already exist")
+	}
 
 	err := a.urlRepo.Create(url)
 	if err != nil {

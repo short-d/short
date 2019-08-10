@@ -10,6 +10,11 @@ type UrlFake struct {
 	urls map[string]entity.Url
 }
 
+func (u *UrlFake) IsAliasExist(alias string) bool {
+	_, ok := u.urls[alias]
+	return ok
+}
+
 func (u *UrlFake) Create(url entity.Url) error {
 	alias := url.Alias
 	url, ok := u.urls[alias]
