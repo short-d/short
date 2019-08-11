@@ -11,6 +11,7 @@ import {QrcodeService} from '../service/Qrcode.service';
 import {ShortLinkUsage} from './ShortLinkUsage';
 import {VersionService} from '../service/Version.service';
 import {Modal} from './ui/Modal';
+import {Notice} from "./ui/Notice";
 
 interface Props {
 }
@@ -119,6 +120,13 @@ export class App extends Component<Props, State> {
     render = () => {
         return (
             <div className='app'>
+                <Notice>
+                    <div className={'ext-promo'}>
+                        Type less with <a target={'_blank'}
+                                          title={'Get s/'}
+                                          href={'https://github.com/byliuyang/short-ext'}>s/</a>.
+                    </div>
+                </Notice>
                 <Header/>
                 <div className={'main'}>
                     <Section title={'New Short Link'}>
