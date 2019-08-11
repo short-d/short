@@ -3,10 +3,10 @@ FROM node:12.7.0-alpine
 WORKDIR /web
 
 # Install dependencies
-COPY app/web/package.json app/web/yarn.lock ./
+COPY app/adapter/web/package.json app/adapter/web/yarn.lock ./
 RUN yarn
 
-COPY app/web .
+COPY app/adapter/web .
 
 ENV CI=true
 
