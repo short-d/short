@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd app/adapter/web
+cd app/web
 yarn
 yarn start
 
