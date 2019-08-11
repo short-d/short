@@ -27,8 +27,9 @@ type CreateUrlArgs struct {
 type ErrCode string
 
 const (
-	ErrCodeUnknown           ErrCode = "unknown"
-	ErrCodeAliasAlreadyExist         = "aliasAlreadyExist"
+	ErrCodeUnknown             ErrCode = "unknown"
+	ErrCodeAliasAlreadyExist           = "aliasAlreadyExist"
+	ErrCodeOriginalUrlTooShort         = "originalUrlTooShort"
 )
 
 type ErrUnknown struct{}
@@ -56,8 +57,26 @@ func (e ErrUrlAliasExist) Error() string {
 	return "url alias already exists"
 }
 
+type ErrOriginalUrlTooShort string
+
+func (e ErrOriginalUrlTooShort) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code":  ErrCodeOriginalUrlTooShort,
+		"originalUrl": string(e),
+	}
+}
+
+func (e ErrOriginalUrlTooShort) Error() string {
+	return "original url is too short"
+}
+
 func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
 	trace := m.tracer.BeginTrace("Mutation.CreateUrl")
+
+	originalUrl := args.Url.OriginalUrl
+	if len(originalUrl) < 6 {
+		return nil, ErrOriginalUrlTooShort(originalUrl)
+	}
 
 	url := entity.Url{
 		OriginalUrl: args.Url.OriginalUrl,
