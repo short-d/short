@@ -34,7 +34,7 @@ steps:
     image: node:12.7.0-alpine
     volumes:
       - name: webdep
-        path: /drone/src/app/web/node_modules
+        path: /drone/src/app/adapter/web/node_modules
     commands:
       - apk add --no-cache bash git
       - cd app/web
