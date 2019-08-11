@@ -6,7 +6,7 @@ WORKDIR /web
 COPY app/adapter/web/package.json app/adapter/web/yarn.lock ./
 RUN yarn
 
-COPY app/web .
+COPY app/adapter/web .
 
 ENV CI=true
 
