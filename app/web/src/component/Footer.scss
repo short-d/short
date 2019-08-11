@@ -6,9 +6,9 @@
 footer {
   @include default-font();
 
-  $font-size : 16px;
-  $font-color : #616161;
-  $padding : 30px;
+  $font-size      : 16px;
+  $font-color     : #616161;
+  $padding        : 30px;
 
   display         : flex;
   justify-content : center;
@@ -25,7 +25,7 @@ footer {
     padding-top    : $padding;
     text-align     : center;
     color          : $font-color;
-    border-top     : 1px solid #EEE;
+    border-top     : 1px solid #EEEEEE;
 
     .row:not(:last-child) {
       margin-bottom : 10px;
@@ -36,8 +36,8 @@ footer {
     }
 
     i.heart {
-      $width : $font-size / 3 * 2;
-      $color : $font-color;
+      $width       : $font-size / 3 * 2;
+      $color       : $font-color;
 
       display      : inline-block;
       width        : $width;
