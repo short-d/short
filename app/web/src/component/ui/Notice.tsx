@@ -10,9 +10,7 @@ export class Notice extends Component<Props> {
     render() {
         return (
             <div className={`notice ${this.props.styleName}`}>
-                <div>
-                    {this.props.children}
-                </div>
+                {this.props.children}
             </div>
         );
     }

@@ -1,0 +1,23 @@
+@import "../styles/font";
+
+.ext-promo {
+  font-weight : $font-weight-medium;
+  padding     : 14px 20px;
+  @include default-font();
+  text-align  : center;
+  color       : black;
+
+  a {
+    font-weight      : $font-weight-bold;
+    padding          : 3px 10px;
+    text-decoration  : none;
+    color            : white;
+    border-radius    : 2px;
+    background-color : #212121;
+
+
+    &:hover {
+      opacity : 0.9;
+    }
+  }
+}

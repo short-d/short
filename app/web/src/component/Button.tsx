@@ -12,7 +12,6 @@ export class Button extends Component<Props> {
         if (!this.props.onClick) {
             return;
         }
-
         this.props.onClick();
     };
 
