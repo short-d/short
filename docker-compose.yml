@@ -8,14 +8,14 @@ services:
     depends_on:
       - db
     environment:
-      - DB_HOST=migration
+      - DB_HOST=db
       - DB_PORT=5432
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
     command: [
       "./bin/wait-for-it", "-s", "-t", "0", "db:5432", "--",
-      "./build/short", "start", "--www", "public", "--migration", "app/adapter/migration"
+      "./build/short", "start", "--www", "public", "--migration", "app/db"
     ]
   db:
     image: postgres
