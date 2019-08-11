@@ -123,7 +123,8 @@ export class App extends Component<Props, State> {
                 <Notice>
                     <div className={'ext-promo'}>
                         Type less with <a target={'_blank'}
-                                          href={'https://github.com/byliuyang/short-ext'}>s/</a> chrome extension.
+                                          title={'Get s/'}
+                                          href={'https://github.com/byliuyang/short-ext'}>s/</a>.
                     </div>
                 </Notice>
                 <Header/>
