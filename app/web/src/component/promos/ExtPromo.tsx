@@ -3,7 +3,7 @@ import {Notice} from "../ui/Notice";
 
 import './ExtPromo.scss';
 
-export class ExtPromo  extends Component{
+export class ExtPromo extends Component {
     render() {
         return (
             <Notice>

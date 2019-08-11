@@ -11,7 +11,6 @@ import {QrcodeService} from '../service/Qrcode.service';
 import {ShortLinkUsage} from './ShortLinkUsage';
 import {VersionService} from '../service/Version.service';
 import {Modal} from './ui/Modal';
-import {Notice} from "./ui/Notice";
 import {ExtPromo} from "./promos/ExtPromo";
 
 interface Props {
