@@ -4,6 +4,7 @@ import (
 	"short/app/entity"
 	"short/app/usecase"
 	"short/fw"
+	"strings"
 	"time"
 )
 
@@ -30,7 +31,10 @@ const (
 	ErrCodeUnknown             ErrCode = "unknown"
 	ErrCodeAliasAlreadyExist           = "aliasAlreadyExist"
 	ErrCodeOriginalUrlTooShort         = "originalUrlTooShort"
+	ErrCodeWrongUriFormat              = "wrongUriFormat"
 )
+
+const minUrlLength = 6
 
 type ErrUnknown struct{}
 
@@ -61,7 +65,7 @@ type ErrOriginalUrlTooShort string
 
 func (e ErrOriginalUrlTooShort) Extensions() map[string]interface{} {
 	return map[string]interface{}{
-		"code":  ErrCodeOriginalUrlTooShort,
+		"code":        ErrCodeOriginalUrlTooShort,
 		"originalUrl": string(e),
 	}
 }
@@ -70,12 +74,33 @@ func (e ErrOriginalUrlTooShort) Error() string {
 	return "original url is too short"
 }
 
+type ErrWrongUriFormat string
+
+func (e ErrWrongUriFormat) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code":        ErrCodeWrongUriFormat,
+		"originalUrl": string(e),
+	}
+}
+
+func (e ErrWrongUriFormat) Error() string {
+	return "url format is incorrect"
+}
+
+func isUri(text string) bool {
+	return strings.Contains(text, "://")
+}
+
 func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
 	trace := m.tracer.BeginTrace("Mutation.CreateUrl")
 
 	originalUrl := args.Url.OriginalUrl
-	if len(originalUrl) < 6 {
+	if len(originalUrl) < minUrlLength {
 		return nil, ErrOriginalUrlTooShort(originalUrl)
+	}
+
+	if !isUri(originalUrl) {
+		return nil, ErrWrongUriFormat(originalUrl)
 	}
 
 	url := entity.Url{
