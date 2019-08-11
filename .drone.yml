@@ -40,8 +40,8 @@ steps:
       - cd app/adapter/web
       - yarn
       - CI=true yarn build
-      - mkdir ../../public
-      - mv build/* ../../public/
+      - mkdir ../../../public
+      - mv build/* ../../../public/
     when:
       branch:
         - master
