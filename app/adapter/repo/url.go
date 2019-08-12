@@ -3,7 +3,7 @@ package repo
 import (
 	"database/sql"
 	"fmt"
-	"short/app/adapter/table"
+	"short/app/adapter/repo/table"
 	"short/app/entity"
 	"time"
 
