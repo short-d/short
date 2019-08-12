@@ -40,13 +40,13 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			name: "found url",
 			tableRows: sqlmock.NewRows(tableRows).AddRow(
 				"220uFicCJj",
-				"mdhttp://www.google.com",
+				"http://www.google.com",
 				mustParseSqlTime("2019-05-01 08:02:16"),
 				mustParseSqlTime("2017-05-01 08:02:16"),
 				nil,
 			).AddRow(
 				"yDOBcj5HIPbUAsw",
-				"mdhttp://www.facebook.com",
+				"http://www.facebook.com",
 				mustParseSqlTime("2018-04-02 08:02:16"),
 				mustParseSqlTime("2017-05-01 08:02:16"),
 				nil,
@@ -55,7 +55,7 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			hasErr: false,
 			expectedUrl: entity.Url{
 				Alias:       "220uFicCJj",
-				OriginalUrl: "mdhttp://www.google.com",
+				OriginalUrl: "http://www.google.com",
 				ExpireAt:    mustParseSqlTime("2019-05-01 08:02:16"),
 				CreatedAt:   mustParseSqlTime("2017-05-01 08:02:16"),
 				UpdatedAt:   nil,
@@ -75,7 +75,7 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 
 			urlRepo := NewUrlSql(db)
 
-			url, err := GetByAlias("220uFicCJj")
+			url, err := urlRepo.GetByAlias("220uFicCJj")
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)
@@ -98,7 +98,7 @@ func TestUrlFake_Create(t *testing.T) {
 			name: "url exists",
 			url: entity.Url{
 				Alias:       "220uFicCJj",
-				OriginalUrl: "mdhttp://www.google.com",
+				OriginalUrl: "http://www.google.com",
 				ExpireAt:    mustParseSqlTime("2019-05-01 08:02:16"),
 				CreatedAt:   mustParseSqlTime("2017-05-01 08:02:16"),
 				UpdatedAt:   nil,
@@ -110,7 +110,7 @@ func TestUrlFake_Create(t *testing.T) {
 			name: "successfully create url",
 			url: entity.Url{
 				Alias:       "220uFicCJj",
-				OriginalUrl: "mdhttp://www.google.com",
+				OriginalUrl: "http://www.google.com",
 				ExpireAt:    mustParseSqlTime("2019-05-01 08:02:16"),
 				CreatedAt:   mustParseSqlTime("2017-05-01 08:02:16"),
 				UpdatedAt:   nil,
@@ -136,7 +136,7 @@ func TestUrlFake_Create(t *testing.T) {
 			}
 
 			urlRepo := NewUrlSql(db)
-			err = Create(testCase.url)
+			err = urlRepo.Create(testCase.url)
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)

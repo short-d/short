@@ -2,7 +2,7 @@ package scalar
 
 import (
 	"encoding/json"
-	parser2 "short/app/adapter/graphql/parser"
+	"short/app/adapter/graphql/parser"
 	"short/fw"
 	"time"
 
@@ -28,11 +28,11 @@ func (t *Time) UnmarshalGraphQL(input interface{}) error {
 		timeTmp = input
 		err = nil
 	case string:
-		timeTmp, err = parser2.NewStringTime().FromVal(input)
+		timeTmp, err = parser.NewStringTime().FromVal(input)
 	case int:
-		timeTmp, err = parser2.NewIntTime().FromVal(input)
+		timeTmp, err = parser.NewIntTime().FromVal(input)
 	case float64:
-		timeTmp, err = parser2.NewFloatTime().FromVal(input)
+		timeTmp, err = parser.NewFloatTime().FromVal(input)
 	default:
 		err = errors.New("wrong type")
 	}

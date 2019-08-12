@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	scalar2 "short/app/adapter/graphql/scalar"
+	"short/app/adapter/graphql/scalar"
 	"short/app/usecase/url"
 	"short/fw"
 )
@@ -22,7 +22,7 @@ func NewQuery(logger fw.Logger, tracer fw.Tracer, urlRetriever url.Retriever) Qu
 
 type UrlArgs struct {
 	Alias       string
-	ExpireAfter *scalar2.Time
+	ExpireAfter *scalar.Time
 }
 
 func (q Query) Url(args *UrlArgs) (*Url, error) {

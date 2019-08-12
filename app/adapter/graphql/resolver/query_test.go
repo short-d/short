@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	scalar2 "short/app/adapter/graphql/scalar"
+	"short/app/adapter/graphql/scalar"
 	"short/app/entity"
 	"short/app/usecase/url"
 	"short/modern/mdtest"
@@ -21,7 +21,7 @@ func TestQuery_Url(t *testing.T) {
 	testCases := []struct {
 		name        string
 		alias       string
-		expireAfter *scalar2.Time
+		expireAfter *scalar.Time
 		urls        urlMap
 		hasErr      bool
 		expectedUrl *Url
@@ -37,7 +37,7 @@ func TestQuery_Url(t *testing.T) {
 		{
 			name:  "alias not found with expireAfter",
 			alias: "220uFicCJj",
-			expireAfter: &scalar2.Time{
+			expireAfter: &scalar.Time{
 				Time: now,
 			},
 			urls:        urlMap{},
@@ -47,7 +47,7 @@ func TestQuery_Url(t *testing.T) {
 		{
 			name:  "alias expired",
 			alias: "220uFicCJj",
-			expireAfter: &scalar2.Time{
+			expireAfter: &scalar.Time{
 				Time: now,
 			},
 			urls: urlMap{
@@ -61,7 +61,7 @@ func TestQuery_Url(t *testing.T) {
 		{
 			name:  "url found",
 			alias: "220uFicCJj",
-			expireAfter: &scalar2.Time{
+			expireAfter: &scalar.Time{
 				Time: now,
 			},
 			urls: urlMap{

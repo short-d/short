@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	scalar2 "short/app/adapter/graphql/scalar"
+	"short/app/adapter/graphql/scalar"
 	"short/app/entity"
 )
 
@@ -17,10 +17,10 @@ func (u Url) OriginalUrl() *string {
 	return &u.url.OriginalUrl
 }
 
-func (u Url) ExpireAt() *scalar2.Time {
+func (u Url) ExpireAt() *scalar.Time {
 	if u.url.ExpireAt == nil {
 		return nil
 	}
 
-	return &scalar2.Time{Time: *u.url.ExpireAt}
+	return &scalar.Time{Time: *u.url.ExpireAt}
 }
