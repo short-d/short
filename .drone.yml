@@ -6,7 +6,7 @@ steps:
     image: docker
     environment:
       RECAPTCHA_SITE_KEY:
-        from_secret: REACT_APP_RECAPTCHA_SITE_KEY
+        from_secret: RECAPTCHA_SITE_KEY
     commands:
       - docker build -t test-web --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY -f Dockerfile-test-web .
       - docker run test-web
@@ -37,7 +37,7 @@ steps:
     image: node:12.7.0-alpine
     environment:
       RECAPTCHA_SITE_KEY:
-        from_secret: REACT_APP_RECAPTCHA_SITE_KEY
+        from_secret: RECAPTCHA_SITE_KEY
     volumes:
       - name: webdep
         path: /drone/src/app/adapter/web/node_modules
