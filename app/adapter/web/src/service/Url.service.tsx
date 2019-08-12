@@ -21,14 +21,16 @@ const gqlClient = new ApolloClient(
 );
 
 export enum ErrUrl {
-    AliasAlreadyExist = 'aliasAlreadyExist'
+    AliasAlreadyExist = 'aliasAlreadyExist',
+    UserNotHuman = 'requestNotHuman'
 }
 
 export class UrlService {
-    createShortLink(link: Url): Promise<Url> {
+    createShortLink(captchaResponse: string, link: Url): Promise<Url> {
         let alias = link.alias === '' ? null : link.alias;
 
         let variables = {
+            captchaResponse: captchaResponse,
             urlInput: {
                 originalUrl: link.originalUrl,
                 customAlias: alias
@@ -36,8 +38,8 @@ export class UrlService {
         };
 
         let mutation = gql`
-            mutation params($urlInput: UrlInput){
-                createUrl(url: $urlInput) {
+            mutation params($captchaResponse: String!, $urlInput: UrlInput!){
+                createUrl(captchaResponse: $captchaResponse, url: $urlInput) {
                     alias
                     originalUrl
                 }

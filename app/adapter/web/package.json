@@ -11,7 +11,8 @@
     "graphql": "^14.4.2",
     "graphql-tag": "^2.10.1",
     "material-design-icons": "^3.0.1",
-    "qrcode": "^1.4.1"
+    "qrcode": "^1.4.1",
+    "recaptcha-v3": "^1.5.0"
   },
   "scripts": {
     "start": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts start",

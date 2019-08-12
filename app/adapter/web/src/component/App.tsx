@@ -12,8 +12,10 @@ import {ShortLinkUsage} from './ShortLinkUsage';
 import {VersionService} from '../service/Version.service';
 import {Modal} from './ui/Modal';
 import {ExtPromo} from "./promos/ExtPromo";
+import {ReCaptcha} from "../service/Captcha.service";
 
 interface Props {
+    reCaptcha:ReCaptcha
 }
 
 interface State {
@@ -38,6 +40,14 @@ function getErr(errCode: ErrUrl): Err {
                 Leaving custom alias field empty will automatically generate a available alias.
                 `
             });
+        case ErrUrl.UserNotHuman:
+            return ({
+                name: 'User not human',
+                description: `
+                The algorithm thinks you are an automated script instead of human user.
+                Please contact byliuyang11@gmail.com if this is wrong.
+                `
+            });
         default:
             return ({
                 name: 'Unknown error',
@@ -52,7 +62,6 @@ function getErr(errCode: ErrUrl): Err {
 export class App extends Component<Props, State> {
     urlService = new UrlService();
     appVersion = VersionService.getAppVersion();
-
     errModal = React.createRef<Modal>();
 
     constructor(props: Props) {
@@ -90,31 +99,27 @@ export class App extends Component<Props, State> {
         this.errModal.current!.close();
     };
 
-    handleCreateShortLinkClick = () => {
-        this.urlService
-            .createShortLink(this.state.editingUrl)
-            .then((url: Url) => {
+    handleCreateShortLinkClick = async () => {
+        let recaptchaToken = await this.props.reCaptcha.execute('createShortLink');
+
+        try {
+            let url = await this.urlService.createShortLink(recaptchaToken, this.state.editingUrl);
+
+            if (url.alias) {
+                let qrCodeUrl = await QrcodeService.newQrCode(this.urlService.aliasToLink(url.alias));
                 this.setState({
+                    qrCodeUrl: qrCodeUrl,
                     createdUrl: url
                 });
-
-                if (url.alias) {
-                    QrcodeService.newQrCode(this.urlService.aliasToLink(url.alias))
-                        .then((qrCodeUrl: string) => {
-                            this.setState({
-                                qrCodeUrl: qrCodeUrl
-                            });
-                        });
-                }
-            })
-            .catch((errCodes: ErrUrl[]) => {
-                for (const errCode of errCodes) {
-                    this.setState({
-                        err: getErr(errCode)
-                    });
-                    this.errModal.current!.open();
-                }
-            });
+            }
+        } catch (errCodes) {
+            for (const errCode of errCodes) {
+                this.setState({
+                    err: getErr(errCode)
+                });
+                this.errModal.current!.open();
+            }
+        }
     };
 
     render = () => {
@@ -136,12 +141,12 @@ export class App extends Component<Props, State> {
                             </div>
                             <Button onClick={this.handleCreateShortLinkClick}>Create Short Link</Button>
                         </div>
-                        {this.state.createdUrl && this.state.qrCodeUrl ?
+                        {this.state.createdUrl?
                             <div className={'short-link-usage-wrapper'}>
                                 <ShortLinkUsage
                                     shortLink={this.urlService.aliasToLink(this.state.createdUrl.alias!)}
                                     originalUrl={this.state.createdUrl.originalUrl!}
-                                    qrCodeUrl={this.state.qrCodeUrl}/>
+                                    qrCodeUrl={this.state.qrCodeUrl!}/>
                             </div>
                             :
                             false
