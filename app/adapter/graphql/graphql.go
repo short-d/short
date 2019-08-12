@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"short/app/adapter/graphql/resolver"
+	"short/app/usecase/captcha"
 	"short/app/usecase/url"
 	"short/fw"
 )
@@ -23,8 +24,9 @@ func NewShort(
 	tracer fw.Tracer,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
+	captchaVerifier captcha.Verifier,
 ) fw.GraphQlApi {
-	r := resolver.NewResolver(logger, tracer, urlRetriever, urlCreator)
+	r := resolver.NewResolver(logger, tracer, urlRetriever, urlCreator, captchaVerifier)
 	return &Short{
 		resolver: &r,
 	}
