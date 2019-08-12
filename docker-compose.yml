@@ -13,6 +13,7 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
+      - RECAPTCHA_SECRET=${RECAPTCHA_SECRET}
     command: [
       "./bin/wait-for-it", "-s", "-t", "0", "db:5432", "--",
       "./build/short", "start", "--www", "public", "--migration", "app/adapter/migration"

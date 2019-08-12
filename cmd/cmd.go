@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"short/app/adapter/routing"
+	"short/app/usecase/captcha"
 	"short/dep"
 	"short/modern/mddb"
 	"strconv"
@@ -20,15 +21,15 @@ func Execute() {
 		Short: "Start service",
 		Run: func(cmd *cobra.Command, args []string) {
 			host := getEnv("DB_HOST", "localhost")
-
 			portStr := getEnv("DB_PORT", "5432")
 			port := MustInt(portStr)
-
 			user := getEnv("DB_USER", "postgres")
 			password := getEnv("DB_PASSWORD", "password")
 			dbName := getEnv("DB_NAME", "short")
 
-			start(host, port, user, password, dbName, migrationRoot, wwwRoot)
+			recaptchaSecret := getEnv("RECAPTCHA_SECRET", "")
+
+			start(host, port, user, password, dbName, migrationRoot, wwwRoot, recaptchaSecret)
 		},
 	}
 
@@ -65,7 +66,16 @@ func MustInt(numStr string) int {
 	return num
 }
 
-func start(host string, port int, user string, password string, dbName string, migrationRoot string, wwwRoot string) {
+func start(
+	host string,
+	port int,
+	user string,
+	password string,
+	dbName string,
+	migrationRoot string,
+	wwwRoot string,
+	recaptchaSecret string,
+) {
 	db, err := mddb.NewPostgresDb(host, port, user, password, dbName)
 
 	if err != nil {
@@ -79,7 +89,7 @@ func start(host string, port int, user string, password string, dbName string, m
 		panic(err)
 	}
 
-	service := dep.InitGraphQlService("GraphQL API", db, "/graphql")
+	service := dep.InitGraphQlService("GraphQL API", db, "/graphql", captcha.RecaptchaV3Secret(recaptchaSecret))
 	service.Start(8080)
 
 	service = dep.InitRoutingService("Routing API", db, routing.WwwRoot(wwwRoot))

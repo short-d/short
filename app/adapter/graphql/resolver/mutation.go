@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"short/app/entity"
+	"short/app/usecase/captcha"
 	"short/app/usecase/url"
 	"short/fw"
 	"strings"
@@ -12,6 +13,7 @@ type Mutation struct {
 	logger          fw.Logger
 	tracer          fw.Tracer
 	urlCreator      url.Creator
+	captchaVerifier captcha.Verifier
 }
 
 type UrlInput struct {
@@ -33,6 +35,7 @@ const (
 	ErrCodeAliasAlreadyExist           = "aliasAlreadyExist"
 	ErrCodeOriginalUrlTooShort         = "originalUrlTooShort"
 	ErrCodeWrongUriFormat              = "wrongUriFormat"
+	ErrCodeRequesterNotHuman           = "requestNotHuman"
 )
 
 const minUrlLength = 6
@@ -88,12 +91,34 @@ func (e ErrWrongUriFormat) Error() string {
 	return "url format is incorrect"
 }
 
+type ErrNotHuman struct{}
+
+func (e ErrNotHuman) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code": ErrCodeRequesterNotHuman,
+	}
+}
+
+func (e ErrNotHuman) Error() string {
+	return "requester is not human"
+}
+
 func isUri(text string) bool {
 	return strings.Contains(text, "://")
 }
 
 func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
 	trace := m.tracer.BeginTrace("Mutation.CreateUrl")
+
+	isHuman, err := m.captchaVerifier.IsHuman(args.CaptchaResponse)
+	if err != nil {
+		m.logger.Error(err)
+		return nil, ErrUnknown{}
+	}
+
+	if !isHuman {
+		return nil, ErrNotHuman{}
+	}
 
 	originalUrl := args.Url.OriginalUrl
 	if len(originalUrl) < minUrlLength {
@@ -146,10 +171,12 @@ func NewMutation(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	urlCreator url.Creator,
+	captchaVerifier captcha.Verifier,
 ) Mutation {
 	return Mutation{
 		logger:          logger,
 		tracer:          tracer,
 		urlCreator:      urlCreator,
+		captchaVerifier: captchaVerifier,
 	}
 }
