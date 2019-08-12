@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+git ls-files -- '*.ts' '*.tsx' '*.scss' '*.go' ':!:*_gen.go' '*.sql' | xargs wc -l
