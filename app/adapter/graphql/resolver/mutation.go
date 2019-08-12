@@ -33,7 +33,6 @@ const (
 	ErrCodeAliasAlreadyExist           = "aliasAlreadyExist"
 	ErrCodeOriginalUrlTooShort         = "originalUrlTooShort"
 	ErrCodeWrongUriFormat              = "wrongUriFormat"
-	ErrCodeRequesterNotHuman           = "requestNotHuman"
 )
 
 const minUrlLength = 6
@@ -87,18 +86,6 @@ func (e ErrWrongUriFormat) Extensions() map[string]interface{} {
 
 func (e ErrWrongUriFormat) Error() string {
 	return "url format is incorrect"
-}
-
-type ErrNotHuman struct{}
-
-func (e ErrNotHuman) Extensions() map[string]interface{} {
-	return map[string]interface{}{
-		"code": ErrCodeRequesterNotHuman,
-	}
-}
-
-func (e ErrNotHuman) Error() string {
-	return "requester is not human"
 }
 
 func isUri(text string) bool {
