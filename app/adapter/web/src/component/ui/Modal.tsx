@@ -31,7 +31,7 @@ export class Modal extends Component<Props, State> {
         setTimeout(() =>
             this.setState({
                 isShowing: true
-            }), 10);
+            }), 2);
     }
 
     close() {
