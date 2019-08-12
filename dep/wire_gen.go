@@ -7,26 +7,39 @@ package dep
 
 import (
 	"database/sql"
-	"short/app"
-	"short/modern"
+	"short/app/adapter/graphql"
+	"short/app/adapter/repo"
+	"short/app/adapter/routing"
+	"short/app/usecase/keygen"
+	"short/app/usecase/url"
+	"short/modern/mdgraphql"
+	"short/modern/mdlogger"
+	"short/modern/mdrouting"
+	"short/modern/mdservice"
+	"short/modern/mdtracer"
 )
 
 // Injectors from wire.go:
 
-func InitGraphQlService(name string, db *sql.DB, graphqlPath modern.GraphQlPath) modern.Service {
-	logger := modern.NewLocalLogger()
-	tracer := modern.NewLocalTracer()
-	graphQlApi := app.NewGraphQlApi(logger, tracer, db)
-	server := modern.NewGraphGophers(graphqlPath, logger, tracer, graphQlApi)
-	service := modern.NewService(name, server, logger)
+func InitGraphQlService(name string, db *sql.DB, graphqlPath mdgraphql.Path) mdservice.Service {
+	logger := mdlogger.NewLocal()
+	tracer := mdtracer.NewLocal()
+	repoUrl := repo.NewUrlSql(db)
+	retriever := url.NewRetrieverPersist(repoUrl)
+	keyGenerator := keygen.NewInMemory()
+	creator := url.NewCreatorPersist(repoUrl, keyGenerator)
+	graphQlApi := graphql.NewShort(logger, tracer, retriever, creator)
+	server := mdgraphql.NewGraphGophers(graphqlPath, logger, tracer, graphQlApi)
+	service := mdservice.New(name, server, logger)
 	return service
 }
 
-func InitRoutingService(name string, db *sql.DB, wwwRoot app.WwwRoot) modern.Service {
-	logger := modern.NewLocalLogger()
-	tracer := modern.NewLocalTracer()
-	v := app.NewRoutes(logger, tracer, db, wwwRoot)
-	server := modern.NewCustomRouting(logger, tracer, v)
-	service := modern.NewService(name, server, logger)
+func InitRoutingService(name string, db *sql.DB, wwwRoot routing.WwwRoot) mdservice.Service {
+	logger := mdlogger.NewLocal()
+	tracer := mdtracer.NewLocal()
+	repoUrl := repo.NewUrlSql(db)
+	v := routing.NewShort(logger, tracer, wwwRoot, repoUrl)
+	server := mdrouting.NewBuiltIn(logger, tracer, v)
+	service := mdservice.New(name, server, logger)
 	return service
 }

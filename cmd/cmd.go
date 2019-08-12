@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"short/app"
+	"short/app/adapter/routing"
 	"short/dep"
-	"short/modern"
+	"short/modern/mddb"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -32,7 +32,7 @@ func Execute() {
 		},
 	}
 
-	startCmd.Flags().StringVar(&migrationRoot, "migration", "app/db", "db migrations root directory")
+	startCmd.Flags().StringVar(&migrationRoot, "migration", "app/adapter/migration", "migration migrations root directory")
 	startCmd.Flags().StringVar(&wwwRoot, "www", "public", "www root directory")
 
 	rootCmd := &cobra.Command{Use: "short"}
@@ -66,7 +66,7 @@ func MustInt(numStr string) int {
 }
 
 func start(host string, port int, user string, password string, dbName string, migrationRoot string, wwwRoot string) {
-	db, err := modern.NewPostgresDb(host, port, user, password, dbName)
+	db, err := mddb.NewPostgresDb(host, port, user, password, dbName)
 
 	if err != nil {
 		panic(err)
@@ -74,14 +74,14 @@ func start(host string, port int, user string, password string, dbName string, m
 
 	defer db.Close()
 
-	err = modern.MigratePostgres(db, migrationRoot)
+	err = mddb.MigratePostgres(db, migrationRoot)
 	if err != nil {
 		panic(err)
 	}
 
-	service := dep.InitGraphQlService("GraphQL API", db, modern.GraphQlPath("/graphql"))
+	service := dep.InitGraphQlService("GraphQL API", db, "/graphql")
 	service.Start(8080)
 
-	service = dep.InitRoutingService("Routing API", db, app.WwwRoot(wwwRoot))
+	service = dep.InitRoutingService("Routing API", db, routing.WwwRoot(wwwRoot))
 	service.StartAndWait(80)
 }
