@@ -2,10 +2,10 @@ FROM golang:1.12.7-alpine
 
 WORKDIR /app
 
-# Install build tools
+# Install tools
 RUN apk add --no-cache git
 RUN apk add --no-cache bash
-RUN apk add --no-cache  gcc
+RUN apk add --no-cache gcc
 RUN apk add --no-cache libc-dev
 
 # Install dependencies

@@ -2,12 +2,19 @@ FROM node:12.7.0-alpine
 
 WORKDIR /web
 
+# Install tools
+RUN apk add --no-cache git
+RUN apk add --no-cache bash
+
 # Install dependencies
 COPY app/adapter/web/package.json app/adapter/web/yarn.lock ./
 RUN yarn
 
 COPY app/adapter/web .
 
+ARG RECAPTCHA_SITE_KEY
+
 ENV CI=true
+ENV REACT_APP_RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY}
 
 CMD ["yarn", "test"]

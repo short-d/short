@@ -8528,6 +8528,11 @@ realpath-native@^1.1.0:
   dependencies:
     util.promisify "^1.0.0"
 
+recaptcha-v3@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/recaptcha-v3/-/recaptcha-v3-1.5.0.tgz#299ed2f72be07570e6a91342b41d58e2a005db17"
+  integrity sha512-iZgVoxQU56yqrrlLu/dlcwmvCMq0gHo1VLqVCzCIOeDfj/1zOqDkeI7G8HuDI6S2ptpVlLBMeBYX64/Z5OgvEA==
+
 recursive-readdir@2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/recursive-readdir/-/recursive-readdir-2.2.2.tgz#9946fb3274e1628de6e36b2f6714953b4845094f"
