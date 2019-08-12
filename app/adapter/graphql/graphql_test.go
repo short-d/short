@@ -2,7 +2,6 @@ package graphql
 
 import (
 	"short/app/entity"
-	"short/app/usecase/captcha"
 	"short/app/usecase/url"
 	"short/modern/mdtest"
 	"testing"
