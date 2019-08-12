@@ -119,6 +119,8 @@ steps:
         from_secret: DB_PASSWORD
       DB_NAME:
         from_secret: DB_NAME
+      RECAPTCHA_SECRET:
+        from_secret: RECAPTCHA_SECRET
       WEB_PORT:
         from_secret: WEB_PORT
       API_PORT:
@@ -131,7 +133,7 @@ steps:
       password:
         from_secret: SERVER_PASSWORD
       port: 22
-      envs: [DOCKER_IMAGE_PREFIX, DEST_DIR, DB_USER, DB_PASSWORD, DB_NAME, WEB_PORT, API_PORT]
+      envs: [DOCKER_IMAGE_PREFIX, DEST_DIR, DB_USER, DB_PASSWORD, DB_NAME, RECAPTCHA_SECRET, WEB_PORT, API_PORT]
       script:
         - docker pull $DOCKER_IMAGE_PREFIX/short
         - cd $DEST_DIR;
@@ -139,6 +141,7 @@ steps:
           DB_USER=$DB_USER
           DB_PASSWORD=$DB_PASSWORD
           DB_NAME=$DB_NAME
+          RECAPTCHA_SECRET=$RECAPTCHA_SECRET
           WEB_PORT=$WEB_PORT
           API_PORT=$API_PORT
           docker-compose up -d
