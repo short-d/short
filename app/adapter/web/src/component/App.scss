@@ -63,4 +63,13 @@
       }
     }
   }
+
+  .input-error {
+    font-size   : 12px;
+    font-weight : $font-weight-semi-bold;
+    line-height : 20px;
+    height      : 20px;
+    margin      : 10px;
+    color       : #B71C1C;
+  }
 }
