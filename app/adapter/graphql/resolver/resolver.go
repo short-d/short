@@ -16,9 +16,15 @@ func NewResolver(
 	tracer fw.Tracer,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
-	captchaVerifier captcha.Verifier) Resolver {
+	captchaVerifier captcha.Verifier,
+) Resolver {
 	return Resolver{
-		Query:    NewQuery(logger, tracer, urlRetriever),
-		Mutation: NewMutation(logger, tracer, urlCreator, captchaVerifier),
+		Query: NewQuery(logger, tracer, urlRetriever),
+		Mutation: NewMutation(
+			logger,
+			tracer,
+			urlCreator,
+			captchaVerifier,
+		),
 	}
 }

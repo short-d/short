@@ -26,7 +26,13 @@ func NewShort(
 	urlCreator url.Creator,
 	captchaVerifier captcha.Verifier,
 ) fw.GraphQlApi {
-	r := resolver.NewResolver(logger, tracer, urlRetriever, urlCreator, captchaVerifier)
+	r := resolver.NewResolver(
+		logger,
+		tracer,
+		urlRetriever,
+		urlCreator,
+		captchaVerifier,
+	)
 	return &Short{
 		resolver: &r,
 	}
