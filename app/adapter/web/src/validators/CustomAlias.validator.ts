@@ -6,7 +6,7 @@ export function validateCustomAliasFormat(customAlias?: string): string | null {
     }
 
     if (customAlias.length >= CUSTOM_ALIAS_MAX_LENGTH) {
-        return `Long link has to contain less than ${CUSTOM_ALIAS_MAX_LENGTH} characters`;
+        return `Custom alias has to contain less than ${CUSTOM_ALIAS_MAX_LENGTH} characters`;
     }
 
     return null;
