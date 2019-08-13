@@ -1,6 +1,5 @@
 package graphql
 
-
 import (
 	"short/app/entity"
 	"short/app/usecase/captcha"
