@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+git branch | grep -v "master" | xargs git branch -D
+git branch | grep -v "master" | xargs git push --delete orgin
