@@ -13,16 +13,19 @@ import {VersionService} from '../service/Version.service';
 import {Modal} from './ui/Modal';
 import {ExtPromo} from "./promos/ExtPromo";
 import {ReCaptcha} from "../service/Captcha.service";
+import {validateLongLinkFormat} from "../validators/LongLink.validator";
+import {validateCustomAliasFormat} from "../validators/CustomAlias.validator";
 
 interface Props {
-    reCaptcha:ReCaptcha
+    reCaptcha: ReCaptcha
 }
 
 interface State {
     editingUrl: Url
     createdUrl?: Url
     qrCodeUrl?: string
-    err: Err
+    err: Err,
+    inputErr?: string
 }
 
 interface Err {
@@ -74,11 +77,12 @@ export class App extends Component<Props, State> {
             err: {
                 name: '',
                 description: ''
-            }
+            },
+            inputErr: ''
         };
     }
 
-    handlerOriginalUrlChange = (newValue: string) => {
+    handlerLongLinkChange = (newValue: string) => {
         this.setState({
             editingUrl: Object.assign({}, this.state.editingUrl, {
                 originalUrl: newValue
@@ -99,7 +103,42 @@ export class App extends Component<Props, State> {
         this.errModal.current!.close();
     };
 
+    handlerLongLinkTextFieldBlur = () => {
+        let err = validateLongLinkFormat(this.state.editingUrl.originalUrl);
+        this.setState({
+            inputErr: err || ''
+        });
+    };
+
+    handlerCustomAliasTextFieldBlur = () => {
+        let err = validateCustomAliasFormat(this.state.editingUrl.alias);
+        this.setState({
+            inputErr: err || ''
+        });
+    };
+
     handleCreateShortLinkClick = async () => {
+        let longLink = this.state.editingUrl.originalUrl;
+        let customAlias = this.state.editingUrl.alias;
+
+        let err = validateLongLinkFormat(longLink);
+        if (err && err.length > 1) {
+            this.showError({
+                name: 'Invalid Long Link',
+                description: err
+            });
+            return;
+        }
+
+        err = validateCustomAliasFormat(customAlias);
+        if (err && err.length > 1) {
+            this.showError({
+                name: 'Invalid Custom Alias',
+                description: err
+            });
+            return;
+        }
+
         let recaptchaToken = await this.props.reCaptcha.execute('createShortLink');
 
         try {
@@ -109,18 +148,26 @@ export class App extends Component<Props, State> {
                 let qrCodeUrl = await QrcodeService.newQrCode(this.urlService.aliasToLink(url.alias));
                 this.setState({
                     qrCodeUrl: qrCodeUrl,
-                    createdUrl: url
+                    createdUrl: url,
+                    editingUrl: {
+                        originalUrl: '',
+                        alias: ''
+                    }
                 });
             }
         } catch (errCodes) {
             for (const errCode of errCodes) {
-                this.setState({
-                    err: getErr(errCode)
-                });
-                this.errModal.current!.open();
+                this.showError(getErr(errCode))
             }
         }
     };
+
+    showError(error: Err) {
+        this.setState({
+            err: error
+        });
+        this.errModal.current!.open();
+    }
 
     render = () => {
         return (
@@ -131,17 +178,23 @@ export class App extends Component<Props, State> {
                     <Section title={'New Short Link'}>
                         <div className={'control create-short-link'}>
                             <div className={'text-field-wrapper'}>
-                                <TextField text={this.state.editingUrl.originalUrl} placeHolder={'Long Link'}
-                                           onChange={this.handlerOriginalUrlChange}/>
+                                <TextField
+                                    text={this.state.editingUrl.originalUrl}
+                                    placeHolder={'Long Link'}
+                                    onBlur={this.handlerLongLinkTextFieldBlur}
+                                    onChange={this.handlerLongLinkChange}/>
                             </div>
                             <div className={'text-field-wrapper'}>
-                                <TextField text={this.state.editingUrl.alias}
-                                           placeHolder={'Custom Short Link ( Optional )'}
-                                           onChange={this.handleAliasChange}/>
+                                <TextField
+                                    text={this.state.editingUrl.alias}
+                                    placeHolder={'Custom Short Link ( Optional )'}
+                                    onBlur={this.handlerCustomAliasTextFieldBlur}
+                                    onChange={this.handleAliasChange}/>
                             </div>
                             <Button onClick={this.handleCreateShortLinkClick}>Create Short Link</Button>
                         </div>
-                        {this.state.createdUrl?
+                        <div className={'input-error'}>{this.state.inputErr}</div>
+                        {this.state.createdUrl ?
                             <div className={'short-link-usage-wrapper'}>
                                 <ShortLinkUsage
                                     shortLink={this.urlService.aliasToLink(this.state.createdUrl.alias!)}
