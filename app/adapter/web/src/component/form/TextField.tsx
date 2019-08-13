@@ -5,6 +5,7 @@ interface Props {
     text?: string
     placeHolder?: string
     onChange?: (text: string) => void
+    onBlur?: () => void
 }
 
 
@@ -20,13 +21,22 @@ export class TextField extends Component<Props, State> {
         this.props.onChange(event.target.value);
     };
 
+    handleBlur = () => {
+        if (!this.props.onBlur) {
+            return;
+        }
+        this.props.onBlur();
+    };
+
     render = () => {
         return (
-            <input className={'text-field'}
-                   type={'text'}
-                   value={this.props.text}
-                   onChange={this.handleChange}
-                   placeholder={this.props.placeHolder}/>
+            <input
+                className={'text-field'}
+                type={'text'}
+                value={this.props.text}
+                onChange={this.handleChange}
+                onBlur={this.handleBlur}
+                placeholder={this.props.placeHolder}/>
         );
     };
 }

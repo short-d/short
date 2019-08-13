@@ -1,12 +1,14 @@
 @import "../styles/color";
 @import "../styles/corner";
+@import "../styles/font";
 
 .text-field {
+  @include default-font();
   font-size  : 20px;
   box-sizing : border-box;
   width      : 100%;
-  padding    : 8px 20px;
   @include round-corner;
+  padding    : 8px 20px;
   border     : 2px solid #9E9E9E;
   outline    : none;
 
