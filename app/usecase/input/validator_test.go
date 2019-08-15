@@ -1,4 +1,4 @@
-package validator
+package input
 
 import (
 	"strings"
@@ -46,7 +46,7 @@ func TestLongLink_IsValid(t *testing.T) {
 		},
 	}
 
-	validator := NewLongLink()
+	validator := NewLongLinkValidator()
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			assert.Equal(t, testCase.expIsValid, validator.IsValid(&testCase.longLink))
@@ -78,7 +78,7 @@ func TestCustomAlias_IsValid(t *testing.T) {
 		},
 	}
 
-	validator := NewCustomAlias()
+	validator := NewCustomAliasValidator()
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			assert.Equal(t, testCase.expIsValid, validator.IsValid(&testCase.alias))

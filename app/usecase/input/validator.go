@@ -1,4 +1,4 @@
-package validator
+package input
 
 import (
 	"regexp"
@@ -13,11 +13,11 @@ const (
 	customAliasMaxLength = 50
 )
 
-type LongLink struct {
+type LongLinkValidator struct {
 	uriPattern *regexp.Regexp
 }
 
-func (l LongLink) IsValid(longLink *string) bool {
+func (l LongLinkValidator) IsValid(longLink *string) bool {
 	if longLink == nil {
 		return false
 	}
@@ -37,18 +37,18 @@ func (l LongLink) IsValid(longLink *string) bool {
 	return true
 }
 
-func NewLongLink() Validator {
+func NewLongLinkValidator() Validator {
 	uriPattern := regexp.MustCompile(`^[a-zA-Z]+://.+$`)
-	return LongLink{
+	return LongLinkValidator{
 		uriPattern: uriPattern,
 	}
 }
 
-type CustomAlias struct {
+type CustomAliasValidator struct {
 	uriPattern *regexp.Regexp
 }
 
-func (c CustomAlias) IsValid(alias *string) bool {
+func (c CustomAliasValidator) IsValid(alias *string) bool {
 	if alias == nil {
 		return true
 	}
@@ -63,6 +63,6 @@ func (c CustomAlias) IsValid(alias *string) bool {
 	return true
 }
 
-func NewCustomAlias() Validator {
-	return CustomAlias{}
+func NewCustomAliasValidator() Validator {
+	return CustomAliasValidator{}
 }

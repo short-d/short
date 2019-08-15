@@ -1,7 +1,7 @@
 package routing
 
 import (
-	"short/app/adapter/repo"
+	"short/app/usecase/repo"
 	"short/app/usecase/url"
 	"short/fw"
 )

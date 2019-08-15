@@ -6,9 +6,11 @@ import (
 	"database/sql"
 	"short/app/adapter/graphql"
 	"short/app/adapter/repo"
+	"short/app/adapter/request"
 	"short/app/adapter/routing"
-	"short/app/usecase/captcha"
+	"short/app/adapter/service"
 	"short/app/usecase/keygen"
+	"short/app/usecase/recaptcha"
 	"short/app/usecase/url"
 	"short/modern/mdgraphql"
 	"short/modern/mdhttp"
@@ -24,7 +26,7 @@ func InitGraphQlService(
 	name string,
 	db *sql.DB,
 	graphqlPath mdgraphql.Path,
-	secret captcha.RecaptchaV3Secret,
+	secret service.ReCaptchaSecret,
 ) mdservice.Service {
 	wire.Build(
 		mdservice.New,
@@ -37,7 +39,9 @@ func InitGraphQlService(
 		keygen.NewInMemory,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
-		captcha.NewRecaptchaV3Verifier,
+		request.NewHttp,
+		service.NewReCaptcha,
+		recaptcha.NewVerifier,
 		graphql.NewShort,
 	)
 	return mdservice.Service{}

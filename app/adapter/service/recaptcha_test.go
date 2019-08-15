@@ -1,41 +1,50 @@
-package captcha
+package service
 
 import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"short/app/adapter/request"
+	"short/app/usecase/service"
 	"short/modern/mdtest"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
+	//"time"
 )
 
-func TestRecaptchaV3Verifier_IsHuman(t *testing.T) {
-	expSecret := "ZPDIGNFj1EQJeNfs"
+func TestV3Api_Verify(t *testing.T) {
+	expSecret := ReCaptchaSecret("ZPDIGNFj1EQJeNfs")
 	expCaptchaResponse := "qHwha3zZh9G9mquEUOKZ"
+	//now := time.Now()
 
 	testCases := []struct {
 		name        string
 		apiResponse map[string]interface{}
-		expIsHuman  bool
+		expRes      service.VerifyResponse
 	}{
 		{
 			name: "successful request with score = 0.8",
 			apiResponse: map[string]interface{}{
-				"success":      true,
-				"score":        0.8,
-				"challenge_ts": time.Now().Format(time.RFC3339),
-				"hostname":     "s.time4hacks.com",
+				"success": true,
+				"action":  "homepage",
+				"score":   0.8,
+				//"challenge_ts": now.Format(time.RFC3339),
+				"hostname": "s.time4hacks.com",
 			},
-			expIsHuman: true,
+			expRes: service.VerifyResponse{
+				Success: true,
+				Action:  "homepage",
+				Score:   0.8,
+				//ChallengeTime: service.JSONTime(now),
+				Hostname: "s.time4hacks.com",
+			},
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			transport := mdtest.NewTransportMock(func(req *http.Request) (response *http.Response, e error) {
-				// https://developers.google.com/recaptcha/docs/verify
 				assert.Equal(t, "https://www.google.com/recaptcha/api/siteverify", req.URL.String())
 				assert.Equal(t, "POST", req.Method)
 				assert.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
@@ -45,7 +54,7 @@ func TestRecaptchaV3Verifier_IsHuman(t *testing.T) {
 				params, err := url.ParseQuery(string(buf))
 				assert.Nil(t, err)
 
-				assert.Equal(t, expSecret, params.Get("secret"))
+				assert.Equal(t, string(expSecret), params.Get("secret"))
 				assert.Equal(t, expCaptchaResponse, params.Get("response"))
 				return mdtest.JsonResponse(testCase.apiResponse)
 			})
@@ -53,11 +62,12 @@ func TestRecaptchaV3Verifier_IsHuman(t *testing.T) {
 			client := http.Client{
 				Transport: transport,
 			}
+			req := request.NewHttp(client)
 
-			verifier := NewRecaptchaV3Verifier(client, RecaptchaV3Secret(expSecret))
-			isHuman, err := verifier.IsHuman(expCaptchaResponse)
+			recaptcha := NewReCaptcha(req, expSecret)
+			gotRes, err := recaptcha.Verify(expCaptchaResponse)
 			assert.Nil(t, err)
-			assert.Equal(t, testCase.expIsHuman, isHuman)
+			assert.Equal(t, testCase.expRes, gotRes)
 		})
 	}
 }

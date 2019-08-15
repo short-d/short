@@ -5,16 +5,11 @@ import (
 	"fmt"
 	"short/app/adapter/repo/table"
 	"short/app/entity"
+	"short/app/usecase/repo"
 	"time"
 
 	"github.com/pkg/errors"
 )
-
-type Url interface {
-	IsAliasExist(alias string) bool
-	GetByAlias(alias string) (entity.Url, error)
-	Create(url entity.Url) error
-}
 
 type UrlSql struct {
 	db *sql.DB
@@ -49,7 +44,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
-func NewUrlSql(db *sql.DB) Url {
+func NewUrlSql(db *sql.DB) repo.Url {
 	return &UrlSql{
 		db: db,
 	}
