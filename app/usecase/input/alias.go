@@ -3,11 +3,8 @@ package input
 import "regexp"
 
 const (
-
 	customAliasMaxLength = 50
 )
-
-
 
 type CustomAlias struct {
 	uriPattern *regexp.Regexp
