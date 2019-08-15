@@ -18,9 +18,12 @@ type ReCaptcha struct {
 type ReCaptchaSecret string
 
 func (r ReCaptcha) Verify(captchaResponse string) (service.VerifyResponse, error) {
+	headers := map[string]string{
+		"Content-Type": "application/x-www-form-urlencoded",
+	}
 	body := fmt.Sprintf("secret=%s&response=%s", r.secret, captchaResponse)
 	apiRes := service.VerifyResponse{}
-	err := r.req.Json(http.MethodPost, verifyApi, map[string]string{}, body, &apiRes)
+	err := r.req.Json(http.MethodPost, verifyApi, headers, body, &apiRes)
 	if err != nil {
 		return service.VerifyResponse{}, err
 	}
