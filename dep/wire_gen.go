@@ -13,7 +13,7 @@ import (
 	"short/app/adapter/routing"
 	"short/app/adapter/service"
 	"short/app/usecase/keygen"
-	"short/app/usecase/recaptcha"
+	"short/app/usecase/requester"
 	"short/app/usecase/url"
 	"short/modern/mdgraphql"
 	"short/modern/mdhttp"
@@ -34,8 +34,8 @@ func InitGraphQlService(name string, db *sql.DB, graphqlPath mdgraphql.Path, sec
 	creator := url.NewCreatorPersist(repoUrl, keyGenerator)
 	client := mdhttp.NewClient()
 	http := request.NewHttp(client)
-	serviceRecaptcha := service.NewReCaptcha(http, secret)
-	verifier := recaptcha.NewVerifier(serviceRecaptcha)
+	recaptcha := service.NewReCaptcha(http, secret)
+	verifier := requester.NewVerifier(recaptcha)
 	graphQlApi := graphql.NewShort(logger, tracer, retriever, creator, verifier)
 	server := mdgraphql.NewGraphGophers(graphqlPath, logger, tracer, graphQlApi)
 	mdserviceService := mdservice.New(name, server, logger)

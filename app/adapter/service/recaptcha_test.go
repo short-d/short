@@ -13,7 +13,7 @@ import (
 	//"time"
 )
 
-func TestV3Api_Verify(t *testing.T) {
+func TestReCaptcha_Verify(t *testing.T) {
 	expSecret := ReCaptchaSecret("ZPDIGNFj1EQJeNfs")
 	expCaptchaResponse := "qHwha3zZh9G9mquEUOKZ"
 	//now := time.Now()

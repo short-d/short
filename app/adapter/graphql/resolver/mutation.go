@@ -3,7 +3,7 @@ package resolver
 import (
 	"short/app/entity"
 	"short/app/usecase/input"
-	"short/app/usecase/recaptcha"
+	"short/app/usecase/requester"
 	"short/app/usecase/url"
 	"short/fw"
 	"time"
@@ -13,7 +13,7 @@ type Mutation struct {
 	logger            fw.Logger
 	tracer            fw.Tracer
 	urlCreator        url.Creator
-	captchaVerifier   recaptcha.Verifier
+	requesterVerifier requester.Verifier
 	longLinkValidator input.Validator
 	aliasValidator    input.Validator
 }
@@ -33,7 +33,7 @@ type CreateUrlArgs struct {
 func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
 	trace := m.tracer.BeginTrace("Mutation.CreateUrl")
 
-	isHuman, err := m.captchaVerifier.IsHuman(args.CaptchaResponse)
+	isHuman, err := m.requesterVerifier.IsHuman(args.CaptchaResponse)
 	if err != nil {
 		m.logger.Error(err)
 		return nil, ErrUnknown{}
@@ -97,13 +97,13 @@ func NewMutation(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	urlCreator url.Creator,
-	captchaVerifier recaptcha.Verifier,
+	requesterVerifier requester.Verifier,
 ) Mutation {
 	return Mutation{
 		logger:            logger,
 		tracer:            tracer,
 		urlCreator:        urlCreator,
-		captchaVerifier:   captchaVerifier,
+		requesterVerifier:   requesterVerifier,
 		longLinkValidator: input.NewLongLinkValidator(),
 		aliasValidator:    input.NewCustomAliasValidator(),
 	}

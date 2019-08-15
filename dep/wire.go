@@ -10,7 +10,7 @@ import (
 	"short/app/adapter/routing"
 	"short/app/adapter/service"
 	"short/app/usecase/keygen"
-	"short/app/usecase/recaptcha"
+	"short/app/usecase/requester"
 	"short/app/usecase/url"
 	"short/modern/mdgraphql"
 	"short/modern/mdhttp"
@@ -41,7 +41,7 @@ func InitGraphQlService(
 		url.NewCreatorPersist,
 		request.NewHttp,
 		service.NewReCaptcha,
-		recaptcha.NewVerifier,
+		requester.NewVerifier,
 		graphql.NewShort,
 	)
 	return mdservice.Service{}

@@ -9,6 +9,6 @@ func (v ReCaptchaFake) Verify(recaptchaResponse string) (service.VerifyResponse,
 	panic("implement me")
 }
 
-func NewServiceFake() service.Recaptcha {
+func NewReCaptchaFake() service.Recaptcha {
 	return ReCaptchaFake{}
 }

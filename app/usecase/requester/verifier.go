@@ -1,4 +1,4 @@
-package recaptcha
+package requester
 
 import (
 	"short/app/usecase/service"
