@@ -8,13 +8,17 @@ package dep
 import (
 	"database/sql"
 	"short/app/adapter/graphql"
+	"short/app/adapter/recaptcha"
 	"short/app/adapter/repo"
 	"short/app/adapter/request"
 	"short/app/adapter/routing"
-	"short/app/adapter/service"
 	"short/app/usecase/keygen"
+	repo2 "short/app/usecase/repo"
 	"short/app/usecase/requester"
+	"short/app/usecase/service"
 	"short/app/usecase/url"
+	"short/fw"
+	"short/modern/mddb"
 	"short/modern/mdgraphql"
 	"short/modern/mdhttp"
 	"short/modern/mdlogger"
@@ -25,7 +29,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitGraphQlService(name string, db *sql.DB, graphqlPath mdgraphql.Path, secret service.ReCaptchaSecret) mdservice.Service {
+func InitGraphQlService(name string, db *sql.DB, graphqlPath GraphQlPath, secret ReCaptchaSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	repoUrl := repo.NewUrlSql(db)
@@ -34,20 +38,63 @@ func InitGraphQlService(name string, db *sql.DB, graphqlPath mdgraphql.Path, sec
 	creator := url.NewCreatorPersist(repoUrl, keyGenerator)
 	client := mdhttp.NewClient()
 	http := request.NewHttp(client)
-	recaptcha := service.NewReCaptcha(http, secret)
-	verifier := requester.NewVerifier(recaptcha)
+	reCaptcha := NewReCaptchaService(http, secret)
+	verifier := requester.NewVerifier(reCaptcha)
 	graphQlApi := graphql.NewShort(logger, tracer, retriever, creator, verifier)
-	server := mdgraphql.NewGraphGophers(graphqlPath, logger, tracer, graphQlApi)
-	mdserviceService := mdservice.New(name, server, logger)
-	return mdserviceService
+	server := NewGraphGophers(graphqlPath, logger, tracer, graphQlApi)
+	service := mdservice.New(name, server, logger)
+	return service
 }
 
-func InitRoutingService(name string, db *sql.DB, wwwRoot routing.WwwRoot) mdservice.Service {
+func InitRoutingService(name string, db *sql.DB, wwwRoot WwwRoot) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	repoUrl := repo.NewUrlSql(db)
-	v := routing.NewShort(logger, tracer, wwwRoot, repoUrl)
+	v := NewShortRoutes(logger, tracer, wwwRoot, repoUrl)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
-	mdserviceService := mdservice.New(name, server, logger)
-	return mdserviceService
+	service := mdservice.New(name, server, logger)
+	return service
+}
+
+// wire.go:
+
+type GraphQlPath string
+
+func NewGraphGophers(graphqlPath GraphQlPath, logger fw.Logger, tracer fw.Tracer, g fw.GraphQlApi) fw.Server {
+	return mdgraphql.NewGraphGophers(string(graphqlPath), logger, tracer, g)
+}
+
+type ReCaptchaSecret string
+
+func NewReCaptchaService(req request.Http, secret ReCaptchaSecret) service.ReCaptcha {
+	return recaptcha.NewService(req, string(secret))
+}
+
+type WwwRoot string
+
+func NewShortRoutes(logger fw.Logger, tracer fw.Tracer, wwwRoot WwwRoot, urlRepo repo2.Url) []fw.Route {
+	return routing.NewShort(logger, tracer, string(wwwRoot), urlRepo)
+}
+
+type serviceLauncher func(db *sql.DB)
+
+func InitDB(
+	host string,
+	port int,
+	user string,
+	password string,
+	dbName string,
+	migrationRoot string, serviceLauncher2 serviceLauncher,
+) {
+	db, err := mddb.NewPostgresDb(host, port, user, password, dbName)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = mddb.MigratePostgres(db, migrationRoot)
+	if err != nil {
+		panic(err)
+	}
+	serviceLauncher2(db)
 }

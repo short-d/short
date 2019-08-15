@@ -1,12 +1,10 @@
 package cmd
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
-	"short/app/adapter/routing"
-	"short/app/adapter/service"
 	"short/dep"
-	"short/modern/mddb"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -76,22 +74,11 @@ func start(
 	wwwRoot string,
 	recaptchaSecret string,
 ) {
-	db, err := mddb.NewPostgresDb(host, port, user, password, dbName)
+	dep.InitDB(host, port, user, password, dbName, migrationRoot, func(db *sql.DB) {
+		service := dep.InitGraphQlService("GraphQL API", db, "/graphql", dep.ReCaptchaSecret(recaptchaSecret))
+		service.Start(8080)
 
-	if err != nil {
-		panic(err)
-	}
-
-	defer db.Close()
-
-	err = mddb.MigratePostgres(db, migrationRoot)
-	if err != nil {
-		panic(err)
-	}
-
-	service := dep.InitGraphQlService("GraphQL API", db, "/graphql", service.ReCaptchaSecret(recaptchaSecret))
-	service.Start(8080)
-
-	service = dep.InitRoutingService("Routing API", db, routing.WwwRoot(wwwRoot))
-	service.StartAndWait(80)
+		service = dep.InitRoutingService("Routing API", db, dep.WwwRoot(wwwRoot))
+		service.StartAndWait(80)
+	})
 }

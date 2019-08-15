@@ -5,13 +5,17 @@ package dep
 import (
 	"database/sql"
 	"short/app/adapter/graphql"
+	"short/app/adapter/recaptcha"
 	"short/app/adapter/repo"
 	"short/app/adapter/request"
 	"short/app/adapter/routing"
-	"short/app/adapter/service"
 	"short/app/usecase/keygen"
+	usecaserepo "short/app/usecase/repo"
 	"short/app/usecase/requester"
+	"short/app/usecase/service"
 	"short/app/usecase/url"
+	"short/fw"
+	"short/modern/mddb"
 	"short/modern/mdgraphql"
 	"short/modern/mdhttp"
 	"short/modern/mdlogger"
@@ -25,14 +29,14 @@ import (
 func InitGraphQlService(
 	name string,
 	db *sql.DB,
-	graphqlPath mdgraphql.Path,
-	secret service.ReCaptchaSecret,
+	graphqlPath GraphQlPath,
+	secret ReCaptchaSecret,
 ) mdservice.Service {
 	wire.Build(
 		mdservice.New,
 		mdlogger.NewLocal,
 		mdtracer.NewLocal,
-		mdgraphql.NewGraphGophers,
+		NewGraphGophers,
 		mdhttp.NewClient,
 
 		repo.NewUrlSql,
@@ -40,14 +44,14 @@ func InitGraphQlService(
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
 		request.NewHttp,
-		service.NewReCaptcha,
+		NewReCaptchaService,
 		requester.NewVerifier,
 		graphql.NewShort,
 	)
 	return mdservice.Service{}
 }
 
-func InitRoutingService(name string, db *sql.DB, wwwRoot routing.WwwRoot) mdservice.Service {
+func InitRoutingService(name string, db *sql.DB, wwwRoot WwwRoot) mdservice.Service {
 	wire.Build(
 		mdservice.New,
 		mdlogger.NewLocal,
@@ -55,7 +59,50 @@ func InitRoutingService(name string, db *sql.DB, wwwRoot routing.WwwRoot) mdserv
 		mdrouting.NewBuiltIn,
 
 		repo.NewUrlSql,
-		routing.NewShort,
+		NewShortRoutes,
 	)
 	return mdservice.Service{}
+}
+
+type GraphQlPath string
+
+func NewGraphGophers(graphqlPath GraphQlPath, logger fw.Logger, tracer fw.Tracer, g fw.GraphQlApi) fw.Server {
+	return mdgraphql.NewGraphGophers(string(graphqlPath), logger, tracer, g)
+}
+
+type ReCaptchaSecret string
+
+func NewReCaptchaService(req request.Http, secret ReCaptchaSecret) service.ReCaptcha {
+	return recaptcha.NewService(req, string(secret))
+}
+
+type WwwRoot string
+
+func NewShortRoutes(logger fw.Logger, tracer fw.Tracer, wwwRoot WwwRoot, urlRepo usecaserepo.Url) []fw.Route {
+	return routing.NewShort(logger, tracer, string(wwwRoot), urlRepo)
+}
+
+type serviceLauncher func(db *sql.DB)
+
+func InitDB(
+	host string,
+	port int,
+	user string,
+	password string,
+	dbName string,
+	migrationRoot string,
+	serviceLauncher serviceLauncher,
+) {
+	db, err := mddb.NewPostgresDb(host, port, user, password, dbName)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = mddb.MigratePostgres(db, migrationRoot)
+	if err != nil {
+		panic(err)
+	}
+
+	serviceLauncher(db)
 }
