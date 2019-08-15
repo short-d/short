@@ -143,7 +143,17 @@ steps:
       password:
         from_secret: SERVER_PASSWORD
       port: 22
-      envs: [DOCKER_IMAGE_PREFIX, DEST_DIR, DB_USER, DB_PASSWORD, DB_NAME, RECAPTCHA_SECRET, WEB_PORT, API_PORT]
+      envs:
+        - DOCKER_IMAGE_PREFIX
+        - DEST_DIR
+        - DB_USER
+        - DB_PASSWORD
+        - DB_NAME
+        - RECAPTCHA_SECRET
+        - GITHUB_CLIENT_ID
+        - GITHUB_CLIENT_SECRET
+        - WEB_PORT
+        - API_PORT
       script:
         - docker pull $DOCKER_IMAGE_PREFIX/short
         - cd $DEST_DIR;
