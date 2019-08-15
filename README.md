@@ -8,19 +8,35 @@
 Get it [here](https://github.com/byliuyang/short-ext)!
 
 ## Prerequisites
+- Node.js v12.7.0
 - Yarn v1.17.3
-- Go   v1.12.7
 
 ## Getting Started
+### Create reCAPTCHA account
+[sign up for an API key pair](http://www.google.com/recaptcha/admin)
 
-1. Build App
+### Create .env file at project root directory with the following content:
 ```bash
-./bin/build
+DOCKER_IMAGE_PREFIX=local
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=your_db_name
+RECAPTCHA_SECRET=your_recaptcha_secret
+WEB_PORT=80
+API_PORT=8080
 ```
+Remember to replace the appropriate lines with your db user, db password, db name, and reCAPTCHA secret.
 
-2. Start server
+### Build docker image
 ```bash
-./build/short start --www build/web
+GRAPHQL_BASE_URL=http://localhost:8080 HTTP_API_BASE_URL=http://localhost RECAPTCHA_SITE_KEY=your_recaptcha_site_key ./bin/build-web-dev docker build -t short:latest .
+docker build -t local/short:latest .
+```
+Remember to replace the appropriate line with your reCAPTCHA site key.
+
+### Start server
+```bash
+docker-compose up
 ```
 
 3. Visit [http://localhost](http://localhost)

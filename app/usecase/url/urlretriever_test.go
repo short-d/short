@@ -1,8 +1,8 @@
 package url
 
 import (
-	"short/app/adapter/repo"
 	"short/app/entity"
+	"short/app/usecase/repo"
 	"short/modern/mdtest"
 	"testing"
 	"time"

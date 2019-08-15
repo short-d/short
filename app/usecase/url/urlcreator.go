@@ -1,9 +1,9 @@
 package url
 
 import (
-	"short/app/adapter/repo"
 	"short/app/entity"
 	"short/app/usecase/keygen"
+	"short/app/usecase/repo"
 )
 
 type ErrAliasExist string

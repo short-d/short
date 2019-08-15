@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	"short/app/usecase/captcha"
+	"short/app/usecase/requester"
 	"short/app/usecase/url"
 	"short/fw"
 )
@@ -16,7 +16,7 @@ func NewResolver(
 	tracer fw.Tracer,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
-	captchaVerifier captcha.Verifier,
+	requesterVerifier requester.Verifier,
 ) Resolver {
 	return Resolver{
 		Query: NewQuery(logger, tracer, urlRetriever),
@@ -24,7 +24,7 @@ func NewResolver(
 			logger,
 			tracer,
 			urlCreator,
-			captchaVerifier,
+			requesterVerifier,
 		),
 	}
 }

@@ -9,9 +9,11 @@ import (
 	"database/sql"
 	"short/app/adapter/graphql"
 	"short/app/adapter/repo"
+	"short/app/adapter/request"
 	"short/app/adapter/routing"
-	"short/app/usecase/captcha"
+	"short/app/adapter/service"
 	"short/app/usecase/keygen"
+	"short/app/usecase/requester"
 	"short/app/usecase/url"
 	"short/modern/mdgraphql"
 	"short/modern/mdhttp"
@@ -23,7 +25,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitGraphQlService(name string, db *sql.DB, graphqlPath mdgraphql.Path, secret captcha.RecaptchaV3Secret) mdservice.Service {
+func InitGraphQlService(name string, db *sql.DB, graphqlPath mdgraphql.Path, secret service.ReCaptchaSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	repoUrl := repo.NewUrlSql(db)
@@ -31,11 +33,13 @@ func InitGraphQlService(name string, db *sql.DB, graphqlPath mdgraphql.Path, sec
 	keyGenerator := keygen.NewInMemory()
 	creator := url.NewCreatorPersist(repoUrl, keyGenerator)
 	client := mdhttp.NewClient()
-	verifier := captcha.NewRecaptchaV3Verifier(client, secret)
+	http := request.NewHttp(client)
+	recaptcha := service.NewReCaptcha(http, secret)
+	verifier := requester.NewVerifier(recaptcha)
 	graphQlApi := graphql.NewShort(logger, tracer, retriever, creator, verifier)
 	server := mdgraphql.NewGraphGophers(graphqlPath, logger, tracer, graphQlApi)
-	service := mdservice.New(name, server, logger)
-	return service
+	mdserviceService := mdservice.New(name, server, logger)
+	return mdserviceService
 }
 
 func InitRoutingService(name string, db *sql.DB, wwwRoot routing.WwwRoot) mdservice.Service {
@@ -44,6 +48,6 @@ func InitRoutingService(name string, db *sql.DB, wwwRoot routing.WwwRoot) mdserv
 	repoUrl := repo.NewUrlSql(db)
 	v := routing.NewShort(logger, tracer, wwwRoot, repoUrl)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
-	service := mdservice.New(name, server, logger)
-	return service
+	mdserviceService := mdservice.New(name, server, logger)
+	return mdserviceService
 }
