@@ -23,7 +23,7 @@ func (h Http) Json(
 		return err
 	}
 
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Accept", "application/json")
 	for key, val := range headers {
 		req.Header.Add(key, val)
 	}

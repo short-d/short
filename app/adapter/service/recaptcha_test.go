@@ -47,7 +47,7 @@ func TestReCaptcha_Verify(t *testing.T) {
 			transport := mdtest.NewTransportMock(func(req *http.Request) (response *http.Response, e error) {
 				assert.Equal(t, "https://www.google.com/recaptcha/api/siteverify", req.URL.String())
 				assert.Equal(t, "POST", req.Method)
-				assert.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
+				assert.Equal(t, "application/json", req.Header.Get("Accept"))
 
 				buf, err := ioutil.ReadAll(req.Body)
 				assert.Nil(t, err)
