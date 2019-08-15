@@ -104,7 +104,7 @@ func NewMutation(
 		tracer:            tracer,
 		urlCreator:        urlCreator,
 		requesterVerifier:   requesterVerifier,
-		longLinkValidator: input.NewLongLinkValidator(),
-		aliasValidator:    input.NewCustomAliasValidator(),
+		longLinkValidator: input.NewLongLink(),
+		aliasValidator:    input.NewCustomAlias(),
 	}
 }
