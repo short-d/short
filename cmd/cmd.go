@@ -26,8 +26,21 @@ func Execute() {
 			dbName := getEnv("DB_NAME", "short")
 
 			recaptchaSecret := getEnv("RECAPTCHA_SECRET", "")
+			githubClientId := getEnv("GITHUB_CLIENT_ID", "")
+			githubClientSecret := getEnv("GITHUB_CLIENT_SECRET", "")
 
-			start(host, port, user, password, dbName, migrationRoot, wwwRoot, recaptchaSecret)
+			start(
+				host,
+				port,
+				user,
+				password,
+				dbName,
+				migrationRoot,
+				wwwRoot,
+				recaptchaSecret,
+				githubClientId,
+				githubClientSecret,
+			)
 		},
 	}
 
@@ -73,12 +86,25 @@ func start(
 	migrationRoot string,
 	wwwRoot string,
 	recaptchaSecret string,
+	githubClientId string,
+	githubClientSecret string,
 ) {
 	dep.InitDB(host, port, user, password, dbName, migrationRoot, func(db *sql.DB) {
-		service := dep.InitGraphQlService("GraphQL API", db, "/graphql", dep.ReCaptchaSecret(recaptchaSecret))
+		service := dep.InitGraphQlService(
+			"GraphQL API",
+			db,
+			"/graphql",
+			dep.ReCaptchaSecret(recaptchaSecret),
+		)
 		service.Start(8080)
 
-		service = dep.InitRoutingService("Routing API", db, dep.WwwRoot(wwwRoot))
+		service = dep.InitRoutingService(
+			"Routing API",
+			db,
+			dep.WwwRoot(wwwRoot),
+			dep.GithubClientId(githubClientId),
+			dep.GithubClientSecret(githubClientSecret),
+		)
 		service.StartAndWait(80)
 	})
 }
