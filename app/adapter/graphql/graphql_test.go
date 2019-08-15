@@ -1,8 +1,9 @@
 package graphql
 
 import (
+	"short/app/adapter/service"
 	"short/app/entity"
-	"short/app/usecase/captcha"
+	"short/app/usecase/requester"
 	"short/app/usecase/url"
 	"short/modern/mdtest"
 	"testing"
@@ -19,7 +20,9 @@ func TestGraphQlApi(t *testing.T) {
 	urls := map[string]entity.Url{}
 	retriever := url.NewRetrieverFake(urls)
 	creator := url.NewCreatorFake(urls)
-	verifier := captcha.NewVerifierFake()
+
+	s := service.NewReCaptchaFake()
+	verifier := requester.NewVerifier(s)
 
 	graphqlApi := NewShort(mdtest.FakeLogger, mdtest.FakeTracer, retriever, creator, verifier)
 	assert.True(t, mdtest.IsGraphQlApiValid(graphqlApi))

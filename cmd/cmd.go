@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"short/app/adapter/routing"
-	"short/app/usecase/captcha"
+	"short/app/adapter/service"
 	"short/dep"
 	"short/modern/mddb"
 	"strconv"
@@ -89,7 +89,7 @@ func start(
 		panic(err)
 	}
 
-	service := dep.InitGraphQlService("GraphQL API", db, "/graphql", captcha.RecaptchaV3Secret(recaptchaSecret))
+	service := dep.InitGraphQlService("GraphQL API", db, "/graphql", service.ReCaptchaSecret(recaptchaSecret))
 	service.Start(8080)
 
 	service = dep.InitRoutingService("Routing API", db, routing.WwwRoot(wwwRoot))
