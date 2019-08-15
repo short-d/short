@@ -5,7 +5,7 @@ import (
 )
 
 type Verifier struct {
-	service service.Recaptcha
+	service service.ReCaptcha
 }
 
 func (r Verifier) IsHuman(recaptchaResponse string) (bool, error) {
@@ -16,7 +16,7 @@ func (r Verifier) IsHuman(recaptchaResponse string) (bool, error) {
 	return apiRes.Score > 0.7, nil
 }
 
-func NewVerifier(service service.Recaptcha) Verifier {
+func NewVerifier(service service.ReCaptcha) Verifier {
 	return Verifier{
 		service: service,
 	}

@@ -1,7 +1,7 @@
 package graphql
 
 import (
-	"short/app/adapter/service"
+	"short/app/adapter/recaptcha"
 	"short/app/entity"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
@@ -21,7 +21,7 @@ func TestGraphQlApi(t *testing.T) {
 	retriever := url.NewRetrieverFake(urls)
 	creator := url.NewCreatorFake(urls)
 
-	s := service.NewReCaptchaFake()
+	s := recaptcha.NewFake()
 	verifier := requester.NewVerifier(s)
 
 	graphqlApi := NewShort(mdtest.FakeLogger, mdtest.FakeTracer, retriever, creator, verifier)

@@ -1,4 +1,4 @@
-package service
+package recaptcha
 
 import (
 	"io/ioutil"
@@ -14,7 +14,7 @@ import (
 )
 
 func TestReCaptcha_Verify(t *testing.T) {
-	expSecret := ReCaptchaSecret("ZPDIGNFj1EQJeNfs")
+	expSecret := "ZPDIGNFj1EQJeNfs"
 	expCaptchaResponse := "qHwha3zZh9G9mquEUOKZ"
 	//now := time.Now()
 
@@ -65,8 +65,8 @@ func TestReCaptcha_Verify(t *testing.T) {
 			}
 			req := request.NewHttp(client)
 
-			recaptcha := NewReCaptcha(req, expSecret)
-			gotRes, err := recaptcha.Verify(expCaptchaResponse)
+			rc := NewService(req, expSecret)
+			gotRes, err := rc.Verify(expCaptchaResponse)
 			assert.Nil(t, err)
 			assert.Equal(t, testCase.expRes, gotRes)
 		})

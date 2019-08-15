@@ -8,8 +8,6 @@ import (
 	"github.com/graph-gophers/graphql-go/relay"
 )
 
-type Path string
-
 type GraphGophers struct {
 	logger fw.Logger
 	server fw.Server
@@ -23,7 +21,7 @@ func (g GraphGophers) ListenAndServe(port int) error {
 	return g.server.ListenAndServe(port)
 }
 
-func NewGraphGophers(graphqlPath Path, logger fw.Logger, tracer fw.Tracer, g fw.GraphQlApi) fw.Server {
+func NewGraphGophers(graphqlPath string, logger fw.Logger, tracer fw.Tracer, g fw.GraphQlApi) fw.Server {
 	schema := graphql.MustParseSchema(g.GetSchema(), g.GetResolver())
 
 	relayHandler := relay.Handler{
@@ -31,7 +29,7 @@ func NewGraphGophers(graphqlPath Path, logger fw.Logger, tracer fw.Tracer, g fw.
 	}
 
 	server := mdhttp.NewServer(logger, tracer)
-	server.HandleFunc(string(graphqlPath), &relayHandler)
+	server.HandleFunc(graphqlPath, &relayHandler)
 
 	return GraphGophers{
 		logger: logger,

@@ -1,4 +1,4 @@
-package service
+package recaptcha
 
 import (
 	"fmt"
@@ -10,14 +10,12 @@ import (
 const verifyApi = "https://www.google.com/recaptcha/api/siteverify"
 
 // https://developers.google.com/recaptcha/docs/verify
-type ReCaptcha struct {
+type Service struct {
 	req    request.Http
 	secret string
 }
 
-type ReCaptchaSecret string
-
-func (r ReCaptcha) Verify(captchaResponse string) (service.VerifyResponse, error) {
+func (r Service) Verify(captchaResponse string) (service.VerifyResponse, error) {
 	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
@@ -30,9 +28,9 @@ func (r ReCaptcha) Verify(captchaResponse string) (service.VerifyResponse, error
 	return apiRes, nil
 }
 
-func NewReCaptcha(req request.Http, secret ReCaptchaSecret) service.Recaptcha {
-	return ReCaptcha{
+func NewService(req request.Http, secret string) service.ReCaptcha {
+	return Service{
 		req:    req,
-		secret: string(secret),
+		secret: secret,
 	}
 }
