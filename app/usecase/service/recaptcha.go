@@ -31,6 +31,6 @@ type VerifyResponse struct {
 	Action        string   `json:"action"`
 }
 
-type Recaptcha interface {
+type ReCaptcha interface {
 	Verify(recaptchaResponse string) (VerifyResponse, error)
 }

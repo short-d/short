@@ -6,11 +6,9 @@ import (
 	"short/fw"
 )
 
-type WwwRoot string
-
-func NewShort(logger fw.Logger, tracer fw.Tracer, wwwRoot WwwRoot, urlRepo repo.Url) []fw.Route {
+func NewShort(logger fw.Logger, tracer fw.Tracer, wwwRoot string, urlRepo repo.Url) []fw.Route {
 	urlRetriever := url.NewRetrieverPersist(urlRepo)
-	fileHandle := NewServeFile(logger, tracer, string(wwwRoot))
+	fileHandle := NewServeFile(logger, tracer, wwwRoot)
 
 	return []fw.Route{
 		{Method: "GET", Path: "/r/:alias", Handle: NewOriginalUrl(logger, tracer, urlRetriever)},
