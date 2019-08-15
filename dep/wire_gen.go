@@ -13,7 +13,6 @@ import (
 	"short/app/adapter/request"
 	"short/app/adapter/routing"
 	"short/app/usecase/keygen"
-	repo2 "short/app/usecase/repo"
 	"short/app/usecase/requester"
 	"short/app/usecase/service"
 	"short/app/usecase/url"
@@ -46,11 +45,14 @@ func InitGraphQlService(name string, db *sql.DB, graphqlPath GraphQlPath, secret
 	return service
 }
 
-func InitRoutingService(name string, db *sql.DB, wwwRoot WwwRoot) mdservice.Service {
+func InitRoutingService(name string, db *sql.DB, wwwRoot WwwRoot, githubClientId GithubClientId, githubClientSecret GithubClientSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	repoUrl := repo.NewUrlSql(db)
-	v := NewShortRoutes(logger, tracer, wwwRoot, repoUrl)
+	retriever := url.NewRetrieverPersist(repoUrl)
+	client := mdhttp.NewClient()
+	http := request.NewHttp(client)
+	v := NewShortRoutes(logger, tracer, wwwRoot, retriever, http, githubClientId, githubClientSecret)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service
@@ -72,8 +74,28 @@ func NewReCaptchaService(req request.Http, secret ReCaptchaSecret) service.ReCap
 
 type WwwRoot string
 
-func NewShortRoutes(logger fw.Logger, tracer fw.Tracer, wwwRoot WwwRoot, urlRepo repo2.Url) []fw.Route {
-	return routing.NewShort(logger, tracer, string(wwwRoot), urlRepo)
+type GithubClientId string
+
+type GithubClientSecret string
+
+func NewShortRoutes(
+	logger fw.Logger,
+	tracer fw.Tracer,
+	wwwRoot WwwRoot,
+	urlRetriever url.Retriever,
+	req request.Http,
+	githubClientId GithubClientId,
+	githubClientSecret GithubClientSecret,
+) []fw.Route {
+	return routing.NewShort(
+		logger,
+		tracer,
+		string(wwwRoot),
+		urlRetriever,
+		req,
+		string(githubClientId),
+		string(githubClientSecret),
+	)
 }
 
 type serviceLauncher func(db *sql.DB)

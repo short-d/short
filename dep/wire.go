@@ -10,7 +10,6 @@ import (
 	"short/app/adapter/request"
 	"short/app/adapter/routing"
 	"short/app/usecase/keygen"
-	usecaserepo "short/app/usecase/repo"
 	"short/app/usecase/requester"
 	"short/app/usecase/service"
 	"short/app/usecase/url"
@@ -51,14 +50,23 @@ func InitGraphQlService(
 	return mdservice.Service{}
 }
 
-func InitRoutingService(name string, db *sql.DB, wwwRoot WwwRoot) mdservice.Service {
+func InitRoutingService(
+	name string,
+	db *sql.DB,
+	wwwRoot WwwRoot,
+	githubClientId GithubClientId,
+	githubClientSecret GithubClientSecret,
+) mdservice.Service {
 	wire.Build(
 		mdservice.New,
 		mdlogger.NewLocal,
 		mdtracer.NewLocal,
 		mdrouting.NewBuiltIn,
+		mdhttp.NewClient,
 
 		repo.NewUrlSql,
+		url.NewRetrieverPersist,
+		request.NewHttp,
 		NewShortRoutes,
 	)
 	return mdservice.Service{}
@@ -77,9 +85,27 @@ func NewReCaptchaService(req request.Http, secret ReCaptchaSecret) service.ReCap
 }
 
 type WwwRoot string
+type GithubClientId string
+type GithubClientSecret string
 
-func NewShortRoutes(logger fw.Logger, tracer fw.Tracer, wwwRoot WwwRoot, urlRepo usecaserepo.Url) []fw.Route {
-	return routing.NewShort(logger, tracer, string(wwwRoot), urlRepo)
+func NewShortRoutes(
+	logger fw.Logger,
+	tracer fw.Tracer,
+	wwwRoot WwwRoot,
+	urlRetriever url.Retriever,
+	req request.Http,
+	githubClientId GithubClientId,
+	githubClientSecret GithubClientSecret,
+) []fw.Route {
+	return routing.NewShort(
+		logger,
+		tracer,
+		string(wwwRoot),
+		urlRetriever,
+		req,
+		string(githubClientId),
+		string(githubClientSecret),
+	)
 }
 
 type serviceLauncher func(db *sql.DB)
