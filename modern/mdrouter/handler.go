@@ -27,6 +27,13 @@ func (r HttpHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		if !ok {
 			continue
 		}
+		values := req.URL.Query()
+		for name, value := range values {
+			if len(value) < 1 {
+				continue
+			}
+			params[name] = value[0]
+		}
 		route.handle(res, req, params)
 		return
 	}
