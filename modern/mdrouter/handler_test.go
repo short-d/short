@@ -27,7 +27,7 @@ func TestHttpHandler_ServeHTTP(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	req, err := http.NewRequest("GET", "/users/fr4esw1rdf/articles/1dsd2DwxS/", strings.NewReader("Test"))
+	req, err := http.NewRequest("GET", "/users/fr4esw1rdf/articles/1dsd2DwxS?name=test&q=google", strings.NewReader("Test"))
 	assert.Nil(t, err)
 	res := httptest.NewRecorder()
 
@@ -42,6 +42,8 @@ func TestHttpHandler_ServeHTTP(t *testing.T) {
 	expParams := Params{
 		"articleId": "1dsd2DwxS",
 		"userId":    "fr4esw1rdf",
+		"q": "google",
+		"name": "test",
 	}
 	assert.Equal(t, expParams, gotParams)
 }
