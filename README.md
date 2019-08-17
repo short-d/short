@@ -5,7 +5,7 @@
 ![Demo](doc/demo.gif)
 
 ## Want `s/` extension?
-Get it [here](https://chrome.google.com/webstore/detail/short/hoobjcdfefnngjeepgjkiojpcicciihc)!
+Get it from [Chrome Web Store](https://chrome.google.com/webstore/detail/short/hoobjcdfefnngjeepgjkiojpcicciihc)
 
 ## Prerequisites
 - Node.js v12.7.0
