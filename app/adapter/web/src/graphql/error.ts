@@ -1,9 +1,9 @@
 interface Extensions {
-    code: string
+  code: string;
 }
 
 export interface GraphQlError {
-    extensions: Extensions
-    message: string
-    path: string[]
+  extensions: Extensions;
+  message: string;
+  path: string[];
 }
