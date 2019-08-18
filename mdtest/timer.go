@@ -8,7 +8,7 @@ type Timer struct {
 	currentTime time.Time
 }
 
-func (t *Timer) SetCurrentTime(currentTime time.Time)  {
+func (t *Timer) SetCurrentTime(currentTime time.Time) {
 	t.currentTime = currentTime
 }
 
