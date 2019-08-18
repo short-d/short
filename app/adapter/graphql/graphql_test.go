@@ -5,7 +5,7 @@ import (
 	"short/app/entity"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
-	"short/modern/mdtest"
+	"short/mdtest"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
