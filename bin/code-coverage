@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+go test -coverprofile=coverage.txt ./...
+bash <(curl -s https://codecov.io/bash) -f "coverage.txt" -t $CODECOV_TOKEN
