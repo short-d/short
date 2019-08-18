@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
 goimports -w .
+
+cd app/adapter/web
+yarn stylelint:write
+yarn prettier:write
