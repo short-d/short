@@ -3,21 +3,22 @@
 
 header {
   @include default-font();
-  display          : flex;
-  justify-content  : center;
-  color            : white;
-  background-color : #C2185B;
+
+  display: flex;
+  justify-content: center;
+  color: white;
+  background-color: #c2185b;
 
   .center {
-    display : flex;
-    width   : $content-width;
-    padding : 10px 0;
+    display: flex;
+    width: $content-width;
+    padding: 10px 0;
   }
 
   #logo {
-    font-size      : 30px;
-    font-weight    : $font-weight-semi-bold;
-    line-height    : 30px;
-    letter-spacing : 2px;
+    font-size: 30px;
+    font-weight: $font-weight-semi-bold;
+    line-height: 30px;
+    letter-spacing: 2px;
   }
 }

@@ -10,90 +10,92 @@ footer {
   $font-color     : #616161;
   $padding        : 30px;
 
-  display         : flex;
-  justify-content : center;
-  padding-bottom  : $padding;
+  display: flex;
+  justify-content: center;
+  padding-bottom: $padding;
 
   .center {
-    font-size      : $font-size;
-    font-weight    : $font-weight-semi-bold;
-    line-height    : $font-size;
-    display        : flex;
-    align-content  : center;
-    flex-direction : column;
-    width          : $content-width;
-    padding-top    : $padding;
-    text-align     : center;
-    color          : $font-color;
-    border-top     : 1px solid #EEEEEE;
+    font-size: $font-size;
+    font-weight: $font-weight-semi-bold;
+    line-height: $font-size;
+    display: flex;
+    align-content: center;
+    flex-direction: column;
+    width: $content-width;
+    padding-top: $padding;
+    text-align: center;
+    color: $font-color;
+    border-top: 1px solid #eee;
 
     .row:not(:last-child) {
-      margin-bottom : 10px;
+      margin-bottom: 10px;
     }
 
     .app-version {
-      font-size : 14px;
+      font-size: 14px;
     }
 
     i.heart {
       $width       : $font-size / 3 * 2;
       $color       : $font-color;
 
-      display      : inline-block;
-      width        : $width;
-      height       : $width;
-      margin-right : 10px;
-      margin-left  : 10px;
+      display: inline-block;
+      width: $width;
+      height: $width;
+      margin-right: 10px;
+      margin-left: 10px;
 
       div {
-        width            : 100%;
-        height           : 100%;
-        transition       : background-color 200ms $easeInOutQuart;
-        transform        : rotate(45deg);
-        background-color : $color;
+        width: 100%;
+        height: 100%;
+        transition: background-color 200ms $easeInOutQuart;
+        transform: rotate(45deg);
+        background-color: $color;
 
-        &:before, &:after {
-          display          : block;
-          width            : 100%;
-          height           : 100%;
-          content          : '';
-          transition       : inherit;
-          border-radius    : 50%;
-          background-color : $color;
+        &::before,
+        &::after {
+          display: block;
+          width: 100%;
+          height: 100%;
+          content: '';
+          transition: inherit;
+          border-radius: 50%;
+          background-color: $color;
         }
 
-        &:before {
-          transform : translateX(-50%);
+        &::before {
+          transform: translateX(-50%);
         }
 
-        &:after {
-          transform : translateY(-150%);
+        &::after {
+          transform: translateY(-150%);
         }
       }
 
       &:hover {
         div {
-          background-color : $color-primary;
+          background-color: $color-primary;
 
-          &:before, &:after {
-            background-color : $color-primary;
+          &::before,
+          &::after {
+            background-color: $color-primary;
           }
         }
       }
     }
 
     .heart:hover {
-      cursor : pointer;
-      color  : $color-primary;
+      cursor: pointer;
+      color: $color-primary;
     }
 
     a {
-      font-weight     : $font-weight-bold;
-      text-decoration : none;
-      color           : $font-color;
+      font-weight: $font-weight-bold;
+      text-decoration: none;
+      color: $font-color;
 
       &:hover {
-        text-decoration : underline;
+        text-decoration: underline;
       }
     }
   }
