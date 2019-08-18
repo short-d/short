@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"net/url"
 	"short/app/adapter/request"
-	"short/app/usecase/service"
 	"strings"
 )
 
 const (
 	authorizationApi = "https://github.com/login/oauth/authorize"
 	accessTokenApi   = "https://github.com/login/oauth/access_token"
+	userEmailScope   = "user:email"
 )
 
 type accessTokenResponse struct {
@@ -26,9 +26,11 @@ type Github struct {
 	req          request.Http
 }
 
-func (g Github) GetAuthorizationUrl(scopes []string) string {
-	scope := strings.Join(scopes, " ")
-	escapedScope := url.QueryEscape(scope)
+func (g Github) GetAuthorizationUrl() string {
+	scopes := strings.Join([]string{
+		userEmailScope,
+	}, " ")
+	escapedScope := url.QueryEscape(scopes)
 	clientId := g.clientId
 	return fmt.Sprintf("%s?client_id=%s&scope=%s", authorizationApi, clientId, escapedScope)
 }
@@ -51,7 +53,7 @@ func (g Github) RequestAccessToken(authorizationCode string) (accessToken string
 	return apiRes.AccessToken, apiRes.Scope, nil
 }
 
-func NewGithub(req request.Http, clientId string, clientSecret string) service.OAuth {
+func NewGithub(req request.Http, clientId string, clientSecret string) Github {
 	return Github{
 		clientId:     clientId,
 		clientSecret: clientSecret,
