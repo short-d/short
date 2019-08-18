@@ -5,18 +5,18 @@ import (
 	"short/fw"
 )
 
-type Tokenizer struct {
+type CryptoTokenizer struct {
 }
 
-func (t Tokenizer) Encode(payload fw.TokenPayload) (string, error) {
+func (t CryptoTokenizer) Encode(payload fw.TokenPayload) (string, error) {
 	buf, err := json.Marshal(payload)
 	return string(buf), err
 }
 
-func (t Tokenizer) Decode(tokenStr string) (fw.TokenPayload, error) {
+func (t CryptoTokenizer) Decode(tokenStr string) (fw.TokenPayload, error) {
 	payload := map[string]interface{}{}
-	err := json.Unmarshal([]byte(tokenStr), payload)
+	err := json.Unmarshal([]byte(tokenStr), &payload)
 	return payload, err
 }
 
-var FakeCryptoTokenizer fw.CryptoTokenizer = Tokenizer{}
+var FakeCryptoTokenizer fw.CryptoTokenizer = CryptoTokenizer{}
