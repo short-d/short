@@ -13,7 +13,8 @@ Get it from [Chrome Web Store](https://chrome.google.com/webstore/detail/short/h
 
 ## Getting Started
 ### Create reCAPTCHA account
-[sign up for an API key pair](http://www.google.com/recaptcha/admin)
+[sign up for ReCAPTCHA account](http://www.google.com/recaptcha/admin)
+[Create OAuth App](https://github.com/settings/developers)
 
 ### Create .env file at project root directory with the following content:
 ```bash
@@ -22,6 +23,9 @@ DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_NAME=your_db_name
 RECAPTCHA_SECRET=your_recaptcha_secret
+GITHUB_CLIENT_ID=your_Github_client_id
+GITHUB_CLIENT_SECRET=your_Github_client_secret
+JWT_SECRET=your_JWT_secret
 WEB_PORT=80
 API_PORT=8080
 ```
@@ -29,7 +33,11 @@ Remember to replace the appropriate lines with your db user, db password, db nam
 
 ### Build docker image
 ```bash
-GRAPHQL_BASE_URL=http://localhost:8080 HTTP_API_BASE_URL=http://localhost RECAPTCHA_SITE_KEY=your_recaptcha_site_key ./bin/build-web-dev docker build -t short:latest .
+GRAPHQL_BASE_URL=http://localhost:8080 \
+HTTP_API_BASE_URL=http://localhost \
+RECAPTCHA_SITE_KEY=your_recaptcha_site_key \
+./bin/build-web-dev docker build -t short:latest .
+
 docker build -t local/short:latest .
 ```
 Remember to replace the appropriate line with your reCAPTCHA site key.
