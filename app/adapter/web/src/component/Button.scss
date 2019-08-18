@@ -3,17 +3,19 @@
 @import "styles/font";
 
 button {
-  font-size        : 16px;
-  font-weight      : $font-weight-semi-bold;
+  font-size: 16px;
+  font-weight: $font-weight-semi-bold;
+
   @include round-corner;
-  padding          : 0 20px;
-  color            : white;
-  border           : none;
-  outline          : none;
-  background-color : $color-primary;
+
+  padding: 0 20px;
+  color: white;
+  border: none;
+  outline: none;
+  background-color: $color-primary;
 
   &:hover {
-    cursor  : pointer;
-    opacity : 0.9;
+    cursor: pointer;
+    opacity: 0.9;
   }
 }

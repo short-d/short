@@ -6,70 +6,70 @@
 
 .app {
   .control {
-    display : flex;
+    display: flex;
 
     &.create-short-link {
       .text-field-wrapper {
-        flex         : 1;
-        margin-right : 20px;
+        flex: 1;
+        margin-right: 20px;
       }
     }
   }
 
   .main {
-    padding : 40px 0;
+    padding: 40px 0;
   }
 
   .short-link-usage-wrapper {
-    margin-top : 40px;
+    margin-top: 40px;
   }
 
   .err {
-    font-family      : $font-family-primary;
-    box-sizing       : border-box;
-    width            : 600px;
-    padding          : 60px;
-    background-color : #424242;
+    font-family: $font-family-primary;
+    box-sizing: border-box;
+    width: 600px;
+    padding: 60px;
+    background-color: #424242;
 
     .title {
-      font-size      : 24px;
-      font-weight    : $font-weight-medium;
-      line-height    : 24px;
-      margin-bottom  : 40px;
-      text-align     : center;
-      text-transform : capitalize;
-      color          : white;
+      font-size: 24px;
+      font-weight: $font-weight-medium;
+      line-height: 24px;
+      margin-bottom: 40px;
+      text-align: center;
+      text-transform: capitalize;
+      color: white;
     }
 
     .description {
-      font-size   : 18px;
-      font-weight : $font-weight-semi-bold;
-      line-height : 1.5;
-      color       : white;
+      font-size: 18px;
+      font-weight: $font-weight-semi-bold;
+      line-height: 1.5;
+      color: white;
     }
 
     .close {
-      position : fixed;
-      top      : 10px;
-      right    : 10px;
-      width    : 24px;
-      height   : 24px;
-      opacity  : 0.6;
-      color    : white;
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      opacity: 0.6;
+      color: white;
 
       &:hover {
-        cursor  : pointer;
-        opacity : 0.9;
+        cursor: pointer;
+        opacity: 0.9;
       }
     }
   }
 
   .input-error {
-    font-size   : 12px;
-    font-weight : $font-weight-semi-bold;
-    line-height : 20px;
-    height      : 20px;
-    margin      : 10px;
-    color       : #B71C1C;
+    font-size: 12px;
+    font-weight: $font-weight-semi-bold;
+    line-height: 20px;
+    height: 20px;
+    margin: 10px;
+    color: #b71c1c;
   }
 }
