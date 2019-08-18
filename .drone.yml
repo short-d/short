@@ -135,6 +135,8 @@ steps:
         from_secret: WEB_PORT
       API_PORT:
         from_secret: API_PORT
+      JWT_SECRET:
+        from_secret: JWT_SECRET
     settings:
       host:
         from_secret: SERVER_HOST
@@ -152,6 +154,7 @@ steps:
         - RECAPTCHA_SECRET
         - GITHUB_CLIENT_ID
         - GITHUB_CLIENT_SECRET
+        - JWT_SECRET
         - WEB_PORT
         - API_PORT
       script:
@@ -164,6 +167,7 @@ steps:
           RECAPTCHA_SECRET=$RECAPTCHA_SECRET
           GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID
           GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
+          JWT_SECRET=$JWT_SECRET
           WEB_PORT=$WEB_PORT
           API_PORT=$API_PORT
           docker-compose up -d
