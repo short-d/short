@@ -33,6 +33,23 @@ steps:
           - master
           - production
 
+  - name: code coverage
+    image: docker
+    environment:
+      CODECOV_TOKEN:
+        from_secret: CODECOV_TOKEN
+    commands:
+      - docker build -t code-coverage --build-arg CODECOV_TOKEN=$CODECOV_TOKEN -f Dockerfile-code-coverage .
+      - docker run code-coverage
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - push
+
   - name: build web ui
     image: node:12.7.0-alpine
     environment:
