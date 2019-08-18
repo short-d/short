@@ -13,7 +13,7 @@ Get it from [Chrome Web Store](https://chrome.google.com/webstore/detail/short/h
 
 ## Getting Started
 ### Create reCAPTCHA account
-[sign up for ReCAPTCHA account](http://www.google.com/recaptcha/admin)
+[Create ReCAPTCHA account](http://www.google.com/recaptcha/admin)
 [Create OAuth App](https://github.com/settings/developers)
 
 ### Create .env file at project root directory with the following content:
