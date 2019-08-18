@@ -16,6 +16,7 @@ services:
       - RECAPTCHA_SECRET=${RECAPTCHA_SECRET}
       - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
       - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
     command: [
       "./bin/wait-for-it", "-s", "-t", "0", "db:5432", "--",
       "./build/short", "start", "--www", "public", "--migration", "app/adapter/migration"

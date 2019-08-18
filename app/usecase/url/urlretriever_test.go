@@ -3,7 +3,7 @@ package url
 import (
 	"short/app/entity"
 	"short/app/usecase/repo"
-	"short/modern/mdtest"
+	"short/mdtest"
 	"testing"
 	"time"
 

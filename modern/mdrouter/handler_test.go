@@ -42,8 +42,8 @@ func TestHttpHandler_ServeHTTP(t *testing.T) {
 	expParams := Params{
 		"articleId": "1dsd2DwxS",
 		"userId":    "fr4esw1rdf",
-		"q": "google",
-		"name": "test",
+		"q":         "google",
+		"name":      "test",
 	}
 	assert.Equal(t, expParams, gotParams)
 }

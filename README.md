@@ -4,8 +4,8 @@
 ## Preview
 ![Demo](doc/demo.gif)
 
-## Like `s/` extension?
-Get it [here](https://github.com/byliuyang/short-ext)!
+## Want `s/` extension?
+Get it from [Chrome Web Store](https://chrome.google.com/webstore/detail/short/hoobjcdfefnngjeepgjkiojpcicciihc)
 
 ## Prerequisites
 - Node.js v12.7.0

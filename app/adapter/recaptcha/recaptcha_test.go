@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"short/app/adapter/request"
 	"short/app/usecase/service"
-	"short/modern/mdtest"
+	"short/mdtest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
