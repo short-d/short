@@ -8,10 +8,11 @@ export class ExtPromo extends Component {
         return (
             <Notice>
                 <div className={'ext-promo'}>
-                    Type less with
+                    Type less with&nbsp;
                     <a target={'_blank'}
                        title={'Get s/'}
-                       href={'https://s.time4hacks.com/r/shortext'}>s/</a>.
+                       href={'https://s.time4hacks.com/r/shortext'}>s/</a>
+                    &nbsp;.
                 </div>
             </Notice>
         )
