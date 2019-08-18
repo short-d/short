@@ -28,6 +28,7 @@ func Execute() {
 			recaptchaSecret := getEnv("RECAPTCHA_SECRET", "")
 			githubClientId := getEnv("GITHUB_CLIENT_ID", "")
 			githubClientSecret := getEnv("GITHUB_CLIENT_SECRET", "")
+			jwtSecret := getEnv("JWT_SECRET", "")
 
 			start(
 				host,
@@ -40,6 +41,7 @@ func Execute() {
 				recaptchaSecret,
 				githubClientId,
 				githubClientSecret,
+				jwtSecret,
 			)
 		},
 	}
@@ -88,6 +90,7 @@ func start(
 	recaptchaSecret string,
 	githubClientId string,
 	githubClientSecret string,
+	jwtSecret string,
 ) {
 	dep.InitDB(host, port, user, password, dbName, migrationRoot, func(db *sql.DB) {
 		service := dep.InitGraphQlService(
@@ -104,6 +107,7 @@ func start(
 			dep.WwwRoot(wwwRoot),
 			dep.GithubClientId(githubClientId),
 			dep.GithubClientSecret(githubClientSecret),
+			dep.JwtSecret(jwtSecret),
 		)
 		service.StartAndWait(80)
 	})

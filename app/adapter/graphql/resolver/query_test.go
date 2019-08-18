@@ -4,7 +4,7 @@ import (
 	"short/app/adapter/graphql/scalar"
 	"short/app/entity"
 	"short/app/usecase/url"
-	"short/modern/mdtest"
+	"short/mdtest"
 	"testing"
 	"time"
 
