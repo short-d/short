@@ -3,6 +3,7 @@ package routing
 import (
 	"fmt"
 	"net/http"
+	"short/app/adapter/account"
 	"short/app/adapter/oauth"
 	"short/app/usecase/auth"
 	"short/app/usecase/url"
@@ -70,5 +71,33 @@ func NewGithubSignIn(
 		}
 		signInLink := githubOAuth.GetAuthorizationUrl()
 		http.Redirect(w, r, signInLink, http.StatusSeeOther)
+	}
+}
+
+func NewGithubSignInCallback(
+	logger fw.Logger,
+	tracer fw.Tracer,
+	githubOAuth oauth.Github,
+	githubAccount account.Github,
+) fw.Handle {
+	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
+		code := params["code"]
+		if len(code) < 1 {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		accessToken, _, err := githubOAuth.RequestAccessToken(code)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		email, err := githubAccount.GetEmail(accessToken)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		fmt.Println(email)
 	}
 }

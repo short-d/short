@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"short/app/adapter/request"
 	"short/app/usecase/service"
 	"short/mdtest"
+	"short/modern/mdrequest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -63,7 +63,7 @@ func TestReCaptcha_Verify(t *testing.T) {
 			client := http.Client{
 				Transport: transport,
 			}
-			req := request.NewHttp(client)
+			req := mdrequest.NewHttp(client)
 
 			rc := NewService(req, expSecret)
 			gotRes, err := rc.Verify(expCaptchaResponse)

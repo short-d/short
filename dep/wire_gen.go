@@ -7,11 +7,11 @@ package dep
 
 import (
 	"database/sql"
+	"short/app/adapter/account"
 	"short/app/adapter/graphql"
 	"short/app/adapter/oauth"
 	"short/app/adapter/recaptcha"
 	"short/app/adapter/repo"
-	"short/app/adapter/request"
 	"short/app/adapter/routing"
 	"short/app/usecase/auth"
 	"short/app/usecase/keygen"
@@ -24,6 +24,7 @@ import (
 	"short/modern/mdgraphql"
 	"short/modern/mdhttp"
 	"short/modern/mdlogger"
+	"short/modern/mdrequest"
 	"short/modern/mdrouting"
 	"short/modern/mdservice"
 	"short/modern/mdtimer"
@@ -41,8 +42,8 @@ func InitGraphQlService(name string, db *sql.DB, graphqlPath GraphQlPath, secret
 	keyGenerator := keygen.NewInMemory()
 	creator := url.NewCreatorPersist(repoUrl, keyGenerator)
 	client := mdhttp.NewClient()
-	http := request.NewHttp(client)
-	reCaptcha := NewReCaptchaService(http, secret)
+	httpRequest := mdrequest.NewHttp(client)
+	reCaptcha := NewReCaptchaService(httpRequest, secret)
 	verifier := requester.NewVerifier(reCaptcha)
 	graphQlApi := graphql.NewShort(logger, tracer, retriever, creator, verifier)
 	server := NewGraphGophers(graphqlPath, logger, tracer, graphQlApi)
@@ -57,11 +58,13 @@ func InitRoutingService(name string, db *sql.DB, wwwRoot WwwRoot, githubClientId
 	repoUrl := repo.NewUrlSql(db)
 	retriever := url.NewRetrieverPersist(repoUrl)
 	client := mdhttp.NewClient()
-	http := request.NewHttp(client)
-	github := NewGithubOAuth(http, githubClientId, githubClientSecret)
+	httpRequest := mdrequest.NewHttp(client)
+	github := NewGithubOAuth(httpRequest, githubClientId, githubClientSecret)
+	graphQlRequest := mdrequest.NewGraphQl(httpRequest)
+	accountGithub := account.NewGithub(graphQlRequest)
 	cryptoTokenizer := NewJwtGo(jwtSecret)
 	authenticator := NewAuthenticator(cryptoTokenizer, timer)
-	v := NewShortRoutes(logger, tracer, wwwRoot, timer, retriever, github, authenticator)
+	v := NewShortRoutes(logger, tracer, wwwRoot, timer, retriever, github, accountGithub, authenticator)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service
@@ -77,7 +80,7 @@ func NewGraphGophers(graphqlPath GraphQlPath, logger fw.Logger, tracer fw.Tracer
 
 type ReCaptchaSecret string
 
-func NewReCaptchaService(req request.Http, secret ReCaptchaSecret) service.ReCaptcha {
+func NewReCaptchaService(req fw.HttpRequest, secret ReCaptchaSecret) service.ReCaptcha {
 	return recaptcha.NewService(req, string(secret))
 }
 
@@ -86,7 +89,7 @@ type GithubClientId string
 type GithubClientSecret string
 
 func NewGithubOAuth(
-	req request.Http,
+	req fw.HttpRequest,
 	clientId GithubClientId,
 	clientSecret GithubClientSecret,
 ) oauth.Github {
@@ -116,6 +119,7 @@ func NewShortRoutes(
 	timer fw.Timer,
 	urlRetriever url.Retriever,
 	githubOAuth oauth.Github,
+	githubAccount account.Github,
 	authenticator auth.Authenticator,
 ) []fw.Route {
 	return routing.NewShort(
@@ -125,6 +129,7 @@ func NewShortRoutes(
 		timer,
 		urlRetriever,
 		githubOAuth,
+		githubAccount,
 		authenticator,
 	)
 }

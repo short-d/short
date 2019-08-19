@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"short/app/adapter/request"
+	"short/fw"
 	"strings"
 )
 
@@ -23,7 +23,7 @@ type accessTokenResponse struct {
 type Github struct {
 	clientId     string
 	clientSecret string
-	req          request.Http
+	http         fw.HttpRequest
 }
 
 func (g Github) GetAuthorizationUrl() string {
@@ -45,7 +45,7 @@ func (g Github) RequestAccessToken(authorizationCode string) (accessToken string
 	}
 
 	apiRes := accessTokenResponse{}
-	err = g.req.Json(http.MethodPost, accessTokenApi, headers, body, &apiRes)
+	err = g.http.Json(http.MethodPost, accessTokenApi, headers, body, &apiRes)
 	if err != nil {
 		return "", "", err
 	}
@@ -53,10 +53,10 @@ func (g Github) RequestAccessToken(authorizationCode string) (accessToken string
 	return apiRes.AccessToken, apiRes.Scope, nil
 }
 
-func NewGithub(req request.Http, clientId string, clientSecret string) Github {
+func NewGithub(http fw.HttpRequest, clientId string, clientSecret string) Github {
 	return Github{
 		clientId:     clientId,
 		clientSecret: clientSecret,
-		req:          req,
+		http:         http,
 	}
 }

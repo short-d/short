@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"short/app/adapter/account"
 	"short/app/adapter/oauth"
 	"short/app/usecase/auth"
 	"short/app/usecase/url"
@@ -13,14 +14,20 @@ func NewShort(
 	wwwRoot string,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
-	github oauth.Github,
+	githubOAuth oauth.Github,
+	githubAccount account.Github,
 	authenticator auth.Authenticator,
 ) []fw.Route {
 	return []fw.Route{
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
-			Handle: NewGithubSignIn(logger, tracer, github, authenticator),
+			Handle: NewGithubSignIn(logger, tracer, githubOAuth, authenticator),
+		},
+		{
+			Method: "GET",
+			Path:   "/oauth/github/sign-in/callback",
+			Handle: NewGithubSignInCallback(logger, tracer, githubOAuth, githubAccount),
 		},
 		{
 			Method: "GET",
