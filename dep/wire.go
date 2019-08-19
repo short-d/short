@@ -4,11 +4,11 @@ package dep
 
 import (
 	"database/sql"
+	"short/app/adapter/account"
 	"short/app/adapter/graphql"
 	"short/app/adapter/oauth"
 	"short/app/adapter/recaptcha"
 	"short/app/adapter/repo"
-	"short/app/adapter/request"
 	"short/app/adapter/routing"
 	"short/app/usecase/auth"
 	"short/app/usecase/keygen"
@@ -21,6 +21,7 @@ import (
 	"short/modern/mdgraphql"
 	"short/modern/mdhttp"
 	"short/modern/mdlogger"
+	"short/modern/mdrequest"
 	"short/modern/mdrouting"
 	"short/modern/mdservice"
 	"short/modern/mdtimer"
@@ -42,12 +43,12 @@ func InitGraphQlService(
 		mdtracer.NewLocal,
 		NewGraphGophers,
 		mdhttp.NewClient,
+		mdrequest.NewHttp,
 
 		repo.NewUrlSql,
 		keygen.NewInMemory,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
-		request.NewHttp,
 		NewReCaptchaService,
 		requester.NewVerifier,
 		graphql.NewShort,
@@ -69,13 +70,15 @@ func InitRoutingService(
 		mdtracer.NewLocal,
 		mdrouting.NewBuiltIn,
 		mdhttp.NewClient,
+		mdrequest.NewHttp,
+		mdrequest.NewGraphQl,
 		mdtimer.NewTimer,
 		NewJwtGo,
 
 		repo.NewUrlSql,
 		url.NewRetrieverPersist,
-		request.NewHttp,
 		NewGithubOAuth,
+		account.NewGithub,
 		NewAuthenticator,
 		NewShortRoutes,
 	)
@@ -90,7 +93,7 @@ func NewGraphGophers(graphqlPath GraphQlPath, logger fw.Logger, tracer fw.Tracer
 
 type ReCaptchaSecret string
 
-func NewReCaptchaService(req request.Http, secret ReCaptchaSecret) service.ReCaptcha {
+func NewReCaptchaService(req fw.HttpRequest, secret ReCaptchaSecret) service.ReCaptcha {
 	return recaptcha.NewService(req, string(secret))
 }
 
@@ -98,7 +101,7 @@ type GithubClientId string
 type GithubClientSecret string
 
 func NewGithubOAuth(
-	req request.Http,
+	req fw.HttpRequest,
 	clientId GithubClientId,
 	clientSecret GithubClientSecret,
 ) oauth.Github {
@@ -127,6 +130,7 @@ func NewShortRoutes(
 	timer fw.Timer,
 	urlRetriever url.Retriever,
 	githubOAuth oauth.Github,
+	githubAccount account.Github,
 	authenticator auth.Authenticator,
 ) []fw.Route {
 	return routing.NewShort(
@@ -136,6 +140,7 @@ func NewShortRoutes(
 		timer,
 		urlRetriever,
 		githubOAuth,
+		githubAccount,
 		authenticator,
 	)
 }
