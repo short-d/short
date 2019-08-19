@@ -79,6 +79,7 @@ func NewGithubSignInCallback(
 	tracer fw.Tracer,
 	githubOAuth oauth.Github,
 	githubAccount account.Github,
+	authenticator auth.Authenticator,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		code := params["code"]
@@ -98,6 +99,14 @@ func NewGithubSignInCallback(
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		fmt.Println(email)
+
+		authToken, err := authenticator.GenerateToken(email)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		setToken(w, authToken)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }

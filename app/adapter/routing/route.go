@@ -27,7 +27,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in/callback",
-			Handle: NewGithubSignInCallback(logger, tracer, githubOAuth, githubAccount),
+			Handle: NewGithubSignInCallback(logger, tracer, githubOAuth, githubAccount, authenticator),
 		},
 		{
 			Method: "GET",
