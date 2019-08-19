@@ -1,4 +1,4 @@
-package new
+package inject
 
 import (
 	"short/app/adapter/oauth"

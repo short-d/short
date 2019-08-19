@@ -10,7 +10,7 @@ import (
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
-	"short/dep/new"
+	"short/dep/inject"
 	"short/modern/mdhttp"
 	"short/modern/mdlogger"
 	"short/modern/mdrequest"
@@ -25,14 +25,14 @@ import (
 func InitGraphQlService(
 	name string,
 	db *sql.DB,
-	graphqlPath new.GraphQlPath,
-	secret new.ReCaptchaSecret,
+	graphqlPath inject.GraphQlPath,
+	secret inject.ReCaptchaSecret,
 ) mdservice.Service {
 	wire.Build(
 		mdservice.New,
 		mdlogger.NewLocal,
 		mdtracer.NewLocal,
-		new.GraphGophers,
+		inject.GraphGophers,
 		mdhttp.NewClient,
 		mdrequest.NewHttp,
 
@@ -40,7 +40,7 @@ func InitGraphQlService(
 		keygen.NewInMemory,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
-		new.ReCaptchaService,
+		inject.ReCaptchaService,
 		requester.NewVerifier,
 		graphql.NewShort,
 	)
@@ -50,10 +50,10 @@ func InitGraphQlService(
 func InitRoutingService(
 	name string,
 	db *sql.DB,
-	wwwRoot new.WwwRoot,
-	githubClientId new.GithubClientId,
-	githubClientSecret new.GithubClientSecret,
-	jwtSecret new.JwtSecret,
+	wwwRoot inject.WwwRoot,
+	githubClientId inject.GithubClientId,
+	githubClientSecret inject.GithubClientSecret,
+	jwtSecret inject.JwtSecret,
 ) mdservice.Service {
 	wire.Build(
 		mdservice.New,
@@ -64,14 +64,14 @@ func InitRoutingService(
 		mdrequest.NewHttp,
 		mdrequest.NewGraphQl,
 		mdtimer.NewTimer,
-		new.JwtGo,
+		inject.JwtGo,
 
 		repo.NewUrlSql,
 		url.NewRetrieverPersist,
-		new.GithubOAuth,
+		inject.GithubOAuth,
 		account.NewGithub,
-		new.Authenticator,
-		new.ShortRoutes,
+		inject.Authenticator,
+		inject.ShortRoutes,
 	)
 	return mdservice.Service{}
 }

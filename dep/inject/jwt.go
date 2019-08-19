@@ -1,4 +1,4 @@
-package new
+package inject
 
 import (
 	"short/fw"

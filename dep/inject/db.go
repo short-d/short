@@ -1,4 +1,4 @@
-package new
+package inject
 
 import (
 	"database/sql"

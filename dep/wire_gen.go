@@ -13,7 +13,7 @@ import (
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
-	new2 "short/dep/new"
+	"short/dep/inject"
 	"short/modern/mdhttp"
 	"short/modern/mdlogger"
 	"short/modern/mdrequest"
@@ -25,7 +25,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitGraphQlService(name string, db *sql.DB, graphqlPath new2.GraphQlPath, secret new2.ReCaptchaSecret) mdservice.Service {
+func InitGraphQlService(name string, db *sql.DB, graphqlPath inject.GraphQlPath, secret inject.ReCaptchaSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	repoUrl := repo.NewUrlSql(db)
@@ -34,15 +34,15 @@ func InitGraphQlService(name string, db *sql.DB, graphqlPath new2.GraphQlPath, s
 	creator := url.NewCreatorPersist(repoUrl, keyGenerator)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHttp(client)
-	reCaptcha := new2.ReCaptchaService(httpRequest, secret)
+	reCaptcha := inject.ReCaptchaService(httpRequest, secret)
 	verifier := requester.NewVerifier(reCaptcha)
 	graphQlApi := graphql.NewShort(logger, tracer, retriever, creator, verifier)
-	server := new2.GraphGophers(graphqlPath, logger, tracer, graphQlApi)
+	server := inject.GraphGophers(graphqlPath, logger, tracer, graphQlApi)
 	service := mdservice.New(name, server, logger)
 	return service
 }
 
-func InitRoutingService(name string, db *sql.DB, wwwRoot new2.WwwRoot, githubClientId new2.GithubClientId, githubClientSecret new2.GithubClientSecret, jwtSecret new2.JwtSecret) mdservice.Service {
+func InitRoutingService(name string, db *sql.DB, wwwRoot inject.WwwRoot, githubClientId inject.GithubClientId, githubClientSecret inject.GithubClientSecret, jwtSecret inject.JwtSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	timer := mdtimer.NewTimer()
@@ -50,12 +50,12 @@ func InitRoutingService(name string, db *sql.DB, wwwRoot new2.WwwRoot, githubCli
 	retriever := url.NewRetrieverPersist(repoUrl)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHttp(client)
-	github := new2.GithubOAuth(httpRequest, githubClientId, githubClientSecret)
+	github := inject.GithubOAuth(httpRequest, githubClientId, githubClientSecret)
 	graphQlRequest := mdrequest.NewGraphQl(httpRequest)
 	accountGithub := account.NewGithub(graphQlRequest)
-	cryptoTokenizer := new2.JwtGo(jwtSecret)
-	authenticator := new2.Authenticator(cryptoTokenizer, timer)
-	v := new2.ShortRoutes(logger, tracer, wwwRoot, timer, retriever, github, accountGithub, authenticator)
+	cryptoTokenizer := inject.JwtGo(jwtSecret)
+	authenticator := inject.Authenticator(cryptoTokenizer, timer)
+	v := inject.ShortRoutes(logger, tracer, wwwRoot, timer, retriever, github, accountGithub, authenticator)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service

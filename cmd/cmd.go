@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"short/dep"
-	"short/dep/new"
+	"short/dep/inject"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -93,22 +93,22 @@ func start(
 	githubClientSecret string,
 	jwtSecret string,
 ) {
-	new.DB(host, port, user, password, dbName, migrationRoot, func(db *sql.DB) {
+	inject.DB(host, port, user, password, dbName, migrationRoot, func(db *sql.DB) {
 		service := dep.InitGraphQlService(
 			"GraphQL API",
 			db,
 			"/graphql",
-			new.ReCaptchaSecret(recaptchaSecret),
+			inject.ReCaptchaSecret(recaptchaSecret),
 		)
 		service.Start(8080)
 
 		service = dep.InitRoutingService(
 			"Routing API",
 			db,
-			new.WwwRoot(wwwRoot),
-			new.GithubClientId(githubClientId),
-			new.GithubClientSecret(githubClientSecret),
-			new.JwtSecret(jwtSecret),
+			inject.WwwRoot(wwwRoot),
+			inject.GithubClientId(githubClientId),
+			inject.GithubClientSecret(githubClientSecret),
+			inject.JwtSecret(jwtSecret),
 		)
 		service.StartAndWait(80)
 	})
