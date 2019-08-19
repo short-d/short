@@ -74,7 +74,6 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			mock.ExpectQuery(statement).WillReturnRows(testCase.tableRows)
 
 			urlRepo := NewUrlSql(db)
-
 			url, err := urlRepo.GetByAlias("220uFicCJj")
 
 			if testCase.hasErr {
