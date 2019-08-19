@@ -6,8 +6,6 @@ import (
 	"short/app/adapter/repo/table"
 	"short/app/entity"
 	"short/app/usecase/repo"
-
-	"github.com/pkg/errors"
 )
 
 type UrlSql struct {
@@ -67,12 +65,8 @@ WHERE "%s"=$1;`,
 
 	url := entity.Url{}
 	err := row.Scan(&url.Alias, &url.OriginalUrl, &url.ExpireAt, &url.CreatedAt, &url.UpdatedAt)
-	if err == sql.ErrNoRows {
-		return entity.Url{}, errors.Errorf("url not found (alias=%s)", alias)
-	}
-
 	if err != nil {
-		return entity.Url{}, errors.WithStack(err)
+		return entity.Url{}, err
 	}
 
 	return url, nil
