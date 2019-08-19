@@ -106,7 +106,7 @@ func NewGithubSignInCallback(
 			return
 		}
 
-		w = setToken(w, authToken)
+		setToken(w, authToken)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }

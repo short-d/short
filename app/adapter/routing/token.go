@@ -18,14 +18,13 @@ func getToken(r *http.Request, params fw.Params) string {
 	return newToken.Value
 }
 
-func setToken(w http.ResponseWriter, token string) http.ResponseWriter {
+func setToken(w http.ResponseWriter, token string) {
 	tokenCookie := http.Cookie{
-		Name:     "token",
-		Path:     "/",
-		Value:    token,
-		Secure:   true,
+		Name:  "token",
+		Path:  "/",
+		Value: token,
+		//Secure:   true,
 		HttpOnly: true,
 	}
 	http.SetCookie(w, &tokenCookie)
-	return w
 }
