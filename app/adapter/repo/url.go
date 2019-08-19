@@ -6,7 +6,6 @@ import (
 	"short/app/adapter/repo/table"
 	"short/app/entity"
 	"short/app/usecase/repo"
-	"time"
 
 	"github.com/pkg/errors"
 )
@@ -66,27 +65,14 @@ WHERE "%s"=$1;`,
 
 	row := u.db.QueryRow(statement, alias)
 
-	var originalUrl string
-	var expireAt *time.Time
-	var createdAt *time.Time
-	var updatedAt *time.Time
-
-	err := row.Scan(&alias, &originalUrl, &expireAt, &createdAt, &updatedAt)
-
+	url := entity.Url{}
+	err := row.Scan(&url.Alias, &url.OriginalUrl, &url.ExpireAt, &url.CreatedAt, &url.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return entity.Url{}, errors.Errorf("url not found (alias=%s)", alias)
 	}
 
 	if err != nil {
 		return entity.Url{}, errors.WithStack(err)
-	}
-
-	url := entity.Url{
-		Alias:       alias,
-		OriginalUrl: originalUrl,
-		ExpireAt:    expireAt,
-		CreatedAt:   createdAt,
-		UpdatedAt:   updatedAt,
 	}
 
 	return url, nil
