@@ -97,7 +97,6 @@ func NewGithubSignInCallback(
 		email, err := githubAccount.GetEmail(accessToken)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Println(err)
 			return
 		}
 
