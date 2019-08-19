@@ -23,7 +23,7 @@ func setToken(w http.ResponseWriter, token string) {
 		Name:  "token",
 		Path:  "/",
 		Value: token,
-		//Secure:   true,
+		Secure:   true,
 		HttpOnly: true,
 	}
 	http.SetCookie(w, &tokenCookie)
