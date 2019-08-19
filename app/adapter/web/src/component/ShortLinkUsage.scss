@@ -1,19 +1,19 @@
 .short-link-usage {
-  font-size   : 18px;
-  line-height : 1.5;
+  font-size: 18px;
+  line-height: 1.5;
 
   a {
-    font-weight : bolder;
-    cursor      : pointer;
-    color       : inherit;
+    font-weight: bolder;
+    cursor: pointer;
+    color: inherit;
 
     &:hover {
-      text-decoration : underline;
+      text-decoration: underline;
     }
   }
 
   .qr-code {
-    font-size  : 0;
-    margin-top : 20px;
+    font-size: 0;
+    margin-top: 20px;
   }
 }

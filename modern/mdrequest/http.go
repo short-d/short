@@ -1,9 +1,11 @@
-package request
+package mdrequest
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
+	"short/fw"
 	"strings"
 )
 
@@ -33,6 +35,10 @@ func (h Http) Json(
 		return err
 	}
 
+	if res.StatusCode >= http.StatusBadRequest {
+		return errors.New(res.Status)
+	}
+
 	buf, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return err
@@ -42,11 +48,10 @@ func (h Http) Json(
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
-func NewHttp(client http.Client) Http {
+func NewHttp(client http.Client) fw.HttpRequest {
 	return Http{
 		client: client,
 	}

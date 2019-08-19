@@ -7,33 +7,25 @@ package dep
 
 import (
 	"database/sql"
+	"short/app/adapter/account"
 	"short/app/adapter/graphql"
-	"short/app/adapter/oauth"
-	"short/app/adapter/recaptcha"
 	"short/app/adapter/repo"
-	"short/app/adapter/request"
-	"short/app/adapter/routing"
-	"short/app/usecase/auth"
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
-	"short/app/usecase/service"
 	"short/app/usecase/url"
-	"short/fw"
-	"short/modern/mdcrypto"
-	"short/modern/mddb"
-	"short/modern/mdgraphql"
+	"short/dep/inject"
 	"short/modern/mdhttp"
 	"short/modern/mdlogger"
+	"short/modern/mdrequest"
 	"short/modern/mdrouting"
 	"short/modern/mdservice"
 	"short/modern/mdtimer"
 	"short/modern/mdtracer"
-	"time"
 )
 
 // Injectors from wire.go:
 
-func InitGraphQlService(name string, db *sql.DB, graphqlPath GraphQlPath, secret ReCaptchaSecret) mdservice.Service {
+func InitGraphQlService(name string, db *sql.DB, graphqlPath inject.GraphQlPath, secret inject.ReCaptchaSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	repoUrl := repo.NewUrlSql(db)
@@ -41,114 +33,30 @@ func InitGraphQlService(name string, db *sql.DB, graphqlPath GraphQlPath, secret
 	keyGenerator := keygen.NewInMemory()
 	creator := url.NewCreatorPersist(repoUrl, keyGenerator)
 	client := mdhttp.NewClient()
-	http := request.NewHttp(client)
-	reCaptcha := NewReCaptchaService(http, secret)
+	httpRequest := mdrequest.NewHttp(client)
+	reCaptcha := inject.ReCaptchaService(httpRequest, secret)
 	verifier := requester.NewVerifier(reCaptcha)
 	graphQlApi := graphql.NewShort(logger, tracer, retriever, creator, verifier)
-	server := NewGraphGophers(graphqlPath, logger, tracer, graphQlApi)
+	server := inject.GraphGophers(graphqlPath, logger, tracer, graphQlApi)
 	service := mdservice.New(name, server, logger)
 	return service
 }
 
-func InitRoutingService(name string, db *sql.DB, wwwRoot WwwRoot, githubClientId GithubClientId, githubClientSecret GithubClientSecret, jwtSecret JwtSecret) mdservice.Service {
+func InitRoutingService(name string, db *sql.DB, wwwRoot inject.WwwRoot, githubClientId inject.GithubClientId, githubClientSecret inject.GithubClientSecret, jwtSecret inject.JwtSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	timer := mdtimer.NewTimer()
 	repoUrl := repo.NewUrlSql(db)
 	retriever := url.NewRetrieverPersist(repoUrl)
 	client := mdhttp.NewClient()
-	http := request.NewHttp(client)
-	github := NewGithubOAuth(http, githubClientId, githubClientSecret)
-	cryptoTokenizer := NewJwtGo(jwtSecret)
-	authenticator := NewAuthenticator(cryptoTokenizer, timer)
-	v := NewShortRoutes(logger, tracer, wwwRoot, timer, retriever, github, authenticator)
+	httpRequest := mdrequest.NewHttp(client)
+	github := inject.GithubOAuth(httpRequest, githubClientId, githubClientSecret)
+	graphQlRequest := mdrequest.NewGraphQl(httpRequest)
+	accountGithub := account.NewGithub(graphQlRequest)
+	cryptoTokenizer := inject.JwtGo(jwtSecret)
+	authenticator := inject.Authenticator(cryptoTokenizer, timer)
+	v := inject.ShortRoutes(logger, tracer, wwwRoot, timer, retriever, github, accountGithub, authenticator)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service
-}
-
-// wire.go:
-
-type GraphQlPath string
-
-func NewGraphGophers(graphqlPath GraphQlPath, logger fw.Logger, tracer fw.Tracer, g fw.GraphQlApi) fw.Server {
-	return mdgraphql.NewGraphGophers(string(graphqlPath), logger, tracer, g)
-}
-
-type ReCaptchaSecret string
-
-func NewReCaptchaService(req request.Http, secret ReCaptchaSecret) service.ReCaptcha {
-	return recaptcha.NewService(req, string(secret))
-}
-
-type GithubClientId string
-
-type GithubClientSecret string
-
-func NewGithubOAuth(
-	req request.Http,
-	clientId GithubClientId,
-	clientSecret GithubClientSecret,
-) oauth.Github {
-	return oauth.NewGithub(req, string(clientId), string(clientSecret))
-}
-
-type JwtSecret string
-
-func NewJwtGo(secret JwtSecret) fw.CryptoTokenizer {
-	return mdcrypto.NewJwtGo(string(secret))
-}
-
-const oneDay = 24 * time.Hour
-
-const oneWeek = 7 * oneDay
-
-func NewAuthenticator(tokenizer fw.CryptoTokenizer, timer fw.Timer) auth.Authenticator {
-	return auth.NewAuthenticator(tokenizer, timer, oneWeek)
-}
-
-type WwwRoot string
-
-func NewShortRoutes(
-	logger fw.Logger,
-	tracer fw.Tracer,
-	wwwRoot WwwRoot,
-	timer fw.Timer,
-	urlRetriever url.Retriever,
-	githubOAuth oauth.Github,
-	authenticator auth.Authenticator,
-) []fw.Route {
-	return routing.NewShort(
-		logger,
-		tracer,
-		string(wwwRoot),
-		timer,
-		urlRetriever,
-		githubOAuth,
-		authenticator,
-	)
-}
-
-type ServiceLauncher func(db *sql.DB)
-
-func InitDB(
-	host string,
-	port int,
-	user string,
-	password string,
-	dbName string,
-	migrationRoot string,
-	serviceLauncher ServiceLauncher,
-) {
-	db, err := mddb.NewPostgresDb(host, port, user, password, dbName)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
-	err = mddb.MigratePostgres(db, migrationRoot)
-	if err != nil {
-		panic(err)
-	}
-	serviceLauncher(db)
 }

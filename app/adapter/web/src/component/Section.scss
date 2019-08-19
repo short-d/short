@@ -3,22 +3,23 @@
 
 .section {
   @include default-font();
-  display         : flex;
-  justify-content : center;
+
+  display: flex;
+  justify-content: center;
 
   .center {
-    box-sizing       : border-box;
-    width            : $content-width;
-    padding          : 20px;
-    border-radius    : 4px;
-    background-color : #FAFAFA;
+    box-sizing: border-box;
+    width: $content-width;
+    padding: 20px;
+    border-radius: 4px;
+    background-color: #fafafa;
   }
 
   .title {
-    font-size     : 26px;
-    font-weight   : $font-weight-semi-bold;
-    margin-bottom : 20px;
-    padding-left  : 10px;
-    color         : #333333;
+    font-size: 26px;
+    font-weight: $font-weight-semi-bold;
+    margin-bottom: 20px;
+    padding-left: 10px;
+    color: #333;
   }
 }
