@@ -11,7 +11,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func Execute() {
+func Execute(
+	host string,
+	portStr string,
+	user string,
+	password string,
+	dbName string,
+	recaptchaSecret string,
+	githubClientId string,
+	githubClientSecret string,
+	jwtSecret string,
+) {
 	var migrationRoot string
 	var wwwRoot string
 
@@ -19,17 +29,7 @@ func Execute() {
 		Use:   "start",
 		Short: "Start service",
 		Run: func(cmd *cobra.Command, args []string) {
-			host := getEnv("DB_HOST", "localhost")
-			portStr := getEnv("DB_PORT", "5432")
 			port := MustInt(portStr)
-			user := getEnv("DB_USER", "postgres")
-			password := getEnv("DB_PASSWORD", "password")
-			dbName := getEnv("DB_NAME", "short")
-
-			recaptchaSecret := getEnv("RECAPTCHA_SECRET", "")
-			githubClientId := getEnv("GITHUB_CLIENT_ID", "")
-			githubClientSecret := getEnv("GITHUB_CLIENT_SECRET", "")
-			jwtSecret := getEnv("JWT_SECRET", "")
 
 			start(
 				host,
@@ -58,16 +58,6 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func getEnv(varName string, defaultVal string) string {
-	val := os.Getenv(varName)
-
-	if val == "" {
-		return defaultVal
-	}
-
-	return val
 }
 
 func MustInt(numStr string) int {
