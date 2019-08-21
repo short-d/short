@@ -89,10 +89,10 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)
-			} else {
-				assert.Nil(t, err)
-				assert.Equal(t, testCase.expectedUrl, url)
+				return
 			}
+			assert.Nil(t, err)
+			assert.Equal(t, testCase.expectedUrl, url)
 		})
 	}
 }
@@ -140,10 +140,10 @@ func TestUrlRetriever_GetUrl(t *testing.T) {
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)
-			} else {
-				assert.Nil(t, err)
-				assert.Equal(t, testCase.expectedUrl, url)
+				return
 			}
+			assert.Nil(t, err)
+			assert.Equal(t, testCase.expectedUrl, url)
 		})
 	}
 }

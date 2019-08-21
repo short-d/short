@@ -60,10 +60,10 @@ func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)
-			} else {
-				assert.Nil(t, err)
-				assert.Equal(t, testCase.expectedUrl, url)
+				return
 			}
+			assert.Nil(t, err)
+			assert.Equal(t, testCase.expectedUrl, url)
 		})
 	}
 }
