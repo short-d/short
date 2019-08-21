@@ -57,13 +57,13 @@ func TestReCaptcha_Verify(t *testing.T) {
 
 				assert.Equal(t, string(expSecret), params.Get("secret"))
 				assert.Equal(t, expCaptchaResponse, params.Get("response"))
-				return mdtest.JsonResponse(testCase.apiResponse)
+				return mdtest.JSONResponse(testCase.apiResponse)
 			})
 
 			client := http.Client{
 				Transport: transport,
 			}
-			req := mdrequest.NewHttp(client)
+			req := mdrequest.NewHTTP(client)
 
 			rc := NewService(req, expSecret)
 			gotRes, err := rc.Verify(expCaptchaResponse)

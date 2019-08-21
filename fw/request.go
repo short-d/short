@@ -1,7 +1,7 @@
 package fw
 
-type HttpRequest interface {
-	Json(method string, url string, headers map[string]string, body string, v interface{}) error
+type HTTPRequest interface {
+	JSON(method string, url string, headers map[string]string, body string, v interface{}) error
 }
 
 type GraphQlQuery struct {

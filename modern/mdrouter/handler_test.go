@@ -11,7 +11,7 @@ import (
 )
 
 func TestHttpHandler_ServeHTTP(t *testing.T) {
-	handler := NewHttpHandler()
+	handler := NewHTTPHandler()
 	var gotParams Params
 
 	err := handler.AddRoute("GET", false, "/users/:userId/articles/:articleId", func(w http.ResponseWriter, r *http.Request, params Params) {

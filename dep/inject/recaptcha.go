@@ -8,6 +8,6 @@ import (
 
 type ReCaptchaSecret string
 
-func ReCaptchaService(req fw.HttpRequest, secret ReCaptchaSecret) service.ReCaptcha {
+func ReCaptchaService(req fw.HTTPRequest, secret ReCaptchaSecret) service.ReCaptcha {
 	return recaptcha.NewService(req, string(secret))
 }

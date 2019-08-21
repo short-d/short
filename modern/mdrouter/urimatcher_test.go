@@ -32,7 +32,7 @@ func TestNewUriExactMatcher(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run("", func(t *testing.T) {
-			_, err := NewUriExactMatcher(testCase.uri)
+			_, err := NewURIExactMatcher(testCase.uri)
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)
@@ -77,7 +77,7 @@ func TestUriMatcher_Params(t *testing.T) {
 	for _, testCase := range testCases {
 
 		t.Run("", func(t *testing.T) {
-			urlMatcher, err := NewUriExactMatcher(testCase.uri)
+			urlMatcher, err := NewURIExactMatcher(testCase.uri)
 
 			if err != nil {
 				return
@@ -91,7 +91,7 @@ func TestUriMatcher_Params(t *testing.T) {
 
 func TestUriExactMatcher_Match(t *testing.T) {
 	uriTemplate := "/users/:userId/articles/:articleId"
-	matcher, err := NewUriExactMatcher(uriTemplate)
+	matcher, err := NewURIExactMatcher(uriTemplate)
 
 	assert.Nil(t, err)
 

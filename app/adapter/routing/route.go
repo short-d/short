@@ -32,7 +32,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/r/:alias",
-			Handle: NewOriginalUrl(logger, tracer, urlRetriever, timer),
+			Handle: NewOriginalURL(logger, tracer, urlRetriever, timer),
 		},
 		{
 			Method:      "GET",

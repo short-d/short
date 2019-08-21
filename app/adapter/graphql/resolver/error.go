@@ -22,16 +22,16 @@ func (e ErrUnknown) Error() string {
 	return "unknown err"
 }
 
-type ErrUrlAliasExist string
+type ErrURLAliasExist string
 
-func (e ErrUrlAliasExist) Extensions() map[string]interface{} {
+func (e ErrURLAliasExist) Extensions() map[string]interface{} {
 	return map[string]interface{}{
 		"code":  ErrCodeAliasAlreadyExist,
 		"alias": string(e),
 	}
 }
 
-func (e ErrUrlAliasExist) Error() string {
+func (e ErrURLAliasExist) Error() string {
 	return "url alias already exists"
 }
 

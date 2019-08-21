@@ -7,21 +7,21 @@ schema {
 }
 
 type Query {
-	url(alias: String!, expireAfter: Time): Url
+	URL(alias: String!, expireAfter: Time): URL
 }
 
 type Mutation {
-	createUrl(captchaResponse: String!, url: UrlInput!, userEmail: String): Url
+	createURL(captchaResponse: String!, url: URLInput!, userEmail: String): URL
 }
 
-type Url {
+type URL {
 	alias: String
-	originalUrl: String
+	originalURL: String
 	expireAt: Time
 }
 
-input UrlInput {
-	originalUrl: String!
+input URLInput {
+	originalURL: String!
 	customAlias: String
 	expireAt: Time
 }

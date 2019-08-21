@@ -7,7 +7,7 @@ import (
 	"short/fw"
 )
 
-var _ fw.GraphQlApi = (*Short)(nil)
+var _ fw.GraphQlAPI = (*Short)(nil)
 
 type Short struct {
 	resolver *resolver.Resolver

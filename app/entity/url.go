@@ -2,9 +2,9 @@ package entity
 
 import "time"
 
-type Url struct {
+type URL struct {
 	Alias       string
-	OriginalUrl string
+	OriginalURL string
 	ExpireAt    *time.Time
 	CreatedBy   *User
 	CreatedAt   *time.Time

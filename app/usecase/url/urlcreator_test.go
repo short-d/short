@@ -10,26 +10,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
+func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 	now := time.Now()
 
 	testCases := []struct {
 		name        string
 		urls        urlMap
 		alias       string
-		url         entity.Url
+		url         entity.URL
 		hasErr      bool
-		expectedUrl entity.Url
+		expectedURL entity.URL
 	}{
 		{
 			name: "alias exists",
 			urls: urlMap{
-				"220uFicCJj": entity.Url{
+				"220uFicCJj": entity.URL{
 					Alias:    "220uFicCJj",
 					ExpireAt: &now,
 				},
 			},
-			url:    entity.Url{},
+			url:    entity.URL{},
 			alias:  "220uFicCJj",
 			hasErr: true,
 		},
@@ -37,12 +37,12 @@ func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
 			name:  "create alias successfully",
 			urls:  urlMap{},
 			alias: "220uFicCJj",
-			url: entity.Url{
+			url: entity.URL{
 				Alias:    "220uFicCJj",
 				ExpireAt: &now,
 			},
 			hasErr: false,
-			expectedUrl: entity.Url{
+			expectedURL: entity.URL{
 				Alias:    "220uFicCJj",
 				ExpireAt: &now,
 			},
@@ -51,7 +51,7 @@ func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			fakeRepo := repo.NewUrlFake(testCase.urls)
+			fakeRepo := repo.NewURLFake(testCase.urls)
 			fakeKeyGen := keygen.NewFake([]string{
 				testCase.alias,
 			})
@@ -63,7 +63,7 @@ func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
 				return
 			}
 			assert.Nil(t, err)
-			assert.Equal(t, testCase.expectedUrl, url)
+			assert.Equal(t, testCase.expectedURL, url)
 		})
 	}
 }

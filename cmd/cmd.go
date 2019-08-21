@@ -18,7 +18,7 @@ func Execute(
 	password string,
 	dbName string,
 	recaptchaSecret string,
-	githubClientId string,
+	githubClientID string,
 	githubClientSecret string,
 	jwtSecret string,
 ) {
@@ -40,7 +40,7 @@ func Execute(
 				migrationRoot,
 				wwwRoot,
 				recaptchaSecret,
-				githubClientId,
+				githubClientID,
 				githubClientSecret,
 				jwtSecret,
 			)
@@ -79,7 +79,7 @@ func start(
 	migrationRoot string,
 	wwwRoot string,
 	recaptchaSecret string,
-	githubClientId string,
+	githubClientID string,
 	githubClientSecret string,
 	jwtSecret string,
 ) {
@@ -96,7 +96,7 @@ func start(
 			"Routing API",
 			db,
 			inject.WwwRoot(wwwRoot),
-			inject.GithubClientId(githubClientId),
+			inject.GithubClientID(githubClientID),
 			inject.GithubClientSecret(githubClientSecret),
 			inject.JwtSecret(jwtSecret),
 		)
