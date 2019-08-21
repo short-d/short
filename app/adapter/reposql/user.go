@@ -1,18 +1,20 @@
-package repo
+package reposql
 
 import (
 	"database/sql"
 	"fmt"
-	"short/app/adapter/repo/table"
+	"short/app/adapter/reposql/table"
 	"short/app/entity"
 	"short/app/usecase/repo"
 )
 
-type UserSql struct {
+var _ repo.User = (*User)(nil)
+
+type User struct {
 	db *sql.DB
 }
 
-func (u UserSql) IsEmailExist(email string) (bool, error) {
+func (u User) IsEmailExist(email string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
 FROM "%s" 
@@ -33,7 +35,7 @@ WHERE "%s"=$1;
 	return true, nil
 }
 
-func (u UserSql) GetByEmail(email string) (entity.User, error) {
+func (u User) GetByEmail(email string) (entity.User, error) {
 	query := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s"
 FROM "%s" 
@@ -59,7 +61,7 @@ WHERE "%s"=$1;
 	return user, nil
 }
 
-func (u *UserSql) Create(user entity.User) error {
+func (u *User) Create(user entity.User) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5)
@@ -76,8 +78,8 @@ VALUES ($1, $2, $3, $4, $5)
 	return err
 }
 
-func NewUserSql(db *sql.DB) repo.User {
-	return &UserSql{
+func NewUser(db *sql.DB) User {
+	return User{
 		db: db,
 	}
 }

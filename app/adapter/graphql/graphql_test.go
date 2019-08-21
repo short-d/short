@@ -19,7 +19,8 @@ func TestGraphQlApi(t *testing.T) {
 
 	urls := map[string]entity.Url{}
 	retriever := url.NewRetrieverFake(urls)
-	creator := url.NewCreatorFake(urls)
+	var availableUrls []string
+	creator := url.NewCreatorFake(urls, availableUrls)
 
 	s := recaptcha.NewFake()
 	verifier := requester.NewVerifier(s)

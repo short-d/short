@@ -4,6 +4,8 @@ import "regexp"
 
 const longLinkMaxLength = 200
 
+var _ Validator = (*LongLink)(nil)
+
 type LongLink struct {
 	uriPattern *regexp.Regexp
 }
@@ -28,7 +30,7 @@ func (l LongLink) IsValid(longLink *string) bool {
 	return true
 }
 
-func NewLongLink() Validator {
+func NewLongLink() LongLink {
 	uriPattern := regexp.MustCompile(`^[a-zA-Z]+://.+$`)
 	return LongLink{
 		uriPattern: uriPattern,

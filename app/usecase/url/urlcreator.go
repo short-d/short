@@ -6,6 +6,8 @@ import (
 	"short/app/usecase/repo"
 )
 
+var _ Creator = (*CreatorPersist)(nil)
+
 type ErrAliasExist string
 
 func (e ErrAliasExist) Error() string {
@@ -47,7 +49,7 @@ func (a CreatorPersist) CreateWithCustomAlias(url entity.Url, alias string) (ent
 	return url, nil
 }
 
-func NewCreatorPersist(urlRepo repo.Url, keyGen keygen.KeyGenerator) Creator {
+func NewCreatorPersist(urlRepo repo.Url, keyGen keygen.KeyGenerator) CreatorPersist {
 	return CreatorPersist{
 		urlRepo: urlRepo,
 		keyGen:  keyGen,

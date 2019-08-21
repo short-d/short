@@ -1,18 +1,20 @@
-package repo
+package reposql
 
 import (
 	"database/sql"
 	"fmt"
-	"short/app/adapter/repo/table"
+	"short/app/adapter/reposql/table"
 	"short/app/entity"
 	"short/app/usecase/repo"
 )
 
-type UrlSql struct {
+var _ repo.Url = (*Url)(nil)
+
+type Url struct {
 	db *sql.DB
 }
 
-func (u UrlSql) IsAliasExist(alias string) (bool, error) {
+func (u Url) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
 FROM "%s" 
@@ -32,7 +34,7 @@ WHERE "%s"=$1;`,
 	return true, err
 }
 
-func (u *UrlSql) Create(url entity.Url) error {
+func (u *Url) Create(url entity.Url) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5);`,
@@ -47,7 +49,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
-func (u UrlSql) GetByAlias(alias string) (entity.Url, error) {
+func (u Url) GetByAlias(alias string) (entity.Url, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s" 
@@ -72,8 +74,8 @@ WHERE "%s"=$1;`,
 	return url, nil
 }
 
-func NewUrlSql(db *sql.DB) repo.Url {
-	return &UrlSql{
+func NewUrl(db *sql.DB) Url {
+	return Url{
 		db: db,
 	}
 }
