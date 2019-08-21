@@ -8,20 +8,20 @@ import (
 	"short/app/usecase/repo"
 )
 
-var _ repo.Url = (*Url)(nil)
+var _ repo.URL = (*URL)(nil)
 
-type Url struct {
+type URL struct {
 	db *sql.DB
 }
 
-func (u Url) IsAliasExist(alias string) (bool, error) {
+func (u URL) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
 FROM "%s" 
 WHERE "%s"=$1;`,
-		table.Url.ColumnAlias,
-		table.Url.TableName,
-		table.Url.ColumnAlias,
+		table.URL.ColumnAlias,
+		table.URL.TableName,
+		table.URL.ColumnAlias,
 	)
 
 	err := u.db.QueryRow(query, alias).Scan(&alias)
@@ -34,48 +34,48 @@ WHERE "%s"=$1;`,
 	return true, err
 }
 
-func (u *Url) Create(url entity.Url) error {
+func (u *URL) Create(url entity.URL) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5);`,
-		table.Url.TableName,
-		table.Url.ColumnAlias,
-		table.Url.ColumnOriginalUrl,
-		table.Url.ColumnExpireAt,
-		table.Url.ColumnCreatedAt,
-		table.Url.ColumnUpdatedAt,
+		table.URL.TableName,
+		table.URL.ColumnAlias,
+		table.URL.ColumnOriginalURL,
+		table.URL.ColumnExpireAt,
+		table.URL.ColumnCreatedAt,
+		table.URL.ColumnUpdatedAt,
 	)
-	_, err := u.db.Exec(statement, url.Alias, url.OriginalUrl, url.ExpireAt, url.CreatedAt, url.UpdatedAt)
+	_, err := u.db.Exec(statement, url.Alias, url.OriginalURL, url.ExpireAt, url.CreatedAt, url.UpdatedAt)
 	return err
 }
 
-func (u Url) GetByAlias(alias string) (entity.Url, error) {
+func (u URL) GetByAlias(alias string) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s" 
 WHERE "%s"=$1;`,
-		table.Url.ColumnAlias,
-		table.Url.ColumnOriginalUrl,
-		table.Url.ColumnExpireAt,
-		table.Url.ColumnCreatedAt,
-		table.Url.ColumnUpdatedAt,
-		table.Url.TableName,
-		table.Url.ColumnAlias,
+		table.URL.ColumnAlias,
+		table.URL.ColumnOriginalURL,
+		table.URL.ColumnExpireAt,
+		table.URL.ColumnCreatedAt,
+		table.URL.ColumnUpdatedAt,
+		table.URL.TableName,
+		table.URL.ColumnAlias,
 	)
 
 	row := u.db.QueryRow(statement, alias)
 
-	url := entity.Url{}
-	err := row.Scan(&url.Alias, &url.OriginalUrl, &url.ExpireAt, &url.CreatedAt, &url.UpdatedAt)
+	url := entity.URL{}
+	err := row.Scan(&url.Alias, &url.OriginalURL, &url.ExpireAt, &url.CreatedAt, &url.UpdatedAt)
 	if err != nil {
-		return entity.Url{}, err
+		return entity.URL{}, err
 	}
 
 	return url, nil
 }
 
-func NewUrl(db *sql.DB) Url {
-	return Url{
+func NewURL(db *sql.DB) URL {
+	return URL{
 		db: db,
 	}
 }

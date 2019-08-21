@@ -6,7 +6,7 @@ import (
 	"github.com/graph-gophers/graphql-go"
 )
 
-func IsGraphQlApiValid(api fw.GraphQlApi) bool {
+func IsGraphQlAPIValid(api fw.GraphQlAPI) bool {
 	_, err := graphql.ParseSchema(api.GetSchema(), api.GetResolver())
 	return err == nil
 }

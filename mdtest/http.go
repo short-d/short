@@ -23,7 +23,7 @@ func NewTransportMock(handleFunc TransportHandleFunc) http.RoundTripper {
 	}
 }
 
-func JsonResponse(jsonObj map[string]interface{}) (*http.Response, error) {
+func JSONResponse(jsonObj map[string]interface{}) (*http.Response, error) {
 	jsonStr, err := json.Marshal(jsonObj)
 	if err != nil {
 		return nil, err

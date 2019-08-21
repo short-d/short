@@ -1,16 +1,16 @@
 package table
 
-var Url = struct {
+var URL = struct {
 	TableName         string
 	ColumnAlias       string
-	ColumnOriginalUrl string
+	ColumnOriginalURL string
 	ColumnCreatedAt   string
 	ColumnExpireAt    string
 	ColumnUpdatedAt   string
 }{
 	TableName:         "Url",
 	ColumnAlias:       "alias",
-	ColumnOriginalUrl: "originalUrl",
+	ColumnOriginalURL: "originalUrl",
 	ColumnCreatedAt:   "createdAt",
 	ColumnExpireAt:    "expireAt",
 	ColumnUpdatedAt:   "updatedAt",

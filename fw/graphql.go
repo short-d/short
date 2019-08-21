@@ -2,7 +2,7 @@ package fw
 
 type Resolver = interface{}
 
-type GraphQlApi interface {
+type GraphQlAPI interface {
 	GetSchema() string
 	GetResolver() Resolver
 }

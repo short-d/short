@@ -10,17 +10,17 @@ import (
 
 type GraphQlPath string
 
-func GraphGophers(graphqlPath GraphQlPath, logger fw.Logger, tracer fw.Tracer, g fw.GraphQlApi) fw.Server {
+func GraphGophers(graphqlPath GraphQlPath, logger fw.Logger, tracer fw.Tracer, g fw.GraphQlAPI) fw.Server {
 	return mdgraphql.NewGraphGophers(string(graphqlPath), logger, tracer, g)
 }
 
-func ShortGraphQlApi(
+func ShortGraphQlAPI(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
 	requesterVerifier requester.Verifier,
-) fw.GraphQlApi {
+) fw.GraphQlAPI {
 	return graphql.NewShort(
 		logger,
 		tracer,

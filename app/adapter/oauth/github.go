@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	authorizationApi = "https://github.com/login/oauth/authorize"
-	accessTokenApi   = "https://github.com/login/oauth/access_token"
+	authorizationAPI = "https://github.com/login/oauth/authorize"
+	accessTokenAPI   = "https://github.com/login/oauth/access_token"
 	userEmailScope   = "user:email"
 )
 
@@ -21,31 +21,31 @@ type accessTokenResponse struct {
 }
 
 type Github struct {
-	clientId     string
+	clientID     string
 	clientSecret string
-	http         fw.HttpRequest
+	http         fw.HTTPRequest
 }
 
-func (g Github) GetAuthorizationUrl() string {
+func (g Github) GetAuthorizationURL() string {
 	scopes := strings.Join([]string{
 		userEmailScope,
 	}, " ")
 	escapedScope := url.QueryEscape(scopes)
-	clientId := g.clientId
-	return fmt.Sprintf("%s?client_id=%s&scope=%s", authorizationApi, clientId, escapedScope)
+	clientID := g.clientID
+	return fmt.Sprintf("%s?client_id=%s&scope=%s", authorizationAPI, clientID, escapedScope)
 }
 
 func (g Github) RequestAccessToken(authorizationCode string) (accessToken string, tokenType string, err error) {
-	clientId := g.clientId
+	clientID := g.clientID
 	clientSecret := g.clientSecret
-	body := fmt.Sprintf("client_id=%s&client_secret=%s&code=%s", clientId, clientSecret, authorizationCode)
+	body := fmt.Sprintf("client_id=%s&client_secret=%s&code=%s", clientID, clientSecret, authorizationCode)
 
 	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
 
 	apiRes := accessTokenResponse{}
-	err = g.http.Json(http.MethodPost, accessTokenApi, headers, body, &apiRes)
+	err = g.http.JSON(http.MethodPost, accessTokenAPI, headers, body, &apiRes)
 	if err != nil {
 		return "", "", err
 	}
@@ -53,9 +53,9 @@ func (g Github) RequestAccessToken(authorizationCode string) (accessToken string
 	return apiRes.AccessToken, apiRes.Scope, nil
 }
 
-func NewGithub(http fw.HttpRequest, clientId string, clientSecret string) Github {
+func NewGithub(http fw.HTTPRequest, clientID string, clientSecret string) Github {
 	return Github{
-		clientId:     clientId,
+		clientID:     clientID,
 		clientSecret: clientSecret,
 		http:         http,
 	}

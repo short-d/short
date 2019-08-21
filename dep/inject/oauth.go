@@ -5,13 +5,13 @@ import (
 	"short/fw"
 )
 
-type GithubClientId string
+type GithubClientID string
 type GithubClientSecret string
 
 func GithubOAuth(
-	req fw.HttpRequest,
-	clientId GithubClientId,
+	req fw.HTTPRequest,
+	clientID GithubClientID,
 	clientSecret GithubClientSecret,
 ) oauth.Github {
-	return oauth.NewGithub(req, string(clientId), string(clientSecret))
+	return oauth.NewGithub(req, string(clientID), string(clientSecret))
 }

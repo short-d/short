@@ -12,12 +12,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGraphQlApi(t *testing.T) {
+func TestGraphQlAPI(t *testing.T) {
 	db, _, err := sqlmock.New()
 	assert.Nil(t, err)
 	defer db.Close()
 
-	urls := map[string]entity.Url{}
+	urls := map[string]entity.URL{}
 	retriever := url.NewRetrieverFake(urls)
 	var availableUrls []string
 	creator := url.NewCreatorFake(urls, availableUrls)
@@ -25,6 +25,6 @@ func TestGraphQlApi(t *testing.T) {
 	s := recaptcha.NewFake()
 	verifier := requester.NewVerifier(s)
 
-	graphqlApi := NewShort(mdtest.FakeLogger, mdtest.FakeTracer, retriever, creator, verifier)
-	assert.True(t, mdtest.IsGraphQlApiValid(graphqlApi))
+	graphqlAPI := NewShort(mdtest.FakeLogger, mdtest.FakeTracer, retriever, creator, verifier)
+	assert.True(t, mdtest.IsGraphQlAPIValid(graphqlAPI))
 }

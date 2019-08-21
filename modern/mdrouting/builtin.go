@@ -21,7 +21,7 @@ func (g BuiltIn) ListenAndServe(port int) error {
 }
 
 func NewBuiltIn(logger fw.Logger, tracer fw.Tracer, routes []fw.Route) fw.Server {
-	httpRouter := mdrouter.NewHttpHandler()
+	httpRouter := mdrouter.NewHTTPHandler()
 
 	for _, route := range routes {
 		route := route

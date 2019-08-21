@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-type HttpHandler struct {
+type HTTPHandler struct {
 	routes []route
 }
 
@@ -12,12 +12,12 @@ type Handle func(w http.ResponseWriter, r *http.Request, params Params)
 
 type route struct {
 	method      string
-	pathMatcher UriMatcher
+	pathMatcher URIMatcher
 	queryParams []string
 	handle      Handle
 }
 
-func (r HttpHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+func (r HTTPHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	for _, route := range r.routes {
 		if route.method != req.Method {
 			continue
@@ -41,15 +41,15 @@ func (r HttpHandler) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	http.Redirect(res, req, "/404", http.StatusNotFound)
 }
 
-func (r *HttpHandler) AddRoute(method string, isPrefix bool, path string, handle Handle) error {
+func (r *HTTPHandler) AddRoute(method string, isPrefix bool, path string, handle Handle) error {
 
-	var matcher UriMatcher
+	var matcher URIMatcher
 	var err error
 
 	if isPrefix {
-		matcher, err = NewUriPrefixMatcher(path)
+		matcher, err = NewURIPrefixMatcher(path)
 	} else {
-		matcher, err = NewUriExactMatcher(path)
+		matcher, err = NewURIExactMatcher(path)
 	}
 
 	if err != nil {
@@ -64,6 +64,6 @@ func (r *HttpHandler) AddRoute(method string, isPrefix bool, path string, handle
 	return nil
 }
 
-func NewHttpHandler() HttpHandler {
-	return HttpHandler{}
+func NewHTTPHandler() HTTPHandler {
+	return HTTPHandler{}
 }

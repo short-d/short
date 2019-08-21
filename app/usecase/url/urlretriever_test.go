@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type urlMap = map[string]entity.Url
+type urlMap = map[string]entity.URL
 
 func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 	now := time.Now()
@@ -23,7 +23,7 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 		alias       string
 		expiringAt  time.Time
 		hasErr      bool
-		expectedUrl entity.Url
+		expectedURL entity.URL
 	}{
 		{
 			name:        "alias not found",
@@ -31,12 +31,12 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 			alias:       "220uFicCJj",
 			expiringAt:  now,
 			hasErr:      true,
-			expectedUrl: entity.Url{},
+			expectedURL: entity.URL{},
 		},
 		{
 			name: "url expired",
 			urls: urlMap{
-				"220uFicCJj": entity.Url{
+				"220uFicCJj": entity.URL{
 					Alias:    "220uFicCJj",
 					ExpireAt: &before,
 				},
@@ -44,12 +44,12 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 			alias:       "220uFicCJj",
 			expiringAt:  now,
 			hasErr:      true,
-			expectedUrl: entity.Url{},
+			expectedURL: entity.URL{},
 		},
 		{
 			name: "url never expire",
 			urls: urlMap{
-				"220uFicCJj": entity.Url{
+				"220uFicCJj": entity.URL{
 					Alias:    "220uFicCJj",
 					ExpireAt: nil,
 				},
@@ -57,7 +57,7 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 			alias:      "220uFicCJj",
 			expiringAt: now,
 			hasErr:     false,
-			expectedUrl: entity.Url{
+			expectedURL: entity.URL{
 				Alias:    "220uFicCJj",
 				ExpireAt: nil,
 			},
@@ -65,7 +65,7 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 		{
 			name: "unexpired url found",
 			urls: urlMap{
-				"220uFicCJj": entity.Url{
+				"220uFicCJj": entity.URL{
 					Alias:    "220uFicCJj",
 					ExpireAt: &after,
 				},
@@ -73,7 +73,7 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 			alias:      "220uFicCJj",
 			expiringAt: now,
 			hasErr:     false,
-			expectedUrl: entity.Url{
+			expectedURL: entity.URL{
 				Alias:    "220uFicCJj",
 				ExpireAt: &after,
 			},
@@ -82,7 +82,7 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			fakeRepo := repo.NewUrlFake(testCase.urls)
+			fakeRepo := repo.NewURLFake(testCase.urls)
 			retriever := NewRetrieverPersist(&fakeRepo)
 			fakeTrace := mdtest.FakeTracer.BeginTrace("GetUrlAfter")
 			url, err := retriever.GetAfter(fakeTrace, testCase.alias, testCase.expiringAt)
@@ -92,7 +92,7 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 				return
 			}
 			assert.Nil(t, err)
-			assert.Equal(t, testCase.expectedUrl, url)
+			assert.Equal(t, testCase.expectedURL, url)
 		})
 	}
 }
@@ -105,26 +105,26 @@ func TestUrlRetriever_GetUrl(t *testing.T) {
 		urls        urlMap
 		alias       string
 		hasErr      bool
-		expectedUrl entity.Url
+		expectedURL entity.URL
 	}{
 		{
 			name:        "alias not found",
 			urls:        urlMap{},
 			alias:       "220uFicCJj",
 			hasErr:      true,
-			expectedUrl: entity.Url{},
+			expectedURL: entity.URL{},
 		},
 		{
 			name: "valid url found",
 			urls: urlMap{
-				"220uFicCJj": entity.Url{
+				"220uFicCJj": entity.URL{
 					Alias:    "220uFicCJj",
 					ExpireAt: &now,
 				},
 			},
 			alias:  "220uFicCJj",
 			hasErr: false,
-			expectedUrl: entity.Url{
+			expectedURL: entity.URL{
 				Alias:    "220uFicCJj",
 				ExpireAt: &now,
 			},
@@ -133,7 +133,7 @@ func TestUrlRetriever_GetUrl(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			fakeRepo := repo.NewUrlFake(testCase.urls)
+			fakeRepo := repo.NewURLFake(testCase.urls)
 			retriever := NewRetrieverPersist(&fakeRepo)
 			fakeTrace := mdtest.FakeTracer.BeginTrace("GetUrl")
 			url, err := retriever.Get(fakeTrace, testCase.alias)
@@ -143,7 +143,7 @@ func TestUrlRetriever_GetUrl(t *testing.T) {
 				return
 			}
 			assert.Nil(t, err)
-			assert.Equal(t, testCase.expectedUrl, url)
+			assert.Equal(t, testCase.expectedURL, url)
 		})
 	}
 }
