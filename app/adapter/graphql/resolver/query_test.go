@@ -92,9 +92,9 @@ func TestQuery_Url(t *testing.T) {
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)
-			} else {
-				assert.Equal(t, testCase.expectedUrl, u)
+				return
 			}
+			assert.Equal(t, testCase.expectedUrl, u)
 		})
 	}
 }

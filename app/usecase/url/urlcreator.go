@@ -30,11 +30,16 @@ func (a CreatorPersist) Create(url entity.Url) (entity.Url, error) {
 func (a CreatorPersist) CreateWithCustomAlias(url entity.Url, alias string) (entity.Url, error) {
 	url.Alias = alias
 
-	if a.urlRepo.IsAliasExist(alias) {
+	isExist, err := a.urlRepo.IsAliasExist(alias)
+	if err != nil {
+		return entity.Url{}, err
+	}
+
+	if isExist {
 		return entity.Url{}, ErrAliasExist("usecase: url alias already exist")
 	}
 
-	err := a.urlRepo.Create(url)
+	err = a.urlRepo.Create(url)
 	if err != nil {
 		return entity.Url{}, err
 	}
