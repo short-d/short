@@ -6,6 +6,8 @@ import (
 	"short/app/usecase/repo"
 )
 
+var _ Creator = (*CreatorPersist)(nil)
+
 type ErrAliasExist string
 
 func (e ErrAliasExist) Error() string {
@@ -30,11 +32,16 @@ func (a CreatorPersist) Create(url entity.Url) (entity.Url, error) {
 func (a CreatorPersist) CreateWithCustomAlias(url entity.Url, alias string) (entity.Url, error) {
 	url.Alias = alias
 
-	if a.urlRepo.IsAliasExist(alias) {
+	isExist, err := a.urlRepo.IsAliasExist(alias)
+	if err != nil {
+		return entity.Url{}, err
+	}
+
+	if isExist {
 		return entity.Url{}, ErrAliasExist("usecase: url alias already exist")
 	}
 
-	err := a.urlRepo.Create(url)
+	err = a.urlRepo.Create(url)
 	if err != nil {
 		return entity.Url{}, err
 	}
@@ -42,7 +49,7 @@ func (a CreatorPersist) CreateWithCustomAlias(url entity.Url, alias string) (ent
 	return url, nil
 }
 
-func NewCreatorPersist(urlRepo repo.Url, keyGen keygen.KeyGenerator) Creator {
+func NewCreatorPersist(urlRepo repo.Url, keyGen keygen.KeyGenerator) CreatorPersist {
 	return CreatorPersist{
 		urlRepo: urlRepo,
 		keyGen:  keyGen,

@@ -83,16 +83,16 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeRepo := repo.NewUrlFake(testCase.urls)
-			retriever := NewRetrieverPersist(fakeRepo)
+			retriever := NewRetrieverPersist(&fakeRepo)
 			fakeTrace := mdtest.FakeTracer.BeginTrace("GetUrlAfter")
 			url, err := retriever.GetAfter(fakeTrace, testCase.alias, testCase.expiringAt)
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)
-			} else {
-				assert.Nil(t, err)
-				assert.Equal(t, testCase.expectedUrl, url)
+				return
 			}
+			assert.Nil(t, err)
+			assert.Equal(t, testCase.expectedUrl, url)
 		})
 	}
 }
@@ -134,16 +134,16 @@ func TestUrlRetriever_GetUrl(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeRepo := repo.NewUrlFake(testCase.urls)
-			retriever := NewRetrieverPersist(fakeRepo)
+			retriever := NewRetrieverPersist(&fakeRepo)
 			fakeTrace := mdtest.FakeTracer.BeginTrace("GetUrl")
 			url, err := retriever.Get(fakeTrace, testCase.alias)
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)
-			} else {
-				assert.Nil(t, err)
-				assert.Equal(t, testCase.expectedUrl, url)
+				return
 			}
+			assert.Nil(t, err)
+			assert.Equal(t, testCase.expectedUrl, url)
 		})
 	}
 }

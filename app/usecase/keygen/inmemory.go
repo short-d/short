@@ -2,6 +2,8 @@ package keygen
 
 import uuid "github.com/satori/go.uuid"
 
+var _ KeyGenerator = (*InMemory)(nil)
+
 type InMemory struct {
 }
 

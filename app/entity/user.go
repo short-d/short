@@ -5,7 +5,7 @@ import "time"
 type User struct {
 	Name           string
 	Email          string
-	LastLoggedInAt *time.Time
+	LastSignedInAt *time.Time
 	CreatedAt      *time.Time
 	UpdatedAt      *time.Time
 }
