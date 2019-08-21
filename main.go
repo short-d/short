@@ -11,7 +11,6 @@ func main() {
 	user := getEnv("DB_USER", "postgres")
 	password := getEnv("DB_PASSWORD", "password")
 	dbName := getEnv("DB_NAME", "short")
-
 	recaptchaSecret := getEnv("RECAPTCHA_SECRET", "")
 	githubClientId := getEnv("GITHUB_CLIENT_ID", "")
 	githubClientSecret := getEnv("GITHUB_CLIENT_SECRET", "")
