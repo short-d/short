@@ -12,18 +12,24 @@ type UrlSql struct {
 	db *sql.DB
 }
 
-func (u UrlSql) IsAliasExist(alias string) bool {
+func (u UrlSql) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
-SELECT %s 
+SELECT "%s" 
 FROM "%s" 
-WHERE %s=$1;`,
+WHERE "%s"=$1;`,
 		table.Url.ColumnAlias,
 		table.Url.TableName,
 		table.Url.ColumnAlias,
 	)
 
-	err := u.db.QueryRow(query, alias).Scan()
-	return err != sql.ErrNoRows
+	err := u.db.QueryRow(query, alias).Scan(&alias)
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
+	if err != nil {
+		return false, nil
+	}
+	return true, err
 }
 
 func (u *UrlSql) Create(url entity.Url) error {
@@ -41,13 +47,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
-func NewUrlSql(db *sql.DB) repo.Url {
-	return &UrlSql{
-		db: db,
-	}
-}
-
-func (u *UrlSql) GetByAlias(alias string) (entity.Url, error) {
+func (u UrlSql) GetByAlias(alias string) (entity.Url, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s" 
@@ -70,4 +70,10 @@ WHERE "%s"=$1;`,
 	}
 
 	return url, nil
+}
+
+func NewUrlSql(db *sql.DB) repo.Url {
+	return &UrlSql{
+		db: db,
+	}
 }
