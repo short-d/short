@@ -1,10 +1,10 @@
-package repo
+package reposql
 
 import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"short/app/adapter/repo/table"
+	"short/app/adapter/reposql/table"
 	"short/app/entity"
 	"testing"
 
@@ -48,7 +48,7 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.User.TableName, table.User.ColumnEmail)
 			mock.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
-			userRepo := NewUserSql(db)
+			userRepo := NewUser(db)
 			gotIsExist, err := userRepo.IsEmailExist(testCase.email)
 			assert.Nil(t, err)
 			assert.Equal(t, testCase.expIsExist, gotIsExist)
@@ -105,7 +105,7 @@ func TestUserSql_GetByEmail(t *testing.T) {
 			expQuery := fmt.Sprintf(`^SELECT ".+",".+",".+",".+",".+" FROM "%s" WHERE "%s"=.+$`, table.User.TableName, table.User.ColumnEmail)
 			mock.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
-			userRepo := NewUserSql(db)
+			userRepo := NewUser(db)
 
 			gotUser, err := userRepo.GetByEmail(testCase.email)
 			if testCase.hasErr {
@@ -157,7 +157,7 @@ func TestUserSql_Create(t *testing.T) {
 				mock.ExpectExec(expStatement).WillReturnResult(driver.ResultNoRows)
 			}
 
-			userRepo := NewUserSql(db)
+			userRepo := NewUser(db)
 
 			err = userRepo.Create(testCase.user)
 			if testCase.hasErr {

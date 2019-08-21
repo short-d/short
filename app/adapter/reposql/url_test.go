@@ -1,9 +1,9 @@
-package repo
+package reposql
 
 import (
 	"database/sql/driver"
 	"fmt"
-	"short/app/adapter/repo/table"
+	"short/app/adapter/reposql/table"
 	"short/app/entity"
 	"testing"
 	"time"
@@ -50,7 +50,7 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.Url.TableName, table.Url.ColumnAlias)
 			mock.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
-			urlRepo := NewUrlSql(db)
+			urlRepo := NewUrl(db)
 			gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
 			assert.Nil(t, err)
 			assert.Equal(t, testCase.expIsExist, gotIsExist)
@@ -120,7 +120,7 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			statement := fmt.Sprintf(`^SELECT .+ FROM "%s" WHERE "%s"=.+$`, table.Url.TableName, table.Url.ColumnAlias)
 			mock.ExpectQuery(statement).WillReturnRows(testCase.tableRows)
 
-			urlRepo := NewUrlSql(db)
+			urlRepo := NewUrl(db)
 			url, err := urlRepo.GetByAlias("220uFicCJj")
 
 			if testCase.hasErr {
@@ -177,7 +177,7 @@ func TestUrlFake_Create(t *testing.T) {
 				mock.ExpectExec(statement).WillReturnResult(driver.ResultNoRows)
 			}
 
-			urlRepo := NewUrlSql(db)
+			urlRepo := NewUrl(db)
 			err = urlRepo.Create(testCase.url)
 
 			if testCase.hasErr {

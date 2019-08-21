@@ -7,6 +7,8 @@ import (
 	"short/fw"
 )
 
+var _ fw.GraphQlApi = (*Short)(nil)
+
 type Short struct {
 	resolver *resolver.Resolver
 }
@@ -25,7 +27,7 @@ func NewShort(
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
 	requesterVerifier requester.Verifier,
-) fw.GraphQlApi {
+) Short {
 	r := resolver.NewResolver(
 		logger,
 		tracer,
@@ -33,7 +35,7 @@ func NewShort(
 		urlCreator,
 		requesterVerifier,
 	)
-	return &Short{
+	return Short{
 		resolver: &r,
 	}
 }

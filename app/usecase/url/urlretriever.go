@@ -9,6 +9,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+var _ Retriever = (*RetrieverPersist)(nil)
+
 type Retriever interface {
 	GetAfter(trace fw.Trace, alias string, expiringAt time.Time) (entity.Url, error)
 	Get(trace fw.Trace, alias string) (entity.Url, error)
@@ -50,7 +52,7 @@ func (u RetrieverPersist) Get(trace fw.Trace, alias string) (entity.Url, error) 
 	return url, nil
 }
 
-func NewRetrieverPersist(urlRepo repo.Url) Retriever {
+func NewRetrieverPersist(urlRepo repo.Url) RetrieverPersist {
 	return RetrieverPersist{
 		urlRepo: urlRepo,
 	}

@@ -55,7 +55,7 @@ func TestUrlCreatorPersist_CreateUrl(t *testing.T) {
 			fakeKeyGen := keygen.NewFake([]string{
 				testCase.alias,
 			})
-			creator := NewCreatorPersist(fakeRepo, fakeKeyGen)
+			creator := NewCreatorPersist(&fakeRepo, &fakeKeyGen)
 			url, err := creator.Create(testCase.url)
 
 			if testCase.hasErr {

@@ -5,11 +5,8 @@ package dep
 import (
 	"database/sql"
 	"short/app/adapter/account"
-	"short/app/adapter/graphql"
-	"short/app/adapter/repo"
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
-	"short/app/usecase/url"
 	"short/dep/inject"
 	"short/modern/mdhttp"
 	"short/modern/mdlogger"
@@ -36,13 +33,13 @@ func InitGraphQlService(
 		mdhttp.NewClient,
 		mdrequest.NewHttp,
 
-		repo.NewUrlSql,
+		inject.UrlRepoSql,
 		keygen.NewInMemory,
-		url.NewRetrieverPersist,
-		url.NewCreatorPersist,
+		inject.UrlRetrieverPersist,
+		inject.UrlCreatorPersist,
 		inject.ReCaptchaService,
 		requester.NewVerifier,
-		graphql.NewShort,
+		inject.ShortGraphQlApi,
 	)
 	return mdservice.Service{}
 }
@@ -66,8 +63,8 @@ func InitRoutingService(
 		mdtimer.NewTimer,
 		inject.JwtGo,
 
-		repo.NewUrlSql,
-		url.NewRetrieverPersist,
+		inject.UrlRepoSql,
+		inject.UrlRetrieverPersist,
 		inject.GithubOAuth,
 		account.NewGithub,
 		inject.Authenticator,

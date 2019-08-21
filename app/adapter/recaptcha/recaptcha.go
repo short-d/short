@@ -9,6 +9,8 @@ import (
 
 const verifyApi = "https://www.google.com/recaptcha/api/siteverify"
 
+var _ service.ReCaptcha = (*Service)(nil)
+
 // https://developers.google.com/recaptcha/docs/verify
 type Service struct {
 	http   fw.HttpRequest
@@ -28,7 +30,7 @@ func (r Service) Verify(captchaResponse string) (service.VerifyResponse, error) 
 	return apiRes, nil
 }
 
-func NewService(http fw.HttpRequest, secret string) service.ReCaptcha {
+func NewService(http fw.HttpRequest, secret string) Service {
 	return Service{
 		http:   http,
 		secret: secret,

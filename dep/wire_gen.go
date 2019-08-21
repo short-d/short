@@ -8,11 +8,8 @@ package dep
 import (
 	"database/sql"
 	"short/app/adapter/account"
-	"short/app/adapter/graphql"
-	"short/app/adapter/repo"
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
-	"short/app/usecase/url"
 	"short/dep/inject"
 	"short/modern/mdhttp"
 	"short/modern/mdlogger"
@@ -28,15 +25,15 @@ import (
 func InitGraphQlService(name string, db *sql.DB, graphqlPath inject.GraphQlPath, secret inject.ReCaptchaSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
-	repoUrl := repo.NewUrlSql(db)
-	retriever := url.NewRetrieverPersist(repoUrl)
+	url := inject.UrlRepoSql(db)
+	retriever := inject.UrlRetrieverPersist(url)
 	keyGenerator := keygen.NewInMemory()
-	creator := url.NewCreatorPersist(repoUrl, keyGenerator)
+	creator := inject.UrlCreatorPersist(url, keyGenerator)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHttp(client)
 	reCaptcha := inject.ReCaptchaService(httpRequest, secret)
 	verifier := requester.NewVerifier(reCaptcha)
-	graphQlApi := graphql.NewShort(logger, tracer, retriever, creator, verifier)
+	graphQlApi := inject.ShortGraphQlApi(logger, tracer, retriever, creator, verifier)
 	server := inject.GraphGophers(graphqlPath, logger, tracer, graphQlApi)
 	service := mdservice.New(name, server, logger)
 	return service
@@ -46,8 +43,8 @@ func InitRoutingService(name string, db *sql.DB, wwwRoot inject.WwwRoot, githubC
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	timer := mdtimer.NewTimer()
-	repoUrl := repo.NewUrlSql(db)
-	retriever := url.NewRetrieverPersist(repoUrl)
+	url := inject.UrlRepoSql(db)
+	retriever := inject.UrlRetrieverPersist(url)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHttp(client)
 	github := inject.GithubOAuth(httpRequest, githubClientId, githubClientSecret)

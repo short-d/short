@@ -6,6 +6,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+var _ Url = (*UrlFake)(nil)
+
 type UrlFake struct {
 	urls map[string]entity.Url
 }
@@ -37,8 +39,8 @@ func (u UrlFake) GetByAlias(alias string) (entity.Url, error) {
 	return url, nil
 }
 
-func NewUrlFake(urls map[string]entity.Url) Url {
-	return &UrlFake{
+func NewUrlFake(urls map[string]entity.Url) UrlFake {
+	return UrlFake{
 		urls: urls,
 	}
 }

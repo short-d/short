@@ -6,6 +6,8 @@ const (
 	customAliasMaxLength = 50
 )
 
+var _ Validator = (*CustomAlias)(nil)
+
 type CustomAlias struct {
 	uriPattern *regexp.Regexp
 }
@@ -25,6 +27,6 @@ func (c CustomAlias) IsValid(alias *string) bool {
 	return true
 }
 
-func NewCustomAlias() Validator {
+func NewCustomAlias() CustomAlias {
 	return CustomAlias{}
 }
