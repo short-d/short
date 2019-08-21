@@ -20,12 +20,12 @@ func NewQuery(logger fw.Logger, tracer fw.Tracer, urlRetriever url.Retriever) Qu
 	}
 }
 
-type UrlArgs struct {
+type URLArgs struct {
 	Alias       string
 	ExpireAfter *scalar.Time
 }
 
-func (q Query) Url(args *UrlArgs) (*Url, error) {
+func (q Query) URL(args *URLArgs) (*URL, error) {
 	trace := q.tracer.BeginTrace("Query.Url")
 
 	if args.ExpireAfter == nil {
@@ -39,7 +39,7 @@ func (q Query) Url(args *UrlArgs) (*Url, error) {
 		}
 
 		trace.End()
-		return &Url{url: u}, nil
+		return &URL{url: u}, nil
 	}
 
 	trace1 := trace.Next("GetAfter")
@@ -52,5 +52,5 @@ func (q Query) Url(args *UrlArgs) (*Url, error) {
 	}
 
 	trace.End()
-	return &Url{url: u}, nil
+	return &URL{url: u}, nil
 }

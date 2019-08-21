@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-type UriMatcher struct {
+type URIMatcher struct {
 	pathFormat string
 	pattern    *regexp.Regexp
 	paramNames []string
@@ -15,7 +15,7 @@ type UriMatcher struct {
 
 var pathSep = "/"
 
-func (m UriMatcher) IsMatch(path string) (bool, Params) {
+func (m URIMatcher) IsMatch(path string) (bool, Params) {
 	matches := m.pattern.FindStringSubmatch(path)
 
 	if len(matches) < 1 {
@@ -37,7 +37,7 @@ func (m UriMatcher) IsMatch(path string) (bool, Params) {
 	return true, params
 }
 
-func (m UriMatcher) Params() []string {
+func (m URIMatcher) Params() []string {
 	return m.paramNames
 }
 
@@ -75,13 +75,13 @@ func isParam(text string) bool {
 	return paramPattern.MatchString(text)
 }
 
-func newUriMatcher(pathFormat string, uriTemplate string) (UriMatcher, error) {
+func newURIMatcher(pathFormat string, uriTemplate string) (URIMatcher, error) {
 	if len(uriTemplate) < 1 {
-		return UriMatcher{}, errors.New("uri is empty")
+		return URIMatcher{}, errors.New("uri is empty")
 	}
 
 	if !strings.HasPrefix(uriTemplate, pathSep) {
-		return UriMatcher{}, errors.New("uri has to start with /")
+		return URIMatcher{}, errors.New("uri has to start with /")
 	}
 
 	paths := strings.Split(uriTemplate, pathSep)
@@ -89,16 +89,16 @@ func newUriMatcher(pathFormat string, uriTemplate string) (UriMatcher, error) {
 	paramNames := extractParamName(paths)
 	uriPattern := getUriPattern(pathFormat, paths)
 
-	return UriMatcher{
+	return URIMatcher{
 		pattern:    uriPattern,
 		paramNames: paramNames,
 	}, nil
 }
 
-func NewUriPrefixMatcher(uriTemplate string) (UriMatcher, error) {
-	return newUriMatcher("^%s.*$", uriTemplate)
+func NewURIPrefixMatcher(uriTemplate string) (URIMatcher, error) {
+	return newURIMatcher("^%s.*$", uriTemplate)
 }
 
-func NewUriExactMatcher(uriTemplate string) (UriMatcher, error) {
-	return newUriMatcher("^%s/?$", uriTemplate)
+func NewURIExactMatcher(uriTemplate string) (URIMatcher, error) {
+	return newURIMatcher("^%s/?$", uriTemplate)
 }

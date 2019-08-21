@@ -11,7 +11,7 @@ type graphQlResponse struct {
 }
 
 type GraphQl struct {
-	http fw.HttpRequest
+	http fw.HTTPRequest
 	root string
 }
 
@@ -23,7 +23,7 @@ func (g GraphQl) Query(query fw.GraphQlQuery, headers map[string]string, respons
 		return err
 	}
 
-	err = g.http.Json(http.MethodPost, g.root, headers, string(reqBuf), &res)
+	err = g.http.JSON(http.MethodPost, g.root, headers, string(reqBuf), &res)
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func (g GraphQl) RootUrl(root string) fw.GraphQlRequest {
 	return g
 }
 
-func NewGraphQl(http fw.HttpRequest) fw.GraphQlRequest {
+func NewGraphQl(http fw.HTTPRequest) fw.GraphQlRequest {
 	return GraphQl{
 		http: http,
 	}

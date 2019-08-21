@@ -21,7 +21,7 @@ func (g GraphGophers) ListenAndServe(port int) error {
 	return g.server.ListenAndServe(port)
 }
 
-func NewGraphGophers(graphqlPath string, logger fw.Logger, tracer fw.Tracer, g fw.GraphQlApi) fw.Server {
+func NewGraphGophers(graphqlPath string, logger fw.Logger, tracer fw.Tracer, g fw.GraphQlAPI) fw.Server {
 	schema := graphql.MustParseSchema(g.GetSchema(), g.GetResolver())
 
 	relayHandler := relay.Handler{

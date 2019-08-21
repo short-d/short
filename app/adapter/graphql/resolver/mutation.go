@@ -18,19 +18,19 @@ type Mutation struct {
 	aliasValidator    input.Validator
 }
 
-type UrlInput struct {
-	OriginalUrl string
+type URLInput struct {
+	OriginalURL string
 	CustomAlias *string
 	ExpireAt    *time.Time
 }
 
-type CreateUrlArgs struct {
+type CreateURLArgs struct {
 	CaptchaResponse string
-	Url             UrlInput
+	URL             URLInput
 	UserEmail       *string
 }
 
-func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
+func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	trace := m.tracer.BeginTrace("Mutation.CreateUrl")
 
 	isHuman, err := m.requesterVerifier.IsHuman(args.CaptchaResponse)
@@ -43,45 +43,45 @@ func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
 		return nil, ErrNotHuman{}
 	}
 
-	longLink := args.Url.OriginalUrl
+	longLink := args.URL.OriginalURL
 	if !m.longLinkValidator.IsValid(&longLink) {
 		return nil, ErrInvalidLongLink(longLink)
 	}
 
-	customAlias := args.Url.CustomAlias
+	customAlias := args.URL.CustomAlias
 	if !m.aliasValidator.IsValid(customAlias) {
 		return nil, ErrInvalidCustomAlias{
 			customAlias: customAlias,
 		}
 	}
 
-	u := entity.Url{
-		OriginalUrl: args.Url.OriginalUrl,
-		ExpireAt:    args.Url.ExpireAt,
+	u := entity.URL{
+		OriginalURL: args.URL.OriginalURL,
+		ExpireAt:    args.URL.ExpireAt,
 	}
 
-	if args.Url.CustomAlias != nil {
-		customAlias := *args.Url.CustomAlias
+	if args.URL.CustomAlias != nil {
+		customAlias := *args.URL.CustomAlias
 
 		trace1 := trace.Next("CreateUrlWithCustomAlias")
-		newUrl, err := m.urlCreator.CreateWithCustomAlias(u, customAlias)
+		newURL, err := m.urlCreator.CreateWithCustomAlias(u, customAlias)
 		trace1.End()
 
 		if err == nil {
-			return &Url{url: newUrl}, nil
+			return &URL{url: newURL}, nil
 		}
 		m.logger.Error(err)
 
 		switch err.(type) {
 		case url.ErrAliasExist:
-			return &Url{}, ErrUrlAliasExist(customAlias)
+			return &URL{}, ErrURLAliasExist(customAlias)
 		default:
 			return nil, ErrUnknown{}
 		}
 	}
 
 	trace1 := trace.Next("CreateUrl")
-	newUrl, err := m.urlCreator.Create(u)
+	newURL, err := m.urlCreator.Create(u)
 	trace1.End()
 
 	if err != nil {
@@ -90,7 +90,7 @@ func (m Mutation) CreateUrl(args *CreateUrlArgs) (*Url, error) {
 	}
 
 	trace.End()
-	return &Url{url: newUrl}, nil
+	return &URL{url: newURL}, nil
 }
 
 func NewMutation(

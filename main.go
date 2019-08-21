@@ -12,11 +12,11 @@ func main() {
 	password := getEnv("DB_PASSWORD", "password")
 	dbName := getEnv("DB_NAME", "short")
 	recaptchaSecret := getEnv("RECAPTCHA_SECRET", "")
-	githubClientId := getEnv("GITHUB_CLIENT_ID", "")
+	githubClientID := getEnv("GITHUB_CLIENT_ID", "")
 	githubClientSecret := getEnv("GITHUB_CLIENT_SECRET", "")
 	jwtSecret := getEnv("JWT_SECRET", "")
 
-	cmd.Execute(host, portStr, user, password, dbName, recaptchaSecret, githubClientId, githubClientSecret, jwtSecret)
+	cmd.Execute(host, portStr, user, password, dbName, recaptchaSecret, githubClientID, githubClientSecret, jwtSecret)
 }
 
 func getEnv(varName string, defaultVal string) string {

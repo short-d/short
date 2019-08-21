@@ -5,6 +5,6 @@ import (
 	"short/app/usecase/url"
 )
 
-func UrlRetrieverPersist(urlRepo repo.Url) url.Retriever {
+func URLRetrieverPersist(urlRepo repo.URL) url.Retriever {
 	return url.NewRetrieverPersist(urlRepo)
 }

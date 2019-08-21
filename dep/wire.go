@@ -31,15 +31,15 @@ func InitGraphQlService(
 		mdtracer.NewLocal,
 		inject.GraphGophers,
 		mdhttp.NewClient,
-		mdrequest.NewHttp,
+		mdrequest.NewHTTP,
 
-		inject.UrlRepoSql,
+		inject.URLRepoSQL,
 		keygen.NewInMemory,
-		inject.UrlRetrieverPersist,
-		inject.UrlCreatorPersist,
+		inject.URLRetrieverPersist,
+		inject.URLCreatorPersist,
 		inject.ReCaptchaService,
 		requester.NewVerifier,
-		inject.ShortGraphQlApi,
+		inject.ShortGraphQlAPI,
 	)
 	return mdservice.Service{}
 }
@@ -48,7 +48,7 @@ func InitRoutingService(
 	name string,
 	db *sql.DB,
 	wwwRoot inject.WwwRoot,
-	githubClientId inject.GithubClientId,
+	githubClientID inject.GithubClientID,
 	githubClientSecret inject.GithubClientSecret,
 	jwtSecret inject.JwtSecret,
 ) mdservice.Service {
@@ -58,13 +58,13 @@ func InitRoutingService(
 		mdtracer.NewLocal,
 		mdrouting.NewBuiltIn,
 		mdhttp.NewClient,
-		mdrequest.NewHttp,
+		mdrequest.NewHTTP,
 		mdrequest.NewGraphQl,
 		mdtimer.NewTimer,
 		inject.JwtGo,
 
-		inject.UrlRepoSql,
-		inject.UrlRetrieverPersist,
+		inject.URLRepoSQL,
+		inject.URLRetrieverPersist,
 		inject.GithubOAuth,
 		account.NewGithub,
 		inject.Authenticator,

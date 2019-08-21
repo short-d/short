@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type urlMap = map[string]entity.Url
+type urlMap = map[string]entity.URL
 
 func TestQuery_Url(t *testing.T) {
 	now := time.Now()
@@ -24,7 +24,7 @@ func TestQuery_Url(t *testing.T) {
 		expireAfter *scalar.Time
 		urls        urlMap
 		hasErr      bool
-		expectedUrl *Url
+		expectedURL *URL
 	}{
 		{
 			name:        "alias not found with no expireAfter",
@@ -32,7 +32,6 @@ func TestQuery_Url(t *testing.T) {
 			expireAfter: nil,
 			urls:        urlMap{},
 			hasErr:      true,
-			expectedUrl: nil,
 		},
 		{
 			name:  "alias not found with expireAfter",
@@ -40,9 +39,8 @@ func TestQuery_Url(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls:        urlMap{},
-			hasErr:      true,
-			expectedUrl: nil,
+			urls:   urlMap{},
+			hasErr: true,
 		},
 		{
 			name:  "alias expired",
@@ -51,12 +49,11 @@ func TestQuery_Url(t *testing.T) {
 				Time: now,
 			},
 			urls: urlMap{
-				"220uFicCJj": entity.Url{
+				"220uFicCJj": entity.URL{
 					ExpireAt: &before,
 				},
 			},
-			hasErr:      true,
-			expectedUrl: nil,
+			hasErr: true,
 		},
 		{
 			name:  "url found",
@@ -65,13 +62,13 @@ func TestQuery_Url(t *testing.T) {
 				Time: now,
 			},
 			urls: urlMap{
-				"220uFicCJj": entity.Url{
+				"220uFicCJj": entity.URL{
 					ExpireAt: &after,
 				},
 			},
 			hasErr: false,
-			expectedUrl: &Url{
-				url: entity.Url{
+			expectedURL: &URL{
+				url: entity.URL{
 					ExpireAt: &after,
 				},
 			},
@@ -83,18 +80,18 @@ func TestQuery_Url(t *testing.T) {
 			retrieverFake := url.NewRetrieverFake(testCase.urls)
 			query := NewQuery(mdtest.FakeLogger, mdtest.FakeTracer, retrieverFake)
 
-			urlArgs := &UrlArgs{
+			urlArgs := &URLArgs{
 				Alias:       testCase.alias,
 				ExpireAfter: testCase.expireAfter,
 			}
 
-			u, err := query.Url(urlArgs)
+			u, err := query.URL(urlArgs)
 
 			if testCase.hasErr {
 				assert.NotNil(t, err)
 				return
 			}
-			assert.Equal(t, testCase.expectedUrl, u)
+			assert.Equal(t, testCase.expectedURL, u)
 		})
 	}
 }

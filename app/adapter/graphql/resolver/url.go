@@ -5,19 +5,19 @@ import (
 	"short/app/entity"
 )
 
-type Url struct {
-	url entity.Url
+type URL struct {
+	url entity.URL
 }
 
-func (u Url) Alias() *string {
+func (u URL) Alias() *string {
 	return &u.url.Alias
 }
 
-func (u Url) OriginalUrl() *string {
-	return &u.url.OriginalUrl
+func (u URL) OriginalURL() *string {
+	return &u.url.OriginalURL
 }
 
-func (u Url) ExpireAt() *scalar.Time {
+func (u URL) ExpireAt() *scalar.Time {
 	if u.url.ExpireAt == nil {
 		return nil
 	}

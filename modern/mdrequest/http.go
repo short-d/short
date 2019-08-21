@@ -9,11 +9,11 @@ import (
 	"strings"
 )
 
-type Http struct {
+type HTTP struct {
 	client http.Client
 }
 
-func (h Http) Json(
+func (h HTTP) JSON(
 	method string,
 	url string,
 	headers map[string]string,
@@ -51,8 +51,8 @@ func (h Http) Json(
 	return nil
 }
 
-func NewHttp(client http.Client) fw.HttpRequest {
-	return Http{
+func NewHTTP(client http.Client) fw.HTTPRequest {
+	return HTTP{
 		client: client,
 	}
 }

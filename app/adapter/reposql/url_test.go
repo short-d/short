@@ -25,7 +25,7 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 			name:  "alias doesn't exist",
 			alias: "gg",
 			tableRows: sqlmock.NewRows([]string{
-				table.Url.ColumnAlias,
+				table.URL.ColumnAlias,
 			}),
 			expIsExist: false,
 		},
@@ -34,7 +34,7 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 			alias: "gg",
 			tableRows: sqlmock.
 				NewRows([]string{
-					table.Url.ColumnAlias,
+					table.URL.ColumnAlias,
 				}).
 				AddRow("gg"),
 			expIsExist: true,
@@ -47,10 +47,10 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 			assert.Nil(t, err)
 			defer db.Close()
 
-			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.Url.TableName, table.Url.ColumnAlias)
+			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
 			mock.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
-			urlRepo := NewUrl(db)
+			urlRepo := NewURL(db)
 			gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
 			assert.Nil(t, err)
 			assert.Equal(t, testCase.expIsExist, gotIsExist)
@@ -64,16 +64,16 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 		tableRows   *sqlmock.Rows
 		alias       string
 		hasErr      bool
-		expectedUrl entity.Url
+		expectedURL entity.URL
 	}{
 		{
 			name: "alias not found",
 			tableRows: sqlmock.NewRows([]string{
-				table.Url.ColumnAlias,
-				table.Url.ColumnOriginalUrl,
-				table.Url.ColumnExpireAt,
-				table.Url.ColumnCreatedAt,
-				table.Url.ColumnUpdatedAt,
+				table.URL.ColumnAlias,
+				table.URL.ColumnOriginalURL,
+				table.URL.ColumnExpireAt,
+				table.URL.ColumnCreatedAt,
+				table.URL.ColumnUpdatedAt,
 			}),
 			alias:  "220uFicCJj",
 			hasErr: true,
@@ -81,31 +81,31 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 		{
 			name: "found url",
 			tableRows: sqlmock.NewRows([]string{
-				table.Url.ColumnAlias,
-				table.Url.ColumnOriginalUrl,
-				table.Url.ColumnExpireAt,
-				table.Url.ColumnCreatedAt,
-				table.Url.ColumnUpdatedAt,
+				table.URL.ColumnAlias,
+				table.URL.ColumnOriginalURL,
+				table.URL.ColumnExpireAt,
+				table.URL.ColumnCreatedAt,
+				table.URL.ColumnUpdatedAt,
 			}).AddRow(
 				"220uFicCJj",
 				"http://www.google.com",
-				mustParseSqlTime("2019-05-01 08:02:16"),
-				mustParseSqlTime("2017-05-01 08:02:16"),
+				mustParseSQLTime("2019-05-01 08:02:16"),
+				mustParseSQLTime("2017-05-01 08:02:16"),
 				nil,
 			).AddRow(
 				"yDOBcj5HIPbUAsw",
 				"http://www.facebook.com",
-				mustParseSqlTime("2018-04-02 08:02:16"),
-				mustParseSqlTime("2017-05-01 08:02:16"),
+				mustParseSQLTime("2018-04-02 08:02:16"),
+				mustParseSQLTime("2017-05-01 08:02:16"),
 				nil,
 			),
 			alias:  "220uFicCJj",
 			hasErr: false,
-			expectedUrl: entity.Url{
+			expectedURL: entity.URL{
 				Alias:       "220uFicCJj",
-				OriginalUrl: "http://www.google.com",
-				ExpireAt:    mustParseSqlTime("2019-05-01 08:02:16"),
-				CreatedAt:   mustParseSqlTime("2017-05-01 08:02:16"),
+				OriginalURL: "http://www.google.com",
+				ExpireAt:    mustParseSQLTime("2019-05-01 08:02:16"),
+				CreatedAt:   mustParseSQLTime("2017-05-01 08:02:16"),
 				UpdatedAt:   nil,
 			},
 		},
@@ -117,10 +117,10 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			assert.Nil(t, err)
 			defer db.Close()
 
-			statement := fmt.Sprintf(`^SELECT .+ FROM "%s" WHERE "%s"=.+$`, table.Url.TableName, table.Url.ColumnAlias)
+			statement := fmt.Sprintf(`^SELECT .+ FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
 			mock.ExpectQuery(statement).WillReturnRows(testCase.tableRows)
 
-			urlRepo := NewUrl(db)
+			urlRepo := NewURL(db)
 			url, err := urlRepo.GetByAlias("220uFicCJj")
 
 			if testCase.hasErr {
@@ -128,34 +128,34 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 				return
 			}
 			assert.Nil(t, err)
-			assert.Equal(t, testCase.expectedUrl, url)
+			assert.Equal(t, testCase.expectedURL, url)
 		})
 	}
 }
 
-func TestUrlFake_Create(t *testing.T) {
+func TestURLFake_Create(t *testing.T) {
 	testCases := []struct {
 		name     string
-		url      entity.Url
+		url      entity.URL
 		rowExist bool
 		hasErr   bool
 	}{
 		{
 			name: "url exists",
-			url: entity.Url{
+			url: entity.URL{
 				Alias:       "220uFicCJj",
-				OriginalUrl: "http://www.google.com",
-				ExpireAt:    mustParseSqlTime("2019-05-01 08:02:16"),
+				OriginalURL: "http://www.google.com",
+				ExpireAt:    mustParseSQLTime("2019-05-01 08:02:16"),
 			},
 			rowExist: true,
 			hasErr:   true,
 		},
 		{
 			name: "successfully create url",
-			url: entity.Url{
+			url: entity.URL{
 				Alias:       "220uFicCJj",
-				OriginalUrl: "http://www.google.com",
-				ExpireAt:    mustParseSqlTime("2019-05-01 08:02:16"),
+				OriginalURL: "http://www.google.com",
+				ExpireAt:    mustParseSQLTime("2019-05-01 08:02:16"),
 			},
 			rowExist: false,
 			hasErr:   false,
@@ -169,7 +169,7 @@ func TestUrlFake_Create(t *testing.T) {
 			assert.Nil(t, err)
 			defer db.Close()
 
-			statement := fmt.Sprintf(`INSERT INTO "%s" .+ VALUES .+`, table.Url.TableName)
+			statement := fmt.Sprintf(`INSERT INTO "%s" .+ VALUES .+`, table.URL.TableName)
 
 			if testCase.rowExist {
 				mock.ExpectExec(statement).WillReturnError(errors.New("row exists"))
@@ -177,7 +177,7 @@ func TestUrlFake_Create(t *testing.T) {
 				mock.ExpectExec(statement).WillReturnResult(driver.ResultNoRows)
 			}
 
-			urlRepo := NewUrl(db)
+			urlRepo := NewURL(db)
 			err = urlRepo.Create(testCase.url)
 
 			if testCase.hasErr {
@@ -191,7 +191,7 @@ func TestUrlFake_Create(t *testing.T) {
 
 var dateTimeFmt = "2006-01-02 15:04:05"
 
-func mustParseSqlTime(dateTime string) *time.Time {
+func mustParseSQLTime(dateTime string) *time.Time {
 	if dateTime == "NULL" {
 		return nil
 	}

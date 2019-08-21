@@ -11,14 +11,14 @@ import (
 	"strings"
 )
 
-func NewOriginalUrl(
+func NewOriginalURL(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	urlRetriever url.Retriever,
 	timer fw.Timer,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		trace := tracer.BeginTrace("OriginalUrl")
+		trace := tracer.BeginTrace("OriginalURL")
 
 		alias := params["alias"]
 
@@ -32,8 +32,8 @@ func NewOriginalUrl(
 			return
 		}
 
-		originUrl := u.OriginalUrl
-		http.Redirect(w, r, originUrl, http.StatusSeeOther)
+		originURL := u.OriginalURL
+		http.Redirect(w, r, originURL, http.StatusSeeOther)
 		trace.End()
 	}
 }
@@ -69,7 +69,7 @@ func NewGithubSignIn(
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}
-		signInLink := githubOAuth.GetAuthorizationUrl()
+		signInLink := githubOAuth.GetAuthorizationURL()
 		http.Redirect(w, r, signInLink, http.StatusSeeOther)
 	}
 }

@@ -5,12 +5,14 @@ import (
 	"short/fw"
 )
 
-const githubApi = "https://api.github.com/graphql"
+const githubAPI = "https://api.github.com/graphql"
 
+// Github Account Service
 type Github struct {
 	graphql fw.GraphQlRequest
 }
 
+// Get user email through Github API given user's accessToken
 func (g Github) GetEmail(accessToken string) (string, error) {
 	headers := map[string]string{
 		"Authorization": fmt.Sprintf("bearer %s", accessToken),
@@ -40,8 +42,9 @@ query {
 	return emailResponse.Viewer.Email, nil
 }
 
+// Create new Github account service
 func NewGithub(graphql fw.GraphQlRequest) Github {
 	return Github{
-		graphql: graphql.RootUrl(githubApi),
+		graphql: graphql.RootUrl(githubAPI),
 	}
 }

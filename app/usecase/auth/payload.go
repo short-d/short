@@ -34,9 +34,9 @@ func fromTokenPayload(tokenPayload fw.TokenPayload) (Payload, error) {
 		return payload, errors.New("expect payload to contain email")
 	}
 
-	issuedAtJson := tokenPayload["issued_at"]
+	issuedAtJSON := tokenPayload["issued_at"]
 	var issuedAtStr string
-	if issuedAtStr, ok = issuedAtJson.(string); !ok {
+	if issuedAtStr, ok = issuedAtJSON.(string); !ok {
 		return payload, errors.New("expect payload to contain issued_at")
 	}
 

@@ -6,18 +6,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-var _ Url = (*UrlFake)(nil)
+var _ URL = (*URLFake)(nil)
 
-type UrlFake struct {
-	urls map[string]entity.Url
+type URLFake struct {
+	urls map[string]entity.URL
 }
 
-func (u *UrlFake) IsAliasExist(alias string) (bool, error) {
+func (u *URLFake) IsAliasExist(alias string) (bool, error) {
 	_, ok := u.urls[alias]
 	return ok, nil
 }
 
-func (u *UrlFake) Create(url entity.Url) error {
+func (u *URLFake) Create(url entity.URL) error {
 	alias := url.Alias
 	url, ok := u.urls[alias]
 
@@ -29,18 +29,18 @@ func (u *UrlFake) Create(url entity.Url) error {
 	return nil
 }
 
-func (u UrlFake) GetByAlias(alias string) (entity.Url, error) {
+func (u URLFake) GetByAlias(alias string) (entity.URL, error) {
 	url, ok := u.urls[alias]
 
 	if !ok {
-		return entity.Url{}, errors.Errorf("url not found (alias=%s)", alias)
+		return entity.URL{}, errors.Errorf("url not found (alias=%s)", alias)
 	}
 
 	return url, nil
 }
 
-func NewUrlFake(urls map[string]entity.Url) UrlFake {
-	return UrlFake{
+func NewURLFake(urls map[string]entity.URL) URLFake {
+	return URLFake{
 		urls: urls,
 	}
 }
