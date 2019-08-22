@@ -1,10 +1,11 @@
 package inject
 
 import (
-	"short/app/adapter/account"
+	"short/app/adapter/github"
 	"short/app/adapter/oauth"
 	"short/app/adapter/routing"
 	"short/app/usecase/auth"
+	"short/app/usecase/service"
 	"short/app/usecase/url"
 	"short/fw"
 )
@@ -18,8 +19,9 @@ func ShortRoutes(
 	timer fw.Timer,
 	urlRetriever url.Retriever,
 	githubOAuth oauth.Github,
-	githubAccount account.Github,
+	githubAPI github.API,
 	authenticator auth.Authenticator,
+	accountService service.Account,
 ) []fw.Route {
 	return routing.NewShort(
 		logger,
@@ -28,7 +30,8 @@ func ShortRoutes(
 		timer,
 		urlRetriever,
 		githubOAuth,
-		githubAccount,
+		githubAPI,
 		authenticator,
+		accountService,
 	)
 }

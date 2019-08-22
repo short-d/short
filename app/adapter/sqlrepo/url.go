@@ -1,9 +1,9 @@
-package reposql
+package sqlrepo
 
 import (
 	"database/sql"
 	"fmt"
-	"short/app/adapter/reposql/table"
+	"short/app/adapter/sqlrepo/table"
 	"short/app/entity"
 	"short/app/usecase/repo"
 )

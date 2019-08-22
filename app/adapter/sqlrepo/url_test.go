@@ -1,9 +1,9 @@
-package reposql
+package sqlrepo
 
 import (
 	"database/sql/driver"
 	"fmt"
-	"short/app/adapter/reposql/table"
+	"short/app/adapter/sqlrepo/table"
 	"short/app/entity"
 	"testing"
 	"time"
