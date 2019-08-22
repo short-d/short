@@ -3,9 +3,9 @@ package routing
 import (
 	"fmt"
 	"net/http"
-	"short/app/adapter/account"
 	"short/app/adapter/oauth"
 	"short/app/usecase/auth"
+	"short/app/usecase/signin"
 	"short/app/usecase/url"
 	"short/fw"
 	"strings"
@@ -77,30 +77,12 @@ func NewGithubSignIn(
 func NewGithubSignInCallback(
 	logger fw.Logger,
 	tracer fw.Tracer,
-	githubOAuth oauth.Github,
-	githubAccount account.Github,
-	authenticator auth.Authenticator,
+	oauthSignIn signin.OAuth,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		code := params["code"]
-		if len(code) < 1 {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
 
-		accessToken, _, err := githubOAuth.RequestAccessToken(code)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		email, err := githubAccount.GetEmail(accessToken)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		authToken, err := authenticator.GenerateToken(email)
+		authToken, err := oauthSignIn.SignIn(code)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return

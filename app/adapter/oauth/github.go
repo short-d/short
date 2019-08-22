@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	authorizationAPI = "https://github.com/login/oauth/authorize"
-	accessTokenAPI   = "https://github.com/login/oauth/access_token"
-	userEmailScope   = "user:email"
+	authorizationAPI     = "https://github.com/login/oauth/authorize"
+	accessTokenAPI       = "https://github.com/login/oauth/access_token"
+	readUserProfileScope = "read:user"
 )
 
 type accessTokenResponse struct {
@@ -28,14 +28,14 @@ type Github struct {
 
 func (g Github) GetAuthorizationURL() string {
 	scopes := strings.Join([]string{
-		userEmailScope,
+		readUserProfileScope,
 	}, " ")
 	escapedScope := url.QueryEscape(scopes)
 	clientID := g.clientID
 	return fmt.Sprintf("%s?client_id=%s&scope=%s", authorizationAPI, clientID, escapedScope)
 }
 
-func (g Github) RequestAccessToken(authorizationCode string) (accessToken string, tokenType string, err error) {
+func (g Github) RequestAccessToken(authorizationCode string) (accessToken string, err error) {
 	clientID := g.clientID
 	clientSecret := g.clientSecret
 	body := fmt.Sprintf("client_id=%s&client_secret=%s&code=%s", clientID, clientSecret, authorizationCode)
@@ -47,10 +47,10 @@ func (g Github) RequestAccessToken(authorizationCode string) (accessToken string
 	apiRes := accessTokenResponse{}
 	err = g.http.JSON(http.MethodPost, accessTokenAPI, headers, body, &apiRes)
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
 
-	return apiRes.AccessToken, apiRes.Scope, nil
+	return apiRes.AccessToken, nil
 }
 
 func NewGithub(http fw.HTTPRequest, clientID string, clientSecret string) Github {

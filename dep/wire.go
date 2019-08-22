@@ -4,7 +4,7 @@ package dep
 
 import (
 	"database/sql"
-	"short/app/adapter/account"
+	"short/app/adapter/github"
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
 	"short/dep/inject"
@@ -66,7 +66,9 @@ func InitRoutingService(
 		inject.URLRepoSQL,
 		inject.URLRetrieverPersist,
 		inject.GithubOAuth,
-		account.NewGithub,
+		github.NewAPI,
+		inject.UserRepoSQL,
+		inject.RepoAccount,
 		inject.Authenticator,
 		inject.ShortRoutes,
 	)

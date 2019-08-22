@@ -7,7 +7,7 @@ package dep
 
 import (
 	"database/sql"
-	"short/app/adapter/account"
+	"short/app/adapter/github"
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
 	"short/dep/inject"
@@ -47,12 +47,14 @@ func InitRoutingService(name string, db *sql.DB, wwwRoot inject.WwwRoot, githubC
 	retriever := inject.URLRetrieverPersist(url)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHTTP(client)
-	github := inject.GithubOAuth(httpRequest, githubClientID, githubClientSecret)
+	oauthGithub := inject.GithubOAuth(httpRequest, githubClientID, githubClientSecret)
 	graphQlRequest := mdrequest.NewGraphQl(httpRequest)
-	accountGithub := account.NewGithub(graphQlRequest)
+	api := github.NewAPI(graphQlRequest)
 	cryptoTokenizer := inject.JwtGo(jwtSecret)
 	authenticator := inject.Authenticator(cryptoTokenizer, timer)
-	v := inject.ShortRoutes(logger, tracer, wwwRoot, timer, retriever, github, accountGithub, authenticator)
+	user := inject.UserRepoSQL(db)
+	account := inject.RepoAccount(user, timer)
+	v := inject.ShortRoutes(logger, tracer, wwwRoot, timer, retriever, oauthGithub, api, authenticator, account)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service
