@@ -1,7 +1,6 @@
 package resolver
 
 import (
-	"fmt"
 	"short/app/entity"
 	"short/app/usecase/auth"
 	"short/app/usecase/input"
@@ -86,7 +85,6 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	defer trace1.End()
 
 	newURL, err := m.urlCreator.CreateWithCustomAlias(u, *customAlias, userEmail)
-	fmt.Println(err)
 	if err == nil {
 		return &URL{url: newURL}, nil
 	}
