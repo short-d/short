@@ -146,7 +146,7 @@ export class App extends Component<Props, State> {
         this.state.editingUrl
       );
 
-      if (url.alias) {
+      if (url && url.alias) {
         let qrCodeUrl = await QrcodeService.newQrCode(
           this.urlService.aliasToLink(url.alias)
         );
