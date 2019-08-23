@@ -1,8 +1,8 @@
 -- +migrate Up
 CREATE TABLE "Url" (
-    "alias" character varying PRIMARY KEY,
-    "originalUrl" text,
-    "expireAt" date,
-    "createdAt" date,
-    "updatedAt" date
+    "alias" CHARACTER VARYING PRIMARY KEY,
+    "originalUrl" TEXT,
+    "expireAt" DATA,
+    "createdAt" DATA,
+    "updatedAt" DATA
 );

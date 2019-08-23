@@ -8,10 +8,10 @@ var URL = struct {
 	ColumnExpireAt    string
 	ColumnUpdatedAt   string
 }{
-	TableName:         "Url",
+	TableName:         "url",
 	ColumnAlias:       "alias",
-	ColumnOriginalURL: "originalUrl",
-	ColumnCreatedAt:   "createdAt",
-	ColumnExpireAt:    "expireAt",
-	ColumnUpdatedAt:   "updatedAt",
+	ColumnOriginalURL: "original_url",
+	ColumnCreatedAt:   "created_at",
+	ColumnExpireAt:    "expire_at",
+	ColumnUpdatedAt:   "updated_at",
 }
