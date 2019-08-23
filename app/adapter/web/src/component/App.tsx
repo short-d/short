@@ -15,6 +15,8 @@ import { ExtPromo } from './promos/ExtPromo';
 import { ReCaptcha } from '../service/Captcha.service';
 import { validateLongLinkFormat } from '../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../validators/CustomAlias.validator';
+import { AuthService } from '../service/Auth.service';
+import { SignIn } from './SignIn';
 
 interface Props {
   reCaptcha: ReCaptcha;
@@ -66,6 +68,7 @@ export class App extends Component<Props, State> {
   urlService = new UrlService();
   appVersion = VersionService.getAppVersion();
   errModal = React.createRef<Modal>();
+  signInModal = React.createRef<Modal>();
 
   constructor(props: Props) {
     super(props);
@@ -80,6 +83,12 @@ export class App extends Component<Props, State> {
       },
       inputErr: ''
     };
+  }
+
+  componentDidMount(): void {
+    if (!AuthService.isSignedIn()) {
+      this.signInModal.current!.open();
+    }
   }
 
   handlerLongLinkChange = (newValue: string) => {
@@ -222,7 +231,10 @@ export class App extends Component<Props, State> {
           authorPortfolio={'https://github.com/byliuyang'}
           version={this.appVersion}
         />
-        <Modal ref={this.errModal}>
+        <Modal ref={this.signInModal}>
+          <SignIn />
+        </Modal>
+        <Modal canClose={true} ref={this.errModal}>
           <div className={'err'}>
             <i
               className={'material-icons close'}
