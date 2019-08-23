@@ -12,12 +12,12 @@ type FakeCreator struct {
 	keyGen keygen.Fake
 }
 
-func (f FakeCreator) Create(url entity.URL) (entity.URL, error) {
+func (f FakeCreator) Create(url entity.URL, userEmail string) (entity.URL, error) {
 	randomAlias := f.keyGen.NewKey()
-	return f.CreateWithCustomAlias(url, randomAlias)
+	return f.CreateWithCustomAlias(url, randomAlias, userEmail)
 }
 
-func (f FakeCreator) CreateWithCustomAlias(url entity.URL, alias string) (entity.URL, error) {
+func (f FakeCreator) CreateWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error) {
 	url.Alias = alias
 
 	_, ok := f.urls[alias]

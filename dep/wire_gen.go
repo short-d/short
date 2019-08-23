@@ -22,18 +22,22 @@ import (
 
 // Injectors from wire.go:
 
-func InitGraphQlService(name string, db *sql.DB, graphqlPath inject.GraphQlPath, secret inject.ReCaptchaSecret) mdservice.Service {
+func InitGraphQlService(name string, db *sql.DB, graphqlPath inject.GraphQlPath, secret inject.ReCaptchaSecret, jwtSecret inject.JwtSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	url := inject.URLRepoSQL(db)
 	retriever := inject.URLRetrieverPersist(url)
+	userURL := inject.UserURLRepoSQL(db)
 	keyGenerator := keygen.NewInMemory()
-	creator := inject.URLCreatorPersist(url, keyGenerator)
+	creator := inject.URLCreatorPersist(url, userURL, keyGenerator)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHTTP(client)
 	reCaptcha := inject.ReCaptchaService(httpRequest, secret)
 	verifier := requester.NewVerifier(reCaptcha)
-	graphQlAPI := inject.ShortGraphQlAPI(logger, tracer, retriever, creator, verifier)
+	cryptoTokenizer := inject.JwtGo(jwtSecret)
+	timer := mdtimer.NewTimer()
+	authenticator := inject.Authenticator(cryptoTokenizer, timer)
+	graphQlAPI := inject.ShortGraphQlAPI(logger, tracer, retriever, creator, verifier, authenticator)
 	server := inject.GraphGophers(graphqlPath, logger, tracer, graphQlAPI)
 	service := mdservice.New(name, server, logger)
 	return service

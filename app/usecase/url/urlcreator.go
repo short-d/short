@@ -15,21 +15,22 @@ func (e ErrAliasExist) Error() string {
 }
 
 type Creator interface {
-	Create(url entity.URL) (entity.URL, error)
-	CreateWithCustomAlias(url entity.URL, alias string) (entity.URL, error)
+	Create(url entity.URL, userEmail string) (entity.URL, error)
+	CreateWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error)
 }
 
 type CreatorPersist struct {
-	urlRepo repo.URL
-	keyGen  keygen.KeyGenerator
+	urlRepo     repo.URL
+	userURLRepo repo.UserURL
+	keyGen      keygen.KeyGenerator
 }
 
-func (a CreatorPersist) Create(url entity.URL) (entity.URL, error) {
+func (a CreatorPersist) Create(url entity.URL, userEmail string) (entity.URL, error) {
 	randomAlias := a.keyGen.NewKey()
-	return a.CreateWithCustomAlias(url, randomAlias)
+	return a.CreateWithCustomAlias(url, randomAlias, userEmail)
 }
 
-func (a CreatorPersist) CreateWithCustomAlias(url entity.URL, alias string) (entity.URL, error) {
+func (a CreatorPersist) CreateWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error) {
 	url.Alias = alias
 
 	isExist, err := a.urlRepo.IsAliasExist(alias)
@@ -46,12 +47,22 @@ func (a CreatorPersist) CreateWithCustomAlias(url entity.URL, alias string) (ent
 		return entity.URL{}, err
 	}
 
+	err = a.userURLRepo.CreateRelation(userEmail, url.Alias)
+	if err != nil {
+		return entity.URL{}, err
+	}
+
 	return url, nil
 }
 
-func NewCreatorPersist(urlRepo repo.URL, keyGen keygen.KeyGenerator) CreatorPersist {
+func NewCreatorPersist(
+	urlRepo repo.URL,
+	userURLRepo repo.UserURL,
+	keyGen keygen.KeyGenerator,
+) CreatorPersist {
 	return CreatorPersist{
-		urlRepo: urlRepo,
-		keyGen:  keyGen,
+		urlRepo:     urlRepo,
+		userURLRepo: userURLRepo,
+		keyGen:      keyGen,
 	}
 }

@@ -2,6 +2,7 @@ package inject
 
 import (
 	"short/app/adapter/graphql"
+	"short/app/usecase/auth"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
 	"short/fw"
@@ -20,6 +21,7 @@ func ShortGraphQlAPI(
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
 	requesterVerifier requester.Verifier,
+	authenticator auth.Authenticator,
 ) fw.GraphQlAPI {
 	return graphql.NewShort(
 		logger,
@@ -27,5 +29,6 @@ func ShortGraphQlAPI(
 		urlRetriever,
 		urlCreator,
 		requesterVerifier,
+		authenticator,
 	)
 }

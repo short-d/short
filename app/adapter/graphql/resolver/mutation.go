@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"short/app/entity"
+	"short/app/usecase/auth"
 	"short/app/usecase/input"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
@@ -14,6 +15,7 @@ type Mutation struct {
 	tracer            fw.Tracer
 	urlCreator        url.Creator
 	requesterVerifier requester.Verifier
+	authenticator     auth.Authenticator
 	longLinkValidator input.Validator
 	aliasValidator    input.Validator
 }
@@ -27,11 +29,12 @@ type URLInput struct {
 type CreateURLArgs struct {
 	CaptchaResponse string
 	URL             URLInput
-	UserEmail       *string
+	AuthToken       string
 }
 
 func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	trace := m.tracer.BeginTrace("Mutation.CreateUrl")
+	defer trace.End()
 
 	isHuman, err := m.requesterVerifier.IsHuman(args.CaptchaResponse)
 	if err != nil {
@@ -49,10 +52,8 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 
 	customAlias := args.URL.CustomAlias
-	if !m.aliasValidator.IsValid(customAlias) {
-		return nil, ErrInvalidCustomAlias{
-			customAlias: customAlias,
-		}
+	if customAlias != nil && !m.aliasValidator.IsValid(customAlias) {
+		return nil, ErrInvalidCustomAlias(*customAlias)
 	}
 
 	u := entity.URL{
@@ -60,37 +61,41 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 		ExpireAt:    args.URL.ExpireAt,
 	}
 
-	if args.URL.CustomAlias != nil {
-		customAlias := *args.URL.CustomAlias
-
-		trace1 := trace.Next("CreateUrlWithCustomAlias")
-		newURL, err := m.urlCreator.CreateWithCustomAlias(u, customAlias)
-		trace1.End()
-
-		if err == nil {
-			return &URL{url: newURL}, nil
-		}
-		m.logger.Error(err)
-
-		switch err.(type) {
-		case url.ErrAliasExist:
-			return &URL{}, ErrURLAliasExist(customAlias)
-		default:
-			return nil, ErrUnknown{}
-		}
-	}
-
-	trace1 := trace.Next("CreateUrl")
-	newURL, err := m.urlCreator.Create(u)
-	trace1.End()
-
+	authToken := args.AuthToken
+	userEmail, err := m.authenticator.GetUserEmail(authToken)
 	if err != nil {
 		m.logger.Error(err)
-		return nil, err
+		return nil, ErrInvalidAuthToken(authToken)
 	}
 
-	trace.End()
-	return &URL{url: newURL}, nil
+	if customAlias == nil {
+		trace1 := trace.Next("CreateUrl")
+		defer trace1.End()
+
+		newURL, err := m.urlCreator.Create(u, userEmail)
+		if err != nil {
+			m.logger.Error(err)
+			return nil, ErrUnknown{}
+		}
+
+		return &URL{url: newURL}, nil
+	}
+
+	trace1 := trace.Next("CreateUrlWithCustomAlias")
+	defer trace1.End()
+
+	newURL, err := m.urlCreator.CreateWithCustomAlias(u, *customAlias, userEmail)
+	if err == nil {
+		return &URL{url: newURL}, nil
+	}
+
+	m.logger.Error(err)
+	switch err.(type) {
+	case url.ErrAliasExist:
+		return &URL{}, ErrURLAliasExist(*customAlias)
+	default:
+		return nil, ErrUnknown{}
+	}
 }
 
 func NewMutation(
@@ -98,12 +103,14 @@ func NewMutation(
 	tracer fw.Tracer,
 	urlCreator url.Creator,
 	requesterVerifier requester.Verifier,
+	authenticator auth.Authenticator,
 ) Mutation {
 	return Mutation{
 		logger:            logger,
 		tracer:            tracer,
 		urlCreator:        urlCreator,
 		requesterVerifier: requesterVerifier,
+		authenticator:     authenticator,
 		longLinkValidator: input.NewLongLink(),
 		aliasValidator:    input.NewCustomAlias(),
 	}

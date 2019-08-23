@@ -15,3 +15,8 @@ func UserRepoSQL(db *sql.DB) repo.User {
 	user := sqlrepo.NewUser(db)
 	return &user
 }
+
+func UserURLRepoSQL(db *sql.DB) repo.UserURL {
+	userUrl := sqlrepo.NewUserURL(db)
+	return &userUrl
+}
