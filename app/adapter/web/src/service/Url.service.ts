@@ -6,6 +6,7 @@ import { ApolloLink, FetchResult } from 'apollo-link';
 import gql from 'graphql-tag';
 import { EnvService } from './Env.service';
 import { GraphQlError } from '../graphql/error';
+import { AuthService } from './Auth.service';
 
 const gqlLink = ApolloLink.from([
   new HttpLink({
@@ -30,16 +31,25 @@ export class UrlService {
     let variables = {
       captchaResponse: captchaResponse,
       urlInput: {
-        originalUrl: link.originalUrl,
+        originalURL: link.originalUrl,
         customAlias: alias
-      }
+      },
+      authToken: AuthService.getAuthToken()
     };
 
     let mutation = gql`
-      mutation params($captchaResponse: String!, $urlInput: UrlInput!) {
-        createUrl(captchaResponse: $captchaResponse, url: $urlInput) {
+      mutation params(
+        $captchaResponse: String!
+        $urlInput: URLInput!
+        $authToken: String!
+      ) {
+        createURL(
+          captchaResponse: $captchaResponse
+          url: $urlInput
+          authToken: $authToken
+        ) {
           alias
-          originalUrl
+          originalURL
         }
       }
     `;
@@ -50,7 +60,7 @@ export class UrlService {
           variables: variables,
           mutation: mutation
         })
-        .then((res: FetchResult<Url>) => resolve(res.data.createUrl))
+        .then((res: FetchResult<Url>) => resolve(res.data.createURL))
         .catch(({ graphQLErrors, networkError, message }) => {
           const errCodes = graphQLErrors.map(
             (graphQLError: GraphQlError) => graphQLError.extensions.code

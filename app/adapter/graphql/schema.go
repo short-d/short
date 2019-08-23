@@ -11,7 +11,7 @@ type Query {
 }
 
 type Mutation {
-	createURL(captchaResponse: String!, url: URLInput!, userEmail: String): URL
+	createURL(captchaResponse: String!, url: URLInput!, authToken: String!): URL
 }
 
 type URL {
@@ -24,10 +24,6 @@ input URLInput {
 	originalURL: String!
 	customAlias: String
 	expireAt: Time
-}
-
-type User {
-	email: String
 }
 
 scalar Time

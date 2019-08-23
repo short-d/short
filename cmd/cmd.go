@@ -89,6 +89,7 @@ func start(
 			db,
 			"/graphql",
 			inject.ReCaptchaSecret(recaptchaSecret),
+			inject.JwtSecret(jwtSecret),
 		)
 		service.Start(8080)
 

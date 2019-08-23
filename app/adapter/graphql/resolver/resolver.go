@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"short/app/usecase/auth"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
 	"short/fw"
@@ -17,6 +18,7 @@ func NewResolver(
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
 	requesterVerifier requester.Verifier,
+	authenticator auth.Authenticator,
 ) Resolver {
 	return Resolver{
 		Query: NewQuery(logger, tracer, urlRetriever),
@@ -25,6 +27,7 @@ func NewResolver(
 			tracer,
 			urlCreator,
 			requesterVerifier,
+			authenticator,
 		),
 	}
 }
