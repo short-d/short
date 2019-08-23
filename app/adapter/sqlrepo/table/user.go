@@ -8,10 +8,10 @@ var User = struct {
 	ColumnCreatedAt      string
 	ColumnUpdatedAt      string
 }{
-	TableName:            "User",
+	TableName:            "user",
 	ColumnEmail:          "email",
 	ColumnName:           "name",
-	ColumnLastSignedInAt: "lastSignedInAt",
-	ColumnCreatedAt:      "createdAt",
-	ColumnUpdatedAt:      "updatedAt",
+	ColumnLastSignedInAt: "last_signed_in_at",
+	ColumnCreatedAt:      "created_at",
+	ColumnUpdatedAt:      "updated_at",
 }
