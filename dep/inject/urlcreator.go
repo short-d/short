@@ -6,6 +6,10 @@ import (
 	"short/app/usecase/url"
 )
 
-func URLCreatorPersist(urlRepo repo.URL, keyGen keygen.KeyGenerator) url.Creator {
-	return url.NewCreatorPersist(urlRepo, keyGen)
+func URLCreatorPersist(
+	urlRepo repo.URL,
+	userUrlRepo repo.UserURL,
+	keyGen keygen.KeyGenerator,
+) url.Creator {
+	return url.NewCreatorPersist(urlRepo, userUrlRepo, keyGen)
 }

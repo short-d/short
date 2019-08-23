@@ -24,6 +24,7 @@ func InitGraphQlService(
 	db *sql.DB,
 	graphqlPath inject.GraphQlPath,
 	secret inject.ReCaptchaSecret,
+	jwtSecret inject.JwtSecret,
 ) mdservice.Service {
 	wire.Build(
 		mdservice.New,
@@ -32,9 +33,13 @@ func InitGraphQlService(
 		inject.GraphGophers,
 		mdhttp.NewClient,
 		mdrequest.NewHTTP,
+		mdtimer.NewTimer,
+		inject.JwtGo,
 
 		inject.URLRepoSQL,
+		inject.UserURLRepoSQL,
 		keygen.NewInMemory,
+		inject.Authenticator,
 		inject.URLRetrieverPersist,
 		inject.URLCreatorPersist,
 		inject.ReCaptchaService,
@@ -64,10 +69,10 @@ func InitRoutingService(
 		inject.JwtGo,
 
 		inject.URLRepoSQL,
+		inject.UserRepoSQL,
 		inject.URLRetrieverPersist,
 		inject.GithubOAuth,
 		github.NewAPI,
-		inject.UserRepoSQL,
 		inject.RepoAccount,
 		inject.Authenticator,
 		inject.ShortRoutes,
