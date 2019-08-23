@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 import './Modal.scss';
 import classNames from 'classnames';
 
-interface Props {}
+interface Props {
+  canClose?: boolean;
+}
 
 interface State {
   isOpen: boolean;
@@ -51,7 +53,9 @@ export class Modal extends Component<Props, State> {
   }
 
   handleOnMaskClick = () => {
-    this.close();
+    if (this.props.canClose) {
+      this.close();
+    }
   };
 
   render() {
