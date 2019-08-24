@@ -8,12 +8,12 @@ import (
 
 const githubAPI = "https://api.github.com/graphql"
 
-// API access user's account & repository information through Github API v4
+// API access user's account & repository information through Github API v4.
 type API struct {
 	graphql fw.GraphQlRequest
 }
 
-// GetUserProfile retrieves user's email and name from Github
+// GetUserProfile retrieves user's email and name from Github.
 func (g API) GetUserProfile(accessToken string) (entity.UserProfile, error) {
 	type response struct {
 		Viewer struct {
@@ -53,7 +53,7 @@ func (g API) sendGraphQlRequest(accessToken string, query fw.GraphQlQuery, respo
 	return g.graphql.Query(query, headers, &response)
 }
 
-// NewAPI initializes Github API access service
+// NewAPI initializes Github API access service.
 func NewAPI(graphql fw.GraphQlRequest) API {
 	return API{
 		graphql: graphql.RootUrl(githubAPI),
