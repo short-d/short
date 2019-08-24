@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"net/url"
 	"short/app/usecase/service"
-	"short/mdtest"
-	"short/modern/mdrequest"
 	"testing"
+
+	"github.com/byliuyang/app/mdtest"
+
+	"github.com/byliuyang/app/modern/mdrequest"
 
 	"github.com/stretchr/testify/assert"
 	//"time"

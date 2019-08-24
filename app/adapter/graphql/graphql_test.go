@@ -6,9 +6,10 @@ import (
 	"short/app/usecase/auth"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
-	"short/mdtest"
 	"testing"
 	"time"
+
+	"github.com/byliuyang/app/mdtest"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"

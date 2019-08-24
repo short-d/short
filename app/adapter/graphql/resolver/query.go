@@ -3,7 +3,8 @@ package resolver
 import (
 	"short/app/adapter/graphql/scalar"
 	"short/app/usecase/url"
-	"short/fw"
+
+	"github.com/byliuyang/app/fw"
 )
 
 type Query struct {

@@ -4,9 +4,10 @@ import (
 	"short/app/adapter/graphql/scalar"
 	"short/app/entity"
 	"short/app/usecase/url"
-	"short/mdtest"
 	"testing"
 	"time"
+
+	"github.com/byliuyang/app/mdtest"
 
 	"github.com/stretchr/testify/assert"
 )
