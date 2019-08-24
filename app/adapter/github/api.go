@@ -3,7 +3,8 @@ package github
 import (
 	"fmt"
 	"short/app/entity"
-	"short/fw"
+
+	"github.com/byliuyang/app/fw"
 )
 
 const githubAPI = "https://api.github.com/graphql"

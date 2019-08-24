@@ -3,7 +3,8 @@ package inject
 import (
 	"short/app/adapter/recaptcha"
 	"short/app/usecase/service"
-	"short/fw"
+
+	"github.com/byliuyang/app/fw"
 )
 
 type ReCaptchaSecret string

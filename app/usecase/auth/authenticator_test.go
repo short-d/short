@@ -1,10 +1,12 @@
 package auth
 
 import (
-	"short/fw"
-	"short/mdtest"
 	"testing"
 	"time"
+
+	"github.com/byliuyang/app/mdtest"
+
+	"github.com/byliuyang/app/fw"
 
 	"github.com/stretchr/testify/assert"
 )

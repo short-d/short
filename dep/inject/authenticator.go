@@ -2,8 +2,9 @@ package inject
 
 import (
 	"short/app/usecase/auth"
-	"short/fw"
 	"time"
+
+	"github.com/byliuyang/app/fw"
 )
 
 const oneDay = 24 * time.Hour

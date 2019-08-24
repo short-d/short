@@ -3,9 +3,10 @@ package url
 import (
 	"short/app/entity"
 	"short/app/usecase/repo"
-	"short/mdtest"
 	"testing"
 	"time"
+
+	"github.com/byliuyang/app/mdtest"
 
 	"github.com/stretchr/testify/assert"
 )

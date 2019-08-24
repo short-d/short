@@ -4,7 +4,8 @@ import (
 	"short/app/entity"
 	"short/app/usecase/repo"
 	"short/app/usecase/service"
-	"short/fw"
+
+	"github.com/byliuyang/app/fw"
 )
 
 var _ service.Account = (*Repo)(nil)
