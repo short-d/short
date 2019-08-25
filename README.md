@@ -11,7 +11,7 @@
 ![Demo](doc/demo.gif)
 
 ## Want `s/` extension?
-Get it from [Chrome Web Store](https://chrome.google.com/webstore/detail/short/hoobjcdfefnngjeepgjkiojpcicciihc) or build it from [source](https://github.com/byliuyang/short-ext)
+Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from [source](https://github.com/byliuyang/short-ext)
 
 ## Prerequisites
 - Node.js v12.7.0
