@@ -2,8 +2,9 @@ package auth
 
 import (
 	"errors"
-	"short/fw"
 	"time"
+
+	"github.com/byliuyang/app/fw"
 )
 
 type Payload struct {

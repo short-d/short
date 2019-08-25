@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"short/fw"
 	"strings"
+
+	"github.com/byliuyang/app/fw"
 )
 
 const (

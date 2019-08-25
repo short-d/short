@@ -8,13 +8,10 @@
   color       : black;
 
   a {
-    font-weight      : $font-weight-bold;
+    font-weight      : $font-weight-semi-bold;
     padding          : 3px 10px;
     text-decoration  : none;
-    color            : white;
-    border-radius    : 2px;
-    background-color : #212121;
-
+    color            : black;
 
     &:hover {
       opacity : 0.9;

@@ -5,8 +5,10 @@ import (
 	"short/app/usecase/auth"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
-	"short/fw"
-	"short/modern/mdgraphql"
+
+	"github.com/byliuyang/app/modern/mdgraphql"
+
+	"github.com/byliuyang/app/fw"
 )
 
 type GraphQlPath string
