@@ -2,8 +2,7 @@
 CREATE TABLE "User" (
     "email" CHARACTER VARYING(254) PRIMARY KEY,
     "name" CHARACTER VARYING(80),
-    "lastSignedInAt" TIME WITH TIME ZONE,
-    "createdAt" TIME WITH TIME ZONE,
-    "expireAt" TIME WITH TIME ZONE,
-    "updatedAt" TIME WITH TIME ZONE
+    "lastSignedInAt" TIMESTAMP WITH TIME ZONE,
+    "createdAt" TIMESTAMP WITH TIME ZONE,
+    "updatedAt" TIMESTAMP WITH TIME ZONE
 );
