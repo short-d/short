@@ -1,11 +1,21 @@
-import { CookieService } from './Cookie.service';
+import {EnvService} from "./Env.service";
+import {CookieService} from "./Cookie.service";
 
 export class AuthService {
   static getAuthToken(): string {
-    return CookieService.read('token');
+    return CookieService.get('token');
+  }
+
+  static signOut() {
+    CookieService.set('token', '');
   }
 
   static isSignedIn(): boolean {
-    return AuthService.getAuthToken().length > 0;
+    let token = AuthService.getAuthToken();
+    return token.length > 0;
+  }
+
+  static githubSignInLink(): string {
+    return EnvService.getVal('GITHUB_SIGN_IN_LINK')
   }
 }
