@@ -1,12 +1,12 @@
-import {Url} from '../entity/Url';
-import {ApolloClient} from 'apollo-client';
-import {HttpLink} from 'apollo-link-http';
-import {InMemoryCache} from 'apollo-cache-inmemory';
-import {ApolloLink, FetchResult} from 'apollo-link';
+import { Url } from '../entity/Url';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { ApolloLink, FetchResult } from 'apollo-link';
 import gql from 'graphql-tag';
-import {EnvService} from './Env.service';
-import {GraphQlError} from '../graphql/error';
-import {AuthService} from './Auth.service';
+import { EnvService } from './Env.service';
+import { GraphQlError } from '../graphql/error';
+import { AuthService } from './Auth.service';
 
 const gqlLink = ApolloLink.from([
   new HttpLink({
@@ -22,7 +22,7 @@ const gqlClient = new ApolloClient({
 export enum ErrUrl {
   AliasAlreadyExist = 'aliasAlreadyExist',
   UserNotHuman = 'requesterNotHuman',
-  Unauthorized = 'invalidAuthToken',
+  Unauthorized = 'invalidAuthToken'
 }
 
 export class UrlService {

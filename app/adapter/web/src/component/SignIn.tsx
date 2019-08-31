@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 import './SignIn.scss';
 import githubLogo from './github.svg';
 
 interface Props {
-    githubSignInLink: string
+  githubSignInLink: string;
 }
 
 export class SignIn extends Component<Props> {
@@ -16,7 +16,7 @@ export class SignIn extends Component<Props> {
           Please sign in with Github so that all the short links created can be
           linked to your account.
         </div>
-          <a href={this.props.githubSignInLink}>
+        <a href={this.props.githubSignInLink}>
           <div className={'button github'}>
             <img
               alt={'Sign in with github account'}

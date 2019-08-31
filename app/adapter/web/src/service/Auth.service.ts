@@ -1,5 +1,5 @@
-import {EnvService} from "./Env.service";
-import {CookieService} from "./Cookie.service";
+import { EnvService } from './Env.service';
+import { CookieService } from './Cookie.service';
 
 export class AuthService {
   static getAuthToken(): string {
@@ -16,6 +16,6 @@ export class AuthService {
   }
 
   static githubSignInLink(): string {
-    return EnvService.getVal('GITHUB_SIGN_IN_LINK')
+    return EnvService.getVal('GITHUB_SIGN_IN_LINK');
   }
 }
