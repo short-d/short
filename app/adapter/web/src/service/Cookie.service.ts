@@ -1,11 +1,11 @@
+import * as Cookies from 'es-cookie';
+
 export class CookieService {
-  static read(key: string): string {
-    const pattern = new RegExp(`${key}\\s*=\\s*([^;]*)`);
-    const matches = document.cookie.match(pattern);
-    if (!matches) return '';
-    if (matches && matches.length < 2) {
-      return '';
-    }
-    return matches[1];
+  static get(key: string): string {
+    return Cookies.get('token') || '';
+  }
+
+  static set(key: string, value?: string) {
+    return Cookies.set(key, value || '');
   }
 }

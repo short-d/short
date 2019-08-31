@@ -5,7 +5,7 @@ type ErrCode string
 const (
 	ErrCodeUnknown            ErrCode = "unknown"
 	ErrCodeAliasAlreadyExist          = "aliasAlreadyExist"
-	ErrCodeRequesterNotHuman          = "requestNotHuman"
+	ErrCodeRequesterNotHuman          = "requesterNotHuman"
 	ErrCodeInvalidLongLink            = "invalidLongLink"
 	ErrCodeInvalidCustomAlias         = "invalidCustomAlias"
 	ErrCodeInvalidAuthToken           = "invalidAuthToken"
