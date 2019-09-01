@@ -1,70 +1,71 @@
-$planet-color : #3FF9DC;
-$sun-color    : #FFAB91;
+$planet-color : #3ff9dc;
+$sun-color    : #ffab91;
 
-$orbit-color  : #FFFFFFA5;
+$orbit-color  : #ffffffa5;
 $orbit-width  : 1px;
 
 .spinner {
-  width  : 250px;
-  height : 250px;
+  width: 250px;
+  height: 250px;
 
   .solar-system {
-    display         : flex;
-    align-items     : center;
-    justify-content : center;
-    width           : 100%;
-    height          : 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
   }
 
   .orbit {
-    position        : relative;
-    display         : flex;
-    align-items     : center;
-    justify-content : center;
-    border          : $orbit-width solid $orbit-color;
-    border-radius   : 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: $orbit-width solid $orbit-color;
+    border-radius: 50%;
   }
 
   .earth-orbit {
-    width             : 165px;
-    height            : 165px;
-    -webkit-animation : spin 12s linear 0s infinite;
+    width: 165px;
+    height: 165px;
+    -webkit-animation: spin 12s linear 0s infinite;
   }
 
   .venus-orbit {
-    width             : 120px;
-    height            : 120px;
-    -webkit-animation : spin 7.4s linear 0s infinite;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 7.4s linear 0s infinite;
   }
 
   .mercury-orbit {
-    width             : 90px;
-    height            : 90px;
-    -webkit-animation : spin 3s linear 0s infinite;
+    width: 90px;
+    height: 90px;
+    -webkit-animation: spin 3s linear 0s infinite;
   }
 
   .planet {
-    position         : absolute;
-    top              : -5px;
-    width            : 10px;
-    height           : 10px;
-    border-radius    : 50%;
-    background-color : $planet-color;
+    position: absolute;
+    top: -5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: $planet-color;
   }
 
   .sun {
-    width            : 35px;
-    height           : 35px;
-    border-radius    : 50%;
-    background-color : $sun-color;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: $sun-color;
   }
 
   @keyframes spin {
     from {
-      transform : rotate(0);
+      transform: rotate(0);
     }
+
     to {
-      transform : rotate(359deg);
+      transform: rotate(359deg);
     }
   }
 }

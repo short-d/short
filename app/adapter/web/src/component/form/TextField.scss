@@ -4,15 +4,18 @@
 
 .text-field {
   @include default-font();
-  font-size  : 20px;
-  box-sizing : border-box;
-  width      : 100%;
+
+  font-size: 20px;
+  box-sizing: border-box;
+  width: 100%;
+
   @include round-corner;
-  padding    : 8px 20px;
-  border     : 2px solid #9E9E9E;
-  outline    : none;
+
+  padding: 8px 20px;
+  border: 2px solid #9e9e9e;
+  outline: none;
 
   &:focus {
-    border-color : $color-primary;
+    border-color: $color-primary;
   }
 }

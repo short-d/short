@@ -9,5 +9,5 @@ $font-weight-black       : 900;
 $font-family-primary     : 'Source Code Pro';
 
 @mixin default-font() {
-  font-family : $font-family-primary, monospace;
+  font-family: $font-family-primary, monospace;
 }

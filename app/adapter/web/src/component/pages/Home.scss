@@ -1,10 +1,10 @@
-@import "styles/font";
-@import "styles/dimension";
-@import "styles/color";
-@import "styles/corner";
-@import "styles/icon";
+@import "../styles/font";
+@import "../styles/dimension";
+@import "../styles/color";
+@import "../styles/corner";
+@import "../styles/icon";
 
-.app {
+.home {
   .control {
     display: flex;
 
