@@ -3,6 +3,6 @@
 rm -rf public
 cd app/adapter/web
 yarn
-REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY REACT_APP_GRAPHQL_API_BASE_URL=$GRAPHQL_BASE_URL REACT_APP_HTTP_API_BASE_URL=$HTTP_API_BASE_URL yarn build
+REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY yarn build
 mkdir ../../../public
 mv build/* ../../../public/
