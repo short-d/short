@@ -3,12 +3,12 @@ package routing
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"short/app/adapter/oauth"
 	"short/app/usecase/auth"
 	"short/app/usecase/signin"
 	"short/app/usecase/url"
-	"strings"
-
 	"short/fw"
 )
 
@@ -39,30 +39,27 @@ func NewOriginalURL(
 	}
 }
 
-func getFilenameFromPath(path string, indexFile string) string {
-	filePath := strings.Trim(path, "/")
-	if filePath == "" {
-		return indexFile
-	}
-	return filePath
+func serve404(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/404", http.StatusSeeOther)
 }
 
 func NewServeFile(logger fw.Logger, tracer fw.Tracer, wwwRoot string) fw.Handle {
-	rootDir := http.Dir(wwwRoot)
-	fs := http.FileServer(rootDir)
-
+	filePath := filePathBuilder(wwwRoot, "index.html")
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		fileName := getFilenameFromPath(r.URL.Path, "index.html")
+		path := filePath(r)
+		logger.Info(fmt.Sprintf("serving %s from %s", path, wwwRoot))
+		http.ServeFile(w, r, path)
+	}
+}
 
-		_, err := rootDir.Open(fileName)
-		if err != nil {
-			logger.Error(err)
-			serve404(w, r)
-			return
+func filePathBuilder(rootDir string, indexPath string) func(r *http.Request) string {
+	return func(r *http.Request) string {
+		path := filepath.Join(rootDir, r.URL.Path)
+		_, err := os.Stat(path)
+		if os.IsNotExist(err) {
+			return filepath.Join(rootDir, indexPath)
 		}
-
-		logger.Info(fmt.Sprintf("serving %s from %s", fileName, wwwRoot))
-		fs.ServeHTTP(w, r)
+		return path
 	}
 }
 
@@ -100,8 +97,4 @@ func NewGithubSignInCallback(
 		setToken(w, authToken)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
-}
-
-func serve404(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/404.html", http.StatusSeeOther)
 }
