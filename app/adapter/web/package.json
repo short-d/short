@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@apollographql/graphql-playground-react": "^1.7.31",
     "apollo-cache-inmemory": "^1.6.2",
     "apollo-client": "^2.6.3",
     "apollo-link": "^1.2.12",
@@ -11,13 +10,14 @@
     "classnames": "^2.2.6",
     "es-cookie": "^1.2.0",
     "graphql": "^14.4.2",
+    "graphql-playground-react": "1.7.20",
     "graphql-tag": "^2.10.1",
     "material-design-icons": "^3.0.1",
     "qrcode": "^1.4.1",
     "react-redux": "^5.1.1",
-    "redux": "^3.7.2",
     "react-router-dom": "^5.0.1",
-    "recaptcha-v3": "^1.5.0"
+    "recaptcha-v3": "^1.5.0",
+    "redux": "^3.7.2"
   },
   "scripts": {
     "start": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts start",

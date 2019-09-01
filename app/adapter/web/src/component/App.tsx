@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { ReCaptcha } from '../service/Captcha.service';
 import { Home } from './pages/Home';
 import { EnvService } from '../service/Env.service';
-import { Playground } from '@apollographql/graphql-playground-react';
+import { Playground } from 'graphql-playground-react';
 
 interface Props {
   reCaptcha: ReCaptcha;
@@ -27,7 +27,6 @@ export class App extends Component<Props> {
             />
           )}
         />
-        }/>
       </Router>
     );
   };

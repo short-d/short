@@ -4,7 +4,7 @@ import './index.scss';
 import { App } from './component/App';
 import * as serviceWorker from './serviceWorker';
 
-import { store } from '@apollographql/graphql-playground-react';
+import { store } from 'graphql-playground-react';
 import { Provider } from 'react-redux';
 
 import { CaptchaService } from './service/Captcha.service';
