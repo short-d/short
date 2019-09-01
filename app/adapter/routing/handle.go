@@ -28,8 +28,8 @@ func NewOriginalURL(
 		trace1.End()
 
 		if err != nil {
-			http.Redirect(w, r, "/404", http.StatusSeeOther)
 			logger.Error(err)
+			serve404(w, r)
 			return
 		}
 
@@ -48,12 +48,20 @@ func getFilenameFromPath(path string, indexFile string) string {
 }
 
 func NewServeFile(logger fw.Logger, tracer fw.Tracer, wwwRoot string) fw.Handle {
-	fs := http.FileServer(http.Dir(wwwRoot))
+	rootDir := http.Dir(wwwRoot)
+	fs := http.FileServer(rootDir)
 
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		fileName := getFilenameFromPath(r.URL.Path, "index.html")
-		logger.Info(fmt.Sprintf("serving %s from %s", fileName, wwwRoot))
 
+		_, err := rootDir.Open(fileName)
+		if err != nil {
+			logger.Error(err)
+			serve404(w, r)
+			return
+		}
+
+		logger.Info(fmt.Sprintf("serving %s from %s", fileName, wwwRoot))
 		fs.ServeHTTP(w, r)
 	}
 }
@@ -92,4 +100,8 @@ func NewGithubSignInCallback(
 		setToken(w, authToken)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
+}
+
+func serve404(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/404.html", http.StatusSeeOther)
 }
