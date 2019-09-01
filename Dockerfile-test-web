@@ -17,4 +17,4 @@ ARG RECAPTCHA_SITE_KEY
 ENV CI=true
 ENV REACT_APP_RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY}
 
-CMD ["yarn", "test"]
+CMD ["yarn", "test", "--passWithNoTests"]
