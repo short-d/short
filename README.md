@@ -56,9 +56,6 @@ docker-compose up
 
 3. Visit [http://localhost](http://localhost)
 
-## API Docs
-[GraphQL APIs](http://s.time4hacks.com/api/graphql)
-
 ## Contributing
 When contributing to this repository, please first discuss the change you wish to make via [issues](https://github.com/byliuyang/short/issues) with the owner of this repository before making a change.
 
