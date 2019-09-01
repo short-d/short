@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Notice } from '../ui/Notice';
+import { Notice } from '../../../ui/Notice';
 
 import './ExtPromo.scss';
 

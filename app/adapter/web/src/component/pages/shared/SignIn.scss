@@ -1,6 +1,6 @@
-@import "./styles/font";
-@import "./styles/corner";
-@import "./styles/easing";
+@import "../../styles/font";
+@import "../../styles/corner";
+@import "../../styles/easing";
 
 .sign-in {
   @include default-font();

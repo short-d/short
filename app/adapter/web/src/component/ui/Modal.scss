@@ -1,36 +1,36 @@
 @import "../styles/easing";
 
 .modal {
-  position   : fixed;
-  z-index    : 1000;
-  top        : 0;
-  right      : 0;
-  bottom     : 0;
-  left       : 0;
-  display    : none;
-  transition : opacity $easeInOutQuart;
-  opacity    : 0;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: none;
+  transition: opacity $easeInOutQuart;
+  opacity: 0;
 
   &.shown {
-    display : block;
+    display: block;
   }
 
   &.showing {
-    opacity : 1;
+    opacity: 1;
   }
 
   .card {
-    position         : fixed;
-    top              : 50%;
-    left             : 50%;
-    transform        : translateX(-50%) translateY(-50%);
-    background-color : white;
-    box-shadow       : 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   }
 
   .mask {
-    width            : 100%;
-    height           : 100%;
-    background-color : rgba(0, 0, 0, 0.2);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
   }
 }
