@@ -1,0 +1,35 @@
+@import "../styles/font";
+
+.page-404 {
+  font-family      : sans-serif;
+  display          : flex;
+  align-items      : center;
+  flex-direction   : column;
+  justify-content  : center;
+  height           : 100vh;
+  background-color : #E91E63;
+
+  .code {
+    font-size      : 220px;
+    font-weight    : 200;
+    line-height    : 220px;
+    letter-spacing : 20px;
+    color          : white;
+  }
+
+  .to-home {
+    font-weight    : 300;
+    bottom         : 40px;
+    margin-top     : 80px;
+    letter-spacing : 2px;
+    color          : rgba(255, 255, 255, 0.9);
+  }
+
+  .to-home a {
+    font-weight     : 500;
+    padding-bottom  : 2px;
+    text-decoration : none;
+    color           : white;
+    border-bottom   : 1px solid white;
+  }
+}
