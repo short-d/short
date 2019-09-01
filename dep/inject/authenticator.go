@@ -4,7 +4,7 @@ import (
 	"short/app/usecase/auth"
 	"time"
 
-	"github.com/byliuyang/app/fw"
+	"short/fw"
 )
 
 const oneDay = 24 * time.Hour

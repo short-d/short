@@ -3,7 +3,7 @@ package inject
 import (
 	"database/sql"
 
-	"github.com/byliuyang/app/modern/mddb"
+	"short/modern/mddb"
 )
 
 type ServiceLauncher func(db *sql.DB)

@@ -5,7 +5,7 @@ import (
 	"short/app/usecase/repo"
 	"short/app/usecase/service"
 
-	"github.com/byliuyang/app/fw"
+	"short/fw"
 )
 
 func RepoAccount(userRepo repo.User, timer fw.Timer) service.Account {

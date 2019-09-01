@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"short/app/entity"
 
-	"github.com/byliuyang/app/fw"
+	"short/fw"
 )
 
 const githubAPI = "https://api.github.com/graphql"

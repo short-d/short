@@ -3,7 +3,7 @@ package routing
 import (
 	"net/http"
 
-	"github.com/byliuyang/app/fw"
+	"short/fw"
 )
 
 func getToken(r *http.Request, params fw.Params) string {

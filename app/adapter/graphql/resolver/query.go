@@ -4,7 +4,7 @@ import (
 	"short/app/adapter/graphql/scalar"
 	"short/app/usecase/url"
 
-	"github.com/byliuyang/app/fw"
+	"short/fw"
 )
 
 type Query struct {

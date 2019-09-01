@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"short/mdtest"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/byliuyang/app/fw"
+	"short/fw"
 )
 
 type Authenticator struct {

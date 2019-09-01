@@ -5,7 +5,7 @@ import (
 	"short/app/adapter/graphql/parser"
 	"time"
 
-	"github.com/byliuyang/app/fw"
+	"short/fw"
 
 	"github.com/pkg/errors"
 )
