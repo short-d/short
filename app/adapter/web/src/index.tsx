@@ -4,16 +4,11 @@ import './index.scss';
 import { App } from './component/App';
 import * as serviceWorker from './serviceWorker';
 
-import { store } from 'graphql-playground-react';
-import { Provider } from 'react-redux';
-
 import { CaptchaService } from './service/Captcha.service';
 
 CaptchaService.InitRecaptchaV3().then(reCaptcha => {
   ReactDOM.render(
-    <Provider store={store}>
-      <App reCaptcha={reCaptcha} />
-    </Provider>,
+    <App reCaptcha={reCaptcha} />,
     document.getElementById('root')
   );
   // If you want your app to work offline and load faster, you can change
