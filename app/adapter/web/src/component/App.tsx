@@ -28,6 +28,7 @@ interface State {
   qrCodeUrl?: string;
   err: Err;
   inputErr?: string;
+  githubSignInLink: string;
 }
 
 interface Err {
@@ -81,14 +82,24 @@ export class App extends Component<Props, State> {
         name: '',
         description: ''
       },
-      inputErr: ''
+      inputErr: '',
+      githubSignInLink: AuthService.githubSignInLink()
     };
   }
 
   componentDidMount(): void {
     if (!AuthService.isSignedIn()) {
-      this.signInModal.current!.open();
+      this.showSignInModal();
     }
+  }
+
+  showSignInModal() {
+    this.signInModal.current!.open();
+  }
+
+  requestSignIn() {
+    AuthService.signOut();
+    this.showSignInModal();
   }
 
   handlerLongLinkChange = (newValue: string) => {
@@ -170,7 +181,13 @@ export class App extends Component<Props, State> {
       }
     } catch (errCodes) {
       for (const errCode of errCodes) {
-        this.showError(getErr(errCode));
+        switch (errCode) {
+          case ErrUrl.Unauthorized:
+            this.requestSignIn();
+            break;
+          default:
+            this.showError(getErr(errCode));
+        }
       }
     }
   };
@@ -232,7 +249,7 @@ export class App extends Component<Props, State> {
           version={this.appVersion}
         />
         <Modal ref={this.signInModal}>
-          <SignIn />
+          <SignIn githubSignInLink={this.state.githubSignInLink} />
         </Modal>
         <Modal canClose={true} ref={this.errModal}>
           <div className={'err'}>

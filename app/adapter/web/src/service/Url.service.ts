@@ -21,7 +21,8 @@ const gqlClient = new ApolloClient({
 
 export enum ErrUrl {
   AliasAlreadyExist = 'aliasAlreadyExist',
-  UserNotHuman = 'requestNotHuman'
+  UserNotHuman = 'requesterNotHuman',
+  Unauthorized = 'invalidAuthToken'
 }
 
 export class UrlService {
