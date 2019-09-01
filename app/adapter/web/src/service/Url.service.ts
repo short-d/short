@@ -61,7 +61,7 @@ export class UrlService {
           variables: variables,
           mutation: mutation
         })
-        .then((res: FetchResult<Url>) => resolve(res.data.createURL))
+        .then((res: FetchResult<Url>) => resolve( res.data || {}))
         .catch(({ graphQLErrors, networkError, message }) => {
           const errCodes = graphQLErrors.map(
             (graphQLError: GraphQlError) => graphQLError.extensions.code
