@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"short/mdtest"
 
-	"github.com/byliuyang/app/fw"
+	"short/fw"
 
 	"github.com/stretchr/testify/assert"
 )

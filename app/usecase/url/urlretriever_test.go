@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"short/mdtest"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -3,7 +3,7 @@ package auth
 import (
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"short/mdtest"
 )
 
 func NewAuthenticatorFake(current time.Time, validPeriod time.Duration) Authenticator {
