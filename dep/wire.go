@@ -9,13 +9,13 @@ import (
 	"short/app/usecase/requester"
 	"short/dep/inject"
 
-	"github.com/byliuyang/app/modern/mdhttp"
-	"github.com/byliuyang/app/modern/mdlogger"
-	"github.com/byliuyang/app/modern/mdrequest"
-	"github.com/byliuyang/app/modern/mdrouting"
-	"github.com/byliuyang/app/modern/mdservice"
-	"github.com/byliuyang/app/modern/mdtimer"
-	"github.com/byliuyang/app/modern/mdtracer"
+	"short/modern/mdhttp"
+	"short/modern/mdlogger"
+	"short/modern/mdrequest"
+	"short/modern/mdrouting"
+	"short/modern/mdservice"
+	"short/modern/mdtimer"
+	"short/modern/mdtracer"
 
 	"github.com/google/wire"
 )

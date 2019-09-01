@@ -3,7 +3,7 @@ package inject
 import (
 	"short/app/adapter/oauth"
 
-	"github.com/byliuyang/app/fw"
+	"short/fw"
 )
 
 type GithubClientID string

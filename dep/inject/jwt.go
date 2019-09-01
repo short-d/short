@@ -1,9 +1,9 @@
 package inject
 
 import (
-	"github.com/byliuyang/app/modern/mdcrypto"
+	"short/modern/mdcrypto"
 
-	"github.com/byliuyang/app/fw"
+	"short/fw"
 )
 
 type JwtSecret string
