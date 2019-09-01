@@ -25,6 +25,10 @@ export enum ErrUrl {
   Unauthorized = 'invalidAuthToken'
 }
 
+interface CreateURLData {
+  createURL: Url;
+}
+
 export class UrlService {
   createShortLink(captchaResponse: string, link: Url): Promise<Url> {
     let alias = link.alias === '' ? null : link.alias;
@@ -61,7 +65,12 @@ export class UrlService {
           variables: variables,
           mutation: mutation
         })
-        .then((res: FetchResult<Url>) => resolve( res.data || {}))
+        .then((res: FetchResult<CreateURLData>) => {
+          if (!res || !res.data) {
+            return resolve({});
+          }
+          resolve(res.data.createURL);
+        })
         .catch(({ graphQLErrors, networkError, message }) => {
           const errCodes = graphQLErrors.map(
             (graphQLError: GraphQlError) => graphQLError.extensions.code
