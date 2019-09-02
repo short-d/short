@@ -8,7 +8,7 @@ import (
 	"short/app/usecase/service"
 	"short/app/usecase/url"
 
-	"short/fw"
+	"github.com/byliuyang/app/fw"
 )
 
 type WwwRoot string

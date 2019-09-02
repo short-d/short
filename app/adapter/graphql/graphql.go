@@ -6,7 +6,7 @@ import (
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
 
-	"short/fw"
+	"github.com/byliuyang/app/fw"
 )
 
 var _ fw.GraphQlAPI = (*Short)(nil)
