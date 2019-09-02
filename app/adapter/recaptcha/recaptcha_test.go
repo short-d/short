@@ -7,9 +7,9 @@ import (
 	"short/app/usecase/service"
 	"testing"
 
-	"short/mdtest"
+	"github.com/byliuyang/app/mdtest"
 
-	"short/modern/mdrequest"
+	"github.com/byliuyang/app/modern/mdrequest"
 
 	"github.com/stretchr/testify/assert"
 	//"time"

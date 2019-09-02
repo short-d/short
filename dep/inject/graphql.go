@@ -6,9 +6,9 @@ import (
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
 
-	"short/modern/mdgraphql"
+	"github.com/byliuyang/app/modern/mdgraphql"
 
-	"short/fw"
+	"github.com/byliuyang/app/fw"
 )
 
 type GraphQlPath string
