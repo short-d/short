@@ -16,6 +16,8 @@ import (
 	"short/dep/provider"
 	"time"
 
+	"github.com/byliuyang/app/modern/mdcli"
+
 	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdhttp"
 	"github.com/byliuyang/app/modern/mdlogger"
@@ -40,6 +42,14 @@ var observabilitySet = wire.NewSet(
 	mdlogger.NewLocal,
 	mdtracer.NewLocal,
 )
+
+func InjectCommandFactory() fw.CommandFactory {
+	wire.Build(
+		wire.Bind(new(fw.CommandFactory), new(mdcli.CobraFactory)),
+		mdcli.NewCobraFactory,
+	)
+	return mdcli.CobraFactory{}
+}
 
 func InjectGraphQlService(
 	name string,
