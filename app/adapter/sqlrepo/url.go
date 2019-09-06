@@ -74,8 +74,8 @@ WHERE "%s"=$1;`,
 	return url, nil
 }
 
-func NewURL(db *sql.DB) URL {
-	return URL{
+func NewURL(db *sql.DB) *URL {
+	return &URL{
 		db: db,
 	}
 }
