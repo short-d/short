@@ -2,12 +2,11 @@ package scalar
 
 import (
 	"encoding/json"
+	"errors"
 	"short/app/adapter/graphql/parser"
 	"time"
 
 	"github.com/byliuyang/app/fw"
-
-	"github.com/pkg/errors"
 )
 
 var _ fw.Scalar = &Time{}

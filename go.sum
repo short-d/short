@@ -15,8 +15,6 @@ github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+CedLV8=
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
-github.com/byliuyang/app v0.0.0-20190906071401-be686930d057 h1:oXCpcMDpPxVdrrliOwuzhp9Fe32dGHueAnZyodI8QFc=
-github.com/byliuyang/app v0.0.0-20190906071401-be686930d057/go.mod h1:lNs3QZwDzj6zapLKVxS/rTEnwmhlFIMVEg9+vdSQDmY=
 github.com/byliuyang/app v0.0.0-20190906073712-a5101a78b938 h1:jTaO1jSxpBkBX0AhW1WXs+d5mr9zcEjUuz/BlMbYUdA=
 github.com/byliuyang/app v0.0.0-20190906073712-a5101a78b938/go.mod h1:lNs3QZwDzj6zapLKVxS/rTEnwmhlFIMVEg9+vdSQDmY=
 github.com/byliuyang/eventbus v0.0.0-20190905025612-ee6985030d5b/go.mod h1:r0/JGVFQObWPCDGD5J+UU9W8eqnnEzhfFUtxsfLAhLg=

@@ -1,9 +1,9 @@
 package repo
 
 import (
+	"errors"
+	"fmt"
 	"short/app/entity"
-
-	"github.com/pkg/errors"
 )
 
 var _ URL = (*URLFake)(nil)
@@ -22,7 +22,7 @@ func (u *URLFake) Create(url entity.URL) error {
 	url, ok := u.urls[alias]
 
 	if ok {
-		return errors.Errorf("url exists (alias=%s)", alias)
+		return errors.New(fmt.Sprintf("url exists (alias=%s)", alias))
 	}
 
 	u.urls[alias] = url
@@ -33,7 +33,7 @@ func (u URLFake) GetByAlias(alias string) (entity.URL, error) {
 	url, ok := u.urls[alias]
 
 	if !ok {
-		return entity.URL{}, errors.Errorf("url not found (alias=%s)", alias)
+		return entity.URL{}, errors.New(fmt.Sprintf("url not found (alias=%s)", alias))
 	}
 
 	return url, nil

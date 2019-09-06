@@ -2,17 +2,15 @@ package sqlrepo
 
 import (
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"short/app/adapter/sqlrepo/table"
 	"short/app/entity"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
-
-	"github.com/pkg/errors"
-
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/byliuyang/app/mdtest"
 )
 
 func TestUserSql_IsAliasExist(t *testing.T) {
