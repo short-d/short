@@ -14,8 +14,7 @@
 Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from [source](https://github.com/byliuyang/short-ext)
 
 ## Prerequisites
-- Node.js v12.7.0
-- Yarn v1.17.3
+- Docker v19.03.1
 
 ## Getting Started
 ### Create reCAPTCHA account
