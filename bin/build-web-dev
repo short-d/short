@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 rm -rf public
-cd app/adapter/web
+cd app/adapter/web || exit
 yarn
 REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY yarn build
 mkdir ../../../public
