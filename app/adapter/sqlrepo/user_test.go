@@ -8,8 +8,9 @@ import (
 	"short/app/entity"
 	"testing"
 
+	"github.com/byliuyang/app/mdtest"
+
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestUserSql_IsEmailExist(t *testing.T) {
@@ -42,7 +43,7 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			db, mock, err := sqlmock.New()
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.User.TableName, table.User.ColumnEmail)
@@ -50,8 +51,8 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 
 			userRepo := NewUser(db)
 			gotIsExist, err := userRepo.IsEmailExist(testCase.email)
-			assert.Nil(t, err)
-			assert.Equal(t, testCase.expIsExist, gotIsExist)
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expIsExist, gotIsExist)
 		})
 	}
 }
@@ -99,7 +100,7 @@ func TestUserSql_GetByEmail(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			db, mock, err := sqlmock.New()
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			expQuery := fmt.Sprintf(`^SELECT ".+",".+",".+",".+",".+" FROM "%s" WHERE "%s"=.+$`, table.User.TableName, table.User.ColumnEmail)
@@ -109,11 +110,11 @@ func TestUserSql_GetByEmail(t *testing.T) {
 
 			gotUser, err := userRepo.GetByEmail(testCase.email)
 			if testCase.hasErr {
-				assert.NotNil(t, err)
+				mdtest.NotEqual(t, nil, err)
 				return
 			}
-			assert.Nil(t, err)
-			assert.Equal(t, testCase.expUser, gotUser)
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expUser, gotUser)
 		})
 	}
 }
@@ -147,7 +148,7 @@ func TestUserSql_Create(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			db, mock, err := sqlmock.New()
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			expStatement := fmt.Sprintf(`INSERT\s*INTO\s*"%s"`, table.User.TableName)
@@ -161,10 +162,10 @@ func TestUserSql_Create(t *testing.T) {
 
 			err = userRepo.Create(testCase.user)
 			if testCase.hasErr {
-				assert.NotNil(t, err)
+				mdtest.NotEqual(t, nil, err)
 				return
 			}
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 		})
 	}
 }

@@ -7,8 +7,6 @@ import (
 	"time"
 
 	"github.com/byliuyang/app/mdtest"
-
-	"github.com/stretchr/testify/assert"
 )
 
 type urlMap = map[string]entity.URL
@@ -89,11 +87,11 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 			url, err := retriever.GetAfter(fakeTrace, testCase.alias, testCase.expiringAt)
 
 			if testCase.hasErr {
-				assert.NotNil(t, err)
+				mdtest.NotEqual(t, nil, err)
 				return
 			}
-			assert.Nil(t, err)
-			assert.Equal(t, testCase.expectedURL, url)
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expectedURL, url)
 		})
 	}
 }
@@ -140,11 +138,11 @@ func TestUrlRetriever_GetUrl(t *testing.T) {
 			url, err := retriever.Get(fakeTrace, testCase.alias)
 
 			if testCase.hasErr {
-				assert.NotNil(t, err)
+				mdtest.NotEqual(t, nil, err)
 				return
 			}
-			assert.Nil(t, err)
-			assert.Equal(t, testCase.expectedURL, url)
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expectedURL, url)
 		})
 	}
 }
