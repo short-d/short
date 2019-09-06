@@ -17,6 +17,8 @@ import (
 	"short/dep/provider"
 	"time"
 
+	"github.com/byliuyang/app/fw"
+	"github.com/byliuyang/app/modern/mdcli"
 	"github.com/byliuyang/app/modern/mdhttp"
 	"github.com/byliuyang/app/modern/mdlogger"
 	"github.com/byliuyang/app/modern/mdrequest"
@@ -28,6 +30,11 @@ import (
 )
 
 // Injectors from wire.go:
+
+func InjectCommandFactory() fw.CommandFactory {
+	cobraFactory := mdcli.NewCobraFactory()
+	return cobraFactory
+}
 
 func InjectGraphQlService(name string, db *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
