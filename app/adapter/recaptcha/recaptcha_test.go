@@ -10,8 +10,6 @@ import (
 	"github.com/byliuyang/app/mdtest"
 
 	"github.com/byliuyang/app/modern/mdrequest"
-
-	"github.com/stretchr/testify/assert"
 	//"time"
 )
 
@@ -47,18 +45,18 @@ func TestReCaptcha_Verify(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			transport := mdtest.NewTransportMock(func(req *http.Request) (response *http.Response, e error) {
-				assert.Equal(t, "https://www.google.com/recaptcha/api/siteverify", req.URL.String())
-				assert.Equal(t, "POST", req.Method)
-				assert.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
-				assert.Equal(t, "application/json", req.Header.Get("Accept"))
+				mdtest.Equal(t, "https://www.google.com/recaptcha/api/siteverify", req.URL.String())
+				mdtest.Equal(t, "POST", req.Method)
+				mdtest.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
+				mdtest.Equal(t, "application/json", req.Header.Get("Accept"))
 
 				buf, err := ioutil.ReadAll(req.Body)
-				assert.Nil(t, err)
+				mdtest.Equal(t, nil, err)
 				params, err := url.ParseQuery(string(buf))
-				assert.Nil(t, err)
+				mdtest.Equal(t, nil, err)
 
-				assert.Equal(t, string(expSecret), params.Get("secret"))
-				assert.Equal(t, expCaptchaResponse, params.Get("response"))
+				mdtest.Equal(t, expSecret, params.Get("secret"))
+				mdtest.Equal(t, expCaptchaResponse, params.Get("response"))
 				return mdtest.JSONResponse(testCase.apiResponse)
 			})
 
@@ -69,8 +67,8 @@ func TestReCaptcha_Verify(t *testing.T) {
 
 			rc := NewService(req, expSecret)
 			gotRes, err := rc.Verify(expCaptchaResponse)
-			assert.Nil(t, err)
-			assert.Equal(t, testCase.expRes, gotRes)
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expRes, gotRes)
 		})
 	}
 }

@@ -12,12 +12,11 @@ import (
 	"github.com/byliuyang/app/mdtest"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestGraphQlAPI(t *testing.T) {
 	db, _, err := sqlmock.New()
-	assert.Nil(t, err)
+	mdtest.Equal(t, nil, err)
 	defer db.Close()
 
 	urls := map[string]entity.URL{}
@@ -30,5 +29,5 @@ func TestGraphQlAPI(t *testing.T) {
 	authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
 
 	graphqlAPI := NewShort(mdtest.FakeLogger, mdtest.FakeTracer, retriever, creator, verifier, authenticator)
-	assert.True(t, mdtest.IsGraphQlAPIValid(graphqlAPI))
+	mdtest.Equal(t, true, mdtest.IsGraphQlAPIValid(graphqlAPI))
 }

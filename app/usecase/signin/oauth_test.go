@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/byliuyang/app/mdtest"
 )
 
 func TestOAuth_SignIn(t *testing.T) {
@@ -76,7 +76,7 @@ func TestOAuth_SignIn(t *testing.T) {
 			oauth := NewOAuth(oauthService, profileService, accountService, authenticator)
 			gotAuthToken, err := oauth.SignIn(testCase.authorizationCode)
 			if testCase.hasErr {
-				assert.NotNil(t, err)
+				mdtest.NotEqual(t, nil, err)
 				return
 			}
 
@@ -86,10 +86,10 @@ func TestOAuth_SignIn(t *testing.T) {
 			}
 
 			buf, err := json.Marshal(values)
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 
 			expAuthToken := string(buf)
-			assert.Equal(t, expAuthToken, gotAuthToken)
+			mdtest.Equal(t, expAuthToken, gotAuthToken)
 		})
 	}
 }

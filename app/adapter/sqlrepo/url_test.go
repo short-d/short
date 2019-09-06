@@ -8,10 +8,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/byliuyang/app/mdtest"
+
 	"github.com/pkg/errors"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestUserSql_IsAliasExist(t *testing.T) {
@@ -44,7 +45,7 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			db, mock, err := sqlmock.New()
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
@@ -52,8 +53,8 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 
 			urlRepo := NewURL(db)
 			gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
-			assert.Nil(t, err)
-			assert.Equal(t, testCase.expIsExist, gotIsExist)
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expIsExist, gotIsExist)
 		})
 	}
 }
@@ -114,7 +115,7 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			db, mock, err := sqlmock.New()
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			statement := fmt.Sprintf(`^SELECT .+ FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
@@ -124,11 +125,11 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			url, err := urlRepo.GetByAlias("220uFicCJj")
 
 			if testCase.hasErr {
-				assert.NotNil(t, err)
+				mdtest.NotEqual(t, nil, err)
 				return
 			}
-			assert.Nil(t, err)
-			assert.Equal(t, testCase.expectedURL, url)
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expectedURL, url)
 		})
 	}
 }
@@ -166,7 +167,7 @@ func TestURLFake_Create(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			db, mock, err := sqlmock.New()
 
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			statement := fmt.Sprintf(`INSERT INTO "%s" .+ VALUES .+`, table.URL.TableName)
@@ -181,10 +182,10 @@ func TestURLFake_Create(t *testing.T) {
 			err = urlRepo.Create(testCase.url)
 
 			if testCase.hasErr {
-				assert.NotNil(t, err)
+				mdtest.NotEqual(t, nil, err)
 				return
 			}
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 		})
 	}
 }
