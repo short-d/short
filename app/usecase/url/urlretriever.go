@@ -1,13 +1,13 @@
 package url
 
 import (
+	"errors"
+	"fmt"
 	"short/app/entity"
 	"short/app/usecase/repo"
 	"time"
 
 	"github.com/byliuyang/app/fw"
-
-	"github.com/pkg/errors"
 )
 
 var _ Retriever = (*RetrieverPersist)(nil)
@@ -35,7 +35,7 @@ func (u RetrieverPersist) GetAfter(trace fw.Trace, alias string, expiringAt time
 	}
 
 	if expiringAt.After(*url.ExpireAt) {
-		return entity.URL{}, errors.Errorf("url expired (alias=%s,expiringAt=%v)", alias, expiringAt)
+		return entity.URL{}, errors.New(fmt.Sprintf("url expired (alias=%s,expiringAt=%v)", alias, expiringAt))
 	}
 
 	return url, nil
