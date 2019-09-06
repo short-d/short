@@ -16,6 +16,9 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
 ## Prerequisites
 - Docker v19.03.1
 
+## Dependencies
+Short is built on top of [app](https://github.com/byliuyang/app), a reusable framework for Go apps & command line tools
+
 ## Getting Started
 ### Create reCAPTCHA account
 [Create ReCAPTCHA account](http://www.google.com/recaptcha/admin)
@@ -63,7 +66,7 @@ When contributing to this repository, please first discuss the change you wish t
    variables, exposed ports, useful file locations and container parameters.
 2. You may merge the Pull Request in once you have the sign-off of code owner, or if you 
    do not have permission to do that, you may request the code owner to merge it for you.
-
+   
 ## Author
 Harry Liu - [byliuyang](https://github.com/byliuyang)
 
