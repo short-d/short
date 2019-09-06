@@ -24,6 +24,7 @@ import (
 	"github.com/byliuyang/app/modern/mdservice"
 	"github.com/byliuyang/app/modern/mdtimer"
 	"github.com/byliuyang/app/modern/mdtracer"
+	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
@@ -66,7 +67,7 @@ func InjectRoutingService(name string, db *sql.DB, wwwRoot provider.WwwRoot, git
 	graphQlRequest := mdrequest.NewGraphQl(httpRequest)
 	api := github.NewAPI(graphQlRequest)
 	cryptoTokenizer := provider.JwtGo(jwtSecret)
-	tokenValidDuration := _wireProviderTokenValidDurationValue
+	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.Authenticator(cryptoTokenizer, timer, tokenValidDuration)
 	user := sqlrepo.NewUser(db)
 	repoService := account.NewRepoService(user, timer)
@@ -76,10 +77,10 @@ func InjectRoutingService(name string, db *sql.DB, wwwRoot provider.WwwRoot, git
 	return service
 }
 
-var (
-	_wireProviderTokenValidDurationValue = provider.TokenValidDuration(oneDay)
-)
-
 // wire.go:
 
 const oneDay = 24 * time.Hour
+
+var authSet = wire.NewSet(provider.JwtGo, wire.Value(provider.TokenValidDuration(oneDay)), provider.Authenticator)
+
+var observabilitySet = wire.NewSet(mdlogger.NewLocal, mdtracer.NewLocal)
