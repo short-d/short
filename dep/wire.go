@@ -29,6 +29,18 @@ import (
 
 const oneDay = 24 * time.Hour
 
+var authSet = wire.NewSet(
+	provider.JwtGo,
+
+	wire.Value(provider.TokenValidDuration(oneDay)),
+	provider.Authenticator,
+)
+
+var observabilitySet = wire.NewSet(
+	mdlogger.NewLocal,
+	mdtracer.NewLocal,
+)
+
 func InjectGraphQlService(
 	name string,
 	db *sql.DB,
@@ -37,27 +49,24 @@ func InjectGraphQlService(
 	jwtSecret provider.JwtSecret,
 ) mdservice.Service {
 	wire.Build(
-		wire.Value(provider.TokenValidDuration(oneDay)),
-
 		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
 		wire.Bind(new(repo.UserURL), new(sqlrepo.UserURL)),
 		wire.Bind(new(repo.URL), new(*sqlrepo.URL)),
 
+		observabilitySet,
+		authSet,
+
 		mdservice.New,
-		mdlogger.NewLocal,
-		mdtracer.NewLocal,
 		provider.GraphGophers,
 		mdhttp.NewClient,
 		mdrequest.NewHTTP,
 		mdtimer.NewTimer,
-		provider.JwtGo,
 
 		sqlrepo.NewURL,
 		sqlrepo.NewUserURL,
 		keygen.NewInMemory,
-		provider.Authenticator,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
 		provider.ReCaptchaService,
@@ -76,22 +85,20 @@ func InjectRoutingService(
 	jwtSecret provider.JwtSecret,
 ) mdservice.Service {
 	wire.Build(
-		wire.Value(provider.TokenValidDuration(oneDay)),
-
 		wire.Bind(new(service.Account), new(account.RepoService)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(repo.User), new(*(sqlrepo.User))),
 		wire.Bind(new(repo.URL), new(*sqlrepo.URL)),
 
+		observabilitySet,
+		authSet,
+
 		mdservice.New,
-		mdlogger.NewLocal,
-		mdtracer.NewLocal,
 		mdrouting.NewBuiltIn,
 		mdhttp.NewClient,
 		mdrequest.NewHTTP,
 		mdrequest.NewGraphQl,
 		mdtimer.NewTimer,
-		provider.JwtGo,
 
 		sqlrepo.NewUser,
 		sqlrepo.NewURL,
@@ -99,7 +106,6 @@ func InjectRoutingService(
 		account.NewRepoService,
 		provider.GithubOAuth,
 		github.NewAPI,
-		provider.Authenticator,
 		provider.ShortRoutes,
 	)
 	return mdservice.Service{}
