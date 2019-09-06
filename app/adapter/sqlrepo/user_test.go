@@ -9,21 +9,19 @@ import (
 	"testing"
 
 	"github.com/byliuyang/app/mdtest"
-
-	"github.com/DATA-DOG/go-sqlmock"
 )
 
 func TestUserSql_IsEmailExist(t *testing.T) {
 	testCases := []struct {
 		name       string
-		tableRows  *sqlmock.Rows
+		tableRows  *mdtest.TableRows
 		email      string
 		expIsExist bool
 	}{
 		{
 			name:  "email doesn't exist",
 			email: "user@example.com",
-			tableRows: sqlmock.NewRows([]string{
+			tableRows: mdtest.NewTableRows([]string{
 				table.User.ColumnEmail,
 			}),
 			expIsExist: false,
@@ -31,10 +29,9 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 		{
 			name:  "email found",
 			email: "user@example.com",
-			tableRows: sqlmock.
-				NewRows([]string{
-					table.User.ColumnEmail,
-				}).
+			tableRows: mdtest.NewTableRows([]string{
+				table.User.ColumnEmail,
+			}).
 				AddRow("user@example.com"),
 			expIsExist: true,
 		},
@@ -42,12 +39,12 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			db, mock, err := sqlmock.New()
+			db, stub, err := mdtest.NewSQLStub()
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.User.TableName, table.User.ColumnEmail)
-			mock.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
+			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
 			userRepo := NewUser(db)
 			gotIsExist, err := userRepo.IsEmailExist(testCase.email)
@@ -60,7 +57,7 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 func TestUserSql_GetByEmail(t *testing.T) {
 	testCases := []struct {
 		name      string
-		tableRows *sqlmock.Rows
+		tableRows *mdtest.TableRows
 		email     string
 		hasErr    bool
 		expUser   entity.User
@@ -68,7 +65,7 @@ func TestUserSql_GetByEmail(t *testing.T) {
 		{
 			name:  "email doesn't exist",
 			email: "user@example.com",
-			tableRows: sqlmock.NewRows([]string{
+			tableRows: mdtest.NewTableRows([]string{
 				table.User.ColumnEmail,
 				table.User.ColumnName,
 				table.User.ColumnLastSignedInAt,
@@ -80,14 +77,13 @@ func TestUserSql_GetByEmail(t *testing.T) {
 		{
 			name:  "email found",
 			email: "user@example.com",
-			tableRows: sqlmock.
-				NewRows([]string{
-					table.User.ColumnEmail,
-					table.User.ColumnName,
-					table.User.ColumnLastSignedInAt,
-					table.User.ColumnUpdatedAt,
-					table.User.ColumnCreatedAt,
-				}).
+			tableRows: mdtest.NewTableRows([]string{
+				table.User.ColumnEmail,
+				table.User.ColumnName,
+				table.User.ColumnLastSignedInAt,
+				table.User.ColumnUpdatedAt,
+				table.User.ColumnCreatedAt,
+			}).
 				AddRow("alpha@example.com", "Alpha", nil, nil, nil),
 			hasErr: false,
 			expUser: entity.User{
@@ -99,12 +95,12 @@ func TestUserSql_GetByEmail(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			db, mock, err := sqlmock.New()
+			db, stub, err := mdtest.NewSQLStub()
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			expQuery := fmt.Sprintf(`^SELECT ".+",".+",".+",".+",".+" FROM "%s" WHERE "%s"=.+$`, table.User.TableName, table.User.ColumnEmail)
-			mock.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
+			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
 			userRepo := NewUser(db)
 
@@ -147,15 +143,15 @@ func TestUserSql_Create(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			db, mock, err := sqlmock.New()
+			db, stub, err := mdtest.NewSQLStub()
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			expStatement := fmt.Sprintf(`INSERT\s*INTO\s*"%s"`, table.User.TableName)
 			if testCase.rowExist {
-				mock.ExpectExec(expStatement).WillReturnError(errors.New("row exists"))
+				stub.ExpectExec(expStatement).WillReturnError(errors.New("row exists"))
 			} else {
-				mock.ExpectExec(expStatement).WillReturnResult(driver.ResultNoRows)
+				stub.ExpectExec(expStatement).WillReturnResult(driver.ResultNoRows)
 			}
 
 			userRepo := NewUser(db)

@@ -9,21 +9,20 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/byliuyang/app/mdtest"
 )
 
 func TestUserSql_IsAliasExist(t *testing.T) {
 	testCases := []struct {
 		name       string
-		tableRows  *sqlmock.Rows
+		tableRows  *mdtest.TableRows
 		alias      string
 		expIsExist bool
 	}{
 		{
 			name:  "alias doesn't exist",
 			alias: "gg",
-			tableRows: sqlmock.NewRows([]string{
+			tableRows: mdtest.NewTableRows([]string{
 				table.URL.ColumnAlias,
 			}),
 			expIsExist: false,
@@ -31,10 +30,9 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 		{
 			name:  "alias found",
 			alias: "gg",
-			tableRows: sqlmock.
-				NewRows([]string{
-					table.URL.ColumnAlias,
-				}).
+			tableRows: mdtest.NewTableRows([]string{
+				table.URL.ColumnAlias,
+			}).
 				AddRow("gg"),
 			expIsExist: true,
 		},
@@ -42,12 +40,12 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			db, mock, err := sqlmock.New()
+			db, stub, err := mdtest.NewSQLStub()
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
-			mock.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
+			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
 			urlRepo := NewURL(db)
 			gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
@@ -60,14 +58,14 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 func TestUrlSql_GetByAlias(t *testing.T) {
 	testCases := []struct {
 		name        string
-		tableRows   *sqlmock.Rows
+		tableRows   *mdtest.TableRows
 		alias       string
 		hasErr      bool
 		expectedURL entity.URL
 	}{
 		{
 			name: "alias not found",
-			tableRows: sqlmock.NewRows([]string{
+			tableRows: mdtest.NewTableRows([]string{
 				table.URL.ColumnAlias,
 				table.URL.ColumnOriginalURL,
 				table.URL.ColumnExpireAt,
@@ -79,7 +77,7 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 		},
 		{
 			name: "found url",
-			tableRows: sqlmock.NewRows([]string{
+			tableRows: mdtest.NewTableRows([]string{
 				table.URL.ColumnAlias,
 				table.URL.ColumnOriginalURL,
 				table.URL.ColumnExpireAt,
@@ -112,12 +110,12 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			db, mock, err := sqlmock.New()
+			db, stub, err := mdtest.NewSQLStub()
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
 			statement := fmt.Sprintf(`^SELECT .+ FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
-			mock.ExpectQuery(statement).WillReturnRows(testCase.tableRows)
+			stub.ExpectQuery(statement).WillReturnRows(testCase.tableRows)
 
 			urlRepo := NewURL(db)
 			url, err := urlRepo.GetByAlias("220uFicCJj")
@@ -163,7 +161,7 @@ func TestURLFake_Create(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			db, mock, err := sqlmock.New()
+			db, stub, err := mdtest.NewSQLStub()
 
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
@@ -171,9 +169,9 @@ func TestURLFake_Create(t *testing.T) {
 			statement := fmt.Sprintf(`INSERT INTO "%s" .+ VALUES .+`, table.URL.TableName)
 
 			if testCase.rowExist {
-				mock.ExpectExec(statement).WillReturnError(errors.New("row exists"))
+				stub.ExpectExec(statement).WillReturnError(errors.New("row exists"))
 			} else {
-				mock.ExpectExec(statement).WillReturnResult(driver.ResultNoRows)
+				stub.ExpectExec(statement).WillReturnResult(driver.ResultNoRows)
 			}
 
 			urlRepo := NewURL(db)
