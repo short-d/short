@@ -1,4 +1,4 @@
-package inject
+package provider
 
 import (
 	"github.com/byliuyang/app/modern/mdcrypto"

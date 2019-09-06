@@ -5,10 +5,18 @@ package dep
 import (
 	"database/sql"
 	"short/app/adapter/github"
+	"short/app/adapter/graphql"
+	"short/app/adapter/sqlrepo"
+	"short/app/usecase/account"
 	"short/app/usecase/keygen"
+	"short/app/usecase/repo"
 	"short/app/usecase/requester"
-	"short/dep/inject"
+	"short/app/usecase/service"
+	"short/app/usecase/url"
+	"short/dep/provider"
+	"time"
 
+	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdhttp"
 	"github.com/byliuyang/app/modern/mdlogger"
 	"github.com/byliuyang/app/modern/mdrequest"
@@ -16,49 +24,65 @@ import (
 	"github.com/byliuyang/app/modern/mdservice"
 	"github.com/byliuyang/app/modern/mdtimer"
 	"github.com/byliuyang/app/modern/mdtracer"
-
 	"github.com/google/wire"
 )
 
-func InitGraphQlService(
+const oneDay = 24 * time.Hour
+
+func InjectGraphQlService(
 	name string,
 	db *sql.DB,
-	graphqlPath inject.GraphQlPath,
-	secret inject.ReCaptchaSecret,
-	jwtSecret inject.JwtSecret,
+	graphqlPath provider.GraphQlPath,
+	secret provider.ReCaptchaSecret,
+	jwtSecret provider.JwtSecret,
 ) mdservice.Service {
 	wire.Build(
+		wire.Value(provider.TokenValidDuration(oneDay)),
+
+		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
+		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
+		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
+		wire.Bind(new(repo.UserURL), new(sqlrepo.UserURL)),
+		wire.Bind(new(repo.URL), new(*sqlrepo.URL)),
+
 		mdservice.New,
 		mdlogger.NewLocal,
 		mdtracer.NewLocal,
-		inject.GraphGophers,
+		provider.GraphGophers,
 		mdhttp.NewClient,
 		mdrequest.NewHTTP,
 		mdtimer.NewTimer,
-		inject.JwtGo,
+		provider.JwtGo,
 
-		inject.URLRepoSQL,
-		inject.UserURLRepoSQL,
+		sqlrepo.NewURL,
+		sqlrepo.NewUserURL,
 		keygen.NewInMemory,
-		inject.Authenticator,
-		inject.URLRetrieverPersist,
-		inject.URLCreatorPersist,
-		inject.ReCaptchaService,
+		provider.Authenticator,
+		url.NewRetrieverPersist,
+		url.NewCreatorPersist,
+		provider.ReCaptchaService,
 		requester.NewVerifier,
-		inject.ShortGraphQlAPI,
+		graphql.NewShort,
 	)
 	return mdservice.Service{}
 }
 
-func InitRoutingService(
+func InjectRoutingService(
 	name string,
 	db *sql.DB,
-	wwwRoot inject.WwwRoot,
-	githubClientID inject.GithubClientID,
-	githubClientSecret inject.GithubClientSecret,
-	jwtSecret inject.JwtSecret,
+	wwwRoot provider.WwwRoot,
+	githubClientID provider.GithubClientID,
+	githubClientSecret provider.GithubClientSecret,
+	jwtSecret provider.JwtSecret,
 ) mdservice.Service {
 	wire.Build(
+		wire.Value(provider.TokenValidDuration(oneDay)),
+
+		wire.Bind(new(service.Account), new(account.RepoService)),
+		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
+		wire.Bind(new(repo.User), new(*(sqlrepo.User))),
+		wire.Bind(new(repo.URL), new(*sqlrepo.URL)),
+
 		mdservice.New,
 		mdlogger.NewLocal,
 		mdtracer.NewLocal,
@@ -67,16 +91,16 @@ func InitRoutingService(
 		mdrequest.NewHTTP,
 		mdrequest.NewGraphQl,
 		mdtimer.NewTimer,
-		inject.JwtGo,
+		provider.JwtGo,
 
-		inject.URLRepoSQL,
-		inject.UserRepoSQL,
-		inject.URLRetrieverPersist,
-		inject.GithubOAuth,
+		sqlrepo.NewUser,
+		sqlrepo.NewURL,
+		url.NewRetrieverPersist,
+		account.NewRepoService,
+		provider.GithubOAuth,
 		github.NewAPI,
-		inject.RepoAccount,
-		inject.Authenticator,
-		inject.ShortRoutes,
+		provider.Authenticator,
+		provider.ShortRoutes,
 	)
 	return mdservice.Service{}
 }

@@ -8,9 +8,14 @@ package dep
 import (
 	"database/sql"
 	"short/app/adapter/github"
+	"short/app/adapter/graphql"
+	"short/app/adapter/sqlrepo"
+	"short/app/usecase/account"
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
-	"short/dep/inject"
+	"short/app/usecase/url"
+	"short/dep/provider"
+	"time"
 
 	"github.com/byliuyang/app/modern/mdhttp"
 	"github.com/byliuyang/app/modern/mdlogger"
@@ -23,44 +28,58 @@ import (
 
 // Injectors from wire.go:
 
-func InitGraphQlService(name string, db *sql.DB, graphqlPath inject.GraphQlPath, secret inject.ReCaptchaSecret, jwtSecret inject.JwtSecret) mdservice.Service {
+func InjectGraphQlService(name string, db *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
-	url := inject.URLRepoSQL(db)
-	retriever := inject.URLRetrieverPersist(url)
-	userURL := inject.UserURLRepoSQL(db)
+	sqlrepoURL := sqlrepo.NewURL(db)
+	retrieverPersist := url.NewRetrieverPersist(sqlrepoURL)
+	userURL := sqlrepo.NewUserURL(db)
 	keyGenerator := keygen.NewInMemory()
-	creator := inject.URLCreatorPersist(url, userURL, keyGenerator)
+	creatorPersist := url.NewCreatorPersist(sqlrepoURL, userURL, keyGenerator)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHTTP(client)
-	reCaptcha := inject.ReCaptchaService(httpRequest, secret)
+	reCaptcha := provider.ReCaptchaService(httpRequest, secret)
 	verifier := requester.NewVerifier(reCaptcha)
-	cryptoTokenizer := inject.JwtGo(jwtSecret)
+	cryptoTokenizer := provider.JwtGo(jwtSecret)
 	timer := mdtimer.NewTimer()
-	authenticator := inject.Authenticator(cryptoTokenizer, timer)
-	graphQlAPI := inject.ShortGraphQlAPI(logger, tracer, retriever, creator, verifier, authenticator)
-	server := inject.GraphGophers(graphqlPath, logger, tracer, graphQlAPI)
+	tokenValidDuration := _wireTokenValidDurationValue
+	authenticator := provider.Authenticator(cryptoTokenizer, timer, tokenValidDuration)
+	short := graphql.NewShort(logger, tracer, retrieverPersist, creatorPersist, verifier, authenticator)
+	server := provider.GraphGophers(graphqlPath, logger, tracer, short)
 	service := mdservice.New(name, server, logger)
 	return service
 }
 
-func InitRoutingService(name string, db *sql.DB, wwwRoot inject.WwwRoot, githubClientID inject.GithubClientID, githubClientSecret inject.GithubClientSecret, jwtSecret inject.JwtSecret) mdservice.Service {
+var (
+	_wireTokenValidDurationValue = provider.TokenValidDuration(oneDay)
+)
+
+func InjectRoutingService(name string, db *sql.DB, wwwRoot provider.WwwRoot, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, jwtSecret provider.JwtSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	timer := mdtimer.NewTimer()
-	url := inject.URLRepoSQL(db)
-	retriever := inject.URLRetrieverPersist(url)
+	sqlrepoURL := sqlrepo.NewURL(db)
+	retrieverPersist := url.NewRetrieverPersist(sqlrepoURL)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHTTP(client)
-	oauthGithub := inject.GithubOAuth(httpRequest, githubClientID, githubClientSecret)
+	oauthGithub := provider.GithubOAuth(httpRequest, githubClientID, githubClientSecret)
 	graphQlRequest := mdrequest.NewGraphQl(httpRequest)
 	api := github.NewAPI(graphQlRequest)
-	cryptoTokenizer := inject.JwtGo(jwtSecret)
-	authenticator := inject.Authenticator(cryptoTokenizer, timer)
-	user := inject.UserRepoSQL(db)
-	account := inject.RepoAccount(user, timer)
-	v := inject.ShortRoutes(logger, tracer, wwwRoot, timer, retriever, oauthGithub, api, authenticator, account)
+	cryptoTokenizer := provider.JwtGo(jwtSecret)
+	tokenValidDuration := _wireProviderTokenValidDurationValue
+	authenticator := provider.Authenticator(cryptoTokenizer, timer, tokenValidDuration)
+	user := sqlrepo.NewUser(db)
+	repoService := account.NewRepoService(user, timer)
+	v := provider.ShortRoutes(logger, tracer, wwwRoot, timer, retrieverPersist, oauthGithub, api, authenticator, repoService)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service
 }
+
+var (
+	_wireProviderTokenValidDurationValue = provider.TokenValidDuration(oneDay)
+)
+
+// wire.go:
+
+const oneDay = 24 * time.Hour
