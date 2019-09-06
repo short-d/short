@@ -10,12 +10,10 @@ import (
 	"time"
 
 	"github.com/byliuyang/app/mdtest"
-
-	"github.com/DATA-DOG/go-sqlmock"
 )
 
 func TestGraphQlAPI(t *testing.T) {
-	db, _, err := sqlmock.New()
+	db, _, err := mdtest.NewSQLStub()
 	mdtest.Equal(t, nil, err)
 	defer db.Close()
 
