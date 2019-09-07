@@ -3,47 +3,36 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"short/dep"
-	"strconv"
 
 	"github.com/byliuyang/app/fw"
 )
 
 func NewRootCmd(
-	host string,
-	portStr string,
-	user string,
-	password string,
-	dbName string,
+	dbConfig fw.DBConfig,
 	recaptchaSecret string,
-	githubClientID string,
-	githubClientSecret string,
+	githubConfig GithubConfig,
 	jwtSecret string,
+	cmdFactory fw.CommandFactory,
+	dbConnector fw.DBConnector,
+	dbMigrationTool fw.DBMigrationTool,
 ) fw.Command {
 	var migrationRoot string
 	var wwwRoot string
-
-	cmdFactory := dep.InjectCommandFactory()
 
 	startCmd := cmdFactory.NewCommand(
 		fw.CommandConfig{
 			Usage:        "start",
 			ShortHelpMsg: "Start service",
 			OnExecute: func(cmd *fw.Command, args []string) {
-				port := MustInt(portStr)
-
 				start(
-					host,
-					port,
-					user,
-					password,
-					dbName,
+					dbConfig,
 					migrationRoot,
 					wwwRoot,
 					recaptchaSecret,
-					githubClientID,
-					githubClientSecret,
+					githubConfig,
 					jwtSecret,
+					dbConnector,
+					dbMigrationTool,
 				)
 			},
 		},
@@ -53,7 +42,7 @@ func NewRootCmd(
 
 	rootCmd := cmdFactory.NewCommand(
 		fw.CommandConfig{
-			Usage: "short",
+			Usage:     "short",
 			OnExecute: func(cmd *fw.Command, args []string) {},
 		},
 	)
@@ -71,14 +60,4 @@ func Execute(rootCmd fw.Command) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func MustInt(numStr string) int {
-	num, err := strconv.Atoi(numStr)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return num
 }
