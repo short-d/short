@@ -16,7 +16,18 @@ func main() {
 	githubClientSecret := getEnv("GITHUB_CLIENT_SECRET", "")
 	jwtSecret := getEnv("JWT_SECRET", "")
 
-	cmd.Execute(host, portStr, user, password, dbName, recaptchaSecret, githubClientID, githubClientSecret, jwtSecret)
+	rootCmd := cmd.NewRootCmd(
+		host,
+		portStr,
+		user,
+		password,
+		dbName,
+		recaptchaSecret,
+		githubClientID,
+		githubClientSecret,
+		jwtSecret,
+	)
+	cmd.Execute(rootCmd)
 }
 
 func getEnv(varName string, defaultVal string) string {
