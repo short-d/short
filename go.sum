@@ -17,6 +17,8 @@ github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+Ce
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
 github.com/byliuyang/app v0.0.0-20190906153749-0f8a0dfaf22b h1:eHt55zwsnkp/31kKSJQfjQhcGJrKfktQxj+jpiID+hI=
 github.com/byliuyang/app v0.0.0-20190906153749-0f8a0dfaf22b/go.mod h1:lNs3QZwDzj6zapLKVxS/rTEnwmhlFIMVEg9+vdSQDmY=
+github.com/byliuyang/app v0.0.0-20190907041201-8cebea9bbc92 h1:Dbk7NyuYf8w8LcAc+gJb6VmQW1B2G9yKNUH/mjyNjaE=
+github.com/byliuyang/app v0.0.0-20190907041201-8cebea9bbc92/go.mod h1:r/nrNvp1aX/a693N2oefDlKstYryqz77gpiInyk/5U0=
 github.com/byliuyang/eventbus v0.0.0-20190905025612-ee6985030d5b/go.mod h1:r0/JGVFQObWPCDGD5J+UU9W8eqnnEzhfFUtxsfLAhLg=
 github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=

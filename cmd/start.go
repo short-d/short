@@ -1,42 +1,53 @@
 package cmd
 
 import (
-	"database/sql"
 	"short/dep"
 	"short/dep/provider"
+
+	"github.com/byliuyang/app/fw"
 )
 
+type GithubConfig struct {
+	ClientID     string
+	ClientSecret string
+}
+
 func start(
-	host string,
-	port int,
-	user string,
-	password string,
-	dbName string,
+	dbConfig fw.DBConfig,
 	migrationRoot string,
 	wwwRoot string,
 	recaptchaSecret string,
-	githubClientID string,
-	githubClientSecret string,
+	githubConfig GithubConfig,
 	jwtSecret string,
+	dbConnector fw.DBConnector,
+	dbMigrationTool fw.DBMigrationTool,
 ) {
-	provider.DB(host, port, user, password, dbName, migrationRoot, func(db *sql.DB) {
-		service := dep.InjectGraphQlService(
-			"GraphQL API",
-			db,
-			"/graphql",
-			provider.ReCaptchaSecret(recaptchaSecret),
-			provider.JwtSecret(jwtSecret),
-		)
-		service.Start(8080)
+	db, err := dbConnector.Connect(dbConfig)
+	if err != nil {
+		panic(err)
+	}
 
-		service = dep.InjectRoutingService(
-			"Routing API",
-			db,
-			provider.WwwRoot(wwwRoot),
-			provider.GithubClientID(githubClientID),
-			provider.GithubClientSecret(githubClientSecret),
-			provider.JwtSecret(jwtSecret),
-		)
-		service.StartAndWait(80)
-	})
+	err = dbMigrationTool.Migrate(db, migrationRoot)
+	if err != nil {
+		panic(err)
+	}
+
+	graphqlAPI := dep.InjectGraphQlService(
+		"GraphQL API",
+		db,
+		"/graphql",
+		provider.ReCaptchaSecret(recaptchaSecret),
+		provider.JwtSecret(jwtSecret),
+	)
+	graphqlAPI.Start(8080)
+
+	httpAPI := dep.InjectRoutingService(
+		"Routing API",
+		db,
+		provider.WwwRoot(wwwRoot),
+		provider.GithubClientID(githubConfig.ClientID),
+		provider.GithubClientSecret(githubConfig.ClientSecret),
+		provider.JwtSecret(jwtSecret),
+	)
+	httpAPI.StartAndWait(80)
 }

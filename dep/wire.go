@@ -16,6 +16,8 @@ import (
 	"short/dep/provider"
 	"time"
 
+	"github.com/byliuyang/app/modern/mddb"
+
 	"github.com/byliuyang/app/modern/mdcli"
 
 	"github.com/byliuyang/app/fw"
@@ -49,6 +51,22 @@ func InjectCommandFactory() fw.CommandFactory {
 		mdcli.NewCobraFactory,
 	)
 	return mdcli.CobraFactory{}
+}
+
+func InjectDBConnector() fw.DBConnector {
+	wire.Build(
+		wire.Bind(new(fw.DBConnector), new(mddb.PostgresConnector)),
+		mddb.NewPostgresConnector,
+	)
+	return mddb.PostgresConnector{}
+}
+
+func InjectDBMigrationTool() fw.DBMigrationTool {
+	wire.Build(
+		wire.Bind(new(fw.DBMigrationTool), new(mddb.PostgresMigrationTool)),
+		mddb.NewPostgresMigrationTool,
+	)
+	return mddb.PostgresMigrationTool{}
 }
 
 func InjectGraphQlService(
