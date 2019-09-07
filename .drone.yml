@@ -92,9 +92,9 @@ steps:
       DOCKERHUB_PASSWORD:
         from_secret: DOCKERHUB_PASSWORD
     commands:
-      - docker login $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-      - docker tag short:latest $DOCKERHUB_USERNAME/short:latest
-      - docker push $DOCKERHUB_USERNAME/short:latest
+      - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - docker tag short:latest $DOCKER_IMAGE_PREFIX/short:latest
+      - docker push $DOCKER_IMAGE_PREFIX/short:latest
     volumes:
       - name: docker
         path: /var/run/docker.sock
