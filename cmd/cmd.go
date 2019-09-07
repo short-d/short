@@ -54,6 +54,7 @@ func NewRootCmd(
 	rootCmd := cmdFactory.NewCommand(
 		fw.CommandConfig{
 			Usage: "short",
+			OnExecute: func(cmd *fw.Command, args []string) {},
 		},
 	)
 	err := rootCmd.AddSubCommand(startCmd)
