@@ -61,7 +61,6 @@ func getEnv(varName string, defaultVal string) string {
 
 func mustInt(numStr string) int {
 	num, err := strconv.Atoi(numStr)
-
 	if err != nil {
 		panic(err)
 	}
