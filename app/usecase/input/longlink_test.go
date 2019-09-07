@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/byliuyang/app/mdtest"
 )
 
 func TestLongLink_IsValid(t *testing.T) {
@@ -49,7 +49,7 @@ func TestLongLink_IsValid(t *testing.T) {
 	validator := NewLongLink()
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			assert.Equal(t, testCase.expIsValid, validator.IsValid(&testCase.longLink))
+			mdtest.Equal(t, testCase.expIsValid, validator.IsValid(&testCase.longLink))
 		})
 	}
 }

@@ -5,21 +5,21 @@ import (
 	"short/app/usecase/repo"
 	"short/app/usecase/service"
 
-	"short/fw"
+	"github.com/byliuyang/app/fw"
 )
 
-var _ service.Account = (*Repo)(nil)
+var _ service.Account = (*RepoService)(nil)
 
-type Repo struct {
+type RepoService struct {
 	userRepo repo.User
 	timer    fw.Timer
 }
 
-func (r Repo) IsAccountExist(email string) (bool, error) {
+func (r RepoService) IsAccountExist(email string) (bool, error) {
 	return r.userRepo.IsEmailExist(email)
 }
 
-func (r Repo) CreateAccount(email string, name string) error {
+func (r RepoService) CreateAccount(email string, name string) error {
 	now := r.timer.Now()
 	user := entity.User{
 		Email:     email,
@@ -29,8 +29,8 @@ func (r Repo) CreateAccount(email string, name string) error {
 	return r.userRepo.Create(user)
 }
 
-func NewRepoService(userRepo repo.User, timer fw.Timer) Repo {
-	return Repo{
+func NewRepoService(userRepo repo.User, timer fw.Timer) RepoService {
+	return RepoService{
 		userRepo: userRepo,
 		timer:    timer,
 	}

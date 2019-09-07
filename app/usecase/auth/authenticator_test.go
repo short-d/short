@@ -4,11 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"short/mdtest"
-
-	"short/fw"
-
-	"github.com/stretchr/testify/assert"
+	"github.com/byliuyang/app/fw"
+	"github.com/byliuyang/app/mdtest"
 )
 
 func TestAuthenticator_GenerateToken(t *testing.T) {
@@ -19,15 +16,15 @@ func TestAuthenticator_GenerateToken(t *testing.T) {
 
 	expEmail := "test@s.time4hacks.com"
 	token, err := authenticator.GenerateToken(expEmail)
-	assert.Nil(t, err)
+	mdtest.Equal(t, nil, err)
 
 	tokenPayload, err := tokenizer.Decode(token)
-	assert.Nil(t, err)
+	mdtest.Equal(t, nil, err)
 
-	assert.Equal(t, expEmail, tokenPayload["email"])
+	mdtest.Equal(t, expEmail, tokenPayload["email"])
 
 	expIssuedAtStr := expIssuedAt.Format(time.RFC3339Nano)
-	assert.Equal(t, expIssuedAtStr, tokenPayload["issued_at"])
+	mdtest.Equal(t, expIssuedAtStr, tokenPayload["issued_at"])
 }
 
 func TestAuthenticator_IsSignedIn(t *testing.T) {
@@ -100,9 +97,9 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 			authenticator := NewAuthenticator(tokenizer, timer, testCase.tokenValidDuration)
 
 			token, err := tokenizer.Encode(testCase.tokenPayload)
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 			gotIsSignIn := authenticator.IsSignedIn(token)
-			assert.Equal(t, testCase.expIsSignIn, gotIsSignIn)
+			mdtest.Equal(t, testCase.expIsSignIn, gotIsSignIn)
 		})
 	}
 }
@@ -195,13 +192,13 @@ func TestAuthenticator_GetUserEmail(t *testing.T) {
 			authenticator := NewAuthenticator(tokenizer, timer, testCase.tokenValidDuration)
 
 			token, err := tokenizer.Encode(testCase.tokenPayload)
-			assert.Nil(t, err)
+			mdtest.Equal(t, nil, err)
 			gotEmail, err := authenticator.GetUserEmail(token)
 			if testCase.hasErr {
-				assert.NotNil(t, err)
+				mdtest.NotEqual(t, nil, err)
 				return
 			}
-			assert.Equal(t, testCase.expEmail, gotEmail)
+			mdtest.Equal(t, testCase.expEmail, gotEmail)
 		})
 	}
 }

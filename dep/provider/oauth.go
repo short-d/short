@@ -1,9 +1,9 @@
-package inject
+package provider
 
 import (
 	"short/app/adapter/oauth"
 
-	"short/fw"
+	"github.com/byliuyang/app/fw"
 )
 
 type GithubClientID string

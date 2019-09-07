@@ -78,8 +78,8 @@ VALUES ($1, $2, $3, $4, $5)
 	return err
 }
 
-func NewUser(db *sql.DB) User {
-	return User{
+func NewUser(db *sql.DB) *User {
+	return &User{
 		db: db,
 	}
 }

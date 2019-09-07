@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/byliuyang/app/mdtest"
 )
 
 func TestURLCreatorPersist_CreateUrl(t *testing.T) {
@@ -64,11 +64,11 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 			url, err := creator.Create(testCase.url, testCase.userEmail)
 
 			if testCase.hasErr {
-				assert.NotNil(t, err)
+				mdtest.NotEqual(t, nil, err)
 				return
 			}
-			assert.Nil(t, err)
-			assert.Equal(t, testCase.expectedURL, url)
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expectedURL, url)
 		})
 	}
 }

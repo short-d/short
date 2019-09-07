@@ -7,9 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"short/mdtest"
-
-	"github.com/stretchr/testify/assert"
+	"github.com/byliuyang/app/mdtest"
 )
 
 type urlMap = map[string]entity.URL
@@ -89,10 +87,10 @@ func TestQuery_Url(t *testing.T) {
 			u, err := query.URL(urlArgs)
 
 			if testCase.hasErr {
-				assert.NotNil(t, err)
+				mdtest.NotEqual(t, nil, err)
 				return
 			}
-			assert.Equal(t, testCase.expectedURL, u)
+			mdtest.Equal(t, testCase.expectedURL, u)
 		})
 	}
 }

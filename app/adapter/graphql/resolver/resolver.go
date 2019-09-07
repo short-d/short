@@ -5,7 +5,7 @@ import (
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
 
-	"short/fw"
+	"github.com/byliuyang/app/fw"
 )
 
 type Resolver struct {

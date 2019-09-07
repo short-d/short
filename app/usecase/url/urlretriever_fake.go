@@ -5,7 +5,7 @@ import (
 	"short/app/entity"
 	"time"
 
-	"short/fw"
+	"github.com/byliuyang/app/fw"
 )
 
 var _ Retriever = (*FakeRetriever)(nil)
