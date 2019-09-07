@@ -91,14 +91,10 @@ steps:
         from_secret: DOCKERHUB_USERNAME
       DOCKERHUB_PASSWORD:
         from_secret: DOCKERHUB_PASSWORD
-      DOCKER_REGISTRY:
-        from_secret: DOCKER_REGISTRY
-      DOCKER_IMAGE_PREFIX:
-        from_secret: DOCKER_IMAGE_PREFIX
     commands:
-      - docker login $DOCKER_REGISTRY -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-      - docker tag short:latest $DOCKER_IMAGE_PREFIX/short:latest
-      - docker push $DOCKER_IMAGE_PREFIX/short:latest
+      - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - docker tag short:latest $DOCKERHUB_USERNAME/short:latest
+      - docker push $DOCKERHUB_USERNAME/short:latest
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -132,8 +128,8 @@ steps:
   - name: deploy service
     image: appleboy/drone-ssh
     environment:
-      DOCKER_IMAGE_PREFIX:
-        from_secret: DOCKER_IMAGE_PREFIX
+      DOCKERHUB_USERNAME:
+        from_secret: DOCKERHUB_USERNAME
       DEST_DIR:
         from_secret: DEST_DIR
       DB_USER:
@@ -163,7 +159,7 @@ steps:
         from_secret: SERVER_PASSWORD
       port: 22
       envs:
-        - DOCKER_IMAGE_PREFIX
+        - DOCKERHUB_USERNAME
         - DEST_DIR
         - DB_USER
         - DB_PASSWORD
@@ -175,9 +171,9 @@ steps:
         - WEB_PORT
         - API_PORT
       script:
-        - docker pull $DOCKER_IMAGE_PREFIX/short
+        - docker pull $DOCKERHUB_USERNAME/short
         - cd $DEST_DIR;
-          DOCKER_IMAGE_PREFIX=$DOCKER_IMAGE_PREFIX
+          DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME
           DB_USER=$DB_USER
           DB_PASSWORD=$DB_PASSWORD
           DB_NAME=$DB_NAME
