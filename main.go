@@ -51,20 +51,16 @@ func main() {
 
 func getEnv(varName string, defaultVal string) string {
 	val := os.Getenv(varName)
-
 	if val == "" {
 		return defaultVal
 	}
-
 	return val
 }
 
 func mustInt(numStr string) int {
 	num, err := strconv.Atoi(numStr)
-
 	if err != nil {
 		panic(err)
 	}
-
 	return num
 }
