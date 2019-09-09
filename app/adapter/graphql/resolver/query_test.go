@@ -77,7 +77,9 @@ func TestQuery_Url(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			retrieverFake := url.NewRetrieverFake(testCase.urls)
-			query := NewQuery(mdtest.FakeLogger, mdtest.FakeTracer, retrieverFake)
+			logger := mdtest.NewLoggerFake()
+			tracer := mdtest.NewTracerFake()
+			query := NewQuery(&logger, &tracer, retrieverFake)
 
 			urlArgs := &URLArgs{
 				Alias:       testCase.alias,

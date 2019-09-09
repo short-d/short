@@ -14,7 +14,7 @@ type FakeRetriever struct {
 	urls map[string]entity.URL
 }
 
-func (f FakeRetriever) GetAfter(trace fw.Trace, alias string, expiringAt time.Time) (entity.URL, error) {
+func (f FakeRetriever) GetAfter(trace fw.Segment, alias string, expiringAt time.Time) (entity.URL, error) {
 	url, ok := f.urls[alias]
 	if !ok {
 		return entity.URL{}, errors.New("url not found")
@@ -30,7 +30,7 @@ func (f FakeRetriever) GetAfter(trace fw.Trace, alias string, expiringAt time.Ti
 	return url, nil
 }
 
-func (f FakeRetriever) Get(trace fw.Trace, alias string) (entity.URL, error) {
+func (f FakeRetriever) Get(trace fw.Segment, alias string) (entity.URL, error) {
 	url, ok := f.urls[alias]
 	if !ok {
 		return entity.URL{}, errors.New("url not found")
