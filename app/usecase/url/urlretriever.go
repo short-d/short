@@ -13,15 +13,15 @@ import (
 var _ Retriever = (*RetrieverPersist)(nil)
 
 type Retriever interface {
-	GetAfter(trace fw.Trace, alias string, expiringAt time.Time) (entity.URL, error)
-	Get(trace fw.Trace, alias string) (entity.URL, error)
+	GetAfter(trace fw.Segment, alias string, expiringAt time.Time) (entity.URL, error)
+	Get(trace fw.Segment, alias string) (entity.URL, error)
 }
 
 type RetrieverPersist struct {
 	urlRepo repo.URL
 }
 
-func (u RetrieverPersist) GetAfter(trace fw.Trace, alias string, expiringAt time.Time) (entity.URL, error) {
+func (u RetrieverPersist) GetAfter(trace fw.Segment, alias string, expiringAt time.Time) (entity.URL, error) {
 	trace1 := trace.Next("Get")
 	url, err := u.Get(trace1, alias)
 	trace1.End()
@@ -41,7 +41,7 @@ func (u RetrieverPersist) GetAfter(trace fw.Trace, alias string, expiringAt time
 	return url, nil
 }
 
-func (u RetrieverPersist) Get(trace fw.Trace, alias string) (entity.URL, error) {
+func (u RetrieverPersist) Get(trace fw.Segment, alias string) (entity.URL, error) {
 	trace1 := trace.Next("GetByAlias")
 	url, err := u.urlRepo.GetByAlias(alias)
 	trace1.End()
