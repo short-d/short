@@ -66,6 +66,13 @@ When contributing to this repository, please first discuss the change you wish t
    variables, exposed ports, useful file locations and container parameters.
 2. You may merge the Pull Request in once you have the sign-off of code owner, or if you 
    do not have permission to do that, you may request the code owner to merge it for you.
+
+### Code of Conduct
+- Using welcoming and inclusive language
+- Being respectful of differing viewpoints and experiences
+- Gracefully accepting constructive criticism
+- Focusing on what is best for the community
+- Showing empathy towards other community members
    
 ## Author
 Harry Liu - [byliuyang](https://github.com/byliuyang)
