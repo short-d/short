@@ -7,8 +7,10 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// ReCaptchaSecret reCAPTCHA secret.
 type ReCaptchaSecret string
 
+// ReCaptchaService initializes reCAPTCHA service.
 func ReCaptchaService(req fw.HTTPRequest, secret ReCaptchaSecret) service.ReCaptcha {
 	return recaptcha.NewService(req, string(secret))
 }

@@ -11,8 +11,10 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// WwwRoot the Root address service.
 type WwwRoot string
 
+// ShortRoutes initializes the service routes.
 func ShortRoutes(
 	logger fw.Logger,
 	tracer fw.Tracer,
