@@ -45,8 +45,6 @@ Remember to replace the appropriate lines with your db user, db password, db nam
 GRAPHQL_BASE_URL=http://localhost:8080 \
 HTTP_API_BASE_URL=http://localhost \
 RECAPTCHA_SITE_KEY=your_recaptcha_site_key \
-./bin/build-web-dev docker build -t short:latest .
-
 docker build -t local/short:latest .
 ```
 Remember to replace the appropriate line with your reCAPTCHA site key.
