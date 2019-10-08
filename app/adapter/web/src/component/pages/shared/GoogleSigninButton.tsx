@@ -22,5 +22,3 @@ export class GoogleSigninButton extends Component<Props> {
     );
   }
 }
-
-export default GoogleSigninButton

@@ -22,5 +22,3 @@ export class GithubSigninButton extends Component<Props> {
     )
   }
 }
-
-export default GithubSigninButton;

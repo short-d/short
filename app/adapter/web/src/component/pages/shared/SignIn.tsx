@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
 import './SignIn.scss';
-import GoogleSigninButton from './GoogleSigninButton';
-import GithubSigninButton from './GithubSigninButton';
+import { GoogleSigninButton } from './GoogleSigninButton';
+import { GithubSigninButton } from './GithubSigninButton';
 
 interface Props {
   githubSignInLink: string;
