@@ -23,7 +23,19 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 ### Create reCAPTCHA account
 [Create ReCAPTCHA account](http://www.google.com/recaptcha/admin)
 
-[Create Github OAuth App](https://github.com/settings/developers)
+### Create Github OAuth Application
+
+1. Register in [Github OAuth](https://github.com/settings/developers) with this following examples:
+
+| Field                      | Value                                                    |
+| -------------------------- | -------------------------------------------------------- |
+| Application Name           | `short`                                                  |
+| Homepage URL               | `https://s.time4hacks.com`                               |
+| Application description    | `URL shortening service written in Go and React`         |
+| Authorization callback URL | `https://s.time4hacks.com/oauth/github/sign-in/callback` |
+
+2. Once you have registered the application, you should get `Client ID` and `Client Secret`
+3. Now you can copy the `Client ID` and `Client Secret` into their respective places in the `.env` file
 
 ### Create .env file at project root directory with the following content:
 ```bash
