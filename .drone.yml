@@ -16,7 +16,6 @@ steps:
     when:
       branch:
         exclude:
-          - master
           - production
 
   - name: test backend
@@ -30,7 +29,6 @@ steps:
     when:
       branch:
         exclude:
-          - master
           - production
 
   - name: code coverage
