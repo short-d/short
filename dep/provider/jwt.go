@@ -6,10 +6,10 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
-// JwtSecret secret to encode and decode JWT.
+// JwtSecret represents the secret used to encode and decode JWT token.
 type JwtSecret string
 
-// JwtGo initializes Crypto Tokenizer for encode and decode tokens using the JWT secret.
+// JwtGo creates Crypto Tokenizer with JwtSecret to uniquely identify secret during dependency injection.
 func JwtGo(secret JwtSecret) fw.CryptoTokenizer {
 	return mdcrypto.NewJwtGo(string(secret))
 }
