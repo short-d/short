@@ -6,7 +6,7 @@ interface Props {
   signInLink: string;
 }
 
-export class GoogleSigninButton extends Component<Props> {
+export class GoogleSignInButton extends Component<Props> {
   render() {
     return (
       <a href={this.props.signInLink}>
