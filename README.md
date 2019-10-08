@@ -29,10 +29,10 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 
 | Field                      | Value                                                    |
 | -------------------------- | -------------------------------------------------------- |
-| Application Name           | `short`                                                  |
-| Homepage URL               | `https://s.time4hacks.com`                               |
+| Application Name           | `Short`                                                  |
+| Homepage URL               | `https://localhost`                                      |
 | Application description    | `URL shortening service written in Go and React`         |
-| Authorization callback URL | `https://s.time4hacks.com/oauth/github/sign-in/callback` |
+| Authorization callback URL | `https://localhost/oauth/github/sign-in/callback`        |
 
 2. Once you have registered the application, you should get `Client ID` and `Client Secret`
 3. Now you can copy the `Client ID` and `Client Secret` into their respective places in the `.env` file
