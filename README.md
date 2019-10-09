@@ -65,14 +65,8 @@ docker build -t local/short:latest .
 Remember to replace the appropriate line with your reCAPTCHA site key.
 
 ### Start server
-Make sure you already set `DOCKERHUB_USERNAME` variable before start the server
 ```bash
-export DOCKERHUB_USERNAME=local
 docker-compose up
-```
-or
-```bash
-DOCKERHUB_USERNAME=local docker-compose up
 ```
 
 3. Visit [http://localhost](http://localhost)
