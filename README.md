@@ -56,6 +56,15 @@ docker-compose up
 
 3. Visit [http://localhost](http://localhost)
 
+## Tools We Use
+
+- [Drone](https://ci.time4hacks.com/byliuyang/short/):
+Continuous integration written in Go
+- [Sourcegraph](https://cs.time4hacks.com/github.com/byliuyang/short):
+Code search written in Go
+- [Code Climate](https://codeclimate.com/github/byliuyang/short):
+Automated code review
+
 ## Contributing
 When contributing to this repository, please first discuss the change you wish to make via [issues](https://github.com/byliuyang/short/issues) with the owner of this repository before making a change.
 
