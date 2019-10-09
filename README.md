@@ -25,13 +25,11 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 
 Register at [ReCAPTCHA](http://www.google.com/recaptcha/admin) using the following configuration.
 
-
 |Field         |Value        |
 |--------------|-------------|
 |Label         |`short`      |
 |reCAPTCHA type|`reCAPTCHAv3`|
 |Domains       |`localhost`  |
-
 
 Once registered copy the `RECAPTCHA_SECRET_KEY` to the env file
 and set the `RECAPTCHA_SITE_KEY` env variable within the build docker image step.
