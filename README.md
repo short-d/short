@@ -25,17 +25,20 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 
 ### Create Github OAuth Application
 
-1. Register in [Github OAuth](https://github.com/settings/developers) with the following configurations:
+- Register at [Github OAuth](https://github.com/settings/developers) with the
+  following configurations:
 
-| Field                      | Value                                                    |
-| -------------------------- | -------------------------------------------------------- |
-| Application Name           | `Short`                                                  |
-| Homepage URL               | `http://localhost`                                       |
-| Application description    | `URL shortening service written in Go and React`         |
-| Authorization callback URL | `http://localhost/oauth/github/sign-in/callback`         |
+|Field                     |Value                                           |
+|--------------------------|------------------------------------------------|
+|Application Name          |`Short`                                         |
+|Homepage URL              |`http://localhost`                              |
+|Application description   |`URL shortening service written in Go and React`|
+|Authorization callback URL|`http://localhost/oauth/github/sign-in/callback`|
 
-2. Once you have registered the application, you should get `Client ID` and `Client Secret`
-3. Now you can copy the `Client ID` and `Client Secret` into their respective locations in the `.env` file
+- Once you have registered the application, you should get `Client ID` and
+  `Client Secret`
+- Now you can copy the `Client ID` and `Client Secret` into their respective
+  locations in the `.env` file
 
 ### Create .env file at project root directory with the following content:
 ```bash
