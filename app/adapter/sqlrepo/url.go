@@ -74,6 +74,50 @@ WHERE "%s"=$1;`,
 	return url, nil
 }
 
+func (u URL) GetByUser(email string) ([]entity.URL, error) {
+	statement := fmt.Sprintf(`
+SELECT  "%s","%s","%s","%s","%s"
+FROM "%s"
+LEFT JOIN "%s" ON  "%s"."%s" = "%s"."%s"
+WHERE "%s"."%s" = $1;`,
+		table.URL.ColumnAlias,
+		table.URL.ColumnOriginalURL,
+		table.URL.ColumnExpireAt,
+		table.URL.ColumnCreatedAt,
+		table.URL.ColumnUpdatedAt,
+
+		table.UserURL.TableName,
+		table.URL.TableName,
+
+		table.UserURL.TableName,
+		table.UserURL.ColumnUrlAlias,
+
+		table.URL.TableName,
+		table.URL.ColumnAlias,
+
+		table.UserURL.TableName,
+		table.UserURL.ColumnUserEmail,
+	)
+
+	urls := make([]entity.URL, 0)
+	rows, err := u.db.Query(statement, email)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		url := entity.URL{}
+
+		if err := rows.Scan(&url.Alias, &url.OriginalURL, &url.ExpireAt, &url.CreatedAt, &url.UpdatedAt); err != nil {
+			return nil, err
+		}
+		urls = append(urls, url)
+	}
+
+	return urls, nil
+}
+
 func NewURL(db *sql.DB) *URL {
 	return &URL{
 		db: db,

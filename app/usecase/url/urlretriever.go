@@ -15,6 +15,7 @@ var _ Retriever = (*RetrieverPersist)(nil)
 type Retriever interface {
 	GetAfter(trace fw.Segment, alias string, expiringAt time.Time) (entity.URL, error)
 	Get(trace fw.Segment, alias string) (entity.URL, error)
+	GetList(trace fw.Segment, email string) ([]entity.URL, error)
 }
 
 type RetrieverPersist struct {
@@ -51,6 +52,18 @@ func (u RetrieverPersist) Get(trace fw.Segment, alias string) (entity.URL, error
 	}
 
 	return url, nil
+}
+
+func (u RetrieverPersist) GetList(trace fw.Segment, email string) ([]entity.URL, error) {
+	trace1 := trace.Next("GetByUser")
+	urls, err := u.urlRepo.GetByUser(email)
+	trace1.End()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return urls, nil
 }
 
 func NewRetrieverPersist(urlRepo repo.URL) RetrieverPersist {

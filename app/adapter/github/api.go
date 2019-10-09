@@ -35,7 +35,6 @@ query {
 `,
 		Variables: nil,
 	}
-
 	err := g.sendGraphQlRequest(accessToken, query, &profileResponse)
 	if err != nil {
 		return entity.UserProfile{}, err

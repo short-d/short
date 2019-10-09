@@ -8,6 +8,7 @@ schema {
 
 type Query {
 	URL(alias: String!, expireAfter: Time): URL
+	listURLs(authToken: String!): [URL!]!
 }
 
 type Mutation {

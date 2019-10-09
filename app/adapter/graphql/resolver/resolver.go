@@ -22,7 +22,7 @@ func NewResolver(
 	authenticator auth.Authenticator,
 ) Resolver {
 	return Resolver{
-		Query: NewQuery(logger, tracer, urlRetriever),
+		Query: NewQuery(logger, tracer, urlRetriever, authenticator),
 		Mutation: NewMutation(
 			logger,
 			tracer,

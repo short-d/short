@@ -39,6 +39,10 @@ func (f FakeRetriever) Get(trace fw.Segment, alias string) (entity.URL, error) {
 	return url, nil
 }
 
+func (f FakeRetriever) GetList(trace fw.Segment, email string) ([]entity.URL, error) {
+	return []entity.URL{}, nil
+}
+
 func NewRetrieverFake(urls map[string]entity.URL) FakeRetriever {
 	return FakeRetriever{
 		urls: urls,

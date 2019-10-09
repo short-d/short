@@ -39,6 +39,11 @@ func (u URLFake) GetByAlias(alias string) (entity.URL, error) {
 	return url, nil
 }
 
+func (u URLFake) GetByUser(email string) ([]entity.URL, error) {
+	return []entity.URL{}, nil
+}
+
+
 func NewURLFake(urls map[string]entity.URL) URLFake {
 	return URLFake{
 		urls: urls,
