@@ -58,11 +58,13 @@ docker-compose up
 
 ## Tools We Use
 
-- [Drone](https://ci.time4hacks.com/byliuyang/short/): 
+- [Drone](https://ci.time4hacks.com/byliuyang/short/):
 Continuous integration written in Go
-- [Sourcegraph](https://cs.time4hacks.com/github.com/byliuyang/short): 
+
+- [Sourcegraph](https://cs.time4hacks.com/github.com/byliuyang/short):
 Code search written in Go
-- [Code Climate](https://codeclimate.com/github/byliuyang/short): 
+
+- [Code Climate](https://codeclimate.com/github/byliuyang/short):
 Automated code review
 
 ## Contributing
