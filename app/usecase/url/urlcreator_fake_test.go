@@ -19,7 +19,6 @@ func TestURLFakeCreator_CreateUrl(t *testing.T) {
 		url         entity.URL
 		hasErr      bool
 		expectedURL entity.URL
-		expectedErr string
 	}{
 		{
 			name: "alias exists",
@@ -33,7 +32,6 @@ func TestURLFakeCreator_CreateUrl(t *testing.T) {
 			userEmail:   "alpha@example.com",
 			url:         entity.URL{},
 			hasErr:      true,
-			expectedErr: "usecase: url alias already exist",
 		},
 		{
 			name:      "create alias successfully",

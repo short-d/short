@@ -22,7 +22,6 @@ func TestFakeURLRetriever_GetURLAfter(t *testing.T) {
 		expiringAt  time.Time
 		hasErr      bool
 		expectedURL entity.URL
-		expectedErr string
 	}{
 		{
 			name:        "alias not found",
@@ -31,7 +30,6 @@ func TestFakeURLRetriever_GetURLAfter(t *testing.T) {
 			expiringAt:  now,
 			hasErr:      true,
 			expectedURL: entity.URL{},
-			expectedErr: "url not found",
 		},
 		{
 			name: "url expired",
@@ -45,7 +43,6 @@ func TestFakeURLRetriever_GetURLAfter(t *testing.T) {
 			expiringAt:  now,
 			hasErr:      true,
 			expectedURL: entity.URL{},
-			expectedErr: "url expired",
 		},
 		{
 			name: "url never expires",
@@ -91,7 +88,6 @@ func TestFakeURLRetriever_GetURLAfter(t *testing.T) {
 
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
-				mdtest.Equal(t, testCase.expectedErr, err.Error())
 				return
 			}
 			mdtest.Equal(t, nil, err)
@@ -109,7 +105,6 @@ func TestFakeURLRetriever_GetURL(t *testing.T) {
 		alias       string
 		hasErr      bool
 		expectedURL entity.URL
-		expectedErr string
 	}{
 		{
 			name:        "alias not found",
@@ -117,7 +112,6 @@ func TestFakeURLRetriever_GetURL(t *testing.T) {
 			alias:       "220uFicCJj",
 			hasErr:      true,
 			expectedURL: entity.URL{},
-			expectedErr: "url not found",
 		},
 		{
 			name: "valid url found",
@@ -146,7 +140,6 @@ func TestFakeURLRetriever_GetURL(t *testing.T) {
 
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
-				mdtest.Equal(t, testCase.expectedErr, err.Error())
 				return
 			}
 			mdtest.Equal(t, nil, err)
