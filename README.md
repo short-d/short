@@ -23,7 +23,22 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 ### Create reCAPTCHA account
 [Create ReCAPTCHA account](http://www.google.com/recaptcha/admin)
 
-[Create Github OAuth App](https://github.com/settings/developers)
+### Create Github OAuth Application
+
+- Register at [Github OAuth](https://github.com/settings/developers) with the
+  following configurations:
+
+|Field                     |Value                                           |
+|--------------------------|------------------------------------------------|
+|Application Name          |`Short`                                         |
+|Homepage URL              |`http://localhost`                              |
+|Application description   |`URL shortening service written in Go and React`|
+|Authorization callback URL|`http://localhost/oauth/github/sign-in/callback`|
+
+- Once you have registered the application, you should get `Client ID` and
+  `Client Secret`
+- Now you can copy the `Client ID` and `Client Secret` into their respective
+  locations in the `.env` file
 
 ### Create .env file at project root directory with the following content:
 ```bash
@@ -55,6 +70,15 @@ docker-compose up
 ```
 
 3. Visit [http://localhost](http://localhost)
+
+## Tools We Use
+
+- [Drone](https://ci.time4hacks.com/byliuyang/short/):
+Continuous integration written in Go
+- [Sourcegraph](https://cs.time4hacks.com/github.com/byliuyang/short):
+Code search written in Go
+- [Code Climate](https://codeclimate.com/github/byliuyang/short):
+Automated code review
 
 ## Contributing
 When contributing to this repository, please first discuss the change you wish to make via [issues](https://github.com/byliuyang/short/issues) with the owner of this repository before making a change.
