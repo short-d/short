@@ -8,32 +8,34 @@ import (
 	"github.com/byliuyang/app/mdtest"
 )
 
-type fakeUrlMap = map[string]entity.URL
+type fakeURLMap = map[string]entity.URL
 
-func TestFakeUrlRetriever_GetUrlAfter(t *testing.T) {
+func TestFakeURLRetriever_GetURLAfter(t *testing.T) {
 	now := time.Now()
 	before := now.Add(-5 * time.Second)
 	after := now.Add(5 * time.Second)
 
 	testCases := []struct {
 		name        string
-		urls        fakeUrlMap
+		urls        fakeURLMap
 		alias       string
 		expiringAt  time.Time
 		hasErr      bool
 		expectedURL entity.URL
+		expectedErr string
 	}{
 		{
 			name:        "alias not found",
-			urls:        fakeUrlMap{},
+			urls:        fakeURLMap{},
 			alias:       "220uFicCJj",
 			expiringAt:  now,
 			hasErr:      true,
 			expectedURL: entity.URL{},
+			expectedErr: "url not found",
 		},
 		{
 			name: "url expired",
-			urls: fakeUrlMap{
+			urls: fakeURLMap{
 				"220uFicCJj": entity.URL{
 					Alias:    "220uFicCJj",
 					ExpireAt: &before,
@@ -43,10 +45,11 @@ func TestFakeUrlRetriever_GetUrlAfter(t *testing.T) {
 			expiringAt:  now,
 			hasErr:      true,
 			expectedURL: entity.URL{},
+			expectedErr: "url expired",
 		},
 		{
-			name: "url never expire",
-			urls: fakeUrlMap{
+			name: "url never expires",
+			urls: fakeURLMap{
 				"220uFicCJj": entity.URL{
 					Alias:    "220uFicCJj",
 					ExpireAt: nil,
@@ -62,7 +65,7 @@ func TestFakeUrlRetriever_GetUrlAfter(t *testing.T) {
 		},
 		{
 			name: "unexpired url found",
-			urls: fakeUrlMap{
+			urls: fakeURLMap{
 				"220uFicCJj": entity.URL{
 					Alias:    "220uFicCJj",
 					ExpireAt: &after,
@@ -81,41 +84,44 @@ func TestFakeUrlRetriever_GetUrlAfter(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			tracer := mdtest.NewTracerFake()
-			fakeTrace := tracer.BeginTrace("GetUrlAfter")
+			fakeTrace := tracer.BeginTrace("GetURLAfter")
 			fakeRetriever := NewRetrieverFake(testCase.urls)
 
-			url, err := fakeRetriever.GetAfter(fakeTrace, testCase.alias, testCase.expiringAt)
+			gotURL, err := fakeRetriever.GetAfter(fakeTrace, testCase.alias, testCase.expiringAt)
 
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
+				mdtest.Equal(t, testCase.expectedErr, err.Error())
 				return
 			}
 			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURL, url)
+			mdtest.Equal(t, testCase.expectedURL, gotURL)
 		})
 	}
 }
 
-func TestFakeUrlRetriever_GetUrl(t *testing.T) {
+func TestFakeURLRetriever_GetURL(t *testing.T) {
 	now := time.Now()
 
 	testCases := []struct {
 		name        string
-		urls        fakeUrlMap
+		urls        fakeURLMap
 		alias       string
 		hasErr      bool
 		expectedURL entity.URL
+		expectedErr string
 	}{
 		{
 			name:        "alias not found",
-			urls:        fakeUrlMap{},
+			urls:        fakeURLMap{},
 			alias:       "220uFicCJj",
 			hasErr:      true,
 			expectedURL: entity.URL{},
+			expectedErr: "url not found",
 		},
 		{
 			name: "valid url found",
-			urls: fakeUrlMap{
+			urls: fakeURLMap{
 				"220uFicCJj": entity.URL{
 					Alias:    "220uFicCJj",
 					ExpireAt: &now,
@@ -133,17 +139,18 @@ func TestFakeUrlRetriever_GetUrl(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			tracer := mdtest.NewTracerFake()
-			fakeTrace := tracer.BeginTrace("GetUrl")
+			fakeTrace := tracer.BeginTrace("GetURL")
 			fakeRetriever := NewRetrieverFake(testCase.urls)
 
-			url, err := fakeRetriever.Get(fakeTrace, testCase.alias)
+			gotURL, err := fakeRetriever.Get(fakeTrace, testCase.alias)
 
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
+				mdtest.Equal(t, testCase.expectedErr, err.Error())
 				return
 			}
 			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURL, url)
+			mdtest.Equal(t, testCase.expectedURL, gotURL)
 		})
 	}
 }

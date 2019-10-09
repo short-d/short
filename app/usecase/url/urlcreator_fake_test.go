@@ -19,6 +19,7 @@ func TestURLFakeCreator_CreateUrl(t *testing.T) {
 		url         entity.URL
 		hasErr      bool
 		expectedURL entity.URL
+		expectedErr string
 	}{
 		{
 			name: "alias exists",
@@ -28,10 +29,11 @@ func TestURLFakeCreator_CreateUrl(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			alias:     []string{"220uFicCJj"},
-			userEmail: "alpha@example.com",
-			url:       entity.URL{},
-			hasErr:    true,
+			alias:       []string{"220uFicCJj"},
+			userEmail:   "alpha@example.com",
+			url:         entity.URL{},
+			hasErr:      true,
+			expectedErr: "usecase: url alias already exist",
 		},
 		{
 			name:      "create alias successfully",
@@ -53,14 +55,14 @@ func TestURLFakeCreator_CreateUrl(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeCreator := NewCreatorFake(testCase.urls, testCase.alias)
-			url, err := fakeCreator.Create(testCase.url, testCase.userEmail)
+			gotURL, err := fakeCreator.Create(testCase.url, testCase.userEmail)
 
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
 			}
 			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURL, url)
+			mdtest.Equal(t, testCase.expectedURL, gotURL)
 		})
 	}
 }
