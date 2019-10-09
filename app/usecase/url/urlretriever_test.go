@@ -83,7 +83,8 @@ func TestUrlRetriever_GetUrlAfter(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeRepo := repo.NewURLFake(testCase.urls)
 			retriever := NewRetrieverPersist(&fakeRepo)
-			fakeTrace := mdtest.FakeTracer.BeginTrace("GetUrlAfter")
+			tracer := mdtest.NewTracerFake()
+			fakeTrace := tracer.BeginTrace("GetUrlAfter")
 			url, err := retriever.GetAfter(fakeTrace, testCase.alias, testCase.expiringAt)
 
 			if testCase.hasErr {
@@ -134,7 +135,8 @@ func TestUrlRetriever_GetUrl(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeRepo := repo.NewURLFake(testCase.urls)
 			retriever := NewRetrieverPersist(&fakeRepo)
-			fakeTrace := mdtest.FakeTracer.BeginTrace("GetUrl")
+			tracer := mdtest.NewTracerFake()
+			fakeTrace := tracer.BeginTrace("GetUrl")
 			url, err := retriever.Get(fakeTrace, testCase.alias)
 
 			if testCase.hasErr {

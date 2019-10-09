@@ -23,7 +23,22 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 ### Create reCAPTCHA account
 [Create ReCAPTCHA account](http://www.google.com/recaptcha/admin)
 
-[Create Github OAuth App](https://github.com/settings/developers)
+### Create Github OAuth Application
+
+- Register at [Github OAuth](https://github.com/settings/developers) with the
+  following configurations:
+
+|Field                     |Value                                           |
+|--------------------------|------------------------------------------------|
+|Application Name          |`Short`                                         |
+|Homepage URL              |`http://localhost`                              |
+|Application description   |`URL shortening service written in Go and React`|
+|Authorization callback URL|`http://localhost/oauth/github/sign-in/callback`|
+
+- Once you have registered the application, you should get `Client ID` and
+  `Client Secret`
+- Now you can copy the `Client ID` and `Client Secret` into their respective
+  locations in the `.env` file
 
 ### Create .env file at project root directory with the following content:
 ```bash
@@ -45,8 +60,6 @@ Remember to replace the appropriate lines with your db user, db password, db nam
 GRAPHQL_BASE_URL=http://localhost:8080 \
 HTTP_API_BASE_URL=http://localhost \
 RECAPTCHA_SITE_KEY=your_recaptcha_site_key \
-./bin/build-web-dev docker build -t short:latest .
-
 docker build -t local/short:latest .
 ```
 Remember to replace the appropriate line with your reCAPTCHA site key.
@@ -58,6 +71,15 @@ docker-compose up
 
 3. Visit [http://localhost](http://localhost)
 
+## Tools We Use
+
+- [Drone](https://ci.time4hacks.com/byliuyang/short/):
+Continuous integration written in Go
+- [Sourcegraph](https://cs.time4hacks.com/github.com/byliuyang/short):
+Code search written in Go
+- [Code Climate](https://codeclimate.com/github/byliuyang/short):
+Automated code review
+
 ## Contributing
 When contributing to this repository, please first discuss the change you wish to make via [issues](https://github.com/byliuyang/short/issues) with the owner of this repository before making a change.
 
@@ -66,6 +88,13 @@ When contributing to this repository, please first discuss the change you wish t
    variables, exposed ports, useful file locations and container parameters.
 2. You may merge the Pull Request in once you have the sign-off of code owner, or if you 
    do not have permission to do that, you may request the code owner to merge it for you.
+
+### Code of Conduct
+- Using welcoming and inclusive language
+- Being respectful of differing viewpoints and experiences
+- Gracefully accepting constructive criticism
+- Focusing on what is best for the community
+- Showing empathy towards other community members
    
 ## Author
 Harry Liu - [byliuyang](https://github.com/byliuyang)

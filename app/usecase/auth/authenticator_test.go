@@ -9,9 +9,9 @@ import (
 )
 
 func TestAuthenticator_GenerateToken(t *testing.T) {
-	tokenizer := mdtest.FakeCryptoTokenizer
+	tokenizer := mdtest.NewCryptoTokenizerFake()
 	expIssuedAt := time.Now()
-	timer := mdtest.NewFakeTimer(expIssuedAt)
+	timer := mdtest.NewTimerFake(expIssuedAt)
 	authenticator := NewAuthenticator(tokenizer, timer, 2*time.Millisecond)
 
 	expEmail := "test@s.time4hacks.com"
@@ -92,8 +92,8 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			tokenizer := mdtest.FakeCryptoTokenizer
-			timer := mdtest.NewFakeTimer(testCase.currentTime)
+			tokenizer := mdtest.NewCryptoTokenizerFake()
+			timer := mdtest.NewTimerFake(testCase.currentTime)
 			authenticator := NewAuthenticator(tokenizer, timer, testCase.tokenValidDuration)
 
 			token, err := tokenizer.Encode(testCase.tokenPayload)
@@ -187,8 +187,8 @@ func TestAuthenticator_GetUserEmail(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			tokenizer := mdtest.FakeCryptoTokenizer
-			timer := mdtest.NewFakeTimer(testCase.currentTime)
+			tokenizer := mdtest.NewCryptoTokenizerFake()
+			timer := mdtest.NewTimerFake(testCase.currentTime)
 			authenticator := NewAuthenticator(tokenizer, timer, testCase.tokenValidDuration)
 
 			token, err := tokenizer.Encode(testCase.tokenPayload)
