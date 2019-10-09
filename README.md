@@ -43,6 +43,7 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 ### Create .env file at project root directory with the following content:
 ```bash
 DOCKER_IMAGE_PREFIX=local
+DOCKERHUB_USERNAME=local
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_NAME=your_db_name
