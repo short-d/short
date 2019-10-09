@@ -57,7 +57,7 @@ docker-compose up
 3. Visit [http://localhost](http://localhost)
 
 ## Tools We Use
-- [Drone](https://ci.time4hacks.com/byliuyang/short/): Continuous integration system written in Go
+- [Drone](https://ci.time4hacks.com/byliuyang/short/): Continuous integration written in Go
 - [Sourcegraph](https://cs.time4hacks.com/github.com/byliuyang/short): Code search written in Go
 - [Code Climate](https://codeclimate.com/github/byliuyang/short): Automated code review
 
