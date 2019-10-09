@@ -32,7 +32,7 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 |Domains       |`localhost`  |
 
 Copy `SECRET KEY` into `.env` file and rename the variable to `RECAPTCHA_SECRET`.
-Set `REACT_APP_ RECAPTCHA_SITE_KEY` to `SITE KEY` environmental variable when building docker image.
+Copy 'SITE_KEY' into `app/adapter/web/.env.development` file and rename the variable to `REACT_APP_ RECAPTCHA_SITE_KEY` for use when building the docker image.
 
 [Create Github OAuth App](https://github.com/settings/developers)
 
