@@ -54,6 +54,7 @@ func (u RetrieverPersist) Get(trace fw.Segment, alias string) (entity.URL, error
 	return url, nil
 }
 
+// GetList returns list of url entities for user with provided email
 func (u RetrieverPersist) GetList(trace fw.Segment, email string) ([]entity.URL, error) {
 	trace1 := trace.Next("GetByUser")
 	urls, err := u.urlRepo.GetByUser(email)

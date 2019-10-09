@@ -39,6 +39,7 @@ func (f FakeRetriever) Get(trace fw.Segment, alias string) (entity.URL, error) {
 	return url, nil
 }
 
+// GetList returns list of url entities for user with provided email
 func (f FakeRetriever) GetList(trace fw.Segment, email string) ([]entity.URL, error) {
 	return []entity.URL{}, nil
 }

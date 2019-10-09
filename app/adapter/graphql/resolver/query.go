@@ -15,6 +15,7 @@ type Query struct {
 	authenticator auth.Authenticator
 }
 
+// NewQuery creates resolver for graphql queries
 func NewQuery(logger fw.Logger, tracer fw.Tracer, urlRetriever url.Retriever, authenticator auth.Authenticator) Query {
 	return Query{
 		logger:        logger,
@@ -59,10 +60,12 @@ func (q Query) URL(args *URLArgs) (*URL, error) {
 	return &URL{url: u}, nil
 }
 
+// ListURLsArgs represents query arguments
 type ListURLsArgs struct {
 	AuthToken string
 }
 
+// ListURLs resolves listURLs field
 func (q Query) ListURLs(args *ListURLsArgs) ([]*URL, error) {
 	trace := q.tracer.BeginTrace("Query.listURLs")
 

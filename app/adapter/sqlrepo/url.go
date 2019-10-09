@@ -74,6 +74,7 @@ WHERE "%s"=$1;`,
 	return url, nil
 }
 
+// GetByUser returns URLs created by user
 func (u URL) GetByUser(email string) ([]entity.URL, error) {
 	statement := fmt.Sprintf(`
 SELECT  "%s","%s","%s","%s","%s"
