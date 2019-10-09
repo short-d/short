@@ -23,7 +23,7 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 ### Create reCAPTCHA account
 [Create ReCAPTCHA account](http://www.google.com/recaptcha/admin)
 
-Register at [ReCAPTCHA](http://www.google.com/recaptcha/admin) using the following configuration.
+1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) using the following configurations:
 
 |Field         |Value        |
 |--------------|-------------|
@@ -31,8 +31,8 @@ Register at [ReCAPTCHA](http://www.google.com/recaptcha/admin) using the followi
 |reCAPTCHA type|`reCAPTCHAv3`|
 |Domains       |`localhost`  |
 
-Once registered copy the `RECAPTCHA_SECRET_KEY` to the env file
-and set the `RECAPTCHA_SITE_KEY` env variable within the build docker image step.
+Copy `SECRET KEY` into `.env` file and rename the variable to `RECAPTCHA_SECRET`.
+Set `REACT_APP_ RECAPTCHA_SITE_KEY` to `SITE KEY` environmental variable when building docker image.
 
 [Create Github OAuth App](https://github.com/settings/developers)
 
