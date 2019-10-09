@@ -11,8 +11,10 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// WwwRoot represents the location of static assets for the web UI.
 type WwwRoot string
 
+// ShortRoutes creates HTTP routes for Short API with WwwRoot to uniquely identify WwwRoot during dependency injection.
 func ShortRoutes(
 	logger fw.Logger,
 	tracer fw.Tracer,
