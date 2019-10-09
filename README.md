@@ -23,6 +23,17 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 ### Create reCAPTCHA account
 [Create ReCAPTCHA account](http://www.google.com/recaptcha/admin)
 
+Register at [ReCAPTCHA](http://www.google.com/recaptcha/admin) using the following configuration.
+|Field       |Value      |
+|--------------|-----------|
+|Label         |short      |
+|reCAPTCHA type|reCAPTCHAv2|
+|Domains       |localhost  |
+|--------------|-----------|
+
+Once registered copy the `RECAPTCHA_SECRET_KEY` to the env file
+and set the `RECAPTCHA_SITE_KEY` env variable within the build docker image step.
+
 [Create Github OAuth App](https://github.com/settings/developers)
 
 ### Create .env file at project root directory with the following content:
