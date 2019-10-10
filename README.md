@@ -98,6 +98,11 @@ When contributing to this repository, please first discuss the change you wish t
 - Gracefully accepting constructive criticism
 - Focusing on what is best for the community
 - Showing empathy towards other community members
+
+### Discussions
+
+Please join this [Slack channel](https://s.time4hacks.com/r/short-slack) to
+discuss bugs, dev environment setup, tooling, and coding best practices.
    
 ## Author
 Harry Liu - [byliuyang](https://github.com/byliuyang)
