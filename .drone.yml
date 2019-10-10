@@ -15,8 +15,9 @@ steps:
         path: /var/run/docker.sock
     when:
       branch:
-        exclude:
-          - production
+        - master
+      event:
+        - pull_request
 
   - name: test backend
     image: docker
@@ -28,8 +29,9 @@ steps:
         path: /var/run/docker.sock
     when:
       branch:
-        exclude:
-          - production
+        - master
+      event:
+        - pull_request
 
   - name: code coverage
     image: docker
@@ -46,7 +48,7 @@ steps:
       branch:
         - master
       event:
-        - push
+        - pull_request
 
   - name: build web ui
     image: node:12.7.0-alpine
