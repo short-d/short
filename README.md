@@ -101,7 +101,7 @@ When contributing to this repository, please first discuss the change you wish t
 
 ### Discussions
 
-Please join the [Slack channel](https://join.slack.com/t/shortapp/shared_invite/enQtNzkwMzM4NDAwNjI5LWMyNWI1ZTNiMDUxNGY3YzBhMDI1ZWRjMDI4ZTA5YTNjODc0OWZlYTFlZWI4ZGJmNDcwYjM4ZDFjOWFjNDhjZTQ) 
+Please join this [Slack channel](https://join.slack.com/t/shortapp/shared_invite/enQtNzkwMzM4NDAwNjI5LWMyNWI1ZTNiMDUxNGY3YzBhMDI1ZWRjMDI4ZTA5YTNjODc0OWZlYTFlZWI4ZGJmNDcwYjM4ZDFjOWFjNDhjZTQ) 
 to discuss bugs, dev environment setup, tooling, and coding best practices.
    
 ## Author
