@@ -46,7 +46,7 @@ steps:
       branch:
         - master
       event:
-        - push
+        - pull_request
 
   - name: build web ui
     image: node:12.7.0-alpine
