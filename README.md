@@ -98,6 +98,9 @@ When contributing to this repository, please first discuss the change you wish t
 - Gracefully accepting constructive criticism
 - Focusing on what is best for the community
 - Showing empathy towards other community members
+
+### Discussions
+We have a [Slack channel](https://join.slack.com/t/shortapp/shared_invite/enQtNzkwMzM4NDAwNjI5LWMyNWI1ZTNiMDUxNGY3YzBhMDI1ZWRjMDI4ZTA5YTNjODc0OWZlYTFlZWI4ZGJmNDcwYjM4ZDFjOWFjNDhjZTQ) created for discussing bugs, dev environment setup, tooling, and coding best practices.
    
 ## Author
 Harry Liu - [byliuyang](https://github.com/byliuyang)
