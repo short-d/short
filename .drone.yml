@@ -64,22 +64,34 @@ steps:
       - yarn
       - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build
     when:
-#      branch:
-#        - master
+      branch:
+        - master
       event:
         - push
 
-  - name: build services
+  - name: build frontend service
     image: docker
     commands:
       - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  - name: build backend service
+    image: docker
+    commands:
       - docker build -t short-backend:latest -f backend/Dockerfile backend
     volumes:
       - name: docker
         path: /var/run/docker.sock
     when:
-#      branch:
-#        - master
+      branch:
+        - master
       event:
         - push
 
@@ -100,8 +112,8 @@ steps:
       - name: docker
         path: /var/run/docker.sock
     when:
-#      branch:
-#        - master
+      branch:
+        - master
       event:
         - push
 
@@ -121,8 +133,8 @@ steps:
       source:
         - docker-compose.yml
     when:
-#      branch:
-#        - production
+      branch:
+        - production
       event:
         - push
 
@@ -195,8 +207,8 @@ steps:
           GRAPHQL_API_PORT=$GRAPHQL_API_PORT
           docker-compose up -d
     when:
-#      branch:
-#        - production
+      branch:
+        - production
       event:
         - push
 volumes:
