@@ -1,0 +1,10 @@
+# Documentation
+README.md
+doc
+
+# ignore files
+.gitignore
+.dockerignore
+
+# Environmental variables
+.env

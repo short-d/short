@@ -11,15 +11,13 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
-// WwwRoot represents the location of static assets for the web UI.
-type WwwRoot string
+// WebFrontendURL represents the URL of the web frontend
 type WebFrontendURL string
 
 // ShortRoutes creates HTTP routes for Short API with WwwRoot to uniquely identify WwwRoot during dependency injection.
 func ShortRoutes(
 	logger fw.Logger,
 	tracer fw.Tracer,
-	wwwRoot WwwRoot,
 	webFrontendURL WebFrontendURL,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
@@ -31,7 +29,6 @@ func ShortRoutes(
 	return routing.NewShort(
 		logger,
 		tracer,
-		string(wwwRoot),
 		string(webFrontendURL),
 		timer,
 		urlRetriever,

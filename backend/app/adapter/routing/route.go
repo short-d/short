@@ -15,7 +15,6 @@ import (
 func NewShort(
 	logger fw.Logger,
 	tracer fw.Tracer,
-	wwwRoot string,
 	webFrontendURL string,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
@@ -43,13 +42,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/r/:alias",
-			Handle: NewOriginalURL(logger, tracer, urlRetriever, timer),
-		},
-		{
-			Method:      "GET",
-			MatchPrefix: true,
-			Path:        "/",
-			Handle:      NewServeFile(logger, tracer, wwwRoot),
+			Handle: NewOriginalURL(logger, tracer, urlRetriever, timer, frontendURL),
 		},
 	}
 }

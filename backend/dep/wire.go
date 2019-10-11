@@ -105,7 +105,6 @@ func InjectGraphQlService(
 func InjectRoutingService(
 	name string,
 	db *sql.DB,
-	wwwRoot provider.WwwRoot,
 	githubClientID provider.GithubClientID,
 	githubClientSecret provider.GithubClientSecret,
 	jwtSecret provider.JwtSecret,

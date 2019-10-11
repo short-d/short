@@ -1,11 +1,8 @@
 package routing
 
 import (
-	"fmt"
 	"net/http"
 	netURL "net/url"
-	"os"
-	"path/filepath"
 	"short/app/adapter/oauth"
 	"short/app/usecase/auth"
 	"short/app/usecase/signin"
@@ -19,6 +16,7 @@ func NewOriginalURL(
 	tracer fw.Tracer,
 	urlRetriever url.Retriever,
 	timer fw.Timer,
+	webFrontendURL *netURL.URL,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		trace := tracer.BeginTrace("OriginalURL")
@@ -31,7 +29,7 @@ func NewOriginalURL(
 
 		if err != nil {
 			logger.Error(err)
-			serve404(w, r)
+			serve404(w, r, *webFrontendURL)
 			return
 		}
 
@@ -41,28 +39,9 @@ func NewOriginalURL(
 	}
 }
 
-func serve404(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/404", http.StatusSeeOther)
-}
-
-func NewServeFile(logger fw.Logger, tracer fw.Tracer, wwwRoot string) fw.Handle {
-	filePath := filePathBuilder(wwwRoot, "index.html")
-	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		path := filePath(r)
-		logger.Info(fmt.Sprintf("serving %s from %s", path, wwwRoot))
-		http.ServeFile(w, r, path)
-	}
-}
-
-func filePathBuilder(rootDir string, indexPath string) func(r *http.Request) string {
-	return func(r *http.Request) string {
-		path := filepath.Join(rootDir, r.URL.Path)
-		_, err := os.Stat(path)
-		if os.IsNotExist(err) {
-			return filepath.Join(rootDir, indexPath)
-		}
-		return path
-	}
+func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL) {
+	webFrontendURL.Path = "/404"
+	http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 }
 
 func NewGithubSignIn(

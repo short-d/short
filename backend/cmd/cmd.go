@@ -18,7 +18,6 @@ func NewRootCmd(
 	dbMigrationTool fw.DBMigrationTool,
 ) fw.Command {
 	var migrationRoot string
-	var wwwRoot string
 
 	startCmd := cmdFactory.NewCommand(
 		fw.CommandConfig{
@@ -28,7 +27,6 @@ func NewRootCmd(
 				start(
 					dbConfig,
 					migrationRoot,
-					wwwRoot,
 					recaptchaSecret,
 					githubConfig,
 					jwtSecret,
@@ -40,7 +38,6 @@ func NewRootCmd(
 		},
 	)
 	startCmd.AddStringFlag(&migrationRoot, "migration", "app/adapter/migration", "migration migrations root directory")
-	startCmd.AddStringFlag(&wwwRoot, "www", "public", "www root directory")
 
 	rootCmd := cmdFactory.NewCommand(
 		fw.CommandConfig{

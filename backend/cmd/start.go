@@ -15,7 +15,6 @@ type GithubConfig struct {
 func start(
 	dbConfig fw.DBConfig,
 	migrationRoot string,
-	wwwRoot string,
 	recaptchaSecret string,
 	githubConfig GithubConfig,
 	jwtSecret string,
@@ -45,7 +44,6 @@ func start(
 	httpAPI := dep.InjectRoutingService(
 		"Routing API",
 		db,
-		provider.WwwRoot(wwwRoot),
 		provider.GithubClientID(githubConfig.ClientID),
 		provider.GithubClientSecret(githubConfig.ClientSecret),
 		provider.JwtSecret(jwtSecret),
