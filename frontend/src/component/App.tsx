@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  match
 } from 'react-router-dom';
 
 import { ReCaptcha } from '../service/Captcha.service';
