@@ -19,6 +19,7 @@ func start(
 	recaptchaSecret string,
 	githubConfig GithubConfig,
 	jwtSecret string,
+	webFrontendURL string,
 	dbConnector fw.DBConnector,
 	dbMigrationTool fw.DBMigrationTool,
 ) {
@@ -48,6 +49,7 @@ func start(
 		provider.GithubClientID(githubConfig.ClientID),
 		provider.GithubClientSecret(githubConfig.ClientSecret),
 		provider.JwtSecret(jwtSecret),
+		provider.WebFrontendURL(webFrontendURL),
 	)
 	httpAPI.StartAndWait(80)
 }

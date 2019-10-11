@@ -73,7 +73,7 @@ var (
 	_wireTokenValidDurationValue = provider.TokenValidDuration(oneDay)
 )
 
-func InjectRoutingService(name string, db *sql.DB, wwwRoot provider.WwwRoot, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, jwtSecret provider.JwtSecret) mdservice.Service {
+func InjectRoutingService(name string, db *sql.DB, wwwRoot provider.WwwRoot, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	timer := mdtimer.NewTimer()
@@ -89,7 +89,7 @@ func InjectRoutingService(name string, db *sql.DB, wwwRoot provider.WwwRoot, git
 	authenticator := provider.Authenticator(cryptoTokenizer, timer, tokenValidDuration)
 	user := sqlrepo.NewUser(db)
 	repoService := account.NewRepoService(user, timer)
-	v := provider.ShortRoutes(logger, tracer, wwwRoot, timer, retrieverPersist, oauthGithub, api, authenticator, repoService)
+	v := provider.ShortRoutes(logger, tracer, wwwRoot, webFrontendURL, timer, retrieverPersist, oauthGithub, api, authenticator, repoService)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service

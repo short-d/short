@@ -12,6 +12,7 @@ func NewRootCmd(
 	recaptchaSecret string,
 	githubConfig GithubConfig,
 	jwtSecret string,
+	webFrontendURL string,
 	cmdFactory fw.CommandFactory,
 	dbConnector fw.DBConnector,
 	dbMigrationTool fw.DBMigrationTool,
@@ -31,6 +32,7 @@ func NewRootCmd(
 					recaptchaSecret,
 					githubConfig,
 					jwtSecret,
+					webFrontendURL,
 					dbConnector,
 					dbMigrationTool,
 				)

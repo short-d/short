@@ -13,12 +13,14 @@ import (
 
 // WwwRoot represents the location of static assets for the web UI.
 type WwwRoot string
+type WebFrontendURL string
 
 // ShortRoutes creates HTTP routes for Short API with WwwRoot to uniquely identify WwwRoot during dependency injection.
 func ShortRoutes(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	wwwRoot WwwRoot,
+	webFrontendURL WebFrontendURL,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
 	githubOAuth oauth.Github,
@@ -30,6 +32,7 @@ func ShortRoutes(
 		logger,
 		tracer,
 		string(wwwRoot),
+		string(webFrontendURL),
 		timer,
 		urlRetriever,
 		githubOAuth,

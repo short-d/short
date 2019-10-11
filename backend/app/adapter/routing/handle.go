@@ -3,6 +3,7 @@ package routing
 import (
 	"fmt"
 	"net/http"
+	netURL "net/url"
 	"os"
 	"path/filepath"
 	"short/app/adapter/oauth"
@@ -69,11 +70,12 @@ func NewGithubSignIn(
 	tracer fw.Tracer,
 	githubOAuth oauth.Github,
 	authenticator auth.Authenticator,
+	webFrontendURL *netURL.URL,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		token := getToken(r, params)
 		if authenticator.IsSignedIn(token) {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 			return
 		}
 		signInLink := githubOAuth.GetAuthorizationURL()
@@ -85,6 +87,7 @@ func NewGithubSignInCallback(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	oauthSignIn signin.OAuth,
+	webFrontendURL *netURL.URL,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		code := params["code"]
@@ -95,7 +98,7 @@ func NewGithubSignInCallback(
 			return
 		}
 
-		setToken(w, authToken)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		setToken(w, webFrontendURL.Hostname(), authToken)
+		http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 	}
 }

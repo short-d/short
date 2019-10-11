@@ -109,6 +109,7 @@ func InjectRoutingService(
 	githubClientID provider.GithubClientID,
 	githubClientSecret provider.GithubClientSecret,
 	jwtSecret provider.JwtSecret,
+	webFrontendURL provider.WebFrontendURL,
 ) mdservice.Service {
 	wire.Build(
 		wire.Bind(new(service.Account), new(account.RepoService)),

@@ -1,15 +1,19 @@
 package main
 
 import (
+	"log"
 	"os"
 	"short/cmd"
 	"short/dep"
 	"strconv"
 
 	"github.com/byliuyang/app/fw"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	autoLoadEnv()
+
 	host := getEnv("DB_HOST", "localhost")
 	portStr := getEnv("DB_PORT", "5432")
 	port := mustInt(portStr)
@@ -20,6 +24,7 @@ func main() {
 	githubClientID := getEnv("GITHUB_CLIENT_ID", "")
 	githubClientSecret := getEnv("GITHUB_CLIENT_SECRET", "")
 	jwtSecret := getEnv("JWT_SECRET", "")
+	webFrontendURL := getEnv("WEB_FRONTEND_URL", "")
 
 	cmdFactory := dep.InjectCommandFactory()
 	dbConnector := dep.InjectDBConnector()
@@ -42,11 +47,24 @@ func main() {
 		recaptchaSecret,
 		githubConfig,
 		jwtSecret,
+		webFrontendURL,
 		cmdFactory,
 		dbConnector,
 		dbMigrationTool,
 	)
 	cmd.Execute(rootCmd)
+}
+
+func autoLoadEnv() {
+	_, err := os.Stat(".env")
+	if os.IsNotExist(err) {
+		return
+	}
+
+	err = godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 }
 
 func getEnv(varName string, defaultVal string) string {
