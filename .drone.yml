@@ -2,14 +2,14 @@ kind: pipeline
 name: default
 
 steps:
-  - name: test web ui
+  - name: test frontend
     image: docker
     environment:
       RECAPTCHA_SITE_KEY:
         from_secret: RECAPTCHA_SITE_KEY
     commands:
-      - docker build -t test-web --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY -f Dockerfile-test-web .
-      - docker run test-web
+      - docker build -t test-frontend --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY -f frontend/Dockerfile-test frontend
+      - docker run test-frontend
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -22,8 +22,8 @@ steps:
   - name: test backend
     image: docker
     commands:
-      - docker build -t test-app -f Dockerfile-test .
-      - docker run test-app
+      - docker build -t test-backend -f backend/Dockerfile-test backend
+      - docker run test-backend
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -39,7 +39,7 @@ steps:
       CODECOV_TOKEN:
         from_secret: CODECOV_TOKEN
     commands:
-      - docker build -t code-coverage --build-arg CODECOV_TOKEN=$CODECOV_TOKEN -f Dockerfile-code-coverage .
+      - docker build -t code-coverage --build-arg CODECOV_TOKEN=$CODECOV_TOKEN -f backend/Dockerfile-code-coverage backend
       - docker run code-coverage
     volumes:
       - name: docker
@@ -50,21 +50,21 @@ steps:
       event:
         - pull_request
 
-  - name: build web ui
+  - name: build frontend
     image: node:12.7.0-alpine
     environment:
       RECAPTCHA_SITE_KEY:
         from_secret: RECAPTCHA_SITE_KEY
     volumes:
-      - name: webdep
-        path: /drone/src/app/adapter/web/node_modules
+      - name: frontend-dep
+        path: /drone/src/frontend/node_modules
     commands:
       - apk add --no-cache bash git
-      - cd app/adapter/web
+      - cd frontend
       - yarn
       - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build
-      - mkdir ../../../public
-      - mv build/* ../../../public/
+      - mkdir public
+      - mv build/* public/
     when:
       branch:
         - master
@@ -193,6 +193,6 @@ volumes:
   - name: docker
     host:
       path: /var/run/docker.sock
-  - name: webdep
+  - name: frontend-dep
     host:
-      path: /drone/webdep
+      path: /drone/frontend-dep

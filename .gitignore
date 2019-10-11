@@ -2,8 +2,8 @@
 .idea
 
 # Build
-/build
-/public
+build/
+public/
 
 # Environmental variables
 .env
