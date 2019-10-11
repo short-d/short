@@ -22,4 +22,4 @@ ARG CODECOV_TOKEN
 
 ENV CODECOV_TOKEN=${CODECOV_TOKEN}
 
-CMD ["./bin/code-coverage"]
+CMD ["./scripts/code-coverage"]
