@@ -50,7 +50,7 @@ steps:
       event:
         - pull_request
 
-  - name: build frontend
+  - name: generate static assets
     image: node:12.7.0-alpine
     environment:
       RECAPTCHA_SITE_KEY:
@@ -63,24 +63,23 @@ steps:
       - cd frontend
       - yarn
       - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build
-      - mkdir public
-      - mv build/* public/
     when:
-      branch:
-        - master
+#      branch:
+#        - master
       event:
         - push
 
-  - name: build backend
+  - name: build services
     image: docker
     commands:
-      - docker build -t short:latest .
+      - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
+      - docker build -t short-backend:latest -f backend/Dockerfile backend
     volumes:
       - name: docker
         path: /var/run/docker.sock
     when:
-      branch:
-        - master
+#      branch:
+#        - master
       event:
         - push
 
@@ -93,14 +92,16 @@ steps:
         from_secret: DOCKERHUB_PASSWORD
     commands:
       - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-      - docker tag short:latest $DOCKERHUB_USERNAME/short:latest
-      - docker push $DOCKERHUB_USERNAME/short:latest
+      - docker tag short-frontend:latest $DOCKERHUB_USERNAME/short-frontend:latest
+      - docker tag short-backend:latest $DOCKERHUB_USERNAME/short-backend:latest
+      - docker push $DOCKERHUB_USERNAME/short-frontend:latest
+      - docker push $DOCKERHUB_USERNAME/short-backend:latest
     volumes:
       - name: docker
         path: /var/run/docker.sock
     when:
-      branch:
-        - master
+#      branch:
+#        - master
       event:
         - push
 
@@ -120,8 +121,8 @@ steps:
       source:
         - docker-compose.yml
     when:
-      branch:
-        - production
+#      branch:
+#        - production
       event:
         - push
 
@@ -146,10 +147,14 @@ steps:
         from_secret: GITHUB_CLIENT_SECRET
       WEB_PORT:
         from_secret: WEB_PORT
-      API_PORT:
-        from_secret: API_PORT
+      HTTP_API_PORT:
+        from_secret: HTTP_API_PORT
+      GRAPHQL_API_PORT:
+        from_secret: GRAPHQL_API_PORT
       JWT_SECRET:
         from_secret: JWT_SECRET
+      WEB_FRONTEND_URL:
+        from_secret: WEB_FRONTEND_URL
     settings:
       host:
         from_secret: SERVER_HOST
@@ -168,10 +173,13 @@ steps:
         - GITHUB_CLIENT_ID
         - GITHUB_CLIENT_SECRET
         - JWT_SECRET
+        - WEB_FRONTEND_URL
         - WEB_PORT
-        - API_PORT
+        - HTTP_API_PORT
+        - GRAPHQL_API_PORT
       script:
-        - docker pull $DOCKERHUB_USERNAME/short
+        - docker pull $DOCKERHUB_USERNAME/short-frontend
+        - docker pull $DOCKERHUB_USERNAME/short-backend
         - cd $DEST_DIR;
           DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME
           DB_USER=$DB_USER
@@ -181,12 +189,14 @@ steps:
           GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID
           GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
           JWT_SECRET=$JWT_SECRET
+          WEB_FRONTEND_URL=$WEB_FRONTEND_URL
           WEB_PORT=$WEB_PORT
-          API_PORT=$API_PORT
+          HTTP_API_PORT=$HTTP_API_PORT
+          GRAPHQL_API_PORT=$GRAPHQL_API_PORT
           docker-compose up -d
     when:
-      branch:
-        - production
+#      branch:
+#        - production
       event:
         - push
 volumes:
