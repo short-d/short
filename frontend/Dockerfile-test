@@ -10,7 +10,7 @@ RUN apk add --no-cache bash
 COPY package.json yarn.lock ./
 RUN yarn
 
-COPY app/adapter/web .
+COPY . .
 
 ARG RECAPTCHA_SITE_KEY
 
