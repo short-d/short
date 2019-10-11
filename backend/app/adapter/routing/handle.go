@@ -40,7 +40,7 @@ func NewOriginalURL(
 }
 
 func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL) {
-	webFrontendURL.RawPath = "/404"
+	webFrontendURL.Path = "/404"
 	http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 }
 
