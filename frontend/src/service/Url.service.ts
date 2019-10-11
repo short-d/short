@@ -81,6 +81,6 @@ export class UrlService {
   }
 
   aliasToLink(alias: string): string {
-    return `${process.env.REACT_APP_HTTP_API_BASE_URL}/r/${alias}`;
+    return `${EnvService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
   }
 }

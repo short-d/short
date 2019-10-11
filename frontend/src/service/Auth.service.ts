@@ -16,6 +16,6 @@ export class AuthService {
   }
 
   static githubSignInLink(): string {
-    return EnvService.getVal('GITHUB_SIGN_IN_LINK');
+    return `${EnvService.getVal('HTTP_API_BASE_URL')}/oauth/github/sign-in`;
   }
 }
