@@ -7,7 +7,7 @@ RUN apk add --no-cache git
 RUN apk add --no-cache bash
 
 # Install dependencies
-COPY app/adapter/web/package.json app/adapter/web/yarn.lock ./
+COPY package.json yarn.lock ./
 RUN yarn
 
 COPY app/adapter/web .
