@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 
 import githubLogo from './github.svg';
 
-interface Props {
+interface IProps {
   signInLink: string;
 }
 
-export class GithubSignInButton extends Component<Props> {
+export class GithubSignInButton extends Component<IProps> {
   render() {
     return (
       <a href={this.props.signInLink}>
@@ -15,7 +15,7 @@ export class GithubSignInButton extends Component<Props> {
             alt={'Sign in with github account'}
             className={'icon'}
             src={githubLogo}
-          />{' '}
+          />
           Sign In with Github
         </div>
       </a>

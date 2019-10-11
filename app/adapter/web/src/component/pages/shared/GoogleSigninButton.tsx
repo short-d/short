@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 
 import googleLogo from './google.svg';
 
-interface Props {
+interface IProps {
   signInLink: string;
 }
 
-export class GoogleSignInButton extends Component<Props> {
+export class GoogleSignInButton extends Component<IProps> {
   render() {
     return (
       <a href={this.props.signInLink}>
@@ -15,7 +15,7 @@ export class GoogleSignInButton extends Component<Props> {
             alt={'Sign in with google account'}
             className={'icon'}
             src={googleLogo}
-          />{' '}
+          />
           Sign In with Google
         </div>
       </a>

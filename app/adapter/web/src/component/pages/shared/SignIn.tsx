@@ -18,7 +18,6 @@ export class SignIn extends Component<Props> {
           linked to your account.
         </div>
         <GithubSignInButton signInLink={this.props.githubSignInLink} />
-        or
         <GoogleSignInButton signInLink={'#'} />
       </div>
     );
