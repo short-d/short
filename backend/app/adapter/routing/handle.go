@@ -16,7 +16,7 @@ func NewOriginalURL(
 	tracer fw.Tracer,
 	urlRetriever url.Retriever,
 	timer fw.Timer,
-	webFrontendURL *netURL.URL,
+	webFrontendURL netURL.URL,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		trace := tracer.BeginTrace("OriginalURL")
@@ -29,7 +29,7 @@ func NewOriginalURL(
 
 		if err != nil {
 			logger.Error(err)
-			serve404(w, r, *webFrontendURL)
+			serve404(w, r, webFrontendURL)
 			return
 		}
 
@@ -40,7 +40,7 @@ func NewOriginalURL(
 }
 
 func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL) {
-	webFrontendURL.Path = "/404"
+	webFrontendURL.RawPath = "/404"
 	http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 }
 
@@ -49,12 +49,12 @@ func NewGithubSignIn(
 	tracer fw.Tracer,
 	githubOAuth oauth.Github,
 	authenticator auth.Authenticator,
-	webFrontendURL *netURL.URL,
+	webFrontendURL string,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		token := getToken(r, params)
 		if authenticator.IsSignedIn(token) {
-			http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
+			http.Redirect(w, r, webFrontendURL, http.StatusSeeOther)
 			return
 		}
 		signInLink := githubOAuth.GetAuthorizationURL()
@@ -66,7 +66,7 @@ func NewGithubSignInCallback(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	oauthSignIn signin.OAuth,
-	webFrontendURL *netURL.URL,
+	webFrontendURL netURL.URL,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		code := params["code"]
@@ -77,7 +77,9 @@ func NewGithubSignInCallback(
 			return
 		}
 
-		setToken(w, webFrontendURL.Hostname(), authToken)
+		query := webFrontendURL.Query()
+		query.Set("token", authToken)
+		webFrontendURL.RawQuery = query.Encode()
 		http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 	}
 }

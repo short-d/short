@@ -18,8 +18,10 @@ import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
 import { AuthService } from '../../service/Auth.service';
 import { SignIn } from './shared/SignIn';
+import { Location } from 'history';
 
 interface Props {
+  location: Location;
   reCaptcha: ReCaptcha;
 }
 
@@ -89,9 +91,16 @@ export class Home extends Component<Props, State> {
   }
 
   componentDidMount(): void {
+    this.cacheAuthToken();
     if (!AuthService.isSignedIn()) {
       this.showSignInModal();
     }
+  }
+
+  cacheAuthToken() {
+    let params = new URLSearchParams(this.props.location.search);
+    AuthService.saveAuthToken(params.get('token'));
+    window.history.replaceState({}, document.title, '/');
   }
 
   showSignInModal() {

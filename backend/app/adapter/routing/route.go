@@ -32,17 +32,17 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
-			Handle: NewGithubSignIn(logger, tracer, githubOAuth, authenticator, frontendURL),
+			Handle: NewGithubSignIn(logger, tracer, githubOAuth, authenticator, webFrontendURL),
 		},
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in/callback",
-			Handle: NewGithubSignInCallback(logger, tracer, githubSignIn, frontendURL),
+			Handle: NewGithubSignInCallback(logger, tracer, githubSignIn, *frontendURL),
 		},
 		{
 			Method: "GET",
 			Path:   "/r/:alias",
-			Handle: NewOriginalURL(logger, tracer, urlRetriever, timer, frontendURL),
+			Handle: NewOriginalURL(logger, tracer, urlRetriever, timer, *frontendURL),
 		},
 	}
 }

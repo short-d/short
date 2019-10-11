@@ -2,6 +2,12 @@ import { EnvService } from './Env.service';
 import { CookieService } from './Cookie.service';
 
 export class AuthService {
+  static saveAuthToken(token: string | null) {
+    if (token == null) {
+      return;
+    }
+    CookieService.set('token', token);
+  }
   static getAuthToken(): string {
     return CookieService.get('token');
   }
