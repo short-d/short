@@ -21,6 +21,7 @@ import { SignIn } from './shared/SignIn';
 import { Location } from 'history';
 
 interface Props {
+  urlService: UrlService;
   location: Location;
   reCaptcha: ReCaptcha;
 }
@@ -69,7 +70,6 @@ function getErr(errCode: ErrUrl): Err {
 }
 
 export class Home extends Component<Props, State> {
-  urlService = new UrlService();
   appVersion = VersionService.getAppVersion();
   errModal = React.createRef<Modal>();
   signInModal = React.createRef<Modal>();
@@ -171,14 +171,14 @@ export class Home extends Component<Props, State> {
     let recaptchaToken = await this.props.reCaptcha.execute('createShortLink');
 
     try {
-      let url = await this.urlService.createShortLink(
+      let url = await this.props.urlService.createShortLink(
         recaptchaToken,
         this.state.editingUrl
       );
 
       if (url && url.alias) {
         let qrCodeUrl = await QrcodeService.newQrCode(
-          this.urlService.aliasToLink(url.alias)
+          this.props.urlService.aliasToLink(url.alias)
         );
         this.setState({
           qrCodeUrl: qrCodeUrl,
@@ -241,7 +241,7 @@ export class Home extends Component<Props, State> {
             {this.state.createdUrl ? (
               <div className={'short-link-usage-wrapper'}>
                 <ShortLinkUsage
-                  shortLink={this.urlService.aliasToLink(
+                  shortLink={this.props.urlService.aliasToLink(
                     this.state.createdUrl.alias!
                   )}
                   originalUrl={this.state.createdUrl.originalUrl!}
