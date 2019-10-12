@@ -45,7 +45,7 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
    ```
    
 1. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
-configurations.
+   configurations.
 
 ### Create reCAPTCHA account
 
