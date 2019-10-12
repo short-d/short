@@ -50,8 +50,8 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 ### Create reCAPTCHA account
 
 1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the
-
    following configurations:
+
    | Field          | Value         |
    |--------------- | --------------|
    | Label          | `Short`       |
@@ -65,9 +65,9 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 ### Create Github OAuth Application
 
 1. Create a new OAuth app at
-
   [Github Developers](https://github.com/settings/developers) with the following
   configurations:
+
   | Field                      | Value                                            |
   |--------------------------- | -------------------------------------------------|
   | Application Name           | `Short`                                          |
