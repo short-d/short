@@ -35,7 +35,7 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 |Domains       |`localhost`  |
 
 Copy `SECRET KEY` into `.env` file and rename the variable to `RECAPTCHA_SECRET`.
-Copy `SITE_KEY` into `app/adapter/web/.env.development` file and rename the
+Copy `SITE_KEY` into `frontend/.env.development` file and rename the
 variable to `REACT_APP_ RECAPTCHA_SITE_KEY`.
 
 ### Create Github OAuth Application
