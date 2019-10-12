@@ -8,12 +8,9 @@ COPY frontend/package.json frontend/yarn.lock ./
 
 RUN yarn
 
-RUN ls -alt
-
 COPY .git/ ./.git/
-COPY frontend/ ./
 
-RUN ls -alt
+COPY frontend/ ./
 
 VOLUME build
 
