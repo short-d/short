@@ -45,7 +45,7 @@ configurations.
 
 ### Create reCAPTCHA account
 
-1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the
+1.Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the
 following configurations:
 
   | Field          | Value         |
@@ -54,16 +54,16 @@ following configurations:
   | reCAPTCHA type | `reCAPTCHAv3` |
   | Domains        | `localhost`   |
 
-2. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
+2.Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
 
-3. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
+3.Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
 `frontend/.env.development` file with `SITE_KEY`.
 
 ### Create Github OAuth Application
 
-1. Create a new OAuth app at
-[Github Developers](https://github.com/settings/developers) with the following
-configurations:
+1.Create a new OAuth app at
+  [Github Developers](https://github.com/settings/developers) with the following
+  configurations:
 
   | Field                      | Value                                            |
   |--------------------------- | -------------------------------------------------|
@@ -72,9 +72,9 @@ configurations:
   | Application description    | `URL shortening service written in Go and React` |
   | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
-2. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
+2.Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
 
-3. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
+3.Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
 
 ### Generate static assets
 
