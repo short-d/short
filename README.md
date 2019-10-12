@@ -17,8 +17,8 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
 
 ### Prerequisites
 
-- Docker v19.03.1	
-- Node.js v12.7.0	
+- Docker v19.03.1
+- Node.js v12.7.0
 - Yarn v1.17.3
 
 ### Configure environmental variables
@@ -40,36 +40,36 @@ HTTP_API_PORT=80
 GRAPHQL_API_PORT=8080
   ```
 
-2. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own configuraions.
-
+2. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
+configurations.
 
 ### Create reCAPTCHA account
 
-1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the following configurations:
-	
-| Field          | Value         |
-|--------------- | --------------|
-| Label          | `Short`       |
-| reCAPTCHA type | `reCAPTCHAv3` |
-| Domains        | `localhost`   |
-	
-2. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
+1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the
+following configurations:
 
-3. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development` file with `SITE_KEY`.
+  | Field          | Value         |
+  |--------------- | --------------|
+  | Label          | `Short`       |
+  | reCAPTCHA type | `reCAPTCHAv3` |
+  | Domains        | `localhost`   |
+
+2. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
+3. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
+`frontend/.env.development` file with `SITE_KEY`.
 
 ### Create Github OAuth Application
 
 1. Create a new OAuth app at [Github Developers](https://github.com/settings/developers) with the following configurations:
 
-| Field                      | Value                                            |
-|--------------------------- | -------------------------------------------------|
-| Application Name           | `Short`                                          |
-| Homepage URL               | `http://localhost`                               |
-| Application description    | `URL shortening service written in Go and React` |
-| Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
+  | Field                      | Value                                            |
+  |--------------------------- | -------------------------------------------------|
+  | Application Name           | `Short`                                          |
+  | Homepage URL               | `http://localhost`                               |
+  | Application description    | `URL shortening service written in Go and React` |
+  | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
 2. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
-
 3. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
 
 ### Generate static assets
