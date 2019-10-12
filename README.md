@@ -1,4 +1,5 @@
 # Short
+
 [![Build Status](https://ci.time4hacks.com/api/badges/byliuyang/short/status.svg)](https://ci.time4hacks.com/byliuyang/short)
 [![codecov](https://codecov.io/gh/byliuyang/short/branch/master/graph/badge.svg)](https://codecov.io/gh/byliuyang/short)
 [![Maintainability](https://api.codeclimate.com/v1/badges/408644627586328ddd6c/maintainability)](https://codeclimate.com/github/byliuyang/short/maintainability)
@@ -8,9 +9,11 @@
 ![Demo](promo/marquee.png)
 
 ## Preview
+
 ![Demo](doc/demo.gif)
 
-## Want `s/` extension?
+## Get `s/` extension
+
 Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from [source](https://github.com/byliuyang/short-ext)
 
 ## Getting Started
@@ -25,13 +28,13 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
 
 1. Create `.env` file at project root with the following content:
 
-  ```
+  ```env
   DOCKERHUB_USERNAME=local
   DB_USER=your_db_user
   DB_PASSWORD=your_db_password
   DB_NAME=your_db_name
-  RECAPTCHA_SECRET= your_recaptcha_secret
-  GITHUB_CLIENT_ID= your_Github_client_id
+  RECAPTCHA_SECRET=your_recaptcha_secret
+  GITHUB_CLIENT_ID=your_Github_client_id
   GITHUB_CLIENT_SECRET= your_Github_client_secret
   JWT_SECRET= your_JWT_secret
   WEB_FRONTEND_URL=http://localhost:3000
@@ -113,15 +116,18 @@ Code search written in Go
 Automated code review
 
 ## Contributing
+
 When contributing to this repository, please first discuss the change you wish to make via [issues](https://github.com/byliuyang/short/issues) with the owner of this repository before making a change.
 
 ### Pull Request Process
-1. Update the README.md with details of changes to the interface, this includes new environment 
+
+1. Update the README.md with details of changes to the interface, this includes new environment
    variables, exposed ports, useful file locations and container parameters.
-1. You may merge the Pull Request in once you have the sign-off of code owner, or if you 
+1. You may merge the Pull Request in once you have the sign-off of code owner, or if you
    do not have permission to do that, you may request the code owner to merge it for you.
 
 ### Code of Conduct
+
 - Using welcoming and inclusive language
 - Being respectful of differing viewpoints and experiences
 - Gracefully accepting constructive criticism
@@ -132,9 +138,11 @@ When contributing to this repository, please first discuss the change you wish t
 
 Please join this [Slack channel](https://s.time4hacks.com/r/short-slack) to
 discuss bugs, dev environment setup, tooling, and coding best practices.
-   
+
 ## Author
+
 Harry Liu - [byliuyang](https://github.com/byliuyang)
 
 ## License
+
 This project is maintained under MIT license
