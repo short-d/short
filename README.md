@@ -25,21 +25,20 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
 
 1. Create `.env` file at project root with the following content:
 
-  ```bash
-DOCKERHUB_USERNAME=local
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_NAME=your_db_name
-RECAPTCHA_SECRET= your_recaptcha_secret
-GITHUB_CLIENT_ID= your_Github_client_id
-GITHUB_CLIENT_SECRET= your_Github_client_secret
-JWT_SECRET= your_JWT_secret
-WEB_FRONTEND_URL=http://localhost:3000
-WEB_PORT=3000
-HTTP_API_PORT=80
-GRAPHQL_API_PORT=8080
   ```
-
+  DOCKERHUB_USERNAME=local
+  DB_USER=your_db_user
+  DB_PASSWORD=your_db_password
+  DB_NAME=your_db_name
+  RECAPTCHA_SECRET= your_recaptcha_secret
+  GITHUB_CLIENT_ID= your_Github_client_id
+  GITHUB_CLIENT_SECRET= your_Github_client_secret
+  JWT_SECRET= your_JWT_secret
+  WEB_FRONTEND_URL=http://localhost:3000
+  WEB_PORT=3000
+  HTTP_API_PORT=80
+  GRAPHQL_API_PORT=8080
+  ```
 2. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
 configurations.
 
@@ -53,14 +52,15 @@ following configurations:
   | Label          | `Short`       |
   | reCAPTCHA type | `reCAPTCHAv3` |
   | Domains        | `localhost`   |
-
 2. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
 3. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
 `frontend/.env.development` file with `SITE_KEY`.
 
 ### Create Github OAuth Application
 
-1. Create a new OAuth app at [Github Developers](https://github.com/settings/developers) with the following configurations:
+1. Create a new OAuth app at
+[Github Developers](https://github.com/settings/developers) with the following 
+configurations:
 
   | Field                      | Value                                            |
   |--------------------------- | -------------------------------------------------|
@@ -68,7 +68,6 @@ following configurations:
   | Homepage URL               | `http://localhost`                               |
   | Application description    | `URL shortening service written in Go and React` |
   | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
-
 2. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
 3. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
 
