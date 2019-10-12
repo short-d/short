@@ -21,7 +21,7 @@ Install it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it f
 
 ### Prerequisites
 
-- Docker v19.03.1
+- Docker v19.03.2
 
 ### Configure environmental variables
 
@@ -127,7 +127,7 @@ Visit [http://localhost:3000](http://localhost:3000)
    ```
    
 1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
-   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET` 
+   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`
    with your own configurations.
 
 1. Launch backend server
