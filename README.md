@@ -23,8 +23,8 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 ### Create reCAPTCHA account
 [Create ReCAPTCHA account](http://www.google.com/recaptcha/admin)
 
-1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) using the 
-following configurations:
+1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) using the
+   following configurations:
 
 |Field         |Value        |
 |--------------|-------------|
@@ -33,7 +33,7 @@ following configurations:
 |Domains       |`localhost`  |
 
 Copy `SECRET KEY` into `.env` file and rename the variable to `RECAPTCHA_SECRET`.
-Copy `SITE_KEY` into `app/adapter/web/.env.development` file and rename the 
+Copy `SITE_KEY` into `app/adapter/web/.env.development` file and rename the
 variable to `REACT_APP_ RECAPTCHA_SITE_KEY`.
 
 ### Create Github OAuth Application
