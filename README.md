@@ -141,7 +141,7 @@ discuss bugs, dev environment setup, tooling, and coding best practices.
 
 ## Author
 
-Harry Liu - Initial work - [byliuyang](https://github.com/byliuyang)
+Harry Liu - *Initial work* - [byliuyang](https://github.com/byliuyang)
 
 ## License
 
