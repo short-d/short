@@ -23,7 +23,7 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
 
 ### Configure environmental variables
 
-1. Create `.env` file at project root with the following content:
+1.Create `.env` file at project root with the following content:
 
   ```
   DOCKERHUB_USERNAME=local
@@ -39,7 +39,8 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
   HTTP_API_PORT=80
   GRAPHQL_API_PORT=8080
   ```
-2. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
+
+2.Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
 configurations.
 
 ### Create reCAPTCHA account
@@ -52,14 +53,16 @@ following configurations:
   | Label          | `Short`       |
   | reCAPTCHA type | `reCAPTCHAv3` |
   | Domains        | `localhost`   |
+
 2. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
+
 3. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
 `frontend/.env.development` file with `SITE_KEY`.
 
 ### Create Github OAuth Application
 
 1. Create a new OAuth app at
-[Github Developers](https://github.com/settings/developers) with the following 
+[Github Developers](https://github.com/settings/developers) with the following
 configurations:
 
   | Field                      | Value                                            |
@@ -68,7 +71,9 @@ configurations:
   | Homepage URL               | `http://localhost`                               |
   | Application description    | `URL shortening service written in Go and React` |
   | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
+
 2. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
+
 3. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
 
 ### Generate static assets
@@ -94,7 +99,7 @@ docker build -t short-backend:latest -f backend/Dockerfile backend
 docker-compose up
 ```
 
-3. Visit [http://localhost:3000](http://localhost:3000)
+Visit [http://localhost:3000](http://localhost:3000)
 
 ## Tools We Use
 
