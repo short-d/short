@@ -13,79 +13,83 @@
 ## Want `s/` extension?
 Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from [source](https://github.com/byliuyang/short-ext)
 
-## Prerequisites
-- Docker v19.03.1
-- Node.js v12.7.0
-- Yarn v1.17.3
-
-## Dependencies
-Short is built on top of [app](https://github.com/byliuyang/app), a reusable framework for Go apps & command line tools
-
 ## Getting Started
+
+### Configure environmental variables
+
+1. Create `.env` file at project root with the following content:
+
+	```bash	
+	DOCKERHUB_USERNAME=local
+	DB_USER=your_db_user
+	DB_PASSWORD=your_db_password
+	DB_NAME=your_db_name
+	RECAPTCHA_SECRET= your_recaptcha_secret
+	GITHUB_CLIENT_ID= your_Github_client_id
+	GITHUB_CLIENT_SECRET= your_Github_client_secret
+	JWT_SECRET= your_JWT_secret
+	WEB_FRONTEND_URL=http://localhost:3000
+	WEB_PORT=3000
+	HTTP_API_PORT=80
+	GRAPHQL_API_PORT=8080
+	```
+
+2. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own configuraions.
+
+
 ### Create reCAPTCHA account
-[Create ReCAPTCHA account](http://www.google.com/recaptcha/admin)
 
-1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) using the
-   following configurations:
+1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the following configurations:
+	
+| Field          | Value         |
+|--------------- | --------------|
+| Label          | `Short`       |
+| reCAPTCHA type | `reCAPTCHAv3` |
+| Domains        | `localhost`   |
+	
+2. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
 
-|Field         |Value        |
-|--------------|-------------|
-|Label         |`short`      |
-|reCAPTCHA type|`reCAPTCHAv3`|
-|Domains       |`localhost`  |
-
-Copy `SECRET KEY` into `.env` file and rename the variable to `RECAPTCHA_SECRET`.
-Copy `SITE_KEY` into `frontend/.env.development` file and rename the
-variable to `REACT_APP_ RECAPTCHA_SITE_KEY`.
+3. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development` file with `SITE_KEY`.
 
 ### Create Github OAuth Application
 
-- Register at [Github OAuth](https://github.com/settings/developers) with the
-  following configurations:
+1. Create a new OAuth app at [Github Developers](https://github.com/settings/developers) with the following configurations:
 
-|Field                     |Value                                           |
-|--------------------------|------------------------------------------------|
-|Application Name          |`Short`                                         |
-|Homepage URL              |`http://localhost`                              |
-|Application description   |`URL shortening service written in Go and React`|
-|Authorization callback URL|`http://localhost/oauth/github/sign-in/callback`|
+| Field                      | Value                                            |
+|--------------------------- | -------------------------------------------------|
+| Application Name           | `Short`                                          |
+| Homepage URL               | `http://localhost`                               |
+| Application description    | `URL shortening service written in Go and React` |
+| Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
-- Once you have registered the application, you should get `Client ID` and
-  `Client Secret`
-- Now you can copy the `Client ID` and `Client Secret` into their respective
-  locations in the `.env` file
+2. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
 
-### Create .env file at project root directory with the following content:
+3. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
+
+### Generate static assets
+
+Run the following commands at project root:
+
 ```bash
-DOCKER_IMAGE_PREFIX=local
-DOCKERHUB_USERNAME=local
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_NAME=your_db_name
-RECAPTCHA_SECRET=your_recaptcha_secret
-GITHUB_CLIENT_ID=your_Github_client_id
-GITHUB_CLIENT_SECRET=your_Github_client_secret
-JWT_SECRET=your_JWT_secret
-WEB_PORT=80
-API_PORT=8080
+cd frontend
+./scripts/build
+cd ..
 ```
-Remember to replace the appropriate lines with your db user, db password, db name, and reCAPTCHA secret.
 
-### Build docker image
+### Build frontend & backend docker images
+
 ```bash
-GRAPHQL_BASE_URL=http://localhost:8080 \
-HTTP_API_BASE_URL=http://localhost \
-RECAPTCHA_SITE_KEY=your_recaptcha_site_key \
-docker build -t local/short:latest .
+docker build -t short-frontend:latest -f frontend/Dockerfile frontend
+docker build -t short-backend:latest -f backend/Dockerfile backend
 ```
-Remember to replace the appropriate line with your reCAPTCHA site key.
 
-### Start server
+### Launch App
+
 ```bash
 docker-compose up
 ```
 
-3. Visit [http://localhost](http://localhost)
+3. Visit [http://localhost:3000](http://localhost:3000)
 
 ## Tools We Use
 
