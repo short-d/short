@@ -12,9 +12,9 @@
 
 ![Demo](doc/demo.gif)
 
-## Get `s/` extension
+## Get `s/` Chrome extension
 
-Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
+Install it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 [source](https://github.com/byliuyang/short-ext)
 
 ## Getting Started
@@ -50,11 +50,11 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the
    following configurations:
 
-   | Field          | Value         |
-   |--------------- | --------------|
-   | Label          | `Short`       |
-   | reCAPTCHA type | `reCAPTCHAv3` |
-   | Domains        | `localhost`   |
+   | Field           | Value          |
+   |-----------------|----------------|
+   | Label           | `Short`        |
+   | reCAPTCHA type  | `reCAPTCHAv3`  |
+   | Domains         | `localhost`    |
 
 1. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
@@ -67,7 +67,7 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
    configurations:
    
    | Field                      | Value                                            |
-   |--------------------------- | -------------------------------------------------|
+   |----------------------------|--------------------------------------------------|
    | Application Name           | `Short`                                          |
    | Homepage URL               | `http://localhost`                               |
    | Application description    | `URL shortening service written in Go and React` |
@@ -99,6 +99,54 @@ docker-compose up
 ```
 
 Visit [http://localhost:3000](http://localhost:3000)
+
+## Development
+
+### Prerequisites
+
+- Go v1.13.1
+- Node.js v12.12.0
+- Yarn v1.19.1
+- Postgresql v12.0
+
+### Backend
+
+1. Create `.env` under `backend` directory with the following content:
+
+   ```env
+   DB_HOST=your_db_host
+   DB_PORT=your_db_port
+   DB_USER=your_db_user
+   DB_PASSWORD=your_db_password
+   DB_NAME=your_db_name
+   RECAPTCHA_SECRET=your_recaptcha_secret
+   GITHUB_CLIENT_ID=your_Github_client_id
+   GITHUB_CLIENT_SECRET=your_Github_client_secret
+   JWT_SECRET=your_JWT_secret
+   WEB_FRONTEND_URL=http://localhost:3000
+   ```
+   
+1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
+   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET` 
+   with your own configurations.
+
+1. Launch backend server
+
+   ```bash
+   cd backend
+   ./scripts/dev
+   ```
+
+### Frontend
+
+1. Launch frontend server
+
+   ```bash
+   cd frontend
+   ./scripts/dev
+   ```
+   
+1. Visit [http://localhost:3000](http://localhost:3000)
 
 ## Tools We Use
 

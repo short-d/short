@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
+go mod download
 go run main.go start
 
