@@ -52,7 +52,7 @@ func NewGithubSignIn(
 	webFrontendURL string,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		token := getToken(r, params)
+		token := getToken(params)
 		if authenticator.IsSignedIn(token) {
 			http.Redirect(w, r, webFrontendURL, http.StatusSeeOther)
 			return
@@ -77,9 +77,7 @@ func NewGithubSignInCallback(
 			return
 		}
 
-		query := webFrontendURL.Query()
-		query.Set("token", authToken)
-		webFrontendURL.RawQuery = query.Encode()
+		webFrontendURL = setToken(webFrontendURL, authToken)
 		http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 	}
 }
