@@ -1,0 +1,20 @@
+FROM node:12.7.0-alpine
+
+WORKDIR /app
+
+RUN apk add --no-cache bash git
+
+COPY frontend/package.json frontend/yarn.lock ./
+
+RUN yarn
+
+RUN ls -alt
+
+COPY .git/ ./.git/
+COPY frontend/ ./
+
+RUN ls -alt
+
+VOLUME build
+
+CMD sh -ac '. .env.development; yarn build --mode development'
