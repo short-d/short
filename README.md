@@ -14,7 +14,8 @@
 
 ## Get `s/` extension
 
-Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from [source](https://github.com/byliuyang/short-ext)
+Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
+[source](https://github.com/byliuyang/short-ext)
 
 ## Getting Started
 
@@ -48,17 +49,14 @@ configurations.
 
 ### Create reCAPTCHA account
 
-1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the
-following configurations:
-
-  | Field          | Value         |
-  |--------------- | --------------|
-  | Label          | `Short`       |
-  | reCAPTCHA type | `reCAPTCHAv3` |
-  | Domains        | `localhost`   |
-
+1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the 
+   following configurations:
+   | Field          | Value         |
+   |--------------- | --------------|
+   | Label          | `Short`       |
+   | reCAPTCHA type | `reCAPTCHAv3` |
+   | Domains        | `localhost`   |
 1. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
-
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
 `frontend/.env.development` file with `SITE_KEY`.
 
@@ -67,16 +65,13 @@ following configurations:
 1. Create a new OAuth app at
   [Github Developers](https://github.com/settings/developers) with the following
   configurations:
-
   | Field                      | Value                                            |
   |--------------------------- | -------------------------------------------------|
   | Application Name           | `Short`                                          |
   | Homepage URL               | `http://localhost`                               |
   | Application description    | `URL shortening service written in Go and React` |
   | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
-
 1. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
-
 1. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
 
 ### Generate static assets
@@ -121,10 +116,12 @@ When contributing to this repository, please first discuss the change you wish t
 
 ### Pull Request Process
 
-1. Update the README.md with details of changes to the interface, this includes new environment
-   variables, exposed ports, useful file locations and container parameters.
-1. You may merge the Pull Request in once you have the sign-off of code owner, or if you
-   do not have permission to do that, you may request the code owner to merge it for you.
+1. Update the README.md with details of changes to the interface, this includes
+   new environment variables, exposed ports, useful file locations and container
+   parameters.
+1. You may merge the Pull Request in once you have the sign-off of code owner,
+   or if you do not have permission to do that, you may request the code owner 
+   to merge it for you.
 
 ### Code of Conduct
 
