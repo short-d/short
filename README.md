@@ -65,15 +65,15 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 ### Create Github OAuth Application
 
 1. Create a new OAuth app at
-  [Github Developers](https://github.com/settings/developers) with the following
-  configurations:
-
-  | Field                      | Value                                            |
-  |--------------------------- | -------------------------------------------------|
-  | Application Name           | `Short`                                          |
-  | Homepage URL               | `http://localhost`                               |
-  | Application description    | `URL shortening service written in Go and React` |
-  | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
+   [Github Developers](https://github.com/settings/developers) with the following
+   configurations:
+   
+   | Field                      | Value                                            |
+   |--------------------------- | -------------------------------------------------|
+   | Application Name           | `Short`                                          |
+   | Homepage URL               | `http://localhost`                               |
+   | Application description    | `URL shortening service written in Go and React` |
+   | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
 1. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
 1. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
