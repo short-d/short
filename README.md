@@ -25,7 +25,7 @@ from [source](https://github.com/byliuyang/short-ext)
 git clone https://github.com/byliuyang/short.git
 ```
 
-If you don't have a Linux machine or a mac at your hand,
+If you don't have a Linux or a macOS machine at your hand,
 [Gitpod](https://gitpod.io/#https://github.com/byliuyang/short) will get you 
 covered!
 
