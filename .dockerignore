@@ -14,3 +14,6 @@ README.md
 
 # Build
 */**/build
+
+# macOS metadata
+.DS_Store

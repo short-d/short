@@ -22,8 +22,6 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 ### Prerequisites
 
 - Docker v19.03.1
-- Node.js v12.7.0
-- Yarn v1.17.3
 
 ### Configure environmental variables
 
@@ -83,9 +81,8 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 Run the following commands at project root:
 
 ```bash
-cd frontend
-./scripts/build
-cd ..
+docker build -t frontend-build -f Dockerfile-build .
+docker run -v $(pwd)/frontend/build:/app/build frontend-build:latest
 ```
 
 ### Build frontend & backend docker images
