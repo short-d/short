@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+yarn
+REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY yarn build

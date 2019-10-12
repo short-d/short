@@ -15,6 +15,8 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
 
 ## Prerequisites
 - Docker v19.03.1
+- Node.js v12.7.0
+- Yarn v1.17.3
 
 ## Dependencies
 Short is built on top of [app](https://github.com/byliuyang/app), a reusable framework for Go apps & command line tools
