@@ -27,7 +27,8 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 
 ### Configure environmental variables
 
-1. Create `.env` file at project root with the following content:
+- Create `.env` file at project root with the following content:
+
    ```env
    DOCKERHUB_USERNAME=local
    DB_USER=your_db_user
@@ -42,6 +43,7 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
    HTTP_API_PORT=80
    GRAPHQL_API_PORT=8080
    ```
+   
 1. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
 configurations.
 
@@ -56,7 +58,7 @@ configurations.
    | Domains        | `localhost`   |
 1. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
-`frontend/.env.development` file with `SITE_KEY`.
+   `frontend/.env.development` file with `SITE_KEY`.
 
 ### Create Github OAuth Application
 
@@ -99,13 +101,13 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ## Tools We Use
 
-- [Drone](https://ci.time4hacks.com/byliuyang/short/): Continuous integration
-  written in Go
-- [Sourcegraph](https://cs.time4hacks.com/github.com/byliuyang/short):Code
-  search written in Go
+- [Drone](https://ci.time4hacks.com/byliuyang/short/):
+  Continuous integration written in Go
+- [Sourcegraph](https://cs.time4hacks.com/github.com/byliuyang/short):
+  Code search written in Go
   ![Tooltip during code review](doc/sourcegraph/reference.png)
-- [Code Climate](https://codeclimate.com/github/byliuyang/short): Automated code
-review
+- [Code Climate](https://codeclimate.com/github/byliuyang/short):
+  Automated code review
 
 ## Contributing
 
