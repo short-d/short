@@ -27,7 +27,7 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 
 ### Configure environmental variables
 
-- Create `.env` file at project root with the following content:
+1. Create `.env` file at project root with the following content:
 
    ```env
    DOCKERHUB_USERNAME=local
@@ -50,12 +50,14 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 ### Create reCAPTCHA account
 
 1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the
+
    following configurations:
    | Field          | Value         |
    |--------------- | --------------|
    | Label          | `Short`       |
    | reCAPTCHA type | `reCAPTCHAv3` |
    | Domains        | `localhost`   |
+
 1. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
    `frontend/.env.development` file with `SITE_KEY`.
@@ -63,6 +65,7 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
 ### Create Github OAuth Application
 
 1. Create a new OAuth app at
+
   [Github Developers](https://github.com/settings/developers) with the following
   configurations:
   | Field                      | Value                                            |
@@ -71,6 +74,7 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from
   | Homepage URL               | `http://localhost`                               |
   | Application description    | `URL shortening service written in Go and React` |
   | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
+
 1. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
 1. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
 
