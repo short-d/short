@@ -156,7 +156,7 @@ delivery in the DevOps world.
 
 ![Continuous Delivery](doc/continuous-delivery.png)
 
-In the future, when there are enough automated tests, we may migrate to 
+In the future, when there are enough automated tests, we may migrate to
 continuous deployment instead.
 
 ![Continuous Deployment](doc/continuous-deployment.png)
