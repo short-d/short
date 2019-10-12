@@ -102,7 +102,7 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ## Development
 
-### Prerequisites
+### Dependencies
 
 - Go v1.13.1
 - Node.js v12.12.0
