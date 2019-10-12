@@ -8,3 +8,6 @@ doc
 
 # Environmental variables
 .env
+
+# Coverage
+coverage.txt

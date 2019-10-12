@@ -1,6 +1,6 @@
 # Documentation
 README.md
-doc
+/doc
 
 # Node.js dependencies
 */**/node_modules
@@ -13,4 +13,4 @@ doc
 .env
 
 # Build
-build
+*/**/build

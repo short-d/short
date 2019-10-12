@@ -33,14 +33,14 @@ steps:
       event:
         - pull_request
 
-  - name: code coverage
+  - name: report code coverage
     image: docker
     environment:
       CODECOV_TOKEN:
         from_secret: CODECOV_TOKEN
     commands:
-      - docker build -t code-coverage --build-arg CODECOV_TOKEN=$CODECOV_TOKEN -f backend/Dockerfile-code-coverage backend
-      - docker run code-coverage
+      - docker build -t report-coverage --build-arg CODECOV_TOKEN=$CODECOV_TOKEN -f Dockerfile-coverage .
+      - docker run report-coverage
     volumes:
       - name: docker
         path: /var/run/docker.sock
