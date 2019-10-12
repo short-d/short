@@ -148,6 +148,19 @@ Visit [http://localhost:3000](http://localhost:3000)
    
 1. Visit [http://localhost:3000](http://localhost:3000)
 
+## Deployment
+
+Merging from `master` branch to `production` branch on Github will automatically
+deploy the latest code to the production server. This is called continuous
+delivery in the DevOps world.
+
+![Continuous Delivery](doc/continuous-delivery.png)
+
+In the future, when there are enough automated tests, we may migrate to
+continuous deployment instead.
+
+![Continuous Deployment](doc/continuous-deployment.png)
+
 ## Tools We Use
 
 - [Drone](https://ci.time4hacks.com/byliuyang/short/): Continuous integration
