@@ -15,6 +15,12 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
 
 ## Getting Started
 
+### Prerequisites
+
+- Docker v19.03.1	
+- Node.js v12.7.0	
+- Yarn v1.17.3
+
 ### Configure environmental variables
 
 1. Create `.env` file at project root with the following content:
