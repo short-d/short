@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+yarn stylelint:write
+yarn prettier:write

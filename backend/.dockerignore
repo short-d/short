@@ -1,9 +1,6 @@
 # Documentation
 README.md
-/doc
-
-# Node.js dependencies
-*/**/node_modules
+doc
 
 # ignore files
 .gitignore
@@ -12,5 +9,5 @@ README.md
 # Environmental variables
 .env
 
-# Build
-*/**/build
+# Coverage
+coverage.txt

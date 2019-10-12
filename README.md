@@ -15,6 +15,8 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
 
 ## Prerequisites
 - Docker v19.03.1
+- Node.js v12.7.0
+- Yarn v1.17.3
 
 ## Dependencies
 Short is built on top of [app](https://github.com/byliuyang/app), a reusable framework for Go apps & command line tools
@@ -22,6 +24,19 @@ Short is built on top of [app](https://github.com/byliuyang/app), a reusable fra
 ## Getting Started
 ### Create reCAPTCHA account
 [Create ReCAPTCHA account](http://www.google.com/recaptcha/admin)
+
+1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) using the
+   following configurations:
+
+|Field         |Value        |
+|--------------|-------------|
+|Label         |`short`      |
+|reCAPTCHA type|`reCAPTCHAv3`|
+|Domains       |`localhost`  |
+
+Copy `SECRET KEY` into `.env` file and rename the variable to `RECAPTCHA_SECRET`.
+Copy `SITE_KEY` into `frontend/.env.development` file and rename the
+variable to `REACT_APP_ RECAPTCHA_SITE_KEY`.
 
 ### Create Github OAuth Application
 
@@ -78,6 +93,8 @@ docker-compose up
 Continuous integration written in Go
 - [Sourcegraph](https://cs.time4hacks.com/github.com/byliuyang/short):
 Code search written in Go
+
+  ![Tooltip during code review](doc/sourcegraph/reference.png)
 - [Code Climate](https://codeclimate.com/github/byliuyang/short):
 Automated code review
 
@@ -96,6 +113,11 @@ When contributing to this repository, please first discuss the change you wish t
 - Gracefully accepting constructive criticism
 - Focusing on what is best for the community
 - Showing empathy towards other community members
+
+### Discussions
+
+Please join this [Slack channel](https://s.time4hacks.com/r/short-slack) to
+discuss bugs, dev environment setup, tooling, and coding best practices.
    
 ## Author
 Harry Liu - [byliuyang](https://github.com/byliuyang)
