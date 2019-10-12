@@ -14,7 +14,7 @@
 
 ## Get `s/` Chrome extension
 
-Install it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it 
+Install it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it
 from [source](https://github.com/byliuyang/short-ext)
 
 ## Getting Started
@@ -26,7 +26,7 @@ git clone https://github.com/byliuyang/short.git
 ```
 
 If you don't have a Linux or a macOS machine at your hand,
-[Gitpod](https://gitpod.io/#https://github.com/byliuyang/short) will get you 
+[Gitpod](https://gitpod.io/#https://github.com/byliuyang/short) will get you
 covered!
 
 ### Prerequisites
@@ -73,7 +73,7 @@ covered!
 ### Create Github OAuth Application
 
 1. Create a new OAuth app at
-   [Github Developers](https://github.com/settings/developers) with the 
+   [Github Developers](https://github.com/settings/developers) with the
    following configurations:
    
    | Field                      | Value                                            |
@@ -84,7 +84,7 @@ covered!
    | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
 1. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
-1. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with 
+1. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with
    `Client Secret`.
 
 ### Generate static assets
@@ -181,14 +181,14 @@ continuous deployment instead.
   ![Tooltip during code review](doc/sourcegraph/reference.png)
 - [Code Climate](https://codeclimate.com/github/byliuyang/short): Automated code
   review
-- [Gitpod](https://gitpod.io/#https://github.com/byliuyang/short): An online IDE 
+- [Gitpod](https://gitpod.io/#https://github.com/byliuyang/short): An online IDE
   that launches ready-to-code development environments from any GitHub page.
   ![Gitpod](doc/gitpod.png)
 
 ## Contributing
 
-When contributing to this repository, please first discuss the change you wish 
-to make via [issues](https://github.com/byliuyang/short/issues) with the owner 
+When contributing to this repository, please first discuss the change you wish
+to make via [issues](https://github.com/byliuyang/short/issues) with the owner
 of this repository before making a change.
 
 ### Pull Request Process
