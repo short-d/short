@@ -23,7 +23,7 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
 
 ### Configure environmental variables
 
-1.Create `.env` file at project root with the following content:
+1. Create `.env` file at project root with the following content:
 
   ```
   DOCKERHUB_USERNAME=local
@@ -40,12 +40,12 @@ Get it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it from 
   GRAPHQL_API_PORT=8080
   ```
 
-2.Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
+1. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
 configurations.
 
 ### Create reCAPTCHA account
 
-1.Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the
+1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the
 following configurations:
 
   | Field          | Value         |
@@ -54,14 +54,14 @@ following configurations:
   | reCAPTCHA type | `reCAPTCHAv3` |
   | Domains        | `localhost`   |
 
-2.Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
+1. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
 
-3.Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
+1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
 `frontend/.env.development` file with `SITE_KEY`.
 
 ### Create Github OAuth Application
 
-1.Create a new OAuth app at
+1. Create a new OAuth app at
   [Github Developers](https://github.com/settings/developers) with the following
   configurations:
 
@@ -72,9 +72,9 @@ following configurations:
   | Application description    | `URL shortening service written in Go and React` |
   | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
-2.Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
+1. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
 
-3.Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
+1. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with `Client Secret`.
 
 ### Generate static assets
 
@@ -118,7 +118,7 @@ When contributing to this repository, please first discuss the change you wish t
 ### Pull Request Process
 1. Update the README.md with details of changes to the interface, this includes new environment 
    variables, exposed ports, useful file locations and container parameters.
-2. You may merge the Pull Request in once you have the sign-off of code owner, or if you 
+1. You may merge the Pull Request in once you have the sign-off of code owner, or if you 
    do not have permission to do that, you may request the code owner to merge it for you.
 
 ### Code of Conduct
