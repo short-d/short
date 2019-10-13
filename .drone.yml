@@ -207,6 +207,15 @@ steps:
         - production
       event:
         - push
+
+services:
+  - name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: short
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+
 volumes:
   - name: docker
     host:
