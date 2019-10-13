@@ -150,6 +150,8 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ### Frontend
 
+Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`.
+
 1. Launch frontend server
 
    ```bash
