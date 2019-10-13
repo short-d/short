@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+yarn
+sh -ac '. .env.development; yarn build --mode development'

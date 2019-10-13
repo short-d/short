@@ -1,0 +1,25 @@
+FROM golang:1.13.1-alpine
+
+WORKDIR /app
+
+# Install tools
+RUN apk add --no-cache git
+RUN apk add --no-cache bash
+RUN apk add --no-cache gcc
+RUN apk add --no-cache libc-dev
+RUN apk add --no-cache curl
+
+# Install dependencies
+COPY backend/go.mod backend/go.sum ./
+RUN go mod download
+
+# Verify dependencies
+RUN go mod verify
+
+COPY . .
+
+ARG CODECOV_TOKEN
+
+ENV CODECOV_TOKEN=${CODECOV_TOKEN}
+
+CMD ["./scripts/report-coverage"]

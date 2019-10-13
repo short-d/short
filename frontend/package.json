@@ -1,0 +1,62 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "apollo-cache-inmemory": "^1.6.3",
+    "apollo-client": "^2.6.4",
+    "apollo-link": "^1.2.13",
+    "apollo-link-http": "^1.5.16",
+    "classnames": "^2.2.6",
+    "es-cookie": "^1.2.0",
+    "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1",
+    "material-design-icons": "^3.0.1",
+    "qrcode": "^1.4.2",
+    "react-router-dom": "^5.1.2",
+    "recaptcha-v3": "^1.7.0"
+  },
+  "scripts": {
+    "start": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts start",
+    "build": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts build",
+    "test": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts test",
+    "eject": "react-scripts eject",
+    "prettier:base": "prettier --parser typescript --single-quote",
+    "prettier:check": "yarn prettier:base --list-different \"src/**/*.{ts,tsx}\"",
+    "prettier:write": "yarn prettier:base --write \"src/**/*.{ts,tsx}\"",
+    "stylelint:write": " yarn stylelint --config=.stylelintrc --fix src/**/*.{scss,css}"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/classnames": "^2.2.9",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.12",
+    "@types/qrcode": "^1.3.4",
+    "@types/react": "^16.9.5",
+    "@types/react-dom": "^16.9.1",
+    "@types/react-router-dom": "^5.1.0",
+    "node-sass": "^4.12.0",
+    "prettier": "1.18.2",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
+    "react-scripts": "3.2.0",
+    "stylelint": "^11.1.1",
+    "stylelint-config-standard": "^19.0.0",
+    "stylelint-scss": "^3.11.1",
+    "typescript": "^3.6.4"
+  }
+}
