@@ -1,4 +1,4 @@
-FROM golang:1.13.0-alpine
+FROM golang:1.13.1-alpine
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN apk add --no-cache libc-dev
 RUN apk add --no-cache curl
 
 # Install dependencies
-COPY backend/go.mod backend/go.sum /
+COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 
 # Verify dependencies
