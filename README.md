@@ -118,7 +118,7 @@ Visit [http://localhost:3000](http://localhost:3000)
 - Go v1.13.1
 - Node.js v12.12.0
 - Yarn v1.19.1
-- Postgresql v12.0
+- Postgresql v12.0 ( or use [ElephantSQL](https://www.elephantsql.com) instead )
 
 ### Backend
 
@@ -186,6 +186,7 @@ continuous deployment instead.
 - [Gitpod](https://gitpod.io/#https://github.com/byliuyang/short): An online IDE
   that launches ready-to-code development environments from any GitHub page.
   ![Gitpod](doc/gitpod.png)
+- [ElephantSQL](https://www.elephantsql.com): Managed PostgreSQL service.
 
 ## Contributing
 
