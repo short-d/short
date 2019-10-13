@@ -9,51 +9,30 @@ import (
 )
 
 func TestURL_Alias(t *testing.T) {
-	urlTest := URL{url: struct {
-		Alias       string
-		OriginalURL string
-		ExpireAt    *time.Time
-		CreatedBy   *entity.User
-		CreatedAt   *time.Time
-		UpdatedAt   *time.Time
-	}{Alias: "TestAlias"}}
+	urlResolver := URL{url: entity.URL{Alias: "TestAlias"}}
 
-	expected := urlTest.url.Alias
-	result := *urlTest.Alias()
-	mdtest.Equal(t, result, expected, "*urlTest.Alias() of '%v' is %v", expected, result)
+	expected := urlResolver.url.Alias
+	got := *urlResolver.Alias()
+	mdtest.Equal(t, got, expected, "*urlTest.Alias() = %v; want %v", expected, got)
 }
 
 func TestURL_OriginalURL(t *testing.T) {
-	urlTest := URL{url: struct {
-		Alias       string
-		OriginalURL string
-		ExpireAt    *time.Time
-		CreatedBy   *entity.User
-		CreatedAt   *time.Time
-		UpdatedAt   *time.Time
-	}{OriginalURL: "TestOriginalUrl"}}
+	urlResolver := URL{url: entity.URL{OriginalURL: "TestOriginalUrl"}}
 
-	expected := urlTest.url.OriginalURL
-	result := *urlTest.OriginalURL()
-	mdtest.Equal(t, result, expected, "*urlTest.OriginalURL() of '%v' is %v", expected, result)
+	expected := urlResolver.url.OriginalURL
+	got := *urlResolver.OriginalURL()
+	mdtest.Equal(t, got, expected, "*urlResolver.OriginalURL() = %v; want %v", expected, got)
 }
 
 func TestURL_ExpireAt(t *testing.T) {
 	timeAfter := time.Now().Add(5 * time.Second)
-	urlTest := URL{url: struct {
-		Alias       string
-		OriginalURL string
-		ExpireAt    *time.Time
-		CreatedBy   *entity.User
-		CreatedAt   *time.Time
-		UpdatedAt   *time.Time
-	}{ExpireAt: &timeAfter}}
+	urlResolver := URL{url: entity.URL{ExpireAt: &timeAfter}}
 
-	expected := scalar.Time{Time: *urlTest.url.ExpireAt}.Time
-	result := urlTest.ExpireAt().Time
-	mdtest.Equal(t, result, expected, "*urlTest.OriginalURL() instead of '%v' is %v", expected, result)
+	expected := scalar.Time{Time: *urlResolver.url.ExpireAt}.Time
+	got := urlResolver.ExpireAt().Time
+	mdtest.Equal(t, got, expected, "*urlResolver.OriginalURL() = %v; want %v", expected, got)
 
-	urlTest.url.ExpireAt = nil
+	urlResolver.url.ExpireAt = nil
 	var expectedTime *scalar.Time = nil
-	mdtest.Equal(t, expectedTime, urlTest.ExpireAt(), "*urlTest.OriginalURL() of '%v' is %v", result, nil)
+	mdtest.Equal(t, expectedTime, urlResolver.ExpireAt(), "*urlResolver.OriginalURL() = %v; want %v", got, nil)
 }
