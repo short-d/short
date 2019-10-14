@@ -27,18 +27,18 @@ func TestURL_OriginalURL(t *testing.T) {
 func TestURL_ExpireAt(t *testing.T) {
 	timeAfter := time.Now().Add(5 * time.Second)
 	testCases := []struct {
-		Url    URL
-		Expect *scalar.Time
+		url    URL
+		expected *scalar.Time
 	}{
 		{
-			Url:    URL{url: entity.URL{ExpireAt: &timeAfter}},
-			Expect: &scalar.Time{Time: timeAfter},
+			url:    URL{url: entity.URL{ExpireAt: &timeAfter}},
+			expected: &scalar.Time{Time: timeAfter},
 		},
 		{
-			Url: URL{url: entity.URL{ExpireAt: nil}},
+			url: URL{url: entity.URL{ExpireAt: nil}},
 		},
 	}
-	for _, v := range testCases {
-		mdtest.Equal(t, v.Expect, v.Url.ExpireAt())
+	for _, testCase := range testCases {
+		mdtest.Equal(t, testCase.expected, testCase.url.ExpireAt())
 	}
 }
