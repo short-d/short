@@ -157,18 +157,27 @@ Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`
    
 1. Visit [http://localhost:3000](http://localhost:3000)
 
+## System Design
+
+### Database Modeling
+
+![Entity Relation Diagram](doc/eng/db/er.png)
+
+You can easily edit this diagram
+[here](https://app.quickdatabasediagrams.com/#/d/egr9VU).
+
 ## Deployment
 
 Merging from `master` branch to `production` branch on Github will automatically
 deploy the latest code to the production server. This is called continuous
 delivery in the DevOps world.
 
-![Continuous Delivery](doc/continuous-delivery.png)
+![Continuous Delivery](doc/eng/devops/continuous-delivery.png)
 
 In the future, when there are enough automated tests, we may migrate to
 continuous deployment instead.
 
-![Continuous Deployment](doc/continuous-deployment.png)
+![Continuous Deployment](doc/eng/devops/continuous-deployment.png)
 
 ## Tools We Use
 
@@ -180,6 +189,8 @@ continuous deployment instead.
 - [Code Climate](https://codeclimate.com/github/byliuyang/short): Automated code
   review
 - [ElephantSQL](https://www.elephantsql.com): Managed PostgreSQL service.
+- [QuickDBD](https://www.quickdatabasediagrams.com): Draw database diagrams by
+  typing.
 
 ## Contributing
 
