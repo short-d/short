@@ -29,7 +29,7 @@ services:
       "./build/short", "start", "--migration", "app/adapter/migration"
     ]
   db:
-    image: postgres
+    image: postgres:11
     restart: always
     environment:
       - POSTGRES_USER=${DB_USER}
