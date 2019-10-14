@@ -161,9 +161,9 @@ Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`
 
 ### Database Modeling
 
-![Entity Relation](doc/eng/db/er.png)
+![Entity Relation Diagram](doc/eng/db/er.png)
 
-You can easily edit this diagram 
+You can easily edit this diagram
 [here](https://app.quickdatabasediagrams.com/#/d/egr9VU).
 
 ## Deployment
@@ -189,7 +189,7 @@ continuous deployment instead.
 - [Code Climate](https://codeclimate.com/github/byliuyang/short): Automated code
   review
 - [ElephantSQL](https://www.elephantsql.com): Managed PostgreSQL service.
-- [QuickDBD](https://www.quickdatabasediagrams.com): Draw database diagrams by 
+- [QuickDBD](https://www.quickdatabasediagrams.com): Draw database diagrams by
   typing.
 
 ## Contributing
