@@ -1,3 +1,5 @@
+# This diagram can be visualized through quickdatabasediagrams.com
+
 user
 -
 email pk varchar(254) NULL

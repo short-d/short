@@ -161,10 +161,7 @@ Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`
 
 ### Database Modeling
 
-![Entity Relation Diagram](doc/eng/db/er.png)
-
-You can easily edit this diagram
-[here](https://app.quickdatabasediagrams.com/#/d/egr9VU).
+![Entity Relation Diagram](doc/eng/db/er-v1.png)
 
 ## Deployment
 
