@@ -25,10 +25,6 @@ from [source](https://github.com/byliuyang/short-ext)
 git clone https://github.com/byliuyang/short.git
 ```
 
-If you don't have a Linux or a macOS machine at your hand,
-[Gitpod](https://gitpod.io/#https://github.com/byliuyang/short) will get you
-covered!
-
 ### Prerequisites
 
 - Docker v19.03.2
@@ -183,9 +179,6 @@ continuous deployment instead.
   ![Tooltip during code review](doc/sourcegraph/reference.png)
 - [Code Climate](https://codeclimate.com/github/byliuyang/short): Automated code
   review
-- [Gitpod](https://gitpod.io/#https://github.com/byliuyang/short): An online IDE
-  that launches ready-to-code development environments from any GitHub page.
-  ![Gitpod](doc/gitpod.png)
 - [ElephantSQL](https://www.elephantsql.com): Managed PostgreSQL service.
 
 ## Contributing
