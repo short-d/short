@@ -14,7 +14,7 @@
 
 ## Get `s/` Chrome extension
 
-Install it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it
+Install it from [Chrome Web Store](https://short-d.com/r/ext) or build it
 from [source](https://github.com/byliuyang/short-ext)
 
 ## Getting Started
@@ -214,7 +214,7 @@ of this repository before making a change.
 
 ### Discussions
 
-Please join this [Slack channel](https://s.time4hacks.com/r/short-slack) to
+Please join this [Slack channel](https://short-d.com/r/short-slack) to
 discuss bugs, dev environment setup, tooling, and coding best practices.
 
 ## Author
