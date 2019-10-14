@@ -1,0 +1,28 @@
+# This diagram can be visualized through quickdatabasediagrams.com
+
+url
+-
+alias pk varchar(50)
+original_url varchar(200)
+expire_at timestamp NULL
+created_at timestamp
+updated_at timestamp NULL
+
+user
+-
+id pk int
+email varchar(254) NULL
+name varchar(80) NULL
+last_signed_in_at timestamp NULL
+created_at timestamp
+updated_at timestamp NULL
+
+user_url_relation
+-
+user_id pk int fk >- user.id
+url_alias pk varchar(50) fk >- url.alias
+
+github_oauth_user_relation
+-
+github_id pk varchar(254)
+user_id pk int fk >- user.id
