@@ -9,7 +9,7 @@ interface IProps {
 }
 
 enum ModalState {
-  Open= 'open',
+  Open = 'open',
   Close = 'close'
 }
 
@@ -34,11 +34,11 @@ export class SignInModel extends Component<IProps> {
 
   open = () => {
     this.updateModalState(ModalState.Open);
-  }
+  };
 
   close = () => {
     this.updateModalState(ModalState.Close);
-  }
+  };
 
   private updateModalState = (state: ModalState) => {
     if (!this.modalRef.current) {
