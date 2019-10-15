@@ -40,6 +40,6 @@ export class SignInModel extends Component<IProps> {
     if (!this.modalRef.current) {
       return;
     }
-    this.modalRef.current[state]()
-  };
+    this.modalRef.current[state]();
+  }
 }
