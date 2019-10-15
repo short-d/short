@@ -17,7 +17,7 @@ import { ReCaptcha } from '../../service/Captcha.service';
 import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
 import { AuthService } from '../../service/Auth.service';
-import { SignIn } from './shared/SignIn';
+import { SignInModel } from './shared/sign-in/SignInModel';
 import { Location } from 'history';
 
 interface Props {
@@ -72,7 +72,7 @@ function getErr(errCode: ErrUrl): Err {
 export class Home extends Component<Props, State> {
   appVersion = VersionService.getAppVersion();
   errModal = React.createRef<Modal>();
-  signInModal = React.createRef<Modal>();
+  signInModal = React.createRef<SignInModel>();
 
   constructor(props: Props) {
     super(props);
@@ -104,7 +104,10 @@ export class Home extends Component<Props, State> {
   }
 
   showSignInModal() {
-    this.signInModal.current!.open();
+    if (!this.signInModal.current) {
+      return;
+    }
+    this.signInModal.current.open();
   }
 
   requestSignIn() {
@@ -258,9 +261,11 @@ export class Home extends Component<Props, State> {
           authorPortfolio={'https://github.com/byliuyang'}
           version={this.appVersion}
         />
-        <Modal ref={this.signInModal}>
-          <SignIn githubSignInLink={this.state.githubSignInLink} />
-        </Modal>
+
+        <SignInModel
+          ref={this.signInModal}
+          githubSignInLink={this.state.githubSignInLink}
+        />
         <Modal canClose={true} ref={this.errModal}>
           <div className={'err'}>
             <i

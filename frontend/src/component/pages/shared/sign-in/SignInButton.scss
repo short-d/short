@@ -1,0 +1,37 @@
+@import '../../../styles/font';
+@import '../../../styles/corner';
+@import '../../../styles/color';
+@import '../../../styles/easing';
+@import '../../../styles/shadow';
+
+.sign-in-button {
+  .button {
+    @include round-corner;
+
+    align-items: center;
+    box-shadow: $shadow-light;
+    color: $color-white;
+    cursor: pointer;
+    display: flex;
+    font-weight: $font-weight-semi-bold;
+    justify-content: center;
+    padding: 10px 40px;
+    transition: opacity 100ms $ease-in-out-quart;
+
+    &:hover {
+      opacity: .9;
+    }
+
+    .icon {
+      fill: $color-white;
+      height: 30px;
+      margin-right: 20px;
+      width: 30px;
+    }
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}

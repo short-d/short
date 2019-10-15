@@ -1,0 +1,31 @@
+@import '../../../styles/font';
+@import '../../../styles/corner';
+@import '../../../styles/easing';
+@import '../../../styles/color';
+
+.sign-in-content {
+  @include default-font;
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 80px 30px 20px;
+  width: 400px;
+
+  .title {
+    font-size: 40px;
+    font-weight: $font-weight-semi-bold;
+    margin-bottom: 80px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .intro {
+    color: $color-dark-gray;
+    font-size: 14px;
+    font-weight: $font-weight-semi-bold;
+    line-height: 2;
+    margin-bottom: 80px;
+    padding: 0 20px;
+  }
+}
