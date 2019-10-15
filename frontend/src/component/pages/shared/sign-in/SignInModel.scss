@@ -1,6 +1,7 @@
-@import "../../../styles/font";
-@import "../../../styles/corner";
-@import "../../../styles/easing";
+@import '../../../styles/font';
+@import '../../../styles/corner';
+@import '../../../styles/easing';
+@import '../../../styles/color';
 
 .sign-in-content {
   @include default-font();
@@ -8,7 +9,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 80px 30px 20px 30px;
+  padding: 80px 30px 20px;
   width: 400px;
 
   .title {
@@ -20,7 +21,7 @@
   }
 
   .intro {
-    color: #343434;
+    color: $color-dark-gray;
     font-size: 14px;
     font-weight: $font-weight-semi-bold;
     line-height: 2;
