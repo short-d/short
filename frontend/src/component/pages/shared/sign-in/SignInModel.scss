@@ -2,7 +2,7 @@
 @import "../../../styles/corner";
 @import "../../../styles/easing";
 
-.sign-in {
+.sign-in-content {
   @include default-font();
 
   display: flex;
@@ -26,40 +26,5 @@
     margin-bottom: 80px;
     padding: 0 20px;
     color: #343434;
-  }
-
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .button {
-    font-weight: $font-weight-semi-bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 40px;
-    cursor: pointer;
-
-    @include round-corner();
-
-    transition: opacity 100ms $easeInOutQuart;
-    color: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-
-    &:hover {
-      opacity: 0.9;
-    }
-
-    &.github {
-      background-color: #343434;
-    }
-
-    .icon {
-      width: 30px;
-      height: 30px;
-      margin-right: 20px;
-      fill: white;
-    }
   }
 }

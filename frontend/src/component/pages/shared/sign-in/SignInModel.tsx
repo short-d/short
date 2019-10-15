@@ -14,7 +14,7 @@ export class SignInModel extends Component<Props> {
   render() {
     return (
       <Modal ref={this.modalRef}>
-        <div className={'sign-in'}>
+        <div className={'sign-in-content'}>
           <div className={'title'}>Sign In</div>
           <div className={'intro'}>
             Please sign in so that we know the short links created are yours.
