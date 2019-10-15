@@ -1,5 +1,6 @@
 @import '../styles/easing';
 @import '../styles/color';
+@import '../styles/shadow';
 
 .modal {
   bottom: 0;
@@ -22,7 +23,7 @@
 
   .card {
     background-color: $color-white;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .23);
+    box-shadow: $shadow-card;
     left: 50%;
     position: fixed;
     top: 50%;
@@ -30,7 +31,7 @@
   }
 
   .mask {
-    background-color: rgba(0, 0, 0, .2);
+    background-color: color-transparent-black(0.2);
     height: 100%;
     width: 100%;
   }
