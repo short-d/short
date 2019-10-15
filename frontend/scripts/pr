@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# $1 = Pull request ID
+# $2 = Local branch name
+git fetch origin "pull/$1/head:$2"
