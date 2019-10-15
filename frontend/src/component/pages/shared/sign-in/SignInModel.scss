@@ -28,4 +28,14 @@
     margin-bottom: 80px;
     padding: 0 20px;
   }
+
+  .sign-in-buttons {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    > li:not(:first-child) {
+      margin-top: 10px;
+    }
+  }
 }

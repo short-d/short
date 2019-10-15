@@ -33,6 +33,7 @@ interface State {
   err: Err;
   inputErr?: string;
   githubSignInLink: string;
+  googleSignInLink: string;
 }
 
 interface Err {
@@ -86,7 +87,8 @@ export class Home extends Component<Props, State> {
         description: ''
       },
       inputErr: '',
-      githubSignInLink: AuthService.githubSignInLink()
+      githubSignInLink: AuthService.githubSignInLink(),
+      googleSignInLink: AuthService.googleSignInLink()
     };
   }
 
@@ -265,6 +267,7 @@ export class Home extends Component<Props, State> {
         <SignInModel
           ref={this.signInModal}
           githubSignInLink={this.state.githubSignInLink}
+          googleSignInLink={this.state.googleSignInLink}
         />
         <Modal canClose={true} ref={this.errModal}>
           <div className={'err'}>
