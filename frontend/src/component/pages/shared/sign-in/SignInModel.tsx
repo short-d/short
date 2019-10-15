@@ -32,18 +32,14 @@ export class SignInModel extends Component<IProps> {
     );
   }
 
-  open = () => {
-    this.updateModalState(ModalState.Open);
-  };
+  open = () => this.updateModalState(ModalState.Open);
 
-  close = () => {
-    this.updateModalState(ModalState.Close);
-  };
+  close = () => this.updateModalState(ModalState.Close);
 
   private updateModalState = (state: ModalState) => {
     if (!this.modalRef.current) {
       return;
     }
     this.modalRef.current[state]();
-  }
+  };
 }
