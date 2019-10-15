@@ -8,15 +8,11 @@ interface IProps {
 }
 
 export class GoogleSignInButton extends Component<IProps> {
-  fontColor = '#fff';
-  backgroundColor = '#c1423d';
-
   render() {
     return (
       <SignInButton
         signInLink={this.props.googleSignInLink}
-        fontColor={this.fontColor}
-        backgroundColor={this.backgroundColor}
+        backgroundColor={'#c1423d'}
         oauthProviderIconSrc={googleLogo}
         oauthProviderName={'Google'}
       />

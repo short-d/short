@@ -8,15 +8,11 @@ interface IProps {
 }
 
 export class GithubSignInButton extends Component<IProps> {
-  fontColor = '#fff';
-  backgroundColor = '#343434';
-
   render() {
     return (
       <SignInButton
         signInLink={this.props.githubSignInLink}
-        fontColor={this.fontColor}
-        backgroundColor={this.backgroundColor}
+        backgroundColor={'#343434'}
         oauthProviderIconSrc={githubLogo}
         oauthProviderName={'Github'}
       />

@@ -4,7 +4,6 @@ import './SignInButton.scss';
 
 interface IProps {
   signInLink: string;
-  fontColor: string;
   backgroundColor: string;
   oauthProviderIconSrc: string;
   oauthProviderName: string;
@@ -18,7 +17,6 @@ export class SignInButton extends Component<IProps> {
           <div
             className={'button'}
             style={{
-              color: this.props.fontColor,
               backgroundColor: this.props.backgroundColor
             }}
           >
