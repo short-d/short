@@ -5,25 +5,23 @@
 
 .sign-in-button {
   .button {
+    @include round-corner;
     align-items: center;
     box-shadow: $shadow-light;
-    color: white;
+    color: #ffffff;
     cursor: pointer;
     display: flex;
     font-weight: $font-weight-semi-bold;
     justify-content: center;
     padding: 10px 40px;
-
-    @include round-corner();
-
-    transition: opacity 100ms $easeInOutQuart;
+    transition: opacity 100ms $ease-in-out-quart;
 
     &:hover {
-      opacity: 0.9;
+      opacity: .9;
     }
 
     .icon {
-      fill: white;
+      fill: #FFFFFF;
       height: 30px;
       margin-right: 20px;
       width: 30px;
