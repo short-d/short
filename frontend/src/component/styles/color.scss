@@ -1,4 +1,7 @@
 $color-primary: #e91e63;
 $color-white: #fff;
 $color-dark-gray: #343434;
-$color-transparent-black: rgba(0, 0, 0, .12);
+
+@function color-transparent-black($opacity) {
+  @return rgba(0, 0, 0, $opacity);
+}

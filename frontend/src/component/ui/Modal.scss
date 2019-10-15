@@ -1,15 +1,16 @@
-@import "../styles/easing";
+@import '../styles/easing';
+@import '../styles/color';
 
 .modal {
-  position: fixed;
-  z-index: 1000;
-  top: 0;
-  right: 0;
   bottom: 0;
-  left: 0;
   display: none;
-  transition: opacity $easeInOutQuart;
+  left: 0;
   opacity: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transition: opacity $ease-in-out-quart;
+  z-index: 1000;
 
   &.shown {
     display: block;
@@ -20,17 +21,17 @@
   }
 
   .card {
+    background-color: $color-white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .19), 0 6px 6px rgba(0, 0, 0, .23);
+    left: 50%;
     position: fixed;
     top: 50%;
-    left: 50%;
     transform: translateX(-50%) translateY(-50%);
-    background-color: white;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   }
 
   .mask {
-    width: 100%;
+    background-color: rgba(0, 0, 0, .2);
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
+    width: 100%;
   }
 }
