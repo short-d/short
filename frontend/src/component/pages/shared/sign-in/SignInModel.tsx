@@ -8,6 +8,11 @@ interface IProps {
   githubSignInLink: string;
 }
 
+enum ModalState {
+  Open= 'open',
+  Close = 'close'
+}
+
 export class SignInModel extends Component<IProps> {
   private modalRef = React.createRef<Modal>();
 
@@ -28,16 +33,17 @@ export class SignInModel extends Component<IProps> {
   }
 
   open = () => {
-    if (!this.modalRef.current) {
-      return;
-    }
-    this.modalRef.current.open();
+    this.updateModalState(ModalState.Open);
   }
 
   close = () => {
+    this.updateModalState(ModalState.Close);
+  }
+
+  private updateModalState = (state: ModalState) => {
     if (!this.modalRef.current) {
       return;
     }
-    this.modalRef.current.close();
+    this.modalRef.current[state]();
   }
 }
