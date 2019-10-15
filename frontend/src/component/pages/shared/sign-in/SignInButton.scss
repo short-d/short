@@ -1,5 +1,6 @@
 @import '../../../styles/font';
 @import '../../../styles/corner';
+@import '../../../styles/color';
 @import '../../../styles/easing';
 @import '../../../styles/shadow';
 
@@ -8,7 +9,7 @@
     @include round-corner;
     align-items: center;
     box-shadow: $shadow-light;
-    color: #FFFFFF;
+    color: $color-white;
     cursor: pointer;
     display: flex;
     font-weight: $font-weight-semi-bold;
@@ -21,7 +22,7 @@
     }
 
     .icon {
-      fill: #FFFFFF;
+      fill: $color-white;
       height: 30px;
       margin-right: 20px;
       width: 30px;
