@@ -5,39 +5,39 @@ import {Modal} from '../../../ui/Modal';
 import {GithubSignInButton} from './GithubSignInButton';
 
 interface Props {
-    githubSignInLink: string;
+  githubSignInLink: string;
 }
 
 export class SignInModel extends Component<Props> {
-    private modalRef = React.createRef<Modal>();
+  private modalRef = React.createRef<Modal>();
 
-    render() {
-        return (
-            <Modal ref={this.modalRef}>
-                <div className={'sign-in-content'}>
-                    <div className={'title'}>Sign In</div>
-                    <div className={'intro'}>
-                        Please sign in so that we know the short links created
-                        are yours.
-                    </div>
-                    <GithubSignInButton
-                        githubSignInLink={this.props.githubSignInLink}/>
-                </div>
-            </Modal>
-        );
+  render() {
+    return (
+      <Modal ref={this.modalRef}>
+        <div className={'sign-in-content'}>
+          <div className={'title'}>Sign In</div>
+          <div className={'intro'}>
+            Please sign in so that we know the short links created
+            are yours.
+          </div>
+          <GithubSignInButton
+            githubSignInLink={this.props.githubSignInLink}/>
+        </div>
+      </Modal>
+    );
+  }
+
+  open = () => {
+    if (!this.modalRef.current) {
+      return;
     }
+    this.modalRef.current.open();
+  };
 
-    open = () => {
-        if (!this.modalRef.current) {
-            return;
-        }
-        this.modalRef.current.open();
-    };
-
-    close = () => {
-        if (!this.modalRef.current) {
-            return;
-        }
-        this.modalRef.current.close();
-    };
+  close = () => {
+    if (!this.modalRef.current) {
+      return;
+    }
+    this.modalRef.current.close();
+  };
 }
