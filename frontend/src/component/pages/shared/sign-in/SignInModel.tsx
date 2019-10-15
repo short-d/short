@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
 import './SignInModel.scss';
-import githubLogo from './github.svg';
 import { Modal } from '../../../ui/Modal';
+import { GithubSignInButton } from './GithubSignInButton';
 
 interface Props {
   githubSignInLink: string;
@@ -17,19 +17,9 @@ export class SignInModel extends Component<Props> {
         <div className={'sign-in'}>
           <div className={'title'}>Sign In</div>
           <div className={'intro'}>
-            Please sign in with Github so that all the short links created can
-            be linked to your account.
+            Please sign in so that we know the short links created are yours.
           </div>
-          <a href={this.props.githubSignInLink}>
-            <div className={'button github'}>
-              <img
-                alt={'Sign in with github account'}
-                className={'icon'}
-                src={githubLogo}
-              />{' '}
-              Sign In with Github
-            </div>
-          </a>
+          <GithubSignInButton githubSignInLink={this.props.githubSignInLink} />
         </div>
       </Modal>
     );
