@@ -5,11 +5,11 @@
 .sign-in-content {
   @include default-font();
 
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  width: 400px;
   padding: 80px 30px 20px 30px;
+  width: 400px;
 
   .title {
     font-size: 40px;
@@ -20,11 +20,11 @@
   }
 
   .intro {
+    color: #343434;
     font-size: 14px;
     font-weight: $font-weight-semi-bold;
     line-height: 2;
     margin-bottom: 80px;
     padding: 0 20px;
-    color: #343434;
   }
 }
