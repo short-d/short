@@ -7,6 +7,7 @@
 .sign-in-button {
   .button {
     @include round-corner;
+
     align-items: center;
     box-shadow: $shadow-light;
     color: $color-white;
@@ -18,7 +19,7 @@
     transition: opacity 100ms $ease-in-out-quart;
 
     &:hover {
-      opacity: .9;
+      opacity: 0.9;
     }
 
     .icon {

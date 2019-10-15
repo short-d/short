@@ -4,11 +4,11 @@ import './SignInModel.scss';
 import {Modal} from '../../../ui/Modal';
 import {GithubSignInButton} from './GithubSignInButton';
 
-interface Props {
+interface IProps {
   githubSignInLink: string;
 }
 
-export class SignInModel extends Component<Props> {
+export class SignInModel extends Component<IProps> {
   private modalRef = React.createRef<Modal>();
 
   render() {
@@ -32,12 +32,12 @@ export class SignInModel extends Component<Props> {
       return;
     }
     this.modalRef.current.open();
-  };
+  }
 
   close = () => {
     if (!this.modalRef.current) {
       return;
     }
     this.modalRef.current.close();
-  };
+  }
 }
