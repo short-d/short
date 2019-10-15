@@ -1,4 +1,4 @@
-import React, { Component, Ref } from 'react';
+import React, { Component } from 'react';
 
 import './SignInModel.scss';
 import githubLogo from './github.svg';
@@ -36,10 +36,16 @@ export class SignInModel extends Component<Props> {
   }
 
   open = () => {
-    this.modalRef.current!.open();
+    if (!this.modalRef.current) {
+      return;
+    }
+    this.modalRef.current.open();
   };
 
   close = () => {
-    this.modalRef.current!.close();
+    if (!this.modalRef.current) {
+      return;
+    }
+    this.modalRef.current.close();
   };
 }

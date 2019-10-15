@@ -104,7 +104,10 @@ export class Home extends Component<Props, State> {
   }
 
   showSignInModal() {
-    this.signInModal.current!.open();
+    if (!this.signInModal.current) {
+      return;
+    }
+    this.signInModal.current.open();
   }
 
   requestSignIn() {
