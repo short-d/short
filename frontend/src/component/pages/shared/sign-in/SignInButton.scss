@@ -1,11 +1,12 @@
 @import '../../../styles/font';
 @import '../../../styles/corner';
 @import '../../../styles/easing';
+@import '../../../styles/shadow';
 
 .sign-in-button {
   .button {
     align-items: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    box-shadow: $shadow-light;
     color: white;
     cursor: pointer;
     display: flex;

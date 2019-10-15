@@ -24,7 +24,7 @@
     "prettier:base": "prettier --parser typescript --single-quote",
     "prettier:check": "yarn prettier:base --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "yarn prettier:base --write \"src/**/*.{ts,tsx}\"",
-    "stylelint:write": " yarn stylelint --config=.stylelintrc --fix src/**/*.{scss,css}"
+    "stylelint:write": "yarn stylelint --config=.stylelintrc --fix src/**/*.{scss,css}"
   },
   "eslintConfig": {
     "extends": "react-app"
