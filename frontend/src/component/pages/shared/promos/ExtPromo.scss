@@ -1,19 +1,19 @@
 @import "../../../styles/font";
 
 .ext-promo {
+  color: black;
   font-weight: $font-weight-medium;
-  padding: 14px 20px;
 
   @include default-font();
 
+  padding: 14px 20px;
   text-align: center;
-  color: black;
 
   a {
+    color: black;
     font-weight: $font-weight-semi-bold;
     padding: 3px 10px;
     text-decoration: none;
-    color: black;
 
     &:hover {
       opacity: 0.9;

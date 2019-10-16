@@ -2,30 +2,35 @@ import { EnvService } from './Env.service';
 import { CookieService } from './Cookie.service';
 
 export class AuthService {
-  static saveAuthToken(token: string | null) {
+  constructor(
+    private cookieService: CookieService,
+    private envService: EnvService,
+  ) {}
+  saveAuthToken(token: string | null) {
     if (token == null) {
       return;
     }
-    CookieService.set('token', token);
-  }
-  static getAuthToken(): string {
-    return CookieService.get('token');
+    this.cookieService.set('token', token);
   }
 
-  static signOut() {
-    CookieService.set('token', '');
+  getAuthToken(): string {
+    return this.cookieService.get('token');
   }
 
-  static isSignedIn(): boolean {
-    let token = AuthService.getAuthToken();
+  signOut() {
+    this.cookieService.set('token', '');
+  }
+
+  isSignedIn(): boolean {
+    let token = this.getAuthToken();
     return token.length > 0;
   }
 
-  static githubSignInLink(): string {
-    return `${EnvService.getVal('HTTP_API_BASE_URL')}/oauth/github/sign-in`;
+  githubSignInLink(): string {
+    return `${this.envService.getVal('HTTP_API_BASE_URL')}/oauth/github/sign-in`;
   }
 
-  static googleSignInLink(): string {
-    return `${EnvService.getVal('HTTP_API_BASE_URL')}/oauth/google/sign-in`;
+  googleSignInLink(): string {
+    return `${this.envService.getVal('HTTP_API_BASE_URL')}/oauth/google/sign-in`;
   }
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 import './Footer.scss';
 
@@ -16,7 +16,7 @@ export class Footer extends Component<Props> {
           <div className={'row'}>
             Made with
             <i className={'heart'}>
-              <div />
+              <div/>
             </i>
             by&nbsp;
             <a href={this.props.authorPortfolio}>{this.props.authorName}</a>

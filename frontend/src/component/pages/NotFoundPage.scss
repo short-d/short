@@ -1,0 +1,36 @@
+@import '../styles/font';
+@import '../styles/color';
+
+.page-404 {
+  align-items: center;
+  background-color: $color-primary;
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+  height: 100vh;
+  justify-content: center;
+
+  .code {
+    color: color-transparent-white(1);
+    font-size: 220px;
+    font-weight: 200;
+    letter-spacing: 20px;
+    line-height: 220px;
+  }
+
+  .to-home {
+    bottom: 40px;
+    color: color-transparent-white(.9);
+    font-weight: 300;
+    letter-spacing: 2px;
+    margin-top: 80px;
+
+    a {
+      border-bottom: 1px solid color-transparent-white(1);
+      color: color-transparent-white(1);
+      font-weight: 500;
+      padding-bottom: 2px;
+      text-decoration: none;
+    }
+  }
+}

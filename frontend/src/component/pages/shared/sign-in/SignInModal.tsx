@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-import './SignInModel.scss';
-import { Modal } from '../../../ui/Modal';
-import { GithubSignInButton } from './GithubSignInButton';
+import './SignInModal.scss';
+import {Modal} from '../../../ui/Modal';
+import {GithubSignInButton} from './GithubSignInButton';
 import {GoogleSignInButton} from './GoogleSignInButton';
 
 interface IProps {
@@ -15,7 +15,7 @@ enum ModalState {
   Close = 'close'
 }
 
-export class SignInModel extends Component<IProps> {
+export class SignInModal extends Component<IProps> {
   private modalRef = React.createRef<Modal>();
 
   render() {
@@ -26,7 +26,6 @@ export class SignInModel extends Component<IProps> {
           <div className={'intro'}>
             Please sign in so that we know the short links created are yours.
           </div>
-
           <ul className={'sign-in-buttons'}>
             <li>
               <GoogleSignInButton googleSignInLink={this.props.googleSignInLink} />
