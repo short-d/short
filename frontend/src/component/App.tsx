@@ -1,17 +1,16 @@
-import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React, {Component} from 'react';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
-import { ReCaptcha } from '../service/Captcha.service';
-import { Home } from './pages/Home';
-import { Page404 } from './pages/Page404';
-import { UrlService } from '../service/Url.service';
+import {UrlService} from '../service/Url.service';
+import {UIFactory} from './UIFactory';
+import {NotFoundPage} from './pages/NotFoundPage';
 
-interface Props {
-  reCaptcha: ReCaptcha;
+interface IProps {
+  urlService: UrlService;
+  uiFactory: UIFactory;
 }
 
-export class App extends Component<Props> {
-  urlService = new UrlService();
+export class App extends Component<IProps> {
   render = () => {
     return (
       <Router>
@@ -19,23 +18,19 @@ export class App extends Component<Props> {
           <Route
             path={'/'}
             exact
-            render={({ location }) => (
-              <Home
-                urlService={this.urlService}
-                location={location}
-                reCaptcha={this.props.reCaptcha}
-              />
-            )}
+            render={({location}) =>
+              this.props.uiFactory.createHomePage(location)
+            }
           />
           <Route
             path={'/r/:alias'}
-            render={({ match }) => {
+            render={({match}) => {
               let alias = match.params['alias'];
-              window.location.href = this.urlService.aliasToLink(alias);
-              return <div />;
+              window.location.href = this.props.urlService.aliasToLink(alias);
+              return <div/>;
             }}
           />
-          <Route component={Page404} />
+          <Route component={NotFoundPage}/>
         </Switch>
       </Router>
     );

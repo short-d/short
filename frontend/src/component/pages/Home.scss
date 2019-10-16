@@ -25,37 +25,37 @@
   }
 
   .err {
-    font-family: $font-family-primary;
-    box-sizing: border-box;
-    width: 600px;
-    padding: 60px;
     background-color: #424242;
+    box-sizing: border-box;
+    font-family: $font-family-primary;
+    padding: 60px;
+    width: 600px;
 
     .title {
+      color: white;
       font-size: 24px;
       font-weight: $font-weight-medium;
       line-height: 24px;
       margin-bottom: 40px;
       text-align: center;
       text-transform: capitalize;
-      color: white;
     }
 
     .description {
+      color: white;
       font-size: 18px;
       font-weight: $font-weight-semi-bold;
       line-height: 1.5;
-      color: white;
     }
 
     .close {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      width: 24px;
+      color: white;
       height: 24px;
       opacity: 0.6;
-      color: white;
+      position: fixed;
+      right: 10px;
+      top: 10px;
+      width: 24px;
 
       &:hover {
         cursor: pointer;
@@ -65,11 +65,11 @@
   }
 
   .input-error {
+    color: #b71c1c;
     font-size: 12px;
     font-weight: $font-weight-semi-bold;
-    line-height: 20px;
     height: 20px;
+    line-height: 20px;
     margin: 10px;
-    color: #b71c1c;
   }
 }

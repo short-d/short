@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import './Page404.scss';
+import React, {Component} from 'react';
+import './NotFoundPage.scss';
 
-export class Page404 extends Component {
+export class NotFoundPage extends Component {
   render() {
     return (
       <div className={'page-404'}>

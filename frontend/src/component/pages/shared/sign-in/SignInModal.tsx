@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-import './SignInModel.scss';
-import { Modal } from '../../../ui/Modal';
-import { GithubSignInButton } from './GithubSignInButton';
+import './SignInModal.scss';
+import {Modal} from '../../../ui/Modal';
+import {GithubSignInButton} from './GithubSignInButton';
 
 interface IProps {
   githubSignInLink: string;
@@ -13,7 +13,7 @@ enum ModalState {
   Close = 'close'
 }
 
-export class SignInModel extends Component<IProps> {
+export class SignInModal extends Component<IProps> {
   private modalRef = React.createRef<Modal>();
 
   render() {
@@ -24,7 +24,7 @@ export class SignInModel extends Component<IProps> {
           <div className={'intro'}>
             Please sign in so that we know the short links created are yours.
           </div>
-          <GithubSignInButton githubSignInLink={this.props.githubSignInLink} />
+          <GithubSignInButton githubSignInLink={this.props.githubSignInLink}/>
         </div>
       </Modal>
     );
@@ -39,5 +39,5 @@ export class SignInModel extends Component<IProps> {
       return;
     }
     this.modalRef.current[state]();
-  }
+  };
 }
