@@ -24,6 +24,7 @@ export function initUIFactory(
 ): UIFactory {
   const cookieService = new CookieService();
   const qrCodeService = new QrCodeService();
+  const staticConfigDecision = new StaticConfigDecisionService();
 
   const authService = new AuthService(cookieService, envService);
   const urlService = new UrlService(authService, envService);
@@ -34,6 +35,7 @@ export function initUIFactory(
     urlService,
     qrCodeService,
     versionService,
+    staticConfigDecision,
     reCaptcha
   );
 }

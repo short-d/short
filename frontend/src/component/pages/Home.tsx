@@ -19,8 +19,10 @@ import {Location} from 'history';
 import {AuthService} from '../../service/Auth.service';
 import {VersionService} from '../../service/Version.service';
 import {QrCodeService} from '../../service/QrCode.service';
+import {UIFactory} from '../UIFactory';
 
 interface Props {
+  uiFactory: UIFactory,
   urlService: UrlService;
   authService: AuthService;
   versionService: VersionService;
@@ -268,8 +270,7 @@ export class Home extends Component<Props, State> {
 
         <SignInModal
           ref={this.signInModal}
-          githubSignInLink={this.state.githubSignInLink}
-          googleSignInLink={this.state.googleSignInLink}
+          uiFactory={this.props.uiFactory}
         />
         <Modal canClose={true} ref={this.errModal}>
           <div className={'err'}>
