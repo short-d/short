@@ -22,7 +22,7 @@ import {QrCodeService} from '../../service/QrCode.service';
 import {UIFactory} from '../UIFactory';
 
 interface Props {
-  uiFactory: UIFactory,
+  uiFactory: UIFactory;
   urlService: UrlService;
   authService: AuthService;
   versionService: VersionService;

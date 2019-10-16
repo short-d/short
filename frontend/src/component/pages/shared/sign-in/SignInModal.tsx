@@ -5,7 +5,7 @@ import {Modal} from '../../../ui/Modal';
 import {UIFactory} from '../../../UIFactory';
 
 interface IProps {
-  uiFactory: UIFactory
+  uiFactory: UIFactory;
 }
 
 enum ModalState {
