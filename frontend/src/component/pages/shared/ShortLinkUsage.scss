@@ -3,9 +3,9 @@
   line-height: 1.5;
 
   a {
-    font-weight: bolder;
-    cursor: pointer;
     color: inherit;
+    cursor: pointer;
+    font-weight: bolder;
 
     &:hover {
       text-decoration: underline;

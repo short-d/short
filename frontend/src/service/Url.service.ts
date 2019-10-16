@@ -1,23 +1,12 @@
-import { Url } from '../entity/Url';
-import { ApolloClient } from 'apollo-client';
-import { HttpLink } from 'apollo-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { ApolloLink, FetchResult } from 'apollo-link';
+import {Url} from '../entity/Url';
+import {ApolloClient} from 'apollo-client';
+import {HttpLink} from 'apollo-link-http';
+import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
+import {ApolloLink, FetchResult} from 'apollo-link';
 import gql from 'graphql-tag';
-import { EnvService } from './Env.service';
-import { GraphQlError } from '../graphql/error';
-import { AuthService } from './Auth.service';
-
-const gqlLink = ApolloLink.from([
-  new HttpLink({
-    uri: `${EnvService.getVal('GRAPHQL_API_BASE_URL')}/graphql`
-  })
-]);
-
-const gqlClient = new ApolloClient({
-  link: gqlLink,
-  cache: new InMemoryCache()
-});
+import {EnvService} from './Env.service';
+import {GraphQlError} from '../graphql/error';
+import {AuthService} from './Auth.service';
 
 export enum ErrUrl {
   AliasAlreadyExist = 'aliasAlreadyExist',
@@ -30,6 +19,24 @@ interface CreateURLData {
 }
 
 export class UrlService {
+  private gqlClient: ApolloClient<NormalizedCacheObject>;
+
+  constructor(
+    private authService: AuthService,
+    private envService: EnvService
+  ) {
+    const gqlLink = ApolloLink.from([
+      new HttpLink({
+        uri: `${this.envService.getVal('GRAPHQL_API_BASE_URL')}/graphql`
+      })
+    ]);
+
+    this.gqlClient = new ApolloClient({
+      link: gqlLink,
+      cache: new InMemoryCache()
+    });
+  }
+
   createShortLink(captchaResponse: string, link: Url): Promise<Url> {
     let alias = link.alias === '' ? null : link.alias;
 
@@ -39,7 +46,7 @@ export class UrlService {
         originalURL: link.originalUrl,
         customAlias: alias
       },
-      authToken: AuthService.getAuthToken()
+      authToken: this.authService.getAuthToken()
     };
 
     let mutation = gql`
@@ -60,7 +67,7 @@ export class UrlService {
     `;
 
     return new Promise<Url>((resolve, reject: (errCodes: ErrUrl[]) => any) => {
-      gqlClient
+      this.gqlClient
         .mutate({
           variables: variables,
           mutation: mutation
@@ -71,7 +78,7 @@ export class UrlService {
           }
           resolve(res.data.createURL);
         })
-        .catch(({ graphQLErrors, networkError, message }) => {
+        .catch(({graphQLErrors, networkError, message}) => {
           const errCodes = graphQLErrors.map(
             (graphQLError: GraphQlError) => graphQLError.extensions.code
           );
@@ -81,6 +88,6 @@ export class UrlService {
   }
 
   aliasToLink(alias: string): string {
-    return `${EnvService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
+    return `${this.envService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
   }
 }

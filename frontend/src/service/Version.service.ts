@@ -1,7 +1,10 @@
-import { EnvService } from './Env.service';
+import {EnvService} from './Env.service';
 
 export class VersionService {
-  static getAppVersion(): string {
-    return EnvService.getVal('GIT_SHA');
+  constructor(private envService: EnvService) {
+  }
+
+  getAppVersion(): string {
+    return this.envService.getVal('GIT_SHA');
   }
 }

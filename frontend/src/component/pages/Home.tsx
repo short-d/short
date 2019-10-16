@@ -1,27 +1,32 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import './Home.scss';
 
-import { Header } from './shared/Header';
-import { Section } from '../ui/Section';
-import { TextField } from '../form/TextField';
-import { Button } from '../ui/Button';
-import { Url } from '../../entity/Url';
-import { ErrUrl, UrlService } from '../../service/Url.service';
-import { Footer } from './shared/Footer';
-import { QrcodeService } from '../../service/Qrcode.service';
-import { ShortLinkUsage } from './shared/ShortLinkUsage';
-import { VersionService } from '../../service/Version.service';
-import { Modal } from '../ui/Modal';
-import { ExtPromo } from './shared/promos/ExtPromo';
-import { ReCaptcha } from '../../service/Captcha.service';
-import { validateLongLinkFormat } from '../../validators/LongLink.validator';
-import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
-import { AuthService } from '../../service/Auth.service';
-import { SignIn } from './shared/SignIn';
-import { Location } from 'history';
+import {Header} from './shared/Header';
+import {Section} from '../ui/Section';
+import {TextField} from '../form/TextField';
+import {Button} from '../ui/Button';
+import {Url} from '../../entity/Url';
+import {ErrUrl, UrlService} from '../../service/Url.service';
+import {Footer} from './shared/Footer';
+import {ShortLinkUsage} from './shared/ShortLinkUsage';
+import {SignInModal} from './shared/sign-in/SignInModal';
+import {Modal} from '../ui/Modal';
+import {ExtPromo} from './shared/promos/ExtPromo';
+import {ReCaptcha} from '../../service/Captcha.service';
+import {validateLongLinkFormat} from '../../validators/LongLink.validator';
+import {validateCustomAliasFormat} from '../../validators/CustomAlias.validator';
+import {Location} from 'history';
+import {AuthService} from '../../service/Auth.service';
+import {VersionService} from '../../service/Version.service';
+import {QrCodeService} from '../../service/QrCode.service';
+import {UIFactory} from '../UIFactory';
 
 interface Props {
+  uiFactory: UIFactory;
   urlService: UrlService;
+  authService: AuthService;
+  versionService: VersionService;
+  qrCodeService: QrCodeService;
   location: Location;
   reCaptcha: ReCaptcha;
 }
@@ -32,7 +37,6 @@ interface State {
   qrCodeUrl?: string;
   err: Err;
   inputErr?: string;
-  githubSignInLink: string;
 }
 
 interface Err {
@@ -70,9 +74,8 @@ function getErr(errCode: ErrUrl): Err {
 }
 
 export class Home extends Component<Props, State> {
-  appVersion = VersionService.getAppVersion();
   errModal = React.createRef<Modal>();
-  signInModal = React.createRef<Modal>();
+  signInModal = React.createRef<SignInModal>();
 
   constructor(props: Props) {
     super(props);
@@ -85,30 +88,32 @@ export class Home extends Component<Props, State> {
         name: '',
         description: ''
       },
-      inputErr: '',
-      githubSignInLink: AuthService.githubSignInLink()
+      inputErr: ''
     };
   }
 
   componentDidMount(): void {
     this.cacheAuthToken();
-    if (!AuthService.isSignedIn()) {
+    if (!this.props.authService.isSignedIn()) {
       this.showSignInModal();
     }
   }
 
   cacheAuthToken() {
     let params = new URLSearchParams(this.props.location.search);
-    AuthService.saveAuthToken(params.get('token'));
+    this.props.authService.saveAuthToken(params.get('token'));
     window.history.replaceState({}, document.title, '/');
   }
 
   showSignInModal() {
-    this.signInModal.current!.open();
+    if (!this.signInModal.current) {
+      return;
+    }
+    this.signInModal.current.open();
   }
 
   requestSignIn() {
-    AuthService.signOut();
+    this.props.authService.signOut();
     this.showSignInModal();
   }
 
@@ -177,7 +182,7 @@ export class Home extends Component<Props, State> {
       );
 
       if (url && url.alias) {
-        let qrCodeUrl = await QrcodeService.newQrCode(
+        let qrCodeUrl = await this.props.qrCodeService.newQrCode(
           this.props.urlService.aliasToLink(url.alias)
         );
         this.setState({
@@ -212,8 +217,8 @@ export class Home extends Component<Props, State> {
   render = () => {
     return (
       <div className="home">
-        <ExtPromo />
-        <Header />
+        <ExtPromo/>
+        <Header/>
         <div className={'main'}>
           <Section title={'New Short Link'}>
             <div className={'control create-short-link'}>
@@ -256,11 +261,13 @@ export class Home extends Component<Props, State> {
         <Footer
           authorName={'Harry'}
           authorPortfolio={'https://github.com/byliuyang'}
-          version={this.appVersion}
+          version={this.props.versionService.getAppVersion()}
         />
-        <Modal ref={this.signInModal}>
-          <SignIn githubSignInLink={this.state.githubSignInLink} />
-        </Modal>
+
+        <SignInModal
+          ref={this.signInModal}
+          uiFactory={this.props.uiFactory}
+        />
         <Modal canClose={true} ref={this.errModal}>
           <div className={'err'}>
             <i

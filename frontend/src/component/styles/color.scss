@@ -1,1 +1,11 @@
-$color-primary : #e91e63;
+$color-primary: #e91e63;
+$color-white: #fff;
+$color-dark-gray: #343434;
+
+@function color-transparent-white($opacity) {
+  @return rgba(255, 255, 255, $opacity);
+}
+
+@function color-transparent-black($opacity) {
+  @return rgba(0, 0, 0, $opacity);
+}
