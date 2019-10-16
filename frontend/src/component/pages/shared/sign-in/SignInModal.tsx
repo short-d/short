@@ -24,9 +24,6 @@ export class SignInModal extends Component<IProps> {
           <div className={'intro'}>
             Please sign in so that we know the short links created are yours.
           </div>
-          {
-
-          }
           <ul className={'sign-in-buttons'}>
             <li>
               {this.props.uiFactory.createGoogleSignInButton()}

@@ -37,8 +37,6 @@ interface State {
   qrCodeUrl?: string;
   err: Err;
   inputErr?: string;
-  githubSignInLink: string;
-  googleSignInLink: string;
 }
 
 interface Err {
@@ -90,9 +88,7 @@ export class Home extends Component<Props, State> {
         name: '',
         description: ''
       },
-      inputErr: '',
-      githubSignInLink: this.props.authService.githubSignInLink(),
-      googleSignInLink: this.props.authService.googleSignInLink()
+      inputErr: ''
     };
   }
 
