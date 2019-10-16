@@ -1,8 +1,9 @@
 @import "../styles/font";
+@import "../styles/color";
 
 .page-404 {
   align-items: center;
-  background-color: #e91e63;
+  background-color: $color-primary;
   display: flex;
   flex-direction: column;
   font-family: sans-serif;
@@ -10,7 +11,7 @@
   justify-content: center;
 
   .code {
-    color: white;
+    color: color-transparent-white(1);
     font-size: 220px;
     font-weight: 200;
     letter-spacing: 20px;
@@ -19,15 +20,15 @@
 
   .to-home {
     bottom: 40px;
-    color: rgba(255, 255, 255, 0.9);
+    color: color-transparent-white(.9);
     font-weight: 300;
     letter-spacing: 2px;
     margin-top: 80px;
   }
 
   .to-home a {
-    border-bottom: 1px solid white;
-    color: white;
+    border-bottom: 1px solid color-transparent-white(1);
+    color: color-transparent-white(1);
     font-weight: 500;
     padding-bottom: 2px;
     text-decoration: none;

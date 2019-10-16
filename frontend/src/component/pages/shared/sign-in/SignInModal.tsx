@@ -39,5 +39,5 @@ export class SignInModal extends Component<IProps> {
       return;
     }
     this.modalRef.current[state]();
-  };
+  }
 }
