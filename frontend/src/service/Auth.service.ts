@@ -29,4 +29,8 @@ export class AuthService {
   githubSignInLink(): string {
     return `${this.envService.getVal('HTTP_API_BASE_URL')}/oauth/github/sign-in`;
   }
+
+  googleSignInLink(): string {
+    return `${this.envService.getVal('HTTP_API_BASE_URL')}/oauth/google/sign-in`;
+  }
 }

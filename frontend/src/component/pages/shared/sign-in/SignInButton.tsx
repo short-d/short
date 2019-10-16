@@ -25,7 +25,7 @@ export class SignInButton extends Component<IProps> {
               className={'icon'}
               src={this.props.oauthProviderIconSrc}
             />
-            Sign In with {this.props.oauthProviderName}
+            Sign in with {this.props.oauthProviderName}
           </div>
         </a>
       </div>

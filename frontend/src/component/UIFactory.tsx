@@ -8,6 +8,8 @@ import H from 'history';
 import {AuthService} from '../service/Auth.service';
 import {QrCodeService} from '../service/QrCode.service';
 import {VersionService} from '../service/Version.service';
+import {GoogleSignInButton} from './pages/shared/sign-in/GoogleSignInButton';
+import {GithubSignInButton} from './pages/shared/sign-in/GithubSignInButton';
 
 export class UIFactory {
   constructor(
@@ -15,12 +17,14 @@ export class UIFactory {
     private urlService: UrlService,
     private qrCodeService: QrCodeService,
     private versionService: VersionService,
+    private featureDecisionService: IFeatureDecisionService,
     private reCaptcha: ReCaptcha,
   ) {}
 
   public createHomePage(location: H.Location<any>): ReactElement {
     return (
       <Home
+        uiFactory={this}
         authService={this.authService}
         qrCodeService={this.qrCodeService}
         versionService={this.versionService}
@@ -31,12 +35,16 @@ export class UIFactory {
     );
   }
 
-  // public createGoogleSignInButton(): Component {
-  //   if (!this.featureDecisionService.includeGoogleSignButton()) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
+  public createGoogleSignInButton(): ReactElement {
+    if (!this.featureDecisionService.includeGoogleSignButton()) {
+      return <div/>;
+    }
+    return <GoogleSignInButton googleSignInLink={this.authService.googleSignInLink()} />;
+  }
+
+  public createGithubSignInButton(): ReactElement {
+    return <GithubSignInButton githubSignInLink={this.authService.githubSignInLink()} />;
+  }
 
   public createApp(): ReactElement {
     return <App uiFactory={this} urlService={this.urlService}/>;

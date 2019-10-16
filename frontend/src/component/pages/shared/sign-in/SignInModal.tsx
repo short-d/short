@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 
 import './SignInModal.scss';
 import {Modal} from '../../../ui/Modal';
-import {GithubSignInButton} from './GithubSignInButton';
+import {UIFactory} from '../../../UIFactory';
 
 interface IProps {
-  githubSignInLink: string;
+  uiFactory: UIFactory;
 }
 
 enum ModalState {
@@ -24,7 +24,14 @@ export class SignInModal extends Component<IProps> {
           <div className={'intro'}>
             Please sign in so that we know the short links created are yours.
           </div>
-          <GithubSignInButton githubSignInLink={this.props.githubSignInLink}/>
+          <ul className={'sign-in-buttons'}>
+            <li>
+              {this.props.uiFactory.createGoogleSignInButton()}
+            </li>
+            <li>
+              {this.props.uiFactory.createGithubSignInButton()}
+            </li>
+          </ul>
         </div>
       </Modal>
     );

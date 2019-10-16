@@ -19,8 +19,10 @@ import {Location} from 'history';
 import {AuthService} from '../../service/Auth.service';
 import {VersionService} from '../../service/Version.service';
 import {QrCodeService} from '../../service/QrCode.service';
+import {UIFactory} from '../UIFactory';
 
 interface Props {
+  uiFactory: UIFactory;
   urlService: UrlService;
   authService: AuthService;
   versionService: VersionService;
@@ -35,7 +37,6 @@ interface State {
   qrCodeUrl?: string;
   err: Err;
   inputErr?: string;
-  githubSignInLink: string;
 }
 
 interface Err {
@@ -87,8 +88,7 @@ export class Home extends Component<Props, State> {
         name: '',
         description: ''
       },
-      inputErr: '',
-      githubSignInLink: this.props.authService.githubSignInLink()
+      inputErr: ''
     };
   }
 
@@ -266,7 +266,7 @@ export class Home extends Component<Props, State> {
 
         <SignInModal
           ref={this.signInModal}
-          githubSignInLink={this.state.githubSignInLink}
+          uiFactory={this.props.uiFactory}
         />
         <Modal canClose={true} ref={this.errModal}>
           <div className={'err'}>
