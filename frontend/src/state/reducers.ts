@@ -30,38 +30,41 @@ export const reducers: Reducer<IAppState> =
   (state: IAppState = initialAppState, action: IPayloadAction): IAppState => {
     switch (action.type) {
       case UPDATE_LONG_LINK:
-        return produceNewState(state, {
-          editingUrl: Object.assign({}, state.editingUrl, {
-            originalUrl: action.payload
-          })
-        });
+        return {
+          ...state, editingUrl:
+            {
+              ...state.editingUrl,
+              originalUrl: action.payload
+            }
+        };
       case UPDATE_ALIAS:
-        return produceNewState(state, {
-          editingUrl: Object.assign({}, state.editingUrl, {
-            alias: action.payload
-          })
-        });
+        return {
+          ...state,
+          editingUrl: {
+            ...state.editingUrl, alias: action.payload
+          }
+        };
       case RAISE_INPUT_ERROR:
-        return produceNewState(state, {
+        return {
+          ...state,
           inputErr: action.payload
-        });
+        };
       case RAISE_CREATE_SHORT_LINK_ERROR:
-        return produceNewState(state, {
+        return {
+          ...state,
           err: action.payload
-        });
+        };
       case UPDATE_CREATED_URL:
-        return produceNewState(state, {
+        return {
+          ...state,
           createdUrl: action.payload
-        });
+        };
       case CLEAR_ERROR:
-        return produceNewState(state, {
-          err: null
-        });
+        return {
+          ...state,
+          err: undefined
+        };
       default:
         return state;
     }
   };
-
-function produceNewState(oldState: IAppState, newState: any): IAppState {
-  return Object.assign({}, oldState, newState);
-}

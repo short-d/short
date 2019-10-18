@@ -15,7 +15,11 @@ describe('UPDATE_LONG_URL', () => {
     const appState = store.getState();
     expect(appState.editingUrl.originalUrl).toBe('');
 
-    store.dispatch(updateLongLink('http://www.example.com'))
+    store.subscribe(()=>{
+      const newState = store.getState();
+      expect(newState.editingUrl.originalUrl).toBe('http://www.example.com');
+    });
+    store.dispatch(updateLongLink('http://www.example.com'));
   });
 });
 
@@ -25,6 +29,10 @@ describe('UPDATE_ALIAS', () => {
     const appState = store.getState();
     expect(appState.editingUrl.alias).toBe('');
 
-    store.dispatch(updateAlias('eg'))
+    store.subscribe(()=>{
+      const newState = store.getState();
+      expect(newState.editingUrl.alias).toBe('eg');
+    });
+    store.dispatch(updateAlias('eg'));
   });
 });
