@@ -98,7 +98,8 @@ export class UrlService {
     return `${this.envService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
   }
 
-  private validateInputs(longLink?: string, customAlias?: string): ICreateShortLinkErrs {
+  private validateInputs(longLink?: string, customAlias?: string):
+    ICreateShortLinkErrs | null {
     let err = validateLongLinkFormat(longLink);
     if (err) {
       return {
@@ -118,7 +119,7 @@ export class UrlService {
         }
       };
     }
-    return {};
+    return null;
   }
 
   private async invokeCreateShortLinkApi(link: Url): Promise<Url> {
