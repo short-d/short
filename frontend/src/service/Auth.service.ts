@@ -1,11 +1,24 @@
 import { EnvService } from './Env.service';
 import { CookieService } from './Cookie.service';
+import {RoutingService} from './Routing.service';
 
 export class AuthService {
   constructor(
     private cookieService: CookieService,
     private envService: EnvService,
+    private routingService: RoutingService,
   ) {}
+
+  cacheAuthToken(pageUrl: string) {
+    const params = new URLSearchParams(pageUrl);
+    const token = params.get('token');
+    if (!token || token.length < 1) {
+      return;
+    }
+    this.saveAuthToken(token);
+    this.routingService.navigateTo('/');
+  }
+
   saveAuthToken(token: string | null) {
     if (token == null) {
       return;
