@@ -1,5 +1,5 @@
 import {Action} from 'redux';
-import {Err} from '../entity/Err';
+import {IErr} from '../entity/Err';
 import {Url} from '../entity/Url';
 
 export interface IPayloadAction extends Action {
@@ -28,7 +28,7 @@ export const raiseInputError = (inputError: string | null): IPayloadAction => ({
   payload: inputError || ''
 });
 
-export const raiseCreateShortLinkError = (err: Err): IPayloadAction => ({
+export const raiseCreateShortLinkError = (err: IErr): IPayloadAction => ({
   type: RAISE_CREATE_SHORT_LINK_ERROR,
   payload: err
 });

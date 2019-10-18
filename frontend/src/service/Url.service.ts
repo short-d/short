@@ -11,10 +11,33 @@ import {CaptchaService, CREATE_SHORT_LINK} from './Captcha.service';
 import {validateLongLinkFormat} from '../validators/LongLink.validator';
 import {validateCustomAliasFormat} from '../validators/CustomAlias.validator';
 import {ErrorService, ErrUrl} from './Error.service';
+import {IErr} from '../entity/Err';
 
 interface CreateURLData {
   createURL: Url;
 }
+
+interface ICreateShortLinkErrs {
+  authorizationErr?: string;
+  createShortLinkErr?: IErr;
+}
+
+const gqlCreateURL = gql`
+      mutation params(
+        $captchaResponse: String!
+        $urlInput: URLInput!
+        $authToken: String!
+      ) {
+        createURL(
+          captchaResponse: $captchaResponse
+          url: $urlInput
+          authToken: $authToken
+        ) {
+          alias
+          originalURL
+        }
+      }
+`;
 
 export class UrlService {
   private gqlClient: ApolloClient<NormalizedCacheObject>;
@@ -42,25 +65,9 @@ export class UrlService {
       let longLink = editingUrl.originalUrl;
       let customAlias = editingUrl.alias;
 
-      let err = validateLongLinkFormat(longLink);
+      const err = this.validateInputs(longLink, customAlias);
       if (err) {
-        reject({
-          createShortLinkErr: {
-            name: 'Invalid Long Link',
-            description: err
-          }
-        });
-        return;
-      }
-
-      err = validateCustomAliasFormat(customAlias);
-      if (err) {
-        reject({
-          createShortLinkErr: {
-            name: 'Invalid Custom Alias',
-            description: err
-          }
-        });
+        reject(err);
         return;
       }
 
@@ -87,42 +94,39 @@ export class UrlService {
     });
   }
 
-  private async invokeCreateShortLinkApi(link: Url): Promise<Url> {
-    // let captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
-
-    let alias = link.alias === '' ? null : link.alias;
-
-    let variables = {
-      captchaResponse: 'null',
-      urlInput: {
-        originalURL: link.originalUrl,
-        customAlias: alias
-      },
-      authToken: this.authService.getAuthToken()
-    };
-
-    let mutation = gql`
-      mutation params(
-        $captchaResponse: String!
-        $urlInput: URLInput!
-        $authToken: String!
-      ) {
-        createURL(
-          captchaResponse: $captchaResponse
-          url: $urlInput
-          authToken: $authToken
-        ) {
-          alias
-          originalURL
+  private validateInputs(longLink?: string, customAlias?: string): ICreateShortLinkErrs {
+    let err = validateLongLinkFormat(longLink);
+    if (err) {
+      return {
+        createShortLinkErr: {
+          name: 'Invalid Long Link',
+          description: err
         }
-      }
-    `;
+      };
+    }
+
+    err = validateCustomAliasFormat(customAlias);
+    if (err) {
+      return {
+        createShortLinkErr: {
+          name: 'Invalid Custom Alias',
+          description: err
+        }
+      };
+    }
+    return {};
+  }
+
+  private async invokeCreateShortLinkApi(link: Url): Promise<Url> {
+    let captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
+    let alias = link.alias === '' ? null : link.alias!;
+    let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
 
     return new Promise<Url>((resolve, reject: (errCodes: ErrUrl[]) => any) => {
       this.gqlClient
         .mutate({
           variables: variables,
-          mutation: mutation
+          mutation: gqlCreateURL
         })
         .then((res: FetchResult<CreateURLData>) => {
           if (!res || !res.data) {
@@ -137,6 +141,21 @@ export class UrlService {
           reject(errCodes);
         });
     });
+  }
+
+  private gqlCreateURLVariable(
+    captchaResponse: string,
+    link: Url,
+    alias: string | null
+  ) {
+    return {
+      captchaResponse: captchaResponse,
+      urlInput: {
+        originalURL: link.originalUrl,
+        customAlias: alias
+      },
+      authToken: this.authService.getAuthToken()
+    };
   }
 
   aliasToLink(alias: string): string {

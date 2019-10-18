@@ -1,4 +1,4 @@
-export interface Err {
+export interface IErr {
   name: string;
   description: string;
 }

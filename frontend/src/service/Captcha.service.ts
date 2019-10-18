@@ -5,7 +5,6 @@ export interface ReCaptcha {
   execute: (action: string) => Promise<string>;
 }
 
-
 export const CREATE_SHORT_LINK = 'createShortLink';
 
 export class CaptchaService {
@@ -25,7 +24,7 @@ export class CaptchaService {
 
   public execute(action: string): Promise<string> {
     if(!this.reCaptcha) {
-      return Promise.reject("ReCaptcha is not ready yet");
+      return Promise.reject('ReCaptcha is not ready yet');
     }
     return this.reCaptcha.execute(action);
   }

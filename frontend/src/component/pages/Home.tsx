@@ -30,7 +30,7 @@ import {
   updateLongLink
 } from '../../state/actions';
 import {ErrorService} from '../../service/Error.service';
-import {Err} from '../../entity/Err';
+import {IErr} from '../../entity/Err';
 import {UrlService} from '../../service/Url.service';
 
 interface Props {
@@ -46,11 +46,11 @@ interface Props {
 }
 
 interface State {
-  longLink?: string,
-  alias?: string,
+  longLink?: string;
+  alias?: string;
   createdUrl?: Url;
   qrCodeUrl?: string;
-  err?: Err;
+  err?: IErr;
   inputErr?: string;
 }
 
@@ -147,7 +147,7 @@ export class Home extends Component<Props, State> {
       });
   };
 
-  showError(error?: Err) {
+  showError(error?: IErr) {
     if (!error) {
       return;
     }
