@@ -94,6 +94,10 @@ export class UrlService {
     });
   }
 
+  aliasToLink(alias: string): string {
+    return `${this.envService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
+  }
+
   private validateInputs(longLink?: string, customAlias?: string): ICreateShortLinkErrs {
     let err = validateLongLinkFormat(longLink);
     if (err) {
@@ -156,9 +160,5 @@ export class UrlService {
       },
       authToken: this.authService.getAuthToken()
     };
-  }
-
-  aliasToLink(alias: string): string {
-    return `${this.envService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
   }
 }
