@@ -62,8 +62,8 @@ export class UrlService {
 
   createShortLink(editingUrl: Url): Promise<Url> {
     return new Promise(async (resolve, reject) => {
-      let longLink = editingUrl.originalUrl;
-      let customAlias = editingUrl.alias;
+      const longLink = editingUrl.originalUrl;
+      const customAlias = editingUrl.alias;
 
       const err = this.validateInputs(longLink, customAlias);
       if (err) {
@@ -72,13 +72,13 @@ export class UrlService {
       }
 
       try {
-        let url = await this.invokeCreateShortLinkApi(
+        const url = await this.invokeCreateShortLinkApi(
           editingUrl
         );
         resolve(url);
         return;
       } catch (errCodes) {
-        let errCode = errCodes[0];
+        const errCode = errCodes[0];
         if (errCode === ErrUrl.Unauthorized) {
           reject({
             authorizationErr: 'Unauthorized to create short link'
@@ -86,7 +86,7 @@ export class UrlService {
           return;
         }
 
-        let error = this.errorService.getErr(errCode);
+        const error = this.errorService.getErr(errCode);
         reject({
           createShortLinkErr: error
         });
@@ -118,7 +118,7 @@ export class UrlService {
   }
 
   private async invokeCreateShortLinkApi(link: Url): Promise<Url> {
-    let captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
+    const captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
     let alias = link.alias === '' ? null : link.alias!;
     let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
 
