@@ -15,7 +15,7 @@ describe('UPDATE_LONG_URL', () => {
     const appState = store.getState();
     expect(appState.editingUrl.originalUrl).toBe('');
 
-    store.subscribe(()=>{
+    store.subscribe(() => {
       const newState = store.getState();
       expect(newState.editingUrl.originalUrl).toBe('http://www.example.com');
     });
@@ -29,7 +29,7 @@ describe('UPDATE_ALIAS', () => {
     const appState = store.getState();
     expect(appState.editingUrl.alias).toBe('');
 
-    store.subscribe(()=>{
+    store.subscribe(() => {
       const newState = store.getState();
       expect(newState.editingUrl.alias).toBe('eg');
     });
