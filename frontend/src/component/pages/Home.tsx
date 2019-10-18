@@ -12,7 +12,7 @@ import {ShortLinkUsage} from './shared/ShortLinkUsage';
 import {SignInModal} from './shared/sign-in/SignInModal';
 import {Modal} from '../ui/Modal';
 import {ExtPromo} from './shared/promos/ExtPromo';
-import {ReCaptcha} from '../../service/Captcha.service';
+import {CaptchaService} from '../../service/Captcha.service';
 import {validateLongLinkFormat} from '../../validators/LongLink.validator';
 import {validateCustomAliasFormat} from '../../validators/CustomAlias.validator';
 import {Location} from 'history';
@@ -20,6 +20,17 @@ import {AuthService} from '../../service/Auth.service';
 import {VersionService} from '../../service/Version.service';
 import {QrCodeService} from '../../service/QrCode.service';
 import {UIFactory} from '../UIFactory';
+import {IAppState} from '../../state/reducers';
+import {Store} from 'redux';
+import {
+  clearError,
+  raiseCreateShortLinkError,
+  raiseInputError,
+  updateAlias, updateCreatedUrl,
+  updateLongLink
+} from '../../state/actions';
+import {ErrorService} from '../../service/Error.service';
+import {Err} from '../../entity/Err';
 
 interface Props {
   uiFactory: UIFactory;
@@ -27,50 +38,19 @@ interface Props {
   authService: AuthService;
   versionService: VersionService;
   qrCodeService: QrCodeService;
+  captchaService: CaptchaService;
+  errorService: ErrorService;
+  store: Store<IAppState>;
   location: Location;
-  reCaptcha: ReCaptcha;
 }
 
 interface State {
-  editingUrl: Url;
+  longLink?: string,
+  alias?: string,
   createdUrl?: Url;
   qrCodeUrl?: string;
-  err: Err;
+  err?: Err;
   inputErr?: string;
-}
-
-interface Err {
-  name: string;
-  description: string;
-}
-
-function getErr(errCode: ErrUrl): Err {
-  switch (errCode) {
-    case ErrUrl.AliasAlreadyExist:
-      return {
-        name: 'Alias not available',
-        description: `
-                The alias you choose is not available, please choose a different one. 
-                Leaving custom alias field empty will automatically generate a available alias.
-                `
-      };
-    case ErrUrl.UserNotHuman:
-      return {
-        name: 'User not human',
-        description: `
-                The algorithm thinks you are an automated script instead of human user.
-                Please contact byliuyang11@gmail.com if this is wrong.
-                `
-      };
-    default:
-      return {
-        name: 'Unknown error',
-        description: `
-                I am not aware of this error. 
-                Please email byliuyang11@gmail.com the screenshots and detailed steps to reproduce it so that I can investigate.
-                `
-      };
-  }
 }
 
 export class Home extends Component<Props, State> {
@@ -79,30 +59,39 @@ export class Home extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {
-      editingUrl: {
-        originalUrl: '',
-        alias: ''
-      },
-      err: {
-        name: '',
-        description: ''
-      },
-      inputErr: ''
-    };
+    this.state = {};
   }
 
   componentDidMount(): void {
-    this.cacheAuthToken();
+    this.props.authService.cacheAuthToken(this.props.location.search);
     if (!this.props.authService.isSignedIn()) {
       this.showSignInModal();
+      return;
     }
-  }
 
-  cacheAuthToken() {
-    let params = new URLSearchParams(this.props.location.search);
-    this.props.authService.saveAuthToken(params.get('token'));
-    window.history.replaceState({}, document.title, '/');
+    this.props.store.subscribe(async () =>{
+      let state = this.props.store.getState();
+
+      let newState: State = {
+        longLink: state.editingUrl.originalUrl,
+        alias: state.editingUrl.alias,
+        err: state.err,
+        createdUrl: state.createdUrl,
+        inputErr: state.inputErr,
+      };
+
+
+      if (state.createdUrl && state.createdUrl.alias) {
+        newState.qrCodeUrl = await this.props.qrCodeService.newQrCode(
+          this.props.urlService.aliasToLink(state.createdUrl.alias)
+        );
+      }
+
+      this.setState(newState);
+      if (newState.err) {
+        this.showError(newState.err);
+      }
+    })
   }
 
   showSignInModal() {
@@ -117,47 +106,39 @@ export class Home extends Component<Props, State> {
     this.showSignInModal();
   }
 
-  handlerLongLinkChange = (newValue: string) => {
-    this.setState({
-      editingUrl: Object.assign({}, this.state.editingUrl, {
-        originalUrl: newValue
-      })
-    });
+  handlerLongLinkChange = (newLongLink: string) => {
+    this.props.store.dispatch(updateLongLink(newLongLink));
   };
 
-  handleAliasChange = (newValue: string) => {
-    this.setState({
-      editingUrl: Object.assign({}, this.state.editingUrl, {
-        alias: newValue
-      })
-    });
+  handleAliasChange = (newAlias: string) => {
+    this.props.store.dispatch(updateAlias(newAlias));
   };
 
   handleOnErrModalCloseClick = () => {
     this.errModal.current!.close();
+    this.props.store.dispatch(clearError());
   };
 
   handlerLongLinkTextFieldBlur = () => {
-    let err = validateLongLinkFormat(this.state.editingUrl.originalUrl);
-    this.setState({
-      inputErr: err || ''
-    });
+    let longLink = this.props.store.getState().editingUrl.originalUrl;
+    let err = validateLongLinkFormat(longLink);
+    this.props.store.dispatch(raiseInputError(err));
   };
 
   handlerCustomAliasTextFieldBlur = () => {
-    let err = validateCustomAliasFormat(this.state.editingUrl.alias);
-    this.setState({
-      inputErr: err || ''
-    });
+    let alias = this.props.store.getState().editingUrl.alias;
+    let err = validateCustomAliasFormat(alias);
+    this.props.store.dispatch(raiseInputError(err));
   };
 
   handleCreateShortLinkClick = async () => {
-    let longLink = this.state.editingUrl.originalUrl;
-    let customAlias = this.state.editingUrl.alias;
+    let url = this.props.store.getState().editingUrl;
+    let longLink = url.originalUrl;
+    let customAlias = url.alias;
 
     let err = validateLongLinkFormat(longLink);
-    if (err && err.length > 1) {
-      this.showError({
+    if (err) {
+      raiseCreateShortLinkError({
         name: 'Invalid Long Link',
         description: err
       });
@@ -165,52 +146,39 @@ export class Home extends Component<Props, State> {
     }
 
     err = validateCustomAliasFormat(customAlias);
-    if (err && err.length > 1) {
-      this.showError({
+    if (err) {
+      raiseCreateShortLinkError({
         name: 'Invalid Custom Alias',
         description: err
       });
       return;
     }
 
-    let recaptchaToken = await this.props.reCaptcha.execute('createShortLink');
-
     try {
       let url = await this.props.urlService.createShortLink(
-        recaptchaToken,
-        this.state.editingUrl
+        this.props.store.getState().editingUrl
       );
 
-      if (url && url.alias) {
-        let qrCodeUrl = await this.props.qrCodeService.newQrCode(
-          this.props.urlService.aliasToLink(url.alias)
-        );
-        this.setState({
-          qrCodeUrl: qrCodeUrl,
-          createdUrl: url,
-          editingUrl: {
-            originalUrl: '',
-            alias: ''
-          }
-        });
-      }
+      this.props.store.dispatch(updateCreatedUrl(url));
     } catch (errCodes) {
+      console.log(errCodes);
       for (const errCode of errCodes) {
         switch (errCode) {
           case ErrUrl.Unauthorized:
             this.requestSignIn();
             break;
           default:
-            this.showError(getErr(errCode));
+            let error = this.props.errorService.getErr(errCode);
+            this.props.store.dispatch(raiseCreateShortLinkError(error));
         }
       }
     }
   };
 
-  showError(error: Err) {
-    this.setState({
-      err: error
-    });
+  showError(error?: Err) {
+    if(!error) {
+      return
+    }
     this.errModal.current!.open();
   }
 
@@ -224,7 +192,7 @@ export class Home extends Component<Props, State> {
             <div className={'control create-short-link'}>
               <div className={'text-field-wrapper'}>
                 <TextField
-                  text={this.state.editingUrl.originalUrl}
+                  text={this.state.longLink}
                   placeHolder={'Long Link'}
                   onBlur={this.handlerLongLinkTextFieldBlur}
                   onChange={this.handlerLongLinkChange}
@@ -232,7 +200,7 @@ export class Home extends Component<Props, State> {
               </div>
               <div className={'text-field-wrapper'}>
                 <TextField
-                  text={this.state.editingUrl.alias}
+                  text={this.state.alias}
                   placeHolder={'Custom Short Link ( Optional )'}
                   onBlur={this.handlerCustomAliasTextFieldBlur}
                   onChange={this.handleAliasChange}
@@ -269,7 +237,7 @@ export class Home extends Component<Props, State> {
           uiFactory={this.props.uiFactory}
         />
         <Modal canClose={true} ref={this.errModal}>
-          <div className={'err'}>
+          {this.state.err ? <div className={'err'}>
             <i
               className={'material-icons close'}
               title={'close'}
@@ -279,7 +247,7 @@ export class Home extends Component<Props, State> {
             </i>
             <div className={'title'}>{this.state.err.name}</div>
             <div className={'description'}>{this.state.err.description}</div>
-          </div>
+          </div> : false}
         </Modal>
       </div>
     );

@@ -7,6 +7,7 @@ import gql from 'graphql-tag';
 import {EnvService} from './Env.service';
 import {GraphQlError} from '../graphql/error';
 import {AuthService} from './Auth.service';
+import {CaptchaService, CREATE_SHORT_LINK} from './Captcha.service';
 
 export enum ErrUrl {
   AliasAlreadyExist = 'aliasAlreadyExist',
@@ -23,7 +24,8 @@ export class UrlService {
 
   constructor(
     private authService: AuthService,
-    private envService: EnvService
+    private envService: EnvService,
+    private captchaService: CaptchaService
   ) {
     const gqlLink = ApolloLink.from([
       new HttpLink({
@@ -37,7 +39,9 @@ export class UrlService {
     });
   }
 
-  createShortLink(captchaResponse: string, link: Url): Promise<Url> {
+  async createShortLink (link: Url): Promise<Url> {
+    let captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
+
     let alias = link.alias === '' ? null : link.alias;
 
     let variables = {
