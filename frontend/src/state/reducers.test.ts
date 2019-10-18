@@ -4,15 +4,15 @@ import {updateAlias, updateLongLink} from './actions';
 
 describe('createStore', () => {
   test('initializes app state', () => {
-    let store = createStore(reducers);
+    const store = createStore(reducers);
     expect(store.getState()).toBe(initialAppState);
   });
 });
 
 describe('UPDATE_LONG_URL', () => {
   test('updates originalUrl', () => {
-    let store = createStore(reducers);
-    let appState = store.getState();
+    const store = createStore(reducers);
+    const appState = store.getState();
     expect(appState.editingUrl.originalUrl).toBe('');
 
     store.dispatch(updateLongLink('http://www.example.com'))
@@ -21,8 +21,8 @@ describe('UPDATE_LONG_URL', () => {
 
 describe('UPDATE_ALIAS', () => {
   test('updates alias', () => {
-    let store = createStore(reducers);
-    let appState = store.getState();
+    const store = createStore(reducers);
+    const appState = store.getState();
     expect(appState.editingUrl.alias).toBe('');
 
     store.dispatch(updateAlias('eg'))

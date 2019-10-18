@@ -3,7 +3,7 @@ import {IErr} from '../entity/Err';
 import {Url} from '../entity/Url';
 
 export interface IPayloadAction extends Action {
-  payload?: any
+  payload?: any;
 }
 
 export const UPDATE_LONG_LINK = 'UPDATE_LONG_URL';

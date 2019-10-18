@@ -71,9 +71,9 @@ export class Home extends Component<Props, State> {
     }
 
     this.props.store.subscribe(async () => {
-      let state = this.props.store.getState();
+      const state = this.props.store.getState();
 
-      let newState: State = {
+      const newState: State = {
         longLink: state.editingUrl.originalUrl,
         alias: state.editingUrl.alias,
         err: state.err,
@@ -127,13 +127,13 @@ export class Home extends Component<Props, State> {
   };
 
   handlerCustomAliasTextFieldBlur = () => {
-    let alias = this.props.store.getState().editingUrl.alias;
-    let err = validateCustomAliasFormat(alias);
+    const alias = this.props.store.getState().editingUrl.alias;
+    const err = validateCustomAliasFormat(alias);
     this.props.store.dispatch(raiseInputError(err));
   };
 
   handleCreateShortLinkClick = () => {
-    let editingUrl = this.props.store.getState().editingUrl;
+    const editingUrl = this.props.store.getState().editingUrl;
     this.props.urlService.createShortLink(editingUrl)
       .then((createdUrl: Url) =>
         this.props.store.dispatch(updateCreatedUrl(createdUrl))
