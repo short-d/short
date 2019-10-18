@@ -2,7 +2,6 @@ import React, {ReactElement} from 'react';
 import {App} from './App';
 import {CaptchaService} from '../service/Captcha.service';
 import {IFeatureDecisionService} from '../service/FeatureDecision.service';
-import {UrlService} from '../service/Url.service';
 import {Home} from './pages/Home';
 import H from 'history';
 import {AuthService} from '../service/Auth.service';
@@ -13,6 +12,7 @@ import {GithubSignInButton} from './pages/shared/sign-in/GithubSignInButton';
 import {Store} from 'redux';
 import {IAppState} from '../state/reducers';
 import {ErrorService} from '../service/Error.service';
+import {UrlService} from '../service/Url.service';
 
 export class UIFactory {
   constructor(

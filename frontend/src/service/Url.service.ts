@@ -8,12 +8,9 @@ import {EnvService} from './Env.service';
 import {GraphQlError} from '../graphql/error';
 import {AuthService} from './Auth.service';
 import {CaptchaService, CREATE_SHORT_LINK} from './Captcha.service';
-
-export enum ErrUrl {
-  AliasAlreadyExist = 'aliasAlreadyExist',
-  UserNotHuman = 'requesterNotHuman',
-  Unauthorized = 'invalidAuthToken'
-}
+import {validateLongLinkFormat} from '../validators/LongLink.validator';
+import {validateCustomAliasFormat} from '../validators/CustomAlias.validator';
+import {ErrorService, ErrUrl} from './Error.service';
 
 interface CreateURLData {
   createURL: Url;
@@ -25,6 +22,7 @@ export class UrlService {
   constructor(
     private authService: AuthService,
     private envService: EnvService,
+    private errorService: ErrorService,
     private captchaService: CaptchaService
   ) {
     const gqlLink = ApolloLink.from([
@@ -39,13 +37,63 @@ export class UrlService {
     });
   }
 
-  async createShortLink (link: Url): Promise<Url> {
-    let captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
+  createShortLink(editingUrl: Url): Promise<Url> {
+    return new Promise(async (resolve, reject) => {
+      let longLink = editingUrl.originalUrl;
+      let customAlias = editingUrl.alias;
+
+      let err = validateLongLinkFormat(longLink);
+      if (err) {
+        reject({
+          createShortLinkErr: {
+            name: 'Invalid Long Link',
+            description: err
+          }
+        });
+        return;
+      }
+
+      err = validateCustomAliasFormat(customAlias);
+      if (err) {
+        reject({
+          createShortLinkErr: {
+            name: 'Invalid Custom Alias',
+            description: err
+          }
+        });
+        return;
+      }
+
+      try {
+        let url = await this.invokeCreateShortLinkApi(
+          editingUrl
+        );
+        resolve(url);
+        return;
+      } catch (errCodes) {
+        let errCode = errCodes[0];
+        if (errCode === ErrUrl.Unauthorized) {
+          reject({
+            authorizationErr: 'Unauthorized to create short link'
+          });
+          return;
+        }
+
+        let error = this.errorService.getErr(errCode);
+        reject({
+          createShortLinkErr: error
+        });
+      }
+    });
+  }
+
+  private async invokeCreateShortLinkApi(link: Url): Promise<Url> {
+    // let captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
 
     let alias = link.alias === '' ? null : link.alias;
 
     let variables = {
-      captchaResponse: captchaResponse,
+      captchaResponse: 'null',
       urlInput: {
         originalURL: link.originalUrl,
         customAlias: alias

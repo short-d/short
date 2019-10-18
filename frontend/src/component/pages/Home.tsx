@@ -6,7 +6,6 @@ import {Section} from '../ui/Section';
 import {TextField} from '../form/TextField';
 import {Button} from '../ui/Button';
 import {Url} from '../../entity/Url';
-import {ErrUrl, UrlService} from '../../service/Url.service';
 import {Footer} from './shared/Footer';
 import {ShortLinkUsage} from './shared/ShortLinkUsage';
 import {SignInModal} from './shared/sign-in/SignInModal';
@@ -26,11 +25,13 @@ import {
   clearError,
   raiseCreateShortLinkError,
   raiseInputError,
-  updateAlias, updateCreatedUrl,
+  updateAlias,
+  updateCreatedUrl,
   updateLongLink
 } from '../../state/actions';
 import {ErrorService} from '../../service/Error.service';
 import {Err} from '../../entity/Err';
+import {UrlService} from '../../service/Url.service';
 
 interface Props {
   uiFactory: UIFactory;
@@ -69,7 +70,7 @@ export class Home extends Component<Props, State> {
       return;
     }
 
-    this.props.store.subscribe(async () =>{
+    this.props.store.subscribe(async () => {
       let state = this.props.store.getState();
 
       let newState: State = {
@@ -80,18 +81,18 @@ export class Home extends Component<Props, State> {
         inputErr: state.inputErr,
       };
 
-
       if (state.createdUrl && state.createdUrl.alias) {
         newState.qrCodeUrl = await this.props.qrCodeService.newQrCode(
           this.props.urlService.aliasToLink(state.createdUrl.alias)
         );
       }
 
-      this.setState(newState);
       if (newState.err) {
+        console.log(newState.err);
         this.showError(newState.err);
       }
-    })
+      this.setState(newState);
+    });
   }
 
   showSignInModal() {
@@ -131,53 +132,24 @@ export class Home extends Component<Props, State> {
     this.props.store.dispatch(raiseInputError(err));
   };
 
-  handleCreateShortLinkClick = async () => {
-    let url = this.props.store.getState().editingUrl;
-    let longLink = url.originalUrl;
-    let customAlias = url.alias;
-
-    let err = validateLongLinkFormat(longLink);
-    if (err) {
-      raiseCreateShortLinkError({
-        name: 'Invalid Long Link',
-        description: err
-      });
-      return;
-    }
-
-    err = validateCustomAliasFormat(customAlias);
-    if (err) {
-      raiseCreateShortLinkError({
-        name: 'Invalid Custom Alias',
-        description: err
-      });
-      return;
-    }
-
-    try {
-      let url = await this.props.urlService.createShortLink(
-        this.props.store.getState().editingUrl
-      );
-
-      this.props.store.dispatch(updateCreatedUrl(url));
-    } catch (errCodes) {
-      console.log(errCodes);
-      for (const errCode of errCodes) {
-        switch (errCode) {
-          case ErrUrl.Unauthorized:
-            this.requestSignIn();
-            break;
-          default:
-            let error = this.props.errorService.getErr(errCode);
-            this.props.store.dispatch(raiseCreateShortLinkError(error));
+  handleCreateShortLinkClick = () => {
+    let editingUrl = this.props.store.getState().editingUrl;
+    this.props.urlService.createShortLink(editingUrl)
+      .then((createdUrl: Url) =>
+        this.props.store.dispatch(updateCreatedUrl(createdUrl))
+      )
+      .catch(({authorizationErr, createShortLinkErr}) => {
+        if (authorizationErr) {
+          this.requestSignIn();
+          return;
         }
-      }
-    }
+        this.props.store.dispatch(raiseCreateShortLinkError(createShortLinkErr));
+      });
   };
 
   showError(error?: Err) {
-    if(!error) {
-      return
+    if (!error) {
+      return;
     }
     this.errModal.current!.open();
   }

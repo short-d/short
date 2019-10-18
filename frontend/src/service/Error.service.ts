@@ -1,5 +1,11 @@
-import {ErrUrl} from './Url.service';
+
 import {Err} from '../entity/Err';
+
+export enum ErrUrl {
+  AliasAlreadyExist = 'aliasAlreadyExist',
+  UserNotHuman = 'requesterNotHuman',
+  Unauthorized = 'invalidAuthToken'
+}
 
 export class ErrorService {
   getErr(errCode: ErrUrl): Err {
@@ -17,7 +23,7 @@ export class ErrorService {
           name: 'User not human',
           description: `
                 The algorithm thinks you are an automated script instead of human user.
-                Please contact byliuyang11@gmail.com if this is wrong.
+                Please contact byliuyang11@gmail.com if this is a mistake.
                 `
         };
       default:
