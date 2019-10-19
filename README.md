@@ -195,9 +195,9 @@ When contributing to this repository, please first discuss the change you wish
 to make via [Slack channel](https://short-d.com/r/slack) with the owner
 of this repository before making a change.
 
-Please open a draft pull request when you are working on a given issue so that the
-owner knows it's in progress. The owner may take over or reassign the issue if no
-body replys on the issue after ten days assigned to you.
+Please open a draft pull request when you are working on an issue so that the
+owner knows it is in progress. The owner may take over or reassign the issue if no
+body replys after ten days assigned to you.
 
 ### Pull Request Process
 
