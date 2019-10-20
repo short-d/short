@@ -1,9 +1,9 @@
-package sqlrepo
+package db
 
 import (
 	"database/sql"
 	"fmt"
-	"short/app/adapter/sqlrepo/table"
+	"short/app/adapter/db/table"
 	"short/app/entity"
 	"short/app/usecase/repo"
 )

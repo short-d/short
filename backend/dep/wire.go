@@ -4,9 +4,9 @@ package dep
 
 import (
 	"database/sql"
+	"short/app/adapter/db"
 	"short/app/adapter/github"
 	"short/app/adapter/graphql"
-	"short/app/adapter/sqlrepo"
 	"short/app/usecase/account"
 	"short/app/usecase/keygen"
 	"short/app/usecase/repo"
@@ -69,7 +69,7 @@ func InjectDBMigrationTool() fw.DBMigrationTool {
 
 func InjectGraphQlService(
 	name string,
-	db *sql.DB,
+	sqlDB *sql.DB,
 	graphqlPath provider.GraphQlPath,
 	secret provider.ReCaptchaSecret,
 	jwtSecret provider.JwtSecret,
@@ -78,8 +78,8 @@ func InjectGraphQlService(
 		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
-		wire.Bind(new(repo.UserURL), new(sqlrepo.UserURL)),
-		wire.Bind(new(repo.URL), new(*sqlrepo.URL)),
+		wire.Bind(new(repo.UserURL), new(db.UserURL)),
+		wire.Bind(new(repo.URL), new(*db.URL)),
 
 		observabilitySet,
 		authSet,
@@ -90,8 +90,8 @@ func InjectGraphQlService(
 		mdrequest.NewHTTP,
 		mdtimer.NewTimer,
 
-		sqlrepo.NewURL,
-		sqlrepo.NewUserURL,
+		db.NewURL,
+		db.NewUserURL,
 		keygen.NewInMemory,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
@@ -104,7 +104,7 @@ func InjectGraphQlService(
 
 func InjectRoutingService(
 	name string,
-	db *sql.DB,
+	sqlDB *sql.DB,
 	githubClientID provider.GithubClientID,
 	githubClientSecret provider.GithubClientSecret,
 	jwtSecret provider.JwtSecret,
@@ -113,8 +113,8 @@ func InjectRoutingService(
 	wire.Build(
 		wire.Bind(new(service.Account), new(account.RepoService)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repo.User), new(*(sqlrepo.User))),
-		wire.Bind(new(repo.URL), new(*sqlrepo.URL)),
+		wire.Bind(new(repo.User), new(*(db.User))),
+		wire.Bind(new(repo.URL), new(*db.URL)),
 
 		observabilitySet,
 		authSet,
@@ -126,8 +126,8 @@ func InjectRoutingService(
 		mdrequest.NewGraphQl,
 		mdtimer.NewTimer,
 
-		sqlrepo.NewUser,
-		sqlrepo.NewURL,
+		db.NewUser,
+		db.NewURL,
 		url.NewRetrieverPersist,
 		account.NewRepoService,
 		provider.GithubOAuth,

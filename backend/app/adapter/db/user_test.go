@@ -1,10 +1,10 @@
-package sqlrepo
+package db
 
 import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"short/app/adapter/sqlrepo/table"
+	"short/app/adapter/db/table"
 	"short/app/entity"
 	"testing"
 
