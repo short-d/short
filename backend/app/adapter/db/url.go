@@ -15,7 +15,7 @@ type URLSql struct {
 	db *sql.DB
 }
 
-// IsEmailExist checks whether a given alias exist in url table.
+// IsAliasExist checks whether a given alias exist in url table.
 func (u URLSql) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
