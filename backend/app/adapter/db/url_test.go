@@ -1,10 +1,10 @@
-package sqlrepo
+package db
 
 import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"short/app/adapter/sqlrepo/table"
+	"short/app/adapter/db/table"
 	"short/app/entity"
 	"testing"
 	"time"
@@ -12,7 +12,7 @@ import (
 	"github.com/byliuyang/app/mdtest"
 )
 
-func TestUserSql_IsAliasExist(t *testing.T) {
+func TestURLSql_IsAliasExist(t *testing.T) {
 	testCases := []struct {
 		name       string
 		tableRows  *mdtest.TableRows
@@ -47,7 +47,7 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
 			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
-			urlRepo := NewURL(db)
+			urlRepo := NewURLSql(db)
 			gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
 			mdtest.Equal(t, nil, err)
 			mdtest.Equal(t, testCase.expIsExist, gotIsExist)
@@ -55,7 +55,7 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 	}
 }
 
-func TestUrlSql_GetByAlias(t *testing.T) {
+func TestURLSql_GetByAlias(t *testing.T) {
 	testCases := []struct {
 		name        string
 		tableRows   *mdtest.TableRows
@@ -117,7 +117,7 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 			statement := fmt.Sprintf(`^SELECT .+ FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
 			stub.ExpectQuery(statement).WillReturnRows(testCase.tableRows)
 
-			urlRepo := NewURL(db)
+			urlRepo := NewURLSql(db)
 			url, err := urlRepo.GetByAlias("220uFicCJj")
 
 			if testCase.hasErr {
@@ -130,7 +130,7 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 	}
 }
 
-func TestURLFake_Create(t *testing.T) {
+func TestURLSql_Create(t *testing.T) {
 	testCases := []struct {
 		name     string
 		url      entity.URL
@@ -174,7 +174,7 @@ func TestURLFake_Create(t *testing.T) {
 				stub.ExpectExec(statement).WillReturnResult(driver.ResultNoRows)
 			}
 
-			urlRepo := NewURL(db)
+			urlRepo := NewURLSql(db)
 			err = urlRepo.Create(testCase.url)
 
 			if testCase.hasErr {

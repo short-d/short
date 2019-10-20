@@ -144,6 +144,12 @@ Visit [http://localhost:3000](http://localhost:3000)
    ./scripts/dev
    ```
 
+1. Remember to install developers tools before start coding:
+
+   ```bash
+   ./scripts/tools
+   ```
+
 ### Frontend
 
 Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`.
@@ -192,8 +198,12 @@ continuous deployment instead.
 ## Contributing
 
 When contributing to this repository, please first discuss the change you wish
-to make via [issues](https://github.com/byliuyang/short/issues) with the owner
+to make via [Slack channel](https://short-d.com/r/slack) with the owner
 of this repository before making a change.
+
+Please open a draft pull request when you are working on an issue so that the
+owner knows it is in progress. The owner may take over or reassign the issue if no
+body replies after ten days assigned to you.
 
 ### Pull Request Process
 

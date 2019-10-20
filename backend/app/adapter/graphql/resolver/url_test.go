@@ -1,11 +1,12 @@
 package resolver
 
 import (
-	"github.com/byliuyang/app/mdtest"
 	"short/app/adapter/graphql/scalar"
 	"short/app/entity"
 	"testing"
 	"time"
+
+	"github.com/byliuyang/app/mdtest"
 )
 
 func TestURL_Alias(t *testing.T) {
@@ -27,11 +28,11 @@ func TestURL_OriginalURL(t *testing.T) {
 func TestURL_ExpireAt(t *testing.T) {
 	timeAfter := time.Now().Add(5 * time.Second)
 	testCases := []struct {
-		url    URL
+		url      URL
 		expected *scalar.Time
 	}{
 		{
-			url:    URL{url: entity.URL{ExpireAt: &timeAfter}},
+			url:      URL{url: entity.URL{ExpireAt: &timeAfter}},
 			expected: &scalar.Time{Time: timeAfter},
 		},
 		{

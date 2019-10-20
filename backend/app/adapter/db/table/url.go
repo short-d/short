@@ -1,5 +1,6 @@
 package table
 
+// URL represents database table columns for 'url' table
 var URL = struct {
 	TableName         string
 	ColumnAlias       string
