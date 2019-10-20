@@ -1,20 +1,22 @@
-package sqlrepo
+package db
 
 import (
 	"database/sql"
 	"fmt"
-	"short/app/adapter/sqlrepo/table"
+	"short/app/adapter/db/table"
 	"short/app/entity"
 	"short/app/usecase/repo"
 )
 
-var _ repo.User = (*User)(nil)
+var _ repo.User = (*UserSQL)(nil)
 
-type User struct {
+// UserSQL accesses User information in user table through SQL.
+type UserSQL struct {
 	db *sql.DB
 }
 
-func (u User) IsEmailExist(email string) (bool, error) {
+// IsEmailExist checks whether a given email exist in user table.
+func (u UserSQL) IsEmailExist(email string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
 FROM "%s" 
@@ -35,7 +37,8 @@ WHERE "%s"=$1;
 	return true, nil
 }
 
-func (u User) GetByEmail(email string) (entity.User, error) {
+// GetByEmail finds an User in user table given email.
+func (u UserSQL) GetByEmail(email string) (entity.User, error) {
 	query := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s"
 FROM "%s" 
@@ -53,7 +56,13 @@ WHERE "%s"=$1;
 	row := u.db.QueryRow(query, email)
 
 	user := entity.User{}
-	err := row.Scan(&user.Email, &user.Name, &user.LastSignedInAt, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(
+		&user.Email,
+		&user.Name,
+		&user.LastSignedInAt,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
 	if err != nil {
 		return user, err
 	}
@@ -61,7 +70,8 @@ WHERE "%s"=$1;
 	return user, nil
 }
 
-func (u *User) Create(user entity.User) error {
+// Create inserts a new User into user table.
+func (u *UserSQL) Create(user entity.User) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5)
@@ -78,8 +88,9 @@ VALUES ($1, $2, $3, $4, $5)
 	return err
 }
 
-func NewUser(db *sql.DB) *User {
-	return &User{
+// NewUserSQL creates UserSQL
+func NewUserSQL(db *sql.DB) *UserSQL {
+	return &UserSQL{
 		db: db,
 	}
 }

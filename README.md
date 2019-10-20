@@ -144,6 +144,12 @@ Visit [http://localhost:3000](http://localhost:3000)
    ./scripts/dev
    ```
 
+1. Remember to install developers tools before start coding:
+
+   ```bash
+   ./scripts/tools
+   ```
+
 ### Frontend
 
 Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`.
