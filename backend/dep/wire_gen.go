@@ -7,16 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"short/app/adapter/db"
-	"short/app/adapter/github"
-	"short/app/adapter/graphql"
-	"short/app/usecase/account"
-	"short/app/usecase/keygen"
-	"short/app/usecase/requester"
-	"short/app/usecase/url"
-	"short/dep/provider"
-	"time"
-
 	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdcli"
 	"github.com/byliuyang/app/modern/mddb"
@@ -28,6 +18,15 @@ import (
 	"github.com/byliuyang/app/modern/mdtimer"
 	"github.com/byliuyang/app/modern/mdtracer"
 	"github.com/google/wire"
+	"short/app/adapter/db"
+	"short/app/adapter/github"
+	"short/app/adapter/graphql"
+	"short/app/usecase/account"
+	"short/app/usecase/keygen"
+	"short/app/usecase/requester"
+	"short/app/usecase/url"
+	"short/dep/provider"
+	"time"
 )
 
 // Injectors from wire.go:
@@ -52,9 +51,9 @@ func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.Graph
 	tracer := mdtracer.NewLocal()
 	urlSql := db.NewURLSql(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql)
-	userURLRelationSql := db.NewUserURLSql(sqlDB)
+	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
 	keyGenerator := keygen.NewInMemory()
-	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSql, keyGenerator)
+	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHTTP(client)
 	reCaptcha := provider.ReCaptchaService(httpRequest, secret)
@@ -87,8 +86,8 @@ func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.Gi
 	cryptoTokenizer := provider.JwtGo(jwtSecret)
 	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.Authenticator(cryptoTokenizer, timer, tokenValidDuration)
-	userSql := db.NewUserSql(sqlDB)
-	repoService := account.NewRepoService(userSql, timer)
+	userSQL := db.NewUserSQL(sqlDB)
+	repoService := account.NewRepoService(userSQL, timer)
 	v := provider.ShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, oauthGithub, api, authenticator, repoService)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)

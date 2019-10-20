@@ -78,7 +78,7 @@ func InjectGraphQlService(
 		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
-		wire.Bind(new(repo.UserURLRelation), new(db.UserURLRelationSql)),
+		wire.Bind(new(repo.UserURLRelation), new(db.UserURLRelationSQL)),
 		wire.Bind(new(repo.URL), new(*db.URLSql)),
 
 		observabilitySet,
@@ -91,7 +91,7 @@ func InjectGraphQlService(
 		mdtimer.NewTimer,
 
 		db.NewURLSql,
-		db.NewUserURLSql,
+		db.NewUserURLRelationSQL,
 		keygen.NewInMemory,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
@@ -113,7 +113,7 @@ func InjectRoutingService(
 	wire.Build(
 		wire.Bind(new(service.Account), new(account.RepoService)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repo.User), new(*(db.UserSql))),
+		wire.Bind(new(repo.User), new(*(db.UserSQL))),
 		wire.Bind(new(repo.URL), new(*db.URLSql)),
 
 		observabilitySet,
@@ -126,7 +126,7 @@ func InjectRoutingService(
 		mdrequest.NewGraphQl,
 		mdtimer.NewTimer,
 
-		db.NewUserSql,
+		db.NewUserSQL,
 		db.NewURLSql,
 		url.NewRetrieverPersist,
 		account.NewRepoService,

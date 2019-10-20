@@ -7,17 +7,17 @@ import (
 	"short/app/usecase/repo"
 )
 
-var _ repo.UserURLRelation = (*UserURLRelationSql)(nil)
+var _ repo.UserURLRelation = (*UserURLRelationSQL)(nil)
 
 // UserURLRelationSql accesses UserURLRelation information in user_url_relation
 // table.
-type UserURLRelationSql struct {
+type UserURLRelationSQL struct {
 	db *sql.DB
 }
 
 // CreateRelation establishes bi-directional relationship between a user and a
 // url in user_url_relation table.
-func (u UserURLRelationSql) CreateRelation(userEmail string, urlAlias string) error {
+func (u UserURLRelationSQL) CreateRelation(userEmail string, urlAlias string) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s")
 VALUES ($1,$2)
@@ -31,9 +31,9 @@ VALUES ($1,$2)
 	return err
 }
 
-// NewUserURLSql creates UserURLRelationSql
-func NewUserURLSql(db *sql.DB) UserURLRelationSql {
-	return UserURLRelationSql{
+// NewUserURLRelationSQL creates UserURLRelationSQL
+func NewUserURLRelationSQL(db *sql.DB) UserURLRelationSQL {
+	return UserURLRelationSQL{
 		db: db,
 	}
 }
