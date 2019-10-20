@@ -9,7 +9,7 @@ import (
 
 var _ repo.UserURLRelation = (*UserURLRelationSQL)(nil)
 
-// UserURLRelationSql accesses UserURLRelation information in user_url_relation
+// UserURLRelationSQL accesses UserURLRelation information in user_url_relation
 // table.
 type UserURLRelationSQL struct {
 	db *sql.DB
