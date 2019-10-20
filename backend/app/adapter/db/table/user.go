@@ -1,6 +1,6 @@
 package table
 
-// URL represents database table columns for 'user' table
+// User represents database table columns for 'user' table
 var User = struct {
 	TableName            string
 	ColumnEmail          string
