@@ -20,9 +20,9 @@ type Creator interface {
 }
 
 type CreatorPersist struct {
-	urlRepo     repo.URL
+	urlRepo             repo.URL
 	userURLRelationRepo repo.UserURLRelation
-	keyGen      keygen.KeyGenerator
+	keyGen              keygen.KeyGenerator
 }
 
 func (a CreatorPersist) Create(url entity.URL, userEmail string) (entity.URL, error) {
@@ -61,8 +61,8 @@ func NewCreatorPersist(
 	keyGen keygen.KeyGenerator,
 ) CreatorPersist {
 	return CreatorPersist{
-		urlRepo:     urlRepo,
+		urlRepo:             urlRepo,
 		userURLRelationRepo: userURLRelationRepo,
-		keyGen:      keyGen,
+		keyGen:              keyGen,
 	}
 }

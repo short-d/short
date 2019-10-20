@@ -90,8 +90,8 @@ func InjectGraphQlService(
 		mdrequest.NewHTTP,
 		mdtimer.NewTimer,
 
-		db.NewURL,
-		db.NewUserURL,
+		db.NewURLSql,
+		db.NewUserURLSql,
 		keygen.NewInMemory,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
@@ -126,8 +126,8 @@ func InjectRoutingService(
 		mdrequest.NewGraphQl,
 		mdtimer.NewTimer,
 
-		db.NewUser,
-		db.NewURL,
+		db.NewUserSql,
+		db.NewURLSql,
 		url.NewRetrieverPersist,
 		account.NewRepoService,
 		provider.GithubOAuth,

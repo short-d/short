@@ -10,10 +10,12 @@ import (
 
 var _ repo.URL = (*URLSql)(nil)
 
+// URLSql accesses URL information in url table through SQL.
 type URLSql struct {
 	db *sql.DB
 }
 
+// IsEmailExist checks whether a given alias exist in url table.
 func (u URLSql) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
@@ -34,6 +36,7 @@ WHERE "%s"=$1;`,
 	return true, err
 }
 
+// Create inserts a new URL into url table.
 func (u *URLSql) Create(url entity.URL) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
@@ -49,6 +52,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
+// GetByAlias finds an URL in url table given alias.
 func (u URLSql) GetByAlias(alias string) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
@@ -74,7 +78,8 @@ WHERE "%s"=$1;`,
 	return url, nil
 }
 
-func NewURL(db *sql.DB) *URLSql {
+// NewURLSql creates URLSql
+func NewURLSql(db *sql.DB) *URLSql {
 	return &URLSql{
 		db: db,
 	}

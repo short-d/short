@@ -4,9 +4,9 @@ package table
 var UserURLRelation = struct {
 	TableName       string
 	ColumnUserEmail string
-	ColumnUrlAlias  string
+	ColumnURLAlias  string
 }{
 	TableName:       "user_url_relation",
 	ColumnUserEmail: "user_email",
-	ColumnUrlAlias:  "url_alias",
+	ColumnURLAlias:  "url_alias",
 }

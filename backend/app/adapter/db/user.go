@@ -10,10 +10,12 @@ import (
 
 var _ repo.User = (*UserSql)(nil)
 
+// UserSql accesses User information in user table through SQL.
 type UserSql struct {
 	db *sql.DB
 }
 
+// IsEmailExist checks whether a given email exist in user table.
 func (u UserSql) IsEmailExist(email string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
@@ -35,6 +37,7 @@ WHERE "%s"=$1;
 	return true, nil
 }
 
+// GetByEmail finds an User in user table given email.
 func (u UserSql) GetByEmail(email string) (entity.User, error) {
 	query := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s"
@@ -53,7 +56,13 @@ WHERE "%s"=$1;
 	row := u.db.QueryRow(query, email)
 
 	user := entity.User{}
-	err := row.Scan(&user.Email, &user.Name, &user.LastSignedInAt, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(
+		&user.Email,
+		&user.Name,
+		&user.LastSignedInAt,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
 	if err != nil {
 		return user, err
 	}
@@ -61,6 +70,7 @@ WHERE "%s"=$1;
 	return user, nil
 }
 
+// Create inserts a new User into user table.
 func (u *UserSql) Create(user entity.User) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
@@ -78,7 +88,8 @@ VALUES ($1, $2, $3, $4, $5)
 	return err
 }
 
-func NewUser(db *sql.DB) *UserSql {
+// NewUserSql creates UserSql
+func NewUserSql(db *sql.DB) *UserSql {
 	return &UserSql{
 		db: db,
 	}

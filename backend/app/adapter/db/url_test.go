@@ -47,7 +47,7 @@ func TestURLSql_IsAliasExist(t *testing.T) {
 			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
 			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
-			urlRepo := NewURL(db)
+			urlRepo := NewURLSql(db)
 			gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
 			mdtest.Equal(t, nil, err)
 			mdtest.Equal(t, testCase.expIsExist, gotIsExist)
@@ -117,7 +117,7 @@ func TestURLSql_GetByAlias(t *testing.T) {
 			statement := fmt.Sprintf(`^SELECT .+ FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
 			stub.ExpectQuery(statement).WillReturnRows(testCase.tableRows)
 
-			urlRepo := NewURL(db)
+			urlRepo := NewURLSql(db)
 			url, err := urlRepo.GetByAlias("220uFicCJj")
 
 			if testCase.hasErr {
@@ -174,7 +174,7 @@ func TestURLSql_Create(t *testing.T) {
 				stub.ExpectExec(statement).WillReturnResult(driver.ResultNoRows)
 			}
 
-			urlRepo := NewURL(db)
+			urlRepo := NewURLSql(db)
 			err = urlRepo.Create(testCase.url)
 
 			if testCase.hasErr {

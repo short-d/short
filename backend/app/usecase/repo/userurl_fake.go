@@ -2,7 +2,7 @@ package repo
 
 var _ UserURLRelation = (*UserURLRelationFake)(nil)
 
-// UserURLFake represents in memory implementation of User-URL relationship accessor.
+// UserURLRelationFake represents in memory implementation of User-URL relationship accessor.
 type UserURLRelationFake struct {
 }
 
