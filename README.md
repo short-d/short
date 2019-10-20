@@ -148,7 +148,7 @@ Visit [http://localhost:3000](http://localhost:3000)
 
    ```bash
    ./scripts/tools
-	```
+   ```
 
 ### Frontend
 

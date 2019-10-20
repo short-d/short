@@ -1,5 +1,5 @@
 package repo
 
-type UserURL interface {
+type UserURLRelation interface {
 	CreateRelation(userEmail string, urlAlias string) error
 }

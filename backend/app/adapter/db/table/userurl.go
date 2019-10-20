@@ -1,6 +1,7 @@
 package table
 
-var UserURL = struct {
+// UserURLRelation represents database table columns for 'user_url_relation' table
+var UserURLRelation = struct {
 	TableName       string
 	ColumnUserEmail string
 	ColumnUrlAlias  string

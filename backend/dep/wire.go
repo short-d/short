@@ -78,8 +78,8 @@ func InjectGraphQlService(
 		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
-		wire.Bind(new(repo.UserURL), new(db.UserURL)),
-		wire.Bind(new(repo.URL), new(*db.URL)),
+		wire.Bind(new(repo.UserURLRelation), new(db.UserURLRelationSql)),
+		wire.Bind(new(repo.URL), new(*db.URLSql)),
 
 		observabilitySet,
 		authSet,
@@ -113,8 +113,8 @@ func InjectRoutingService(
 	wire.Build(
 		wire.Bind(new(service.Account), new(account.RepoService)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repo.User), new(*(db.User))),
-		wire.Bind(new(repo.URL), new(*db.URL)),
+		wire.Bind(new(repo.User), new(*(db.UserSql))),
+		wire.Bind(new(repo.URL), new(*db.URLSql)),
 
 		observabilitySet,
 		authSet,

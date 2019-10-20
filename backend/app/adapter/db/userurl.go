@@ -7,28 +7,28 @@ import (
 	"short/app/usecase/repo"
 )
 
-var _ repo.UserURL = (*UserURL)(nil)
+var _ repo.UserURLRelation = (*UserURLRelationSql)(nil)
 
-type UserURL struct {
+type UserURLRelationSql struct {
 	db *sql.DB
 }
 
-func (u UserURL) CreateRelation(userEmail string, urlAlias string) error {
+func (u UserURLRelationSql) CreateRelation(userEmail string, urlAlias string) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s")
 VALUES ($1,$2)
 `,
-		table.UserURL.TableName,
-		table.UserURL.ColumnUserEmail,
-		table.UserURL.ColumnUrlAlias,
+		table.UserURLRelation.TableName,
+		table.UserURLRelation.ColumnUserEmail,
+		table.UserURLRelation.ColumnUrlAlias,
 	)
 
 	_, err := u.db.Exec(statement, userEmail, urlAlias)
 	return err
 }
 
-func NewUserURL(db *sql.DB) UserURL {
-	return UserURL{
+func NewUserURL(db *sql.DB) UserURLRelationSql {
+	return UserURLRelationSql{
 		db: db,
 	}
 }

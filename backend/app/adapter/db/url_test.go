@@ -12,7 +12,7 @@ import (
 	"github.com/byliuyang/app/mdtest"
 )
 
-func TestUserSql_IsAliasExist(t *testing.T) {
+func TestURLSql_IsAliasExist(t *testing.T) {
 	testCases := []struct {
 		name       string
 		tableRows  *mdtest.TableRows
@@ -55,7 +55,7 @@ func TestUserSql_IsAliasExist(t *testing.T) {
 	}
 }
 
-func TestUrlSql_GetByAlias(t *testing.T) {
+func TestURLSql_GetByAlias(t *testing.T) {
 	testCases := []struct {
 		name        string
 		tableRows   *mdtest.TableRows
@@ -130,7 +130,7 @@ func TestUrlSql_GetByAlias(t *testing.T) {
 	}
 }
 
-func TestURLFake_Create(t *testing.T) {
+func TestURLSql_Create(t *testing.T) {
 	testCases := []struct {
 		name     string
 		url      entity.URL

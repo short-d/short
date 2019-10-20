@@ -8,13 +8,13 @@ import (
 	"short/app/usecase/repo"
 )
 
-var _ repo.URL = (*URL)(nil)
+var _ repo.URL = (*URLSql)(nil)
 
-type URL struct {
+type URLSql struct {
 	db *sql.DB
 }
 
-func (u URL) IsAliasExist(alias string) (bool, error) {
+func (u URLSql) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
 FROM "%s" 
@@ -34,7 +34,7 @@ WHERE "%s"=$1;`,
 	return true, err
 }
 
-func (u *URL) Create(url entity.URL) error {
+func (u *URLSql) Create(url entity.URL) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5);`,
@@ -49,7 +49,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
-func (u URL) GetByAlias(alias string) (entity.URL, error) {
+func (u URLSql) GetByAlias(alias string) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s" 
@@ -74,8 +74,8 @@ WHERE "%s"=$1;`,
 	return url, nil
 }
 
-func NewURL(db *sql.DB) *URL {
-	return &URL{
+func NewURL(db *sql.DB) *URLSql {
+	return &URLSql{
 		db: db,
 	}
 }

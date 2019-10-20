@@ -7,16 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"short/app/adapter/db"
-	"short/app/adapter/github"
-	"short/app/adapter/graphql"
-	"short/app/usecase/account"
-	"short/app/usecase/keygen"
-	"short/app/usecase/requester"
-	"short/app/usecase/url"
-	"short/dep/provider"
-	"time"
-
 	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdcli"
 	"github.com/byliuyang/app/modern/mddb"
@@ -28,6 +18,15 @@ import (
 	"github.com/byliuyang/app/modern/mdtimer"
 	"github.com/byliuyang/app/modern/mdtracer"
 	"github.com/google/wire"
+	"short/app/adapter/db"
+	"short/app/adapter/github"
+	"short/app/adapter/graphql"
+	"short/app/usecase/account"
+	"short/app/usecase/keygen"
+	"short/app/usecase/requester"
+	"short/app/usecase/url"
+	"short/dep/provider"
+	"time"
 )
 
 // Injectors from wire.go:
@@ -50,11 +49,11 @@ func InjectDBMigrationTool() fw.DBMigrationTool {
 func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
-	dbURL := db.NewURL(sqlDB)
-	retrieverPersist := url.NewRetrieverPersist(dbURL)
-	userURL := db.NewUserURL(sqlDB)
+	urlSql := db.NewURL(sqlDB)
+	retrieverPersist := url.NewRetrieverPersist(urlSql)
+	userURLRelationSql := db.NewUserURL(sqlDB)
 	keyGenerator := keygen.NewInMemory()
-	creatorPersist := url.NewCreatorPersist(dbURL, userURL, keyGenerator)
+	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSql, keyGenerator)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHTTP(client)
 	reCaptcha := provider.ReCaptchaService(httpRequest, secret)
@@ -77,8 +76,8 @@ func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.Gi
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	timer := mdtimer.NewTimer()
-	dbURL := db.NewURL(sqlDB)
-	retrieverPersist := url.NewRetrieverPersist(dbURL)
+	urlSql := db.NewURL(sqlDB)
+	retrieverPersist := url.NewRetrieverPersist(urlSql)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHTTP(client)
 	oauthGithub := provider.GithubOAuth(httpRequest, githubClientID, githubClientSecret)
@@ -87,8 +86,8 @@ func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.Gi
 	cryptoTokenizer := provider.JwtGo(jwtSecret)
 	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.Authenticator(cryptoTokenizer, timer, tokenValidDuration)
-	user := db.NewUser(sqlDB)
-	repoService := account.NewRepoService(user, timer)
+	userSql := db.NewUser(sqlDB)
+	repoService := account.NewRepoService(userSql, timer)
 	v := provider.ShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, oauthGithub, api, authenticator, repoService)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)

@@ -8,13 +8,13 @@ import (
 	"short/app/usecase/repo"
 )
 
-var _ repo.User = (*User)(nil)
+var _ repo.User = (*UserSql)(nil)
 
-type User struct {
+type UserSql struct {
 	db *sql.DB
 }
 
-func (u User) IsEmailExist(email string) (bool, error) {
+func (u UserSql) IsEmailExist(email string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
 FROM "%s" 
@@ -35,7 +35,7 @@ WHERE "%s"=$1;
 	return true, nil
 }
 
-func (u User) GetByEmail(email string) (entity.User, error) {
+func (u UserSql) GetByEmail(email string) (entity.User, error) {
 	query := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s"
 FROM "%s" 
@@ -61,7 +61,7 @@ WHERE "%s"=$1;
 	return user, nil
 }
 
-func (u *User) Create(user entity.User) error {
+func (u *UserSql) Create(user entity.User) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5)
@@ -78,8 +78,8 @@ VALUES ($1, $2, $3, $4, $5)
 	return err
 }
 
-func NewUser(db *sql.DB) *User {
-	return &User{
+func NewUser(db *sql.DB) *UserSql {
+	return &UserSql{
 		db: db,
 	}
 }

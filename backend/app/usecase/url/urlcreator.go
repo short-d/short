@@ -21,7 +21,7 @@ type Creator interface {
 
 type CreatorPersist struct {
 	urlRepo     repo.URL
-	userURLRepo repo.UserURL
+	userURLRelationRepo repo.UserURLRelation
 	keyGen      keygen.KeyGenerator
 }
 
@@ -47,7 +47,7 @@ func (a CreatorPersist) CreateWithCustomAlias(url entity.URL, alias string, user
 		return entity.URL{}, err
 	}
 
-	err = a.userURLRepo.CreateRelation(userEmail, url.Alias)
+	err = a.userURLRelationRepo.CreateRelation(userEmail, url.Alias)
 	if err != nil {
 		return entity.URL{}, err
 	}
@@ -57,12 +57,12 @@ func (a CreatorPersist) CreateWithCustomAlias(url entity.URL, alias string, user
 
 func NewCreatorPersist(
 	urlRepo repo.URL,
-	userURLRepo repo.UserURL,
+	userURLRelationRepo repo.UserURLRelation,
 	keyGen keygen.KeyGenerator,
 ) CreatorPersist {
 	return CreatorPersist{
 		urlRepo:     urlRepo,
-		userURLRepo: userURLRepo,
+		userURLRelationRepo: userURLRelationRepo,
 		keyGen:      keyGen,
 	}
 }
