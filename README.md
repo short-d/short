@@ -197,7 +197,7 @@ of this repository before making a change.
 
 Please open a draft pull request when you are working on an issue so that the
 owner knows it is in progress. The owner may take over or reassign the issue if no
-body replys after ten days assigned to you.
+body replies after ten days assigned to you.
 
 ### Pull Request Process
 
