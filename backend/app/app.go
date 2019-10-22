@@ -7,6 +7,7 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// Start launches the GraphQL & HTTP APIs
 func Start(
 	dbConfig fw.DBConfig,
 	migrationRoot string,
