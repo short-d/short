@@ -26,11 +26,11 @@ const aliasNotAvailableErr = {
 };
 
 const userNotHumanErr = {
-  name: 'Alias not available',
+  name: 'User not human',
   description: `
-                The alias you choose is not available, please choose a 
-                different one. Leaving custom alias field empty will automatically 
-                generate a available alias.
+                The algorithm believes you are an automated script instead of a
+                human user. Please email byliuyang11@gmail.com if this is a
+                mistake.
                 `
 };
 

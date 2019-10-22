@@ -186,14 +186,9 @@ continuous deployment instead.
 
 - [Drone](https://short-d.com/r/ci): Continuous integration
   written in Go
-- [Sourcegraph](https://short-d.com/r/cs): Code
-  search written in Go
-  ![Tooltip during code review](doc/sourcegraph/reference.png)
 - [Code Climate](https://short-d.com/r/cs): Automated code
   review
 - [ElephantSQL](https://www.elephantsql.com): Managed PostgreSQL service.
-- [QuickDBD](https://short-d.com/r/db): Draw database diagrams by
-  typing.
 
 ## Contributing
 
