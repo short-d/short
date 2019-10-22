@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"short/app"
 
 	"github.com/byliuyang/app/fw"
 )
@@ -10,9 +11,12 @@ import (
 func NewRootCmd(
 	dbConfig fw.DBConfig,
 	recaptchaSecret string,
-	githubConfig GithubConfig,
+	githubClientID string,
+	githubClientSecret string,
 	jwtSecret string,
 	webFrontendURL string,
+	graphQLAPIPort int,
+	httpAPIPort int,
 	cmdFactory fw.CommandFactory,
 	dbConnector fw.DBConnector,
 	dbMigrationTool fw.DBMigrationTool,
@@ -24,13 +28,16 @@ func NewRootCmd(
 			Usage:        "start",
 			ShortHelpMsg: "Start service",
 			OnExecute: func(cmd *fw.Command, args []string) {
-				start(
+				app.Start(
 					dbConfig,
 					migrationRoot,
 					recaptchaSecret,
-					githubConfig,
+					githubClientID,
+					githubClientSecret,
 					jwtSecret,
 					webFrontendURL,
+					graphQLAPIPort,
+					httpAPIPort,
 					dbConnector,
 					dbMigrationTool,
 				)
