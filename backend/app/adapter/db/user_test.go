@@ -1,10 +1,10 @@
-package sqlrepo
+package db
 
 import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"short/app/adapter/sqlrepo/table"
+	"short/app/adapter/db/table"
 	"short/app/entity"
 	"testing"
 
@@ -46,7 +46,7 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.User.TableName, table.User.ColumnEmail)
 			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
-			userRepo := NewUser(db)
+			userRepo := NewUserSQL(db)
 			gotIsExist, err := userRepo.IsEmailExist(testCase.email)
 			mdtest.Equal(t, nil, err)
 			mdtest.Equal(t, testCase.expIsExist, gotIsExist)
@@ -102,7 +102,7 @@ func TestUserSql_GetByEmail(t *testing.T) {
 			expQuery := fmt.Sprintf(`^SELECT ".+",".+",".+",".+",".+" FROM "%s" WHERE "%s"=.+$`, table.User.TableName, table.User.ColumnEmail)
 			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
-			userRepo := NewUser(db)
+			userRepo := NewUserSQL(db)
 
 			gotUser, err := userRepo.GetByEmail(testCase.email)
 			if testCase.hasErr {
@@ -131,7 +131,7 @@ func TestUserSql_Create(t *testing.T) {
 			hasErr:   true,
 		},
 		{
-			name: "email available",
+			name: "no given email",
 			user: entity.User{
 				Email: "user@example.com",
 				Name:  "Test User",
@@ -154,7 +154,7 @@ func TestUserSql_Create(t *testing.T) {
 				stub.ExpectExec(expStatement).WillReturnResult(driver.ResultNoRows)
 			}
 
-			userRepo := NewUser(db)
+			userRepo := NewUserSQL(db)
 
 			err = userRepo.Create(testCase.user)
 			if testCase.hasErr {

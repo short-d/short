@@ -14,8 +14,8 @@
 
 ## Get `s/` Chrome extension
 
-Install it from [Chrome Web Store](https://s.time4hacks.com/r/ext) or build it
-from [source](https://github.com/byliuyang/short-ext)
+Install it from [Chrome Web Store](https://short-d.com/r/ext) or build it
+from [source](https://short-d.com/r/ext-code)
 
 ## Getting Started
 
@@ -24,10 +24,6 @@ from [source](https://github.com/byliuyang/short-ext)
 ```bash
 git clone https://github.com/byliuyang/short.git
 ```
-
-If you don't have a Linux or a macOS machine at your hand,
-[Gitpod](https://gitpod.io/#https://github.com/byliuyang/short) will get you
-covered!
 
 ### Prerequisites
 
@@ -57,7 +53,7 @@ covered!
 
 ### Create reCAPTCHA account
 
-1. Sign up at [ReCAPTCHA](http://www.google.com/recaptcha/admin) with the
+1. Sign up at [ReCAPTCHA](https://short-d.com/r/recaptcha) with the
    following configurations:
 
    | Field           | Value          |
@@ -73,7 +69,7 @@ covered!
 ### Create Github OAuth Application
 
 1. Create a new OAuth app at
-   [Github Developers](https://github.com/settings/developers) with the
+   [Github Developers](https://short-d.com/r/ghdev) with the
    following configurations:
    
    | Field                      | Value                                            |
@@ -118,7 +114,7 @@ Visit [http://localhost:3000](http://localhost:3000)
 - Go v1.13.1
 - Node.js v12.12.0
 - Yarn v1.19.1
-- Postgresql v12.0 ( or use [ElephantSQL](https://www.elephantsql.com) instead )
+- Postgresql v12.0 ( or use [ElephantSQL](https://short-d.com/r/sql) instead )
 
 ### Backend
 
@@ -148,6 +144,12 @@ Visit [http://localhost:3000](http://localhost:3000)
    ./scripts/dev
    ```
 
+1. Remember to install developers tools before start coding:
+
+   ```bash
+   ./scripts/tools
+   ```
+
 ### Frontend
 
 Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`.
@@ -161,38 +163,42 @@ Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`
    
 1. Visit [http://localhost:3000](http://localhost:3000)
 
+## System Design
+
+### Database Modeling
+
+![Entity Relation Diagram](doc/eng/db/er-v1.png)
+
 ## Deployment
 
 Merging from `master` branch to `production` branch on Github will automatically
 deploy the latest code to the production server. This is called continuous
 delivery in the DevOps world.
 
-![Continuous Delivery](doc/continuous-delivery.png)
+![Continuous Delivery](doc/eng/devops/continuous-delivery.png)
 
 In the future, when there are enough automated tests, we may migrate to
 continuous deployment instead.
 
-![Continuous Deployment](doc/continuous-deployment.png)
+![Continuous Deployment](doc/eng/devops/continuous-deployment.png)
 
 ## Tools We Use
 
-- [Drone](https://ci.time4hacks.com/byliuyang/short/): Continuous integration
+- [Drone](https://short-d.com/r/ci): Continuous integration
   written in Go
-- [Sourcegraph](https://cs.time4hacks.com/github.com/byliuyang/short): Code
-  search written in Go
-  ![Tooltip during code review](doc/sourcegraph/reference.png)
-- [Code Climate](https://codeclimate.com/github/byliuyang/short): Automated code
+- [Code Climate](https://short-d.com/r/cs): Automated code
   review
-- [Gitpod](https://gitpod.io/#https://github.com/byliuyang/short): An online IDE
-  that launches ready-to-code development environments from any GitHub page.
-  ![Gitpod](doc/gitpod.png)
 - [ElephantSQL](https://www.elephantsql.com): Managed PostgreSQL service.
 
 ## Contributing
 
 When contributing to this repository, please first discuss the change you wish
-to make via [issues](https://github.com/byliuyang/short/issues) with the owner
+to make via [Slack channel](https://short-d.com/r/slack) with the owner
 of this repository before making a change.
+
+Please open a draft pull request when you are working on an issue so that the
+owner knows it is in progress. The owner may take over or reassign the issue if no
+body replies after ten days assigned to you.
 
 ### Pull Request Process
 
@@ -213,7 +219,7 @@ of this repository before making a change.
 
 ### Discussions
 
-Please join this [Slack channel](https://s.time4hacks.com/r/short-slack) to
+Please join this [Slack channel](https://short-d.com/r/slack) to
 discuss bugs, dev environment setup, tooling, and coding best practices.
 
 ## Author

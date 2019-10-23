@@ -1,4 +1,4 @@
-package cmd
+package app
 
 import (
 	"short/dep"
@@ -7,18 +7,17 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
-type GithubConfig struct {
-	ClientID     string
-	ClientSecret string
-}
-
-func start(
+// Start launches the GraphQL & HTTP APIs
+func Start(
 	dbConfig fw.DBConfig,
 	migrationRoot string,
 	recaptchaSecret string,
-	githubConfig GithubConfig,
+	githubClientID string,
+	githubClientSecret string,
 	jwtSecret string,
 	webFrontendURL string,
+	graphQLAPIPort int,
+	httpAPIPort int,
 	dbConnector fw.DBConnector,
 	dbMigrationTool fw.DBMigrationTool,
 ) {
@@ -39,15 +38,15 @@ func start(
 		provider.ReCaptchaSecret(recaptchaSecret),
 		provider.JwtSecret(jwtSecret),
 	)
-	graphqlAPI.Start(8080)
+	graphqlAPI.Start(graphQLAPIPort)
 
 	httpAPI := dep.InjectRoutingService(
 		"Routing API",
 		db,
-		provider.GithubClientID(githubConfig.ClientID),
-		provider.GithubClientSecret(githubConfig.ClientSecret),
+		provider.GithubClientID(githubClientID),
+		provider.GithubClientSecret(githubClientSecret),
 		provider.JwtSecret(jwtSecret),
 		provider.WebFrontendURL(webFrontendURL),
 	)
-	httpAPI.StartAndWait(80)
+	httpAPI.StartAndWait(httpAPIPort)
 }

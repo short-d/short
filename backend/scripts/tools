@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Compile time dependency injection code generator
+go get github.com/google/wire/cmd/wire
+
+# Code formatter
+go get golang.org/x/tools/cmd/goimports

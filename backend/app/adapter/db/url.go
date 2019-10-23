@@ -1,20 +1,22 @@
-package sqlrepo
+package db
 
 import (
 	"database/sql"
 	"fmt"
-	"short/app/adapter/sqlrepo/table"
+	"short/app/adapter/db/table"
 	"short/app/entity"
 	"short/app/usecase/repo"
 )
 
-var _ repo.URL = (*URL)(nil)
+var _ repo.URL = (*URLSql)(nil)
 
-type URL struct {
+// URLSql accesses URL information in url table through SQL.
+type URLSql struct {
 	db *sql.DB
 }
 
-func (u URL) IsAliasExist(alias string) (bool, error) {
+// IsAliasExist checks whether a given alias exist in url table.
+func (u URLSql) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
 FROM "%s" 
@@ -34,7 +36,8 @@ WHERE "%s"=$1;`,
 	return true, err
 }
 
-func (u *URL) Create(url entity.URL) error {
+// Create inserts a new URL into url table.
+func (u *URLSql) Create(url entity.URL) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5);`,
@@ -49,7 +52,8 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
-func (u URL) GetByAlias(alias string) (entity.URL, error) {
+// GetByAlias finds an URL in url table given alias.
+func (u URLSql) GetByAlias(alias string) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s" 
@@ -74,8 +78,9 @@ WHERE "%s"=$1;`,
 	return url, nil
 }
 
-func NewURL(db *sql.DB) *URL {
-	return &URL{
+// NewURLSql creates URLSql
+func NewURLSql(db *sql.DB) *URLSql {
+	return &URLSql{
 		db: db,
 	}
 }
