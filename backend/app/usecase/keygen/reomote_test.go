@@ -18,7 +18,7 @@ func TestRemote_NewKey(t *testing.T) {
 	testCases := []struct {
 		name              string
 		availableKeys     []entity.Key
-		bufferSize        uint
+		bufferSize        int
 		expectedGetKeyOps int
 		expectedHasErrs   []bool
 		expectedKeys      []entity.Key
