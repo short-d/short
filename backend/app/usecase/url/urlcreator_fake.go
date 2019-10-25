@@ -12,12 +12,20 @@ type FakeCreator struct {
 	keyGen keygen.Fake
 }
 
-func (f FakeCreator) Create(url entity.URL, userEmail string) (entity.URL, error) {
-	randomAlias := f.keyGen.NewKey()
-	return f.CreateWithCustomAlias(url, randomAlias, userEmail)
+func (f FakeCreator) CreateURL(url entity.URL, userEmail string) (entity.URL, error) {
+	key, err := f.keyGen.NewKey()
+	if err != nil {
+		return entity.URL{}, err
+	}
+	randomAlias := string(key)
+	return f.CreateURLWithCustomAlias(url, randomAlias, userEmail)
 }
 
-func (f FakeCreator) CreateWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error) {
+func (f FakeCreator) CreateURLWithCustomAlias(
+	url entity.URL,
+	alias string,
+	userEmail string,
+) (entity.URL, error) {
 	url.Alias = alias
 
 	_, ok := f.urls[alias]
@@ -29,7 +37,10 @@ func (f FakeCreator) CreateWithCustomAlias(url entity.URL, alias string, userEma
 	return url, nil
 }
 
-func NewCreatorFake(urls map[string]entity.URL, availableAlias []string) FakeCreator {
+func NewCreatorFake(
+	urls map[string]entity.URL,
+	availableAlias []string,
+) FakeCreator {
 	return FakeCreator{
 		urls:   urls,
 		keyGen: keygen.NewFake(availableAlias),

@@ -7,17 +7,24 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+type ServiceConfig struct {
+	MigrationRoot      string
+	RecaptchaSecret    string
+	GithubClientID     string
+	GithubClientSecret string
+	JwtSecret          string
+	WebFrontendURL     string
+	GraphQLAPIPort     int
+	HttpAPIPort        int
+	KeyGenBufferSize   int
+	KgsHostname        string
+	KgsPort            int
+}
+
 // Start launches the GraphQL & HTTP APIs
 func Start(
 	dbConfig fw.DBConfig,
-	migrationRoot string,
-	recaptchaSecret string,
-	githubClientID string,
-	githubClientSecret string,
-	jwtSecret string,
-	webFrontendURL string,
-	graphQLAPIPort int,
-	httpAPIPort int,
+	config ServiceConfig,
 	dbConnector fw.DBConnector,
 	dbMigrationTool fw.DBMigrationTool,
 ) {
@@ -26,27 +33,35 @@ func Start(
 		panic(err)
 	}
 
-	err = dbMigrationTool.Migrate(db, migrationRoot)
+	err = dbMigrationTool.Migrate(db, config.MigrationRoot)
 	if err != nil {
 		panic(err)
 	}
 
-	graphqlAPI := dep.InjectGraphQlService(
+	graphqlAPI, err := dep.InjectGraphQlService(
 		"GraphQL API",
 		db,
 		"/graphql",
-		provider.ReCaptchaSecret(recaptchaSecret),
-		provider.JwtSecret(jwtSecret),
+		provider.ReCaptchaSecret(config.RecaptchaSecret),
+		provider.JwtSecret(config.JwtSecret),
+		provider.KeyGenBufferSize(config.KeyGenBufferSize),
+		provider.KgsRpcConfig{
+			Hostname: config.KgsHostname,
+			Port:     config.KgsPort,
+		},
 	)
-	graphqlAPI.Start(graphQLAPIPort)
+	if err != nil {
+		panic(err)
+	}
+	graphqlAPI.Start(config.GraphQLAPIPort)
 
 	httpAPI := dep.InjectRoutingService(
 		"Routing API",
 		db,
-		provider.GithubClientID(githubClientID),
-		provider.GithubClientSecret(githubClientSecret),
-		provider.JwtSecret(jwtSecret),
-		provider.WebFrontendURL(webFrontendURL),
+		provider.GithubClientID(config.GithubClientID),
+		provider.GithubClientSecret(config.GithubClientSecret),
+		provider.JwtSecret(config.JwtSecret),
+		provider.WebFrontendURL(config.WebFrontendURL),
 	)
-	httpAPI.StartAndWait(httpAPIPort)
+	httpAPI.StartAndWait(config.HttpAPIPort)
 }

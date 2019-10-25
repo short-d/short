@@ -8,15 +8,22 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+type ServiceConfig struct {
+	RecaptchaSecret    string
+	GithubClientID     string
+	GithubClientSecret string
+	JwtSecret          string
+	WebFrontendURL     string
+	GraphQLAPIPort     int
+	HttpAPIPort        int
+	KeyGenBufferSize   int
+	KgsHostname        string
+	KgsPort            int
+}
+
 func NewRootCmd(
 	dbConfig fw.DBConfig,
-	recaptchaSecret string,
-	githubClientID string,
-	githubClientSecret string,
-	jwtSecret string,
-	webFrontendURL string,
-	graphQLAPIPort int,
-	httpAPIPort int,
+	config ServiceConfig,
 	cmdFactory fw.CommandFactory,
 	dbConnector fw.DBConnector,
 	dbMigrationTool fw.DBMigrationTool,
@@ -28,16 +35,24 @@ func NewRootCmd(
 			Usage:        "start",
 			ShortHelpMsg: "Start service",
 			OnExecute: func(cmd *fw.Command, args []string) {
+
+				serviceConfig := app.ServiceConfig{
+					MigrationRoot:      migrationRoot,
+					RecaptchaSecret:    config.RecaptchaSecret,
+					GithubClientID:     config.GithubClientID,
+					GithubClientSecret: config.GithubClientSecret,
+					JwtSecret:          config.JwtSecret,
+					WebFrontendURL:     config.WebFrontendURL,
+					GraphQLAPIPort:     config.GraphQLAPIPort,
+					HttpAPIPort:        config.HttpAPIPort,
+					KeyGenBufferSize:   config.KeyGenBufferSize,
+					KgsHostname:        config.KgsHostname,
+					KgsPort:            config.KgsPort,
+				}
+
 				app.Start(
 					dbConfig,
-					migrationRoot,
-					recaptchaSecret,
-					githubClientID,
-					githubClientSecret,
-					jwtSecret,
-					webFrontendURL,
-					graphQLAPIPort,
-					httpAPIPort,
+					serviceConfig,
 					dbConnector,
 					dbMigrationTool,
 				)

@@ -7,16 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"short/app/adapter/db"
-	"short/app/adapter/github"
-	"short/app/adapter/graphql"
-	"short/app/usecase/account"
-	"short/app/usecase/keygen"
-	"short/app/usecase/requester"
-	"short/app/usecase/url"
-	"short/dep/provider"
-	"time"
-
 	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdcli"
 	"github.com/byliuyang/app/modern/mddb"
@@ -28,6 +18,14 @@ import (
 	"github.com/byliuyang/app/modern/mdtimer"
 	"github.com/byliuyang/app/modern/mdtracer"
 	"github.com/google/wire"
+	"short/app/adapter/db"
+	"short/app/adapter/github"
+	"short/app/adapter/graphql"
+	"short/app/usecase/account"
+	"short/app/usecase/requester"
+	"short/app/usecase/url"
+	"short/dep/provider"
+	"time"
 )
 
 // Injectors from wire.go:
@@ -47,26 +45,33 @@ func InjectDBMigrationTool() fw.DBMigrationTool {
 	return postgresMigrationTool
 }
 
-func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret) mdservice.Service {
+func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRpcConfig provider.KgsRpcConfig) (mdservice.Service, error) {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	urlSql := db.NewURLSql(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql)
 	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
-	keyGenerator := keygen.NewInMemory()
-	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator)
+	rpc, err := provider.NewKgsRpc(kgsRpcConfig)
+	if err != nil {
+		return mdservice.Service{}, err
+	}
+	remote, err := provider.NewRemote(bufferSize, rpc)
+	if err != nil {
+		return mdservice.Service{}, err
+	}
+	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, remote)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHTTP(client)
-	reCaptcha := provider.ReCaptchaService(httpRequest, secret)
+	reCaptcha := provider.NewReCaptchaService(httpRequest, secret)
 	verifier := requester.NewVerifier(reCaptcha)
-	cryptoTokenizer := provider.JwtGo(jwtSecret)
+	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	timer := mdtimer.NewTimer()
 	tokenValidDuration := _wireTokenValidDurationValue
-	authenticator := provider.Authenticator(cryptoTokenizer, timer, tokenValidDuration)
+	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	short := graphql.NewShort(logger, tracer, retrieverPersist, creatorPersist, verifier, authenticator)
 	server := provider.GraphGophers(graphqlPath, logger, tracer, short)
 	service := mdservice.New(name, server, logger)
-	return service
+	return service, nil
 }
 
 var (
@@ -81,15 +86,15 @@ func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.Gi
 	retrieverPersist := url.NewRetrieverPersist(urlSql)
 	client := mdhttp.NewClient()
 	httpRequest := mdrequest.NewHTTP(client)
-	oauthGithub := provider.GithubOAuth(httpRequest, githubClientID, githubClientSecret)
+	oauthGithub := provider.NewGithubOAuth(httpRequest, githubClientID, githubClientSecret)
 	graphQlRequest := mdrequest.NewGraphQl(httpRequest)
 	api := github.NewAPI(graphQlRequest)
-	cryptoTokenizer := provider.JwtGo(jwtSecret)
+	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	tokenValidDuration := _wireTokenValidDurationValue
-	authenticator := provider.Authenticator(cryptoTokenizer, timer, tokenValidDuration)
+	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	repoService := account.NewRepoService(userSQL, timer)
-	v := provider.ShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, oauthGithub, api, authenticator, repoService)
+	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, oauthGithub, api, authenticator, repoService)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service
@@ -99,6 +104,6 @@ func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.Gi
 
 const oneDay = 24 * time.Hour
 
-var authSet = wire.NewSet(provider.JwtGo, wire.Value(provider.TokenValidDuration(oneDay)), provider.Authenticator)
+var authSet = wire.NewSet(provider.NewJwtGo, wire.Value(provider.TokenValidDuration(oneDay)), provider.NewAuthenticator)
 
 var observabilitySet = wire.NewSet(mdlogger.NewLocal, mdtracer.NewLocal)

@@ -14,23 +14,30 @@ func (e ErrAliasExist) Error() string {
 	return string(e)
 }
 
+// Creator represents a URL alias creator
 type Creator interface {
-	Create(url entity.URL, userEmail string) (entity.URL, error)
-	CreateWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error)
+	CreateURL(url entity.URL, userEmail string) (entity.URL, error)
+	CreateURLWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error)
 }
 
+// Creator represents a URL alias creator which persist the generated alias in
+// the repository
 type CreatorPersist struct {
 	urlRepo             repo.URL
 	userURLRelationRepo repo.UserURLRelation
 	keyGen              keygen.KeyGenerator
 }
 
-func (a CreatorPersist) Create(url entity.URL, userEmail string) (entity.URL, error) {
-	randomAlias := a.keyGen.NewKey()
-	return a.CreateWithCustomAlias(url, randomAlias, userEmail)
+func (a CreatorPersist) CreateURL(url entity.URL, userEmail string) (entity.URL, error) {
+	key, err := a.keyGen.NewKey()
+	if err != nil {
+		return entity.URL{}, err
+	}
+	randomAlias := string(key)
+	return a.CreateURLWithCustomAlias(url, randomAlias, userEmail)
 }
 
-func (a CreatorPersist) CreateWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error) {
+func (a CreatorPersist) CreateURLWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error) {
 	url.Alias = alias
 
 	isExist, err := a.urlRepo.IsAliasExist(alias)

@@ -1,14 +1,13 @@
 package resolver
 
 import (
+	"github.com/byliuyang/app/fw"
 	"short/app/entity"
 	"short/app/usecase/auth"
 	"short/app/usecase/input"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
 	"time"
-
-	"github.com/byliuyang/app/fw"
 )
 
 type Mutation struct {
@@ -70,10 +69,10 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 
 	if customAlias == nil {
-		trace1 := trace.Next("CreateUrl")
+		trace1 := trace.Next("CreateURL")
 		defer trace1.End()
 
-		newURL, err := m.urlCreator.Create(u, userEmail)
+		newURL, err := m.urlCreator.CreateURL(u, userEmail)
 		if err != nil {
 			m.logger.Error(err)
 			return nil, ErrUnknown{}
@@ -82,10 +81,10 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 		return &URL{url: newURL}, nil
 	}
 
-	trace1 := trace.Next("CreateUrlWithCustomAlias")
+	trace1 := trace.Next("CreateURLWithCustomAlias")
 	defer trace1.End()
 
-	newURL, err := m.urlCreator.CreateWithCustomAlias(u, *customAlias, userEmail)
+	newURL, err := m.urlCreator.CreateURLWithCustomAlias(u, *customAlias, userEmail)
 	if err == nil {
 		return &URL{url: newURL}, nil
 	}

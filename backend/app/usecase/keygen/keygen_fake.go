@@ -1,5 +1,11 @@
 package keygen
 
+import (
+	"errors"
+
+	"github.com/byliuyang/kgs/app/entity"
+)
+
 var _ KeyGenerator = (*Fake)(nil)
 
 type Fake struct {
@@ -7,14 +13,14 @@ type Fake struct {
 	currKeyIdx int
 }
 
-func (k *Fake) NewKey() string {
+func (k *Fake) NewKey() (entity.Key, error) {
 	if k.currKeyIdx >= len(k.keys) {
-		return ""
+		return "", errors.New("no available key")
 	}
 
 	key := k.keys[k.currKeyIdx]
 	k.currKeyIdx++
-	return key
+	return entity.Key(key), nil
 }
 
 func NewFake(keys []string) Fake {
