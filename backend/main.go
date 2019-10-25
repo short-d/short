@@ -25,6 +25,8 @@ func main() {
 	githubClientSecret := getEnv("GITHUB_CLIENT_SECRET", "")
 	jwtSecret := getEnv("JWT_SECRET", "")
 	webFrontendURL := getEnv("WEB_FRONTEND_URL", "")
+	graphQLAPIPort := mustInt(getEnv("GRAPHQL_API_PORT", "8080"))
+	httpAPIPort := mustInt(getEnv("HTTP_API_PORT", "80"))
 
 	cmdFactory := dep.InjectCommandFactory()
 	dbConnector := dep.InjectDBConnector()
@@ -37,17 +39,16 @@ func main() {
 		Password: password,
 		DbName:   dbName,
 	}
-	githubConfig := cmd.GithubConfig{
-		ClientID:     githubClientID,
-		ClientSecret: githubClientSecret,
-	}
 
 	rootCmd := cmd.NewRootCmd(
 		dbConfig,
 		recaptchaSecret,
-		githubConfig,
+		githubClientID,
+		githubClientSecret,
 		jwtSecret,
 		webFrontendURL,
+		graphQLAPIPort,
+		httpAPIPort,
 		cmdFactory,
 		dbConnector,
 		dbMigrationTool,

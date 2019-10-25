@@ -131,7 +131,7 @@ func TestUserSql_Create(t *testing.T) {
 			hasErr:   true,
 		},
 		{
-			name: "email available",
+			name: "no given email",
 			user: entity.User{
 				Email: "user@example.com",
 				Name:  "Test User",
