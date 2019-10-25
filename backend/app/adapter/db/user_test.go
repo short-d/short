@@ -99,8 +99,7 @@ func TestUserSql_GetUserByEmail(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
-			expQuery := fmt.Sprintf(
-				`^SELECT\s+".+",".+",".+",".+",".+"\s+FROM\s+"%s"\s+WHERE\s+"%s"=.+$`,
+			expQuery := fmt.Sprintf(`^SELECT ".+",".+",".+",".+",".+" FROM "%s" WHERE "%s"=.+$`,
 				table.User.TableName, table.User.ColumnEmail)
 			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
