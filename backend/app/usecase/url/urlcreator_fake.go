@@ -7,11 +7,13 @@ import (
 
 var _ Creator = (*FakeCreator)(nil)
 
+// FakeCreator represents in-memory url creator
 type FakeCreator struct {
 	urls   map[string]entity.URL
 	keyGen keygen.Fake
 }
 
+// CreateURL persists a new url with a generated alias in the repository.
 func (f FakeCreator) CreateURL(url entity.URL, userEmail string) (entity.URL, error) {
 	key, err := f.keyGen.NewKey()
 	if err != nil {
@@ -21,6 +23,8 @@ func (f FakeCreator) CreateURL(url entity.URL, userEmail string) (entity.URL, er
 	return f.CreateURLWithCustomAlias(url, randomAlias, userEmail)
 }
 
+// CreateURLWithCustomAlias persists a new url with a custom alias in
+// the repository.
 func (f FakeCreator) CreateURLWithCustomAlias(
 	url entity.URL,
 	alias string,
@@ -37,6 +41,7 @@ func (f FakeCreator) CreateURLWithCustomAlias(
 	return url, nil
 }
 
+// NewCreatorFake creates in-memory url creator
 func NewCreatorFake(
 	urls map[string]entity.URL,
 	availableAlias []string,
