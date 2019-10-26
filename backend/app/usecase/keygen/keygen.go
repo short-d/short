@@ -1,5 +1,7 @@
 package keygen
 
+import "github.com/byliuyang/kgs/app/entity"
+
 type KeyGenerator interface {
-	NewKey() string
+	NewKey() (entity.Key, error)
 }

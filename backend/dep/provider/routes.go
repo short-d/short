@@ -14,8 +14,8 @@ import (
 // WebFrontendURL represents the URL of the web frontend
 type WebFrontendURL string
 
-// ShortRoutes creates HTTP routes for Short API with WwwRoot to uniquely identify WwwRoot during dependency injection.
-func ShortRoutes(
+// NewShortRoutes creates HTTP routes for Short API with WwwRoot to uniquely identify WwwRoot during dependency injection.
+func NewShortRoutes(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	webFrontendURL WebFrontendURL,
@@ -26,14 +26,20 @@ func ShortRoutes(
 	authenticator auth.Authenticator,
 	accountService service.Account,
 ) []fw.Route {
+	observability := routing.Observability{
+		Logger: logger,
+		Tracer: tracer,
+	}
+	gh := routing.Github{
+		OAuth: githubOAuth,
+		API:   githubAPI,
+	}
 	return routing.NewShort(
-		logger,
-		tracer,
+		observability,
 		string(webFrontendURL),
 		timer,
 		urlRetriever,
-		githubOAuth,
-		githubAPI,
+		gh,
 		authenticator,
 		accountService,
 	)

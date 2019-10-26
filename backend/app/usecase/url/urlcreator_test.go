@@ -61,7 +61,7 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 			})
 
 			creator := NewCreatorPersist(&urlRepo, &userURLRepo, &keyGen)
-			url, err := creator.Create(testCase.url, testCase.userEmail)
+			url, err := creator.CreateURL(testCase.url, testCase.userEmail)
 
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)

@@ -8,7 +8,7 @@ import (
 	"github.com/byliuyang/app/mdtest"
 )
 
-func TestURLFakeCreator_CreateUrl(t *testing.T) {
+func TestURLFakeCreator_CreateURL(t *testing.T) {
 	now := time.Now()
 
 	testCases := []struct {
@@ -53,7 +53,7 @@ func TestURLFakeCreator_CreateUrl(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeCreator := NewCreatorFake(testCase.urls, testCase.alias)
-			gotURL, err := fakeCreator.Create(testCase.url, testCase.userEmail)
+			gotURL, err := fakeCreator.CreateURL(testCase.url, testCase.userEmail)
 
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)

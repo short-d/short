@@ -28,6 +28,10 @@ func main() {
 	graphQLAPIPort := mustInt(getEnv("GRAPHQL_API_PORT", "8080"))
 	httpAPIPort := mustInt(getEnv("HTTP_API_PORT", "80"))
 
+	keyGenBufferSize := mustInt(getEnv("KEY_GEN_BUFFER_SIZE", "50"))
+	kgsHostname := getEnv("KEY_GEN_HOSTNAME", "localhost")
+	kgsPort := mustInt(getEnv("KEY_GEN_PORT", "8080"))
+
 	cmdFactory := dep.InjectCommandFactory()
 	dbConnector := dep.InjectDBConnector()
 	dbMigrationTool := dep.InjectDBMigrationTool()
@@ -40,15 +44,22 @@ func main() {
 		DbName:   dbName,
 	}
 
+	serviceConfig := cmd.ServiceConfig{
+		RecaptchaSecret:    recaptchaSecret,
+		GithubClientID:     githubClientID,
+		GithubClientSecret: githubClientSecret,
+		JwtSecret:          jwtSecret,
+		WebFrontendURL:     webFrontendURL,
+		GraphQLAPIPort:     graphQLAPIPort,
+		HTTPAPIPort:        httpAPIPort,
+		KeyGenBufferSize:   keyGenBufferSize,
+		KgsHostname:        kgsHostname,
+		KgsPort:            kgsPort,
+	}
+
 	rootCmd := cmd.NewRootCmd(
 		dbConfig,
-		recaptchaSecret,
-		githubClientID,
-		githubClientSecret,
-		jwtSecret,
-		webFrontendURL,
-		graphQLAPIPort,
-		httpAPIPort,
+		serviceConfig,
 		cmdFactory,
 		dbConnector,
 		dbMigrationTool,

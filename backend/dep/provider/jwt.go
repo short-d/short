@@ -9,7 +9,7 @@ import (
 // JwtSecret represents the secret used to encode and decode JWT token.
 type JwtSecret string
 
-// JwtGo creates Crypto Tokenizer with JwtSecret to uniquely identify secret during dependency injection.
-func JwtGo(secret JwtSecret) fw.CryptoTokenizer {
+// NewJwtGo creates Crypto Tokenizer with JwtSecret to uniquely identify secret during dependency injection.
+func NewJwtGo(secret JwtSecret) fw.CryptoTokenizer {
 	return mdcrypto.NewJwtGo(string(secret))
 }
