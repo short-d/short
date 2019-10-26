@@ -26,14 +26,20 @@ func NewShortRoutes(
 	authenticator auth.Authenticator,
 	accountService service.Account,
 ) []fw.Route {
+	observability := routing.Observability{
+		Logger: logger,
+		Tracer: tracer,
+	}
+	gh := routing.Github{
+		OAuth: githubOAuth,
+		API:   githubAPI,
+	}
 	return routing.NewShort(
-		logger,
-		tracer,
+		observability,
 		string(webFrontendURL),
 		timer,
 		urlRetriever,
-		githubOAuth,
-		githubAPI,
+		gh,
 		authenticator,
 		accountService,
 	)

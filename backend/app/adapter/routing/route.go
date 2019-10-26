@@ -12,27 +12,40 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// Observability represents a set of tools to improves observability of the
+// system.
+type Observability struct {
+	Logger fw.Logger
+	Tracer fw.Tracer
+}
+
+// Github groups Github oauth and public APIs together.
+type Github struct {
+	OAuth oauth.Github
+	API github.API
+}
+
 func NewShort(
-	logger fw.Logger,
-	tracer fw.Tracer,
+	observability Observability,
 	webFrontendURL string,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
-	githubOAuth oauth.Github,
-	githubAPI github.API,
+	github Github,
 	authenticator auth.Authenticator,
 	accountService service.Account,
 ) []fw.Route {
-	githubSignIn := signin.NewOAuth(githubOAuth, githubAPI, accountService, authenticator)
+	githubSignIn := signin.NewOAuth(github.OAuth, github.API, accountService, authenticator)
 	frontendURL, err := netURL.Parse(webFrontendURL)
 	if err != nil {
 		panic(err)
 	}
+	logger := observability.Logger
+	tracer := observability.Tracer
 	return []fw.Route{
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
-			Handle: NewGithubSignIn(logger, tracer, githubOAuth, authenticator, webFrontendURL),
+			Handle: NewGithubSignIn(logger, tracer, github.OAuth, authenticator, webFrontendURL),
 		},
 		{
 			Method: "GET",
