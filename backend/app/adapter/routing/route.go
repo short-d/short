@@ -22,7 +22,7 @@ type Observability struct {
 // Github groups Github oauth and public APIs together.
 type Github struct {
 	OAuth oauth.Github
-	API github.API
+	API   github.API
 }
 
 func NewShort(
