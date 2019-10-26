@@ -9,8 +9,8 @@ import (
 )
 
 func TestNewRemote(t *testing.T) {
-	keyGenService := service.NewKeyGenFake([]entity.Key{})
-	_, err := NewRemote(0, &keyGenService)
+	keyFetcher := service.NewKeyFetcherFake([]entity.Key{})
+	_, err := NewRemote(0, &keyFetcher)
 	mdtest.NotEqual(t, nil, err)
 }
 
@@ -75,8 +75,8 @@ func TestRemote_NewKey(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			keyGenService := service.NewKeyGenFake(testCase.availableKeys)
-			remote, err := NewRemote(testCase.bufferSize, &keyGenService)
+			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
+			remote, err := NewRemote(testCase.bufferSize, &keyFetcher)
 			mdtest.Equal(t, nil, err)
 
 			for idx := 0; idx < testCase.expectedGetKeyOps; idx++ {
