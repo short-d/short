@@ -2,6 +2,7 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://short-d.com",
   "dependencies": {
     "apollo-cache-inmemory": "^1.6.3",
     "apollo-client": "^2.6.4",
