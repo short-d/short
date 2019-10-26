@@ -51,7 +51,7 @@ func main() {
 		JwtSecret:          jwtSecret,
 		WebFrontendURL:     webFrontendURL,
 		GraphQLAPIPort:     graphQLAPIPort,
-		HttpAPIPort:        httpAPIPort,
+		HTTPAPIPort:        httpAPIPort,
 		KeyGenBufferSize:   keyGenBufferSize,
 		KgsHostname:        kgsHostname,
 		KgsPort:            kgsPort,

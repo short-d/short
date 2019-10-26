@@ -17,9 +17,9 @@ type bufferEntry struct {
 // Remote represents a KeyGenerator which fetch unique keys from remote service
 // and buffer them in memory for fast response.
 type Remote struct {
-	bufferSize    int
-	buffer        chan bufferEntry
-	keyGenService service.KeyGen
+	bufferSize int
+	buffer     chan bufferEntry
+	keyFetcher service.KeyFetcher
 }
 
 // NewKey produces a key
@@ -35,7 +35,7 @@ func (r Remote) NewKey() (entity.Key, error) {
 }
 
 func (r Remote) fetchKeys() {
-	keys, err := r.keyGenService.FetchKeys(r.bufferSize)
+	keys, err := r.keyFetcher.FetchKeys(r.bufferSize)
 	if err != nil {
 		r.buffer <- bufferEntry{
 			key: "",
@@ -53,13 +53,13 @@ func (r Remote) fetchKeys() {
 }
 
 // NewRemote creates Remote keygen generator
-func NewRemote(bufferSize int, keyGenService service.KeyGen) (Remote, error) {
+func NewRemote(bufferSize int, keyFetcher service.KeyFetcher) (Remote, error) {
 	if bufferSize < 1 {
 		return Remote{}, errors.New("buffer size can't be less than 1")
 	}
 	return Remote{
-		bufferSize:    bufferSize,
-		buffer:        make(chan bufferEntry, bufferSize),
-		keyGenService: keyGenService,
+		bufferSize: bufferSize,
+		buffer:     make(chan bufferEntry, bufferSize),
+		keyFetcher: keyFetcher,
 	}, nil
 }

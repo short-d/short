@@ -46,13 +46,13 @@ func InjectDBMigrationTool() fw.DBMigrationTool {
 	return postgresMigrationTool
 }
 
-func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRpcConfig provider.KgsRpcConfig) (mdservice.Service, error) {
+func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (mdservice.Service, error) {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	urlSql := db.NewURLSql(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql)
 	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
-	rpc, err := provider.NewKgsRpc(kgsRpcConfig)
+	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
 		return mdservice.Service{}, err
 	}

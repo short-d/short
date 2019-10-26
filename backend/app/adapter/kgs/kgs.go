@@ -12,18 +12,21 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
-var _ service.KeyGen = (*Rpc)(nil)
+var _ service.KeyFetcher = (*RPC)(nil)
 
-type Rpc struct {
-	gRpcClient proto.KeyGenClient
+// RPC represents remote procedure calls which interact with key generation
+// service.
+type RPC struct {
+	gRPCClient proto.KeyGenClient
 }
 
-func (k Rpc) FetchKeys(maxCount int) ([]entity.Key, error) {
+// FetchKeys retrieves keys in batch from key generation service.
+func (k RPC) FetchKeys(maxCount int) ([]entity.Key, error) {
 	req := proto.AllocateKeysRequest{
 		MaxKeyCount: uint32(maxCount),
 	}
 	ctx := context.Background()
-	res, err := k.gRpcClient.AllocateKeys(ctx, &req)
+	res, err := k.gRPCClient.AllocateKeys(ctx, &req)
 
 	if err != nil {
 		return nil, err
@@ -36,19 +39,20 @@ func (k Rpc) FetchKeys(maxCount int) ([]entity.Key, error) {
 	return keys, nil
 }
 
-func NewRpc(hostname string, port int) (Rpc, error) {
+// NewRPC initializes GRPC client for key generation service APIs.
+func NewRPC(hostname string, port int) (RPC, error) {
 	target := fmt.Sprintf("%s:%d", hostname, port)
 
 	config := &tls.Config{
 		InsecureSkipVerify: true,
 	}
 
-	gRpcTLS := credentials.NewTLS(config)
-	gRpcCredentials := grpc.WithTransportCredentials(gRpcTLS)
-	connection, err := grpc.Dial(target, gRpcCredentials)
+	gRPCTls := credentials.NewTLS(config)
+	gRPCCredentials := grpc.WithTransportCredentials(gRPCTls)
+	connection, err := grpc.Dial(target, gRPCCredentials)
 	if err != nil {
-		return Rpc{}, err
+		return RPC{}, err
 	}
-	gRpcClient := proto.NewKeyGenClient(connection)
-	return Rpc{gRpcClient: gRpcClient}, nil
+	gRPCClient := proto.NewKeyGenClient(connection)
+	return RPC{gRPCClient: gRPCClient}, nil
 }

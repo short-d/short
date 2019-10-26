@@ -8,6 +8,8 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// ServiceConfig represents necessary parameters needed to initialize the
+// backend APIs.
 type ServiceConfig struct {
 	RecaptchaSecret    string
 	GithubClientID     string
@@ -15,7 +17,7 @@ type ServiceConfig struct {
 	JwtSecret          string
 	WebFrontendURL     string
 	GraphQLAPIPort     int
-	HttpAPIPort        int
+	HTTPAPIPort        int
 	KeyGenBufferSize   int
 	KgsHostname        string
 	KgsPort            int
@@ -44,7 +46,7 @@ func NewRootCmd(
 					JwtSecret:          config.JwtSecret,
 					WebFrontendURL:     config.WebFrontendURL,
 					GraphQLAPIPort:     config.GraphQLAPIPort,
-					HttpAPIPort:        config.HttpAPIPort,
+					HTTPAPIPort:        config.HTTPAPIPort,
 					KeyGenBufferSize:   config.KeyGenBufferSize,
 					KgsHostname:        config.KgsHostname,
 					KgsPort:            config.KgsPort,

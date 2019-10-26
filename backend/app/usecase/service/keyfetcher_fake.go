@@ -7,15 +7,15 @@ import (
 	"github.com/byliuyang/kgs/app/entity"
 )
 
-var _ KeyGen = (*KeyGenFake)(nil)
+var _ KeyFetcher = (*KeyFetcherFake)(nil)
 
-// KeyGenFake represents an in memory key generator
-type KeyGenFake struct {
+// KeyFetcherFake represents an in memory key generator
+type KeyFetcherFake struct {
 	availableKeys []entity.Key
 }
 
 // FetchKeys returns keys from the buffer
-func (k *KeyGenFake) FetchKeys(maxCount int) ([]entity.Key, error) {
+func (k *KeyFetcherFake) FetchKeys(maxCount int) ([]entity.Key, error) {
 	if len(k.availableKeys) < 1 {
 		return nil, errors.New("no available key")
 	}
@@ -25,9 +25,9 @@ func (k *KeyGenFake) FetchKeys(maxCount int) ([]entity.Key, error) {
 	return allocatedKeys, nil
 }
 
-// NewKeyGenFake creates fake key generator
-func NewKeyGenFake(availableKeys []entity.Key) KeyGenFake {
-	return KeyGenFake{
+// NewKeyFetcherFake creates fake key generator
+func NewKeyFetcherFake(availableKeys []entity.Key) KeyFetcherFake {
+	return KeyFetcherFake{
 		availableKeys: availableKeys,
 	}
 }

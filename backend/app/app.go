@@ -7,6 +7,7 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// ServiceConfig represents require parameters for the backend APIs
 type ServiceConfig struct {
 	MigrationRoot      string
 	RecaptchaSecret    string
@@ -15,7 +16,7 @@ type ServiceConfig struct {
 	JwtSecret          string
 	WebFrontendURL     string
 	GraphQLAPIPort     int
-	HttpAPIPort        int
+	HTTPAPIPort        int
 	KeyGenBufferSize   int
 	KgsHostname        string
 	KgsPort            int
@@ -45,7 +46,7 @@ func Start(
 		provider.ReCaptchaSecret(config.RecaptchaSecret),
 		provider.JwtSecret(config.JwtSecret),
 		provider.KeyGenBufferSize(config.KeyGenBufferSize),
-		provider.KgsRpcConfig{
+		provider.KgsRPCConfig{
 			Hostname: config.KgsHostname,
 			Port:     config.KgsPort,
 		},
@@ -63,5 +64,5 @@ func Start(
 		provider.JwtSecret(config.JwtSecret),
 		provider.WebFrontendURL(config.WebFrontendURL),
 	)
-	httpAPI.StartAndWait(config.HttpAPIPort)
+	httpAPI.StartAndWait(config.HTTPAPIPort)
 }

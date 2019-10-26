@@ -75,7 +75,7 @@ func InjectGraphQlService(
 	secret provider.ReCaptchaSecret,
 	jwtSecret provider.JwtSecret,
 	bufferSize provider.KeyGenBufferSize,
-	kgsRpcConfig provider.KgsRpcConfig,
+	kgsRPCConfig provider.KgsRPCConfig,
 ) (mdservice.Service, error) {
 	wire.Build(
 		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
@@ -84,7 +84,7 @@ func InjectGraphQlService(
 		wire.Bind(new(repo.UserURLRelation), new(db.UserURLRelationSQL)),
 		wire.Bind(new(repo.URL), new(*db.URLSql)),
 		wire.Bind(new(keygen.KeyGenerator), new(keygen.Remote)),
-		wire.Bind(new(service.KeyGen), new(kgs.Rpc)),
+		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
 
 		observabilitySet,
 		authSet,
@@ -100,7 +100,7 @@ func InjectGraphQlService(
 		provider.NewRemote,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
-		provider.NewKgsRpc,
+		provider.NewKgsRPC,
 		provider.NewReCaptchaService,
 		requester.NewVerifier,
 		graphql.NewShort,
