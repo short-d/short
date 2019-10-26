@@ -5,6 +5,7 @@ package dep
 import (
 	"database/sql"
 	"short/app/adapter/db"
+	"short/app/adapter/facebook"
 	"short/app/adapter/github"
 	"short/app/adapter/graphql"
 	"short/app/adapter/kgs"
@@ -113,6 +114,9 @@ func InjectRoutingService(
 	sqlDB *sql.DB,
 	githubClientID provider.GithubClientID,
 	githubClientSecret provider.GithubClientSecret,
+	facebookClientID provider.FacebookClientID,
+	facebookClientSecret provider.FacebookClientSecret,
+	facebookRedirectURI provider.FacebookRedirectURI,
 	jwtSecret provider.JwtSecret,
 	webFrontendURL provider.WebFrontendURL,
 ) mdservice.Service {
@@ -138,6 +142,8 @@ func InjectRoutingService(
 		account.NewRepoService,
 		provider.NewGithubOAuth,
 		github.NewAPI,
+		provider.NewFacebookOAuth,
+		facebook.NewAPI,
 		provider.NewShortRoutes,
 	)
 	return mdservice.Service{}

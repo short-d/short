@@ -4,13 +4,10 @@ import (
 	"short/app/entity"
 
 	fb "github.com/huandu/facebook"
-
-	"github.com/byliuyang/app/fw"
 )
 
-// API access user's account & repository information through FB Graph API.
+// API access user's profile information through FB Graph API.
 type API struct {
-	graphql fw.GraphQlRequest
 }
 
 // GetUserProfile retrieves user's email and name from Facebook.
@@ -37,4 +34,9 @@ func (g API) GetUserProfile(accessToken string) (entity.UserProfile, error) {
 		Email: fbResponse.Email,
 		Name:  fbResponse.Name,
 	}, nil
+}
+
+// NewAPI initializes Github API access service.
+func NewAPI() API {
+	return API{}
 }

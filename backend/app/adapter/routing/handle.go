@@ -81,3 +81,42 @@ func NewGithubSignInCallback(
 		http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 	}
 }
+
+func NewFacebookSignIn(
+	logger fw.Logger,
+	tracer fw.Tracer,
+	FacebookOAuth oauth.Facebook,
+	authenticator auth.Authenticator,
+	webFrontendURL string,
+) fw.Handle {
+	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
+		token := getToken(params)
+		if authenticator.IsSignedIn(token) {
+			http.Redirect(w, r, webFrontendURL, http.StatusSeeOther)
+			return
+		}
+		signInLink := FacebookOAuth.GetAuthorizationURL()
+		http.Redirect(w, r, signInLink, http.StatusSeeOther)
+	}
+}
+
+func NewFacebookSignInCallback(
+	logger fw.Logger,
+	tracer fw.Tracer,
+	oauthSignIn signin.OAuth,
+	webFrontendURL netURL.URL,
+) fw.Handle {
+	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
+		code := params["code"]
+
+		authToken, err := oauthSignIn.SignIn(code)
+		if err != nil {
+			logger.Error(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		webFrontendURL = setToken(webFrontendURL, authToken)
+		http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
+	}
+}
