@@ -7,6 +7,7 @@ import (
 	"short/app/adapter/db"
 	"short/app/adapter/github"
 	"short/app/adapter/graphql"
+	"short/app/adapter/kgs"
 	"short/app/usecase/account"
 	"short/app/usecase/keygen"
 	"short/app/usecase/repo"
@@ -32,10 +33,10 @@ import (
 const oneDay = 24 * time.Hour
 
 var authSet = wire.NewSet(
-	provider.JwtGo,
+	provider.NewJwtGo,
 
 	wire.Value(provider.TokenValidDuration(oneDay)),
-	provider.Authenticator,
+	provider.NewAuthenticator,
 )
 
 var observabilitySet = wire.NewSet(
@@ -73,33 +74,38 @@ func InjectGraphQlService(
 	graphqlPath provider.GraphQlPath,
 	secret provider.ReCaptchaSecret,
 	jwtSecret provider.JwtSecret,
-) mdservice.Service {
+	bufferSize provider.KeyGenBufferSize,
+	kgsRPCConfig provider.KgsRPCConfig,
+) (mdservice.Service, error) {
 	wire.Build(
 		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
 		wire.Bind(new(repo.UserURLRelation), new(db.UserURLRelationSQL)),
 		wire.Bind(new(repo.URL), new(*db.URLSql)),
+		wire.Bind(new(keygen.KeyGenerator), new(keygen.Remote)),
+		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
 
 		observabilitySet,
 		authSet,
 
 		mdservice.New,
-		provider.GraphGophers,
+		provider.NewGraphGophers,
 		mdhttp.NewClient,
 		mdrequest.NewHTTP,
 		mdtimer.NewTimer,
 
 		db.NewURLSql,
 		db.NewUserURLRelationSQL,
-		keygen.NewInMemory,
+		provider.NewRemote,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
-		provider.ReCaptchaService,
+		provider.NewKgsRPC,
+		provider.NewReCaptchaService,
 		requester.NewVerifier,
 		graphql.NewShort,
 	)
-	return mdservice.Service{}
+	return mdservice.Service{}, nil
 }
 
 func InjectRoutingService(
@@ -130,9 +136,9 @@ func InjectRoutingService(
 		db.NewURLSql,
 		url.NewRetrieverPersist,
 		account.NewRepoService,
-		provider.GithubOAuth,
+		provider.NewGithubOAuth,
 		github.NewAPI,
-		provider.ShortRoutes,
+		provider.NewShortRoutes,
 	)
 	return mdservice.Service{}
 }

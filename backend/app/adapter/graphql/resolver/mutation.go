@@ -70,10 +70,10 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 
 	if customAlias == nil {
-		trace1 := trace.Next("CreateUrl")
+		trace1 := trace.Next("CreateURL")
 		defer trace1.End()
 
-		newURL, err := m.urlCreator.Create(u, userEmail)
+		newURL, err := m.urlCreator.CreateURL(u, userEmail)
 		if err != nil {
 			m.logger.Error(err)
 			return nil, ErrUnknown{}
@@ -82,10 +82,10 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 		return &URL{url: newURL}, nil
 	}
 
-	trace1 := trace.Next("CreateUrlWithCustomAlias")
+	trace1 := trace.Next("CreateURLWithCustomAlias")
 	defer trace1.End()
 
-	newURL, err := m.urlCreator.CreateWithCustomAlias(u, *customAlias, userEmail)
+	newURL, err := m.urlCreator.CreateURLWithCustomAlias(u, *customAlias, userEmail)
 	if err == nil {
 		return &URL{url: newURL}, nil
 	}

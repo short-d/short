@@ -167,6 +167,12 @@ steps:
         from_secret: JWT_SECRET
       WEB_FRONTEND_URL:
         from_secret: WEB_FRONTEND_URL
+      KEY_GEN_BUFFER_SIZE:
+        from_secret: KEY_GEN_BUFFER_SIZE
+      KEY_GEN_HOSTNAME:
+        from_secret: KEY_GEN_HOSTNAME
+      KEY_GEN_PORT:
+        from_secret: KEY_GEN_PORT
     settings:
       host:
         from_secret: SERVER_HOST
@@ -189,6 +195,9 @@ steps:
         - WEB_PORT
         - HTTP_API_PORT
         - GRAPHQL_API_PORT
+        - KEY_GEN_BUFFER_SIZE
+        - KEY_GEN_HOSTNAME
+        - KEY_GEN_PORT
       script:
         - docker pull $DOCKERHUB_USERNAME/short-frontend
         - docker pull $DOCKERHUB_USERNAME/short-backend
@@ -205,6 +214,9 @@ steps:
           WEB_PORT=$WEB_PORT
           HTTP_API_PORT=$HTTP_API_PORT
           GRAPHQL_API_PORT=$GRAPHQL_API_PORT
+          KEY_GEN_BUFFER_SIZE=$KEY_GEN_BUFFER_SIZE
+          KEY_GEN_HOSTNAME=$KEY_GEN_HOSTNAME
+          KEY_GEN_PORT=$KEY_GEN_PORT
           docker-compose up -d
     when:
       branch:
