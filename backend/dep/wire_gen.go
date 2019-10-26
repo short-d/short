@@ -7,15 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"short/app/adapter/db"
-	"short/app/adapter/github"
-	"short/app/adapter/graphql"
-	"short/app/usecase/account"
-	"short/app/usecase/requester"
-	"short/app/usecase/url"
-	"short/dep/provider"
-	"time"
-
 	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdcli"
 	"github.com/byliuyang/app/modern/mddb"
@@ -27,6 +18,14 @@ import (
 	"github.com/byliuyang/app/modern/mdtimer"
 	"github.com/byliuyang/app/modern/mdtracer"
 	"github.com/google/wire"
+	"short/app/adapter/db"
+	"short/app/adapter/github"
+	"short/app/adapter/graphql"
+	"short/app/usecase/account"
+	"short/app/usecase/requester"
+	"short/app/usecase/url"
+	"short/dep/provider"
+	"time"
 )
 
 // Injectors from wire.go:
@@ -70,7 +69,7 @@ func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.Graph
 	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	short := graphql.NewShort(logger, tracer, retrieverPersist, creatorPersist, verifier, authenticator)
-	server := provider.GraphGophers(graphqlPath, logger, tracer, short)
+	server := provider.NewGraphGophers(graphqlPath, logger, tracer, short)
 	service := mdservice.New(name, server, logger)
 	return service, nil
 }

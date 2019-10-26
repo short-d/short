@@ -90,7 +90,7 @@ func InjectGraphQlService(
 		authSet,
 
 		mdservice.New,
-		provider.GraphGophers,
+		provider.NewGraphGophers,
 		mdhttp.NewClient,
 		mdrequest.NewHTTP,
 		mdtimer.NewTimer,
