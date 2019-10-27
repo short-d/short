@@ -8,6 +8,8 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// More info here: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
+
 const (
 	fbAuthorizationAPI = "https://www.facebook.com/v4.0/dialog/oauth"
 	fbAccessTokenAPI   = "https://graph.facebook.com/v4.0/oauth/access_token"
