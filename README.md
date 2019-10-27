@@ -66,7 +66,7 @@ git clone https://github.com/byliuyang/short.git
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
    `frontend/.env.development` file with `SITE_KEY`.
 
-### Create Github OAuth Application
+### Create Github OAuth application
 
 1. Create a new OAuth app at
    [Github Developers](https://short-d.com/r/ghdev) with the
@@ -192,7 +192,7 @@ independent deployment of each service.
 Short leverages class design, package cohesion, and package coupling princiapls
 from C++ world to manage its internal dependencies.
 
-#### Class design
+#### Class Design
 
 | Principal                                                        | Description                                                            |
 |------------------------------------------------------------------|------------------------------------------------------------------------|
@@ -202,7 +202,7 @@ from C++ world to manage its internal dependencies.
 | [Interface Segregation Principle](https://api.short-d.com/r/isp) | Make fine grained interfaces that are client specific.                 |
 | [Dependency Inversion Principle](https://api.short-d.com/r/dip)  | Depend on abstractions, not on concretions.                            |
 
-#### package cohesion
+#### Package Cohesion
 
 | Principal                                                            | Description                                           |
 |----------------------------------------------------------------------|-------------------------------------------------------|
@@ -210,7 +210,7 @@ from C++ world to manage its internal dependencies.
 | [The Common Closure Principle](https://api.short-d.com/r/ccp)        | Classes that change together are packaged together.   |
 | [The Common Reuse Principle](https://api.short-d.com/r/crp)          | Classes that are used together are packaged together. |
 
-#### Package coupling
+#### Package Coupling
 
 | Principal                                                       | Description                                           |
 |-----------------------------------------------------------------|-------------------------------------------------------|
