@@ -6,7 +6,7 @@ RUN go mod download \
 	&& go mod verify \
 	# Build binary without dwarf debug tables.
 	# Also trim paths to provide more reproduceable builds.
-	&& go build -trimpath -ldflags="-s -w" -o build/short main.go
+	&& go build -trimpath -ldflags="-s -w" -o build/app main.go
 
 # Build Artifact
 FROM alpine:latest
@@ -19,6 +19,6 @@ RUN apk --no-cache add \
 WORKDIR /app
 COPY --from=builder /app/scripts scripts
 COPY --from=builder /app/app/adapter/migration migration
-COPY --from=builder /app/build/short .
+COPY --from=builder /app/build/app .
 
-CMD [ "sh", "-c", "./scripts/wait-for-it -s -t 0 $DB_HOST:$DB_PORT -- ./short start --migration migration" ]
+CMD [ "sh", "-c", "./scripts/wait-for-it -s -t 0 $DB_HOST:$DB_PORT -- ./app start --migration migration" ]

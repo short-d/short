@@ -24,6 +24,9 @@ services:
       - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
       - JWT_SECRET=${JWT_SECRET}
       - WEB_FRONTEND_URL=${WEB_FRONTEND_URL}
+      - KEY_GEN_BUFFER_SIZE=${KEY_GEN_BUFFER_SIZE}
+      - KEY_GEN_HOSTNAME=${KEY_GEN_HOSTNAME}
+      - KEY_GEN_PORT=${KEY_GEN_PORT}
   db:
     image: postgres:11
     restart: always
