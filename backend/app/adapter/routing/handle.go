@@ -81,3 +81,11 @@ func NewGithubSignInCallback(
 		http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 	}
 }
+
+func NewHealthURL(
+	logger fw.Logger,
+) fw.Handle {
+	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
+		w.WriteHeader(http.StatusOK)
+	}
+}

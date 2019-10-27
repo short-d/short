@@ -44,5 +44,10 @@ func NewShort(
 			Path:   "/r/:alias",
 			Handle: NewOriginalURL(logger, tracer, urlRetriever, timer, *frontendURL),
 		},
+		{
+			Method: "GET",
+			Path:   "/health",
+			Handle: NewHealthURL(logger),
+		},
 	}
 }
