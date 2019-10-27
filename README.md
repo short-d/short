@@ -167,7 +167,7 @@ Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`
 
 ### App Level Architecture
 
-Short backend is built on top of [Uncle Bob's Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html), the central objective of which is separation of concerns.
+Short backend is built on top of [Uncle Bob's Clean Architecture](https://api.short-d.com/r/ca), the central objective of which is separation of concerns.
 
 ![Clean Architecture](doc/eng/architecture/clean-architecture.jpg)
 
