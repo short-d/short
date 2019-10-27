@@ -10,6 +10,8 @@ RUN go mod download \
 
 # Build Artifact
 FROM alpine:latest
+ENV DB_HOST=postgres \
+	DB_PORT=5432
 RUN apk --no-cache add \
 	ca-certificates \
 	tzdata \
@@ -19,4 +21,4 @@ COPY --from=builder /app/scripts scripts
 COPY --from=builder /app/app/adapter/migration migration
 COPY --from=builder /app/build/short .
 
-CMD [ "./scripts/wait-for-it", "-s", "-t", "0", "db:5432", "--", "./short", "start", "--migration", "migration" ]
+CMD [ "sh", "-c", "./scripts/wait-for-it -s -t 0 $DB_HOST:$DB_PORT -- ./short start --migration migration" ]
