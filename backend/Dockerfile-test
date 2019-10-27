@@ -1,19 +1,9 @@
-FROM golang:1.13.1-alpine
+FROM byliuyang/go-builder:latest
 
-WORKDIR /app
-
-# Install tools
-RUN apk add --no-cache git
-RUN apk add --no-cache bash
-RUN apk add --no-cache gcc
-RUN apk add --no-cache libc-dev
-
-# Install dependencies
 COPY go.mod go.sum ./
-RUN go mod download
-
-# Verify dependencies
-RUN go mod verify
+# Install and verify dependencies
+RUN go mod download \
+	&& go mod verify
 
 COPY . .
 
