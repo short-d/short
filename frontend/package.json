@@ -19,13 +19,12 @@
     "redux": "^4.0.4"
   },
   "scripts": {
-    "start:local": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts start",
-    "build:local": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts build",
-    "test:local": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts test",
+    "start": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts start",
+    "build": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts build",
+    "test": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts test",
     "eject": "react-scripts eject",
-    "build": "react-scripts build",
-    "dev": "react-scripts dev",
     "build:docker": "docker build . --build-arg REACT_APP_GIT_SHA=`git rev-parse --short HEAD`",
+    "react:build": "react-scripts build",
     "prettier:base": "prettier --parser typescript --single-quote",
     "prettier:check": "yarn prettier:base --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "yarn prettier:base --write \"src/**/*.{ts,tsx}\"",

@@ -12,16 +12,13 @@ ENV REACT_APP_GRAPHQL_API_BASE_URL=$REACT_APP_GRAPHQL_API_BASE_URL
 ENV REACT_APP_HTTP_API_BASE_URL=$REACT_APP_HTTP_API_BASE_URL
 ENV REACT_APP_RECAPTCHA_SITE_KEY=$REACT_APP_RECAPTCHA_SITE_KEY
 
-
 # Install dependencies
 COPY package.json yarn.lock ./
 RUN yarn install
 
 COPY . .
 
-RUN yarn build
-
-CMD yarn
+RUN yarn react:build
 
 FROM nginx:alpine AS production
 
