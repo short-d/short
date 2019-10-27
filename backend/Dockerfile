@@ -19,5 +19,8 @@ FROM alpine:3.10 as production
 
 WORKDIR /app
 
+RUN apk add --no-cache bash
+
 COPY --from=builder /app/build/app ./build/app
-COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/scripts/wait-for-it ./scripts/wait-for-it
+COPY --from=builder /app/app/adapter/migration ./app/adapter/migration
