@@ -46,4 +46,8 @@ export class AuthService {
   googleSignInLink(): string {
     return `${this.envService.getVal('HTTP_API_BASE_URL')}/oauth/google/sign-in`;
   }
+
+  facebookSignInLink(): string {
+    return `${this.envService.getVal('HTTP_API_BASE_URL')}/oauth/facebook/sign-in`;
+  }
 }

@@ -9,6 +9,7 @@ import {QrCodeService} from '../service/QrCode.service';
 import {VersionService} from '../service/Version.service';
 import {GoogleSignInButton} from './pages/shared/sign-in/GoogleSignInButton';
 import {GithubSignInButton} from './pages/shared/sign-in/GithubSignInButton';
+import {FacebookSignInButton} from './pages/shared/sign-in/FacebookSignInButton';
 import {Store} from 'redux';
 import {IAppState} from '../state/reducers';
 import {ErrorService} from '../service/Error.service';
@@ -51,6 +52,13 @@ export class UIFactory {
 
   public createGithubSignInButton(): ReactElement {
     return <GithubSignInButton githubSignInLink={this.authService.githubSignInLink()} />;
+  }
+
+  public createFacebookSignInButton(): ReactElement {
+    if (!this.featureDecisionService.includeFacebookSignButton()) {
+      return <div/>;
+    }
+    return <FacebookSignInButton facebookSignInLink={this.authService.facebookSignInLink()} />;
   }
 
   public createApp(): ReactElement {
