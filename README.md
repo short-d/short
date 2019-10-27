@@ -66,7 +66,7 @@ git clone https://github.com/byliuyang/short.git
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
    `frontend/.env.development` file with `SITE_KEY`.
 
-### Create Github oauth application
+### Create Github OAuth application
 
 1. Create a new OAuth app at
    [Github Developers](https://short-d.com/r/ghdev) with the
