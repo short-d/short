@@ -189,7 +189,7 @@ independent deployment of each service.
 
 ### Dependency Management
 
-Short borrows class design, package cohesion, and package coupling princiapls
+Short leverages class design, package cohesion, and package coupling princiapls
 from C++ world to manage its internal dependencies.
 
 #### Class design
