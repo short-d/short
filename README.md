@@ -167,21 +167,30 @@ Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`
 
 ### App Level Architecture
 
-Short backend is built on top of [Uncle Bob's Clean Architecture](https://api.short-d.com/r/ca), the central objective of which is separation of concerns.
+Short backend is built on top of
+[Uncle Bob's Clean Architecture](https://api.short-d.com/r/ca), the central
+objective of which is separation of concerns.
 
 ![Clean Architecture](doc/eng/architecture/clean-architecture.jpg)
 
-It enables the developers to modify a single component of the system at a time while leaving the rest unchanged. This minizes the amount of changes have to be made in order to support new requirements as the system grows. Clean Architecture also improves the testability of system, which in turn saves precious time when creating automated tests.
+It enables the developers to modify a single component of the system at a time
+while leaving the rest unchanged. This minizes the amount of changes have to
+be made in order to support new requirements as the system grows. Clean
+Architecture also improves the testability of system, which in turn saves
+precious time when creating automated tests.
 
 ### Service Level Archtecture
 
-Short adopts [Microservices Architecture](https://api.short-d.com/r/ms) to organize dependent services around business capabilities and to enable independent deployment of each service.
+Short adopts [Microservices Architecture](https://api.short-d.com/r/ms) to
+organize dependent services around business capabilities and to enable
+independent deployment of each service.
 
 ![Microservice Architecture](doc/eng/architecture/microservices.jpg)
 
 ### Dependency Management
 
-Short borrows class design, package cohesion, and package coupling princiapls from C++ world to manage its internal dependencies.
+Short borrows class design, package cohesion, and package coupling princiapls
+from C++ world to manage its internal dependencies.
 
 #### Class design
 
@@ -211,69 +220,72 @@ Short borrows class design, package cohesion, and package coupling princiapls fr
 
 ### Dependency Injection
 
-Short produces flexible and loosely coupled code, by explicitly providing components with all of the dependencies they need.
+Short produces flexible and loosely coupled code, by explicitly providing
+components with all of the dependencies they need.
 
 ```go
 type Authenticator struct {
-	tokenizer          fw.CryptoTokenizer
-	timer              fw.Timer
-	tokenValidDuration time.Duration
+  tokenizer          fw.CryptoTokenizer
+  timer              fw.Timer
+  tokenValidDuration time.Duration
 }
 
 func NewAuthenticator(
-	tokenizer fw.CryptoTokenizer,
-	timer fw.Timer,
-	tokenValidDuration time.Duration,
+  tokenizer fw.CryptoTokenizer,
+  timer fw.Timer,
+  tokenValidDuration time.Duration,
 ) Authenticator {
-	return Authenticator{
-		tokenizer:          tokenizer,
-		timer:              timer,
-		tokenValidDuration: tokenValidDuration,
-	}
+  return Authenticator{
+    tokenizer:          tokenizer,
+    timer:              timer,
+    tokenValidDuration: tokenValidDuration,
+  }
 }
 ```
 
-Short also simplifies the management of the big block of order-dependent initialization code with [Wire](https://api.short-d.com/r/wire), a compile time depedency injection framework by Google.
+Short also simplifies the management of the big block of order-dependent
+initialization code with [Wire](https://api.short-d.com/r/wire), a compile time
+depedency injection framework by Google.
 
 ```go
 func InjectGraphQlService(
-	name string,
-	sqlDB *sql.DB,
-	graphqlPath provider.GraphQlPath,
-	secret provider.ReCaptchaSecret,
-	jwtSecret provider.JwtSecret,
-	bufferSize provider.KeyGenBufferSize,
-	kgsRPCConfig provider.KgsRPCConfig,
+  name string,
+  sqlDB *sql.DB,
+  graphqlPath provider.GraphQlPath,
+  secret provider.ReCaptchaSecret,
+  jwtSecret provider.JwtSecret,
+  bufferSize provider.KeyGenBufferSize,
+  kgsRPCConfig provider.KgsRPCConfig,
 ) (mdservice.Service, error) {
-	wire.Build(
-		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
-		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
-		wire.Bind(new(repo.UserURLRelation), new(db.UserURLRelationSQL)),
-		wire.Bind(new(repo.URL), new(*db.URLSql)),
-		wire.Bind(new(keygen.KeyGenerator), new(keygen.Remote)),
-		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
+  wire.Build(
+    wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
+    wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
+    wire.Bind(new(url.Creator), new(url.CreatorPersist)),
+    wire.Bind(new(repo.UserURLRelation), new(db.UserURLRelationSQL)),
+    wire.Bind(new(repo.URL), new(*db.URLSql)),
+    wire.Bind(new(keygen.KeyGenerator), new(keygen.Remote)),
+    wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
 
-		observabilitySet,
-		authSet,
+    observabilitySet,
+    authSet,
 
-		mdservice.New,
-		provider.NewGraphGophers,
-		mdhttp.NewClient,
-		mdrequest.NewHTTP,
-		mdtimer.NewTimer,
+    mdservice.New,
+    provider.NewGraphGophers,
+    mdhttp.NewClient,
+    mdrequest.NewHTTP,
+    mdtimer.NewTimer,
 
-		db.NewURLSql,
-		db.NewUserURLRelationSQL,
-		provider.NewRemote,
-		url.NewRetrieverPersist,
-		url.NewCreatorPersist,
-		provider.NewKgsRPC,
-		provider.NewReCaptchaService,
-		requester.NewVerifier,
-		graphql.NewShort,
-	)
-	return mdservice.Service{}, nil
+    db.NewURLSql,
+    db.NewUserURLRelationSQL,
+    provider.NewRemote,
+    url.NewRetrieverPersist,
+    url.NewCreatorPersist,
+    provider.NewKgsRPC,
+    provider.NewReCaptchaService,
+    requester.NewVerifier,
+    graphql.NewShort,
+  )
+  return mdservice.Service{}, nil
 }
 ```
 
