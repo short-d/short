@@ -40,14 +40,17 @@ git clone https://github.com/byliuyang/short.git
    DB_NAME=your_db_name
    RECAPTCHA_SECRET=your_recaptcha_secret
    GITHUB_CLIENT_ID=your_Github_client_id
-   GITHUB_CLIENT_SECRET= your_Github_client_secret
+   GITHUB_CLIENT_SECRET=your_Github_client_secret
+   FACEBOOK_CLIENT_ID=your_facebook_app_id
+   FACEBOOK_CLIENT_SECRET=your_facebook_app_secret
+   FACEBOOK_REDIRECT_URI=http://localhost/oauth/facebook/sign-in/callback
    JWT_SECRET= your_JWT_secret
    WEB_FRONTEND_URL=http://localhost:3000
    WEB_PORT=3000
    HTTP_API_PORT=80
    GRAPHQL_API_PORT=8080
    ```
-   
+
 1. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
    configurations.
 
@@ -71,7 +74,7 @@ git clone https://github.com/byliuyang/short.git
 1. Create a new OAuth app at
    [Github Developers](https://short-d.com/r/ghdev) with the
    following configurations:
-   
+
    | Field                      | Value                                            |
    |----------------------------|--------------------------------------------------|
    | Application Name           | `Short`                                          |
@@ -82,6 +85,16 @@ git clone https://github.com/byliuyang/short.git
 1. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
 1. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with
    `Client Secret`.
+
+### Create Facebook Application
+
+1. Create a new app at
+   [Facebook Developers](https://short-d.com/r/fbdev) with the display name of your likeness
+1. Add `Facebook Login` product to the app
+1. Copy `App ID` and `App Secret` on `Settings->Basic` tab
+1. Replace the value of `FACEBOOK_CLIENT_ID` in the `.env` file with `App ID`.
+1. Replace the value of `FACEBOOK_CLIENT_SECRET` in the `.env` file with
+   `App Secret`.
 
 ### Generate static assets
 
@@ -129,12 +142,16 @@ Visit [http://localhost:3000](http://localhost:3000)
    RECAPTCHA_SECRET=your_recaptcha_secret
    GITHUB_CLIENT_ID=your_Github_client_id
    GITHUB_CLIENT_SECRET=your_Github_client_secret
+   FACEBOOK_CLIENT_ID=your_facebook_app_id
+   FACEBOOK_CLIENT_SECRET=your_facebook_app_secret
+   FACEBOOK_REDIRECT_URI=http://localhost/oauth/facebook/sign-in/callback
    JWT_SECRET=your_JWT_secret
    WEB_FRONTEND_URL=http://localhost:3000
    ```
-   
+
 1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
-   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`
+   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`,\
+   `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`
    with your own configurations.
 
 1. Launch backend server
@@ -160,7 +177,7 @@ Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`
    cd frontend
    ./scripts/dev
    ```
-   
+
 1. Visit [http://localhost:3000](http://localhost:3000)
 
 ## System Design
