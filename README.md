@@ -293,7 +293,6 @@ func InjectGraphQlService(
 
 ![Entity Relation Diagram](doc/eng/db/er-v1.png)
 
-
 ## Deployment
 
 Merging from `master` branch to `production` branch on Github will automatically
