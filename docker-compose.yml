@@ -2,12 +2,24 @@ version: '3'
 services:
   frontend:
     image: ${DOCKERHUB_USERNAME}/short-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_GIT_SHA: ${REACT_APP_GIT_SHA}
+        REACT_APP_GRAPHQL_API_BASE_URL: ${GRAPHQL_API_BASE_URL}
+        REACT_APP_HTTP_API_BASE_URL: ${HTTP_API_BASE_URL}
+        REACT_APP_RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY}
     ports:
       - "${WEB_PORT}:80"
     depends_on:
       - backend
+
   backend:
     image: ${DOCKERHUB_USERNAME}/short-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "${GRAPHQL_API_PORT}:8080"
       - "${HTTP_API_PORT}:80"

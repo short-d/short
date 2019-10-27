@@ -47,6 +47,11 @@ git clone https://github.com/byliuyang/short.git
    HTTP_API_PORT=80
    GRAPHQL_API_PORT=8080
    ```
+
+Or just copy `.env.dist` to a new name:
+```
+cp .env.dist .env
+```
    
 1. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
    configurations.
