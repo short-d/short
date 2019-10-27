@@ -1,3 +1,5 @@
+# This diagram can be visualized through quickdatabasediagrams.com
+
 url
 -
 alias pk varchar(50)

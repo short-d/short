@@ -175,13 +175,13 @@ It enables the developers to modify a single component of the system at a time w
 
 ### Service Level Archtecture
 
-Short adopted [Microservices Architecture](https://api.short-d.com/r/ms) to organize dependent services around business capabilities and to enable independent deployment of each service.
+Short adopts [Microservices Architecture](https://api.short-d.com/r/ms) to organize dependent services around business capabilities and to enable independent deployment of each service.
 
 ![Microservice Architecture](doc/eng/architecture/microservices.jpg)
 
 ### Dependency Management
 
-Short borrowed class design, package cohesion, and package coupling princiapls from C++ world to manage its internal dependencies.
+Short borrows class design, package cohesion, and package coupling princiapls from C++ world to manage its internal dependencies.
 
 #### Class design
 
@@ -211,7 +211,7 @@ Short borrowed class design, package cohesion, and package coupling princiapls f
 
 ### Dependency Injection
 
-Short produces flexible and loosely coupled code, by explicitly providing components with all of the dependencies they need to work with.
+Short produces flexible and loosely coupled code, by explicitly providing components with all of the dependencies they need.
 
 ```go
 type Authenticator struct {
