@@ -1,8 +1,9 @@
 kind: pipeline
-name: default
+type: docker
+name: backend
 
 steps:
-  - name: test frontend
+  - name: frontend - unit tests
     image: docker
     environment:
       RECAPTCHA_SITE_KEY:
@@ -14,104 +15,105 @@ steps:
       - name: docker
         path: /var/run/docker.sock
     when:
-      event:
-        - pull_request
+      branch:
+        exclude:
+          - master
+          - production
 
-  - name: test backend
-    image: docker
+  - name: backend - download and verify deps
+    image: byliuyang/go-builder:latest
     commands:
-      - docker build -t test-backend -f backend/Dockerfile-test backend
-      - docker run test-backend
-    volumes:
-      - name: docker
-        path: /var/run/docker.sock
+      - cd backend
+      - go mod download
+      - go mod verify
     when:
-      event:
-        - pull_request
+      branch:
+        exclude:
+          - production
 
-  - name: report code coverage
-    image: docker
-    environment:
-      CODECOV_TOKEN:
-        from_secret: CODECOV_TOKEN
+  - name: backend - unit tests
+    image: byliuyang/go-builder:latest
     commands:
-      - docker build -t report-coverage --build-arg CODECOV_TOKEN=$CODECOV_TOKEN -f Dockerfile-coverage .
-      - docker run report-coverage
-    volumes:
-      - name: docker
-        path: /var/run/docker.sock
+      - cd backend
+      - go test -coverprofile=coverage.txt -v ./...
+    when:
+      branch:
+        exclude:
+          - master
+          - production
+
+  - name: backend - code coverage
+    image: plugins/codecov
+    settings:
+      token:
+        from_secret: CODECOV_TOKEN
+      paths:
+        - backend
+      files:
+        - coverage.txt
+    when:
+      branch:
+        exclude:
+          - production
+
+  - name: backend - integration tests
+    image: byliuyang/go-builder:latest
+    commands:
+      - cd backend
+      - go test -tags integration -v ./...
     when:
       branch:
         - master
-      event:
-        - pull_request
 
-  - name: generate static assets
+  - name: backend - build and publish service
+    image: plugins/docker
+    settings:
+      auto_tag: true
+      repo: byliuyang/short-backend
+      context: backend
+      dockerfile: backend/Dockerfile
+      username:
+        from_secret: DOCKERHUB_USERNAME
+      password:
+        from_secret: DOCKERHUB_PASSWORD
+    when:
+      branch:
+        - master
+
+  - name: frontend - generate static assets
     image: node:12.7.0-alpine
     environment:
       RECAPTCHA_SITE_KEY:
         from_secret: RECAPTCHA_SITE_KEY
-    volumes:
-      - name: frontend-dep
-        path: /drone/src/frontend/node_modules
     commands:
       - apk add --no-cache bash git
       - cd frontend
       - yarn
       - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build
-    when:
-      branch:
-        - master
-      event:
-        - push
-
-  - name: build frontend service
-    image: docker
-    commands:
-      - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
     volumes:
-      - name: docker
-        path: /var/run/docker.sock
+      - name: frontend-dep
+        path: /drone/src/frontend/node_modules
     when:
       branch:
         - master
-      event:
-        - push
 
-  - name: build backend service
-    image: docker
-    commands:
-      - docker build -t short-backend:latest -f backend/Dockerfile backend
-    volumes:
-      - name: docker
-        path: /var/run/docker.sock
-    when:
-      branch:
-        - master
-      event:
-        - push
-
-  - name: publish to Docker registry
-    image: docker
-    environment:
-      DOCKERHUB_USERNAME:
+  - name: frontend - build and publish service
+    image: plugins/docker
+    settings:
+      auto_tag: true
+      repo: byliuyang/short-frontend
+      context: frontend
+      dockerfile: frontend/Dockerfile
+      username:
         from_secret: DOCKERHUB_USERNAME
-      DOCKERHUB_PASSWORD:
+      password:
         from_secret: DOCKERHUB_PASSWORD
-    commands:
-      - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-      - docker tag short-frontend:latest $DOCKERHUB_USERNAME/short-frontend:latest
-      - docker tag short-backend:latest $DOCKERHUB_USERNAME/short-backend:latest
-      - docker push $DOCKERHUB_USERNAME/short-frontend:latest
-      - docker push $DOCKERHUB_USERNAME/short-backend:latest
-    volumes:
-      - name: docker
-        path: /var/run/docker.sock
     when:
       branch:
         - master
-      event:
-        - push
+
+  # TODO: deploy to staging environment
+  # TODO: run acceptance tests + load tests
 
   - name: upload docker-compose.yml
     image: appleboy/drone-scp
@@ -131,8 +133,6 @@ steps:
     when:
       branch:
         - production
-      event:
-        - push
 
   - name: deploy service
     image: appleboy/drone-ssh
@@ -205,16 +205,8 @@ steps:
     when:
       branch:
         - production
-      event:
-        - push
 
-services:
-  - name: postgres
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: short
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+# TODO: run data integration tests
 
 volumes:
   - name: docker
