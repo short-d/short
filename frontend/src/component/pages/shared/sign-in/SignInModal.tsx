@@ -31,6 +31,9 @@ export class SignInModal extends Component<IProps> {
             <li>
               {this.props.uiFactory.createGithubSignInButton()}
             </li>
+            <li>
+              {this.props.uiFactory.createFacebookSignInButton()}
+            </li>
           </ul>
         </div>
       </Modal>
