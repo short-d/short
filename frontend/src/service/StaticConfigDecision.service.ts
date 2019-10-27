@@ -5,6 +5,6 @@ export class StaticConfigDecisionService implements IFeatureDecisionService {
     return false;
   }
   includeFacebookSignButton(): boolean {
-    return true;
+    return false;
   }
 }
