@@ -1,5 +1,3 @@
-# This diagram can be visualized through quickdatabasediagrams.com
-
 url
 -
 alias pk varchar(50)
@@ -24,5 +22,5 @@ url_alias pk varchar(50) fk >- url.alias
 
 github_oauth_user_relation
 -
-github_id pk varchar(254)
-user_id pk int fk >- user.id
+github_user_id pk varchar(254)
+short_user_id pk int fk >- user.id

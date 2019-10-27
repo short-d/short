@@ -165,9 +165,122 @@ Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`
 
 ## System Design
 
+### App Level Architecture
+
+Short backend is built on top of [Uncle Bob's Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html), the central objective of which is separation of concerns.
+
+![Clean Architecture](doc/eng/architecture/clean-architecture.jpg)
+
+It enables the developers to modify a single component of the system at a time while leaving the rest unchanged. This minizes the amount of changes have to be made in order to support new requirements as the system grows. Clean Architecture also improves the testability of system, which in turn saves precious time when creating automated tests.
+
+### Service Level Archtecture
+
+Short adopted [Microservices Architecture](https://api.short-d.com/r/ms) to organize dependent services around business capabilities and to enable independent deployment of each service.
+
+![Microservice Architecture](doc/eng/architecture/microservices.jpg)
+
+### Dependency Management
+
+Short borrowed class design, package cohesion, and package coupling princiapls from C++ world to manage its internal dependencies.
+
+#### Class design
+
+| Principal                                                        | Description                                                            |
+|------------------------------------------------------------------|------------------------------------------------------------------------|
+| [Single Responsibility Principle](https://api.short-d.com/r/srp) | A class should have one, and only one, reason to change.               |
+| [Open Closed Principle](https://api.short-d.com/r/ocp)           | You should be able to extend a classes behavior, without modifying it. |
+| [Liskov Substitution Principle](https://api.short-d.com/r/lsp)   | Derived classes must be substitutable for their base classes.          |
+| [Interface Segregation Principle](https://api.short-d.com/r/isp) | Make fine grained interfaces that are client specific.                 |
+| [Dependency Inversion Principle](https://api.short-d.com/r/dip)  | Depend on abstractions, not on concretions.                            |
+
+#### package cohesion
+
+| Principal                                                            | Description                                           |
+|----------------------------------------------------------------------|-------------------------------------------------------|
+| [Release Reuse Equivalency Principle](https://api.short-d.com/r/rep) | The granule of reuse is the granule of release.       |
+| [The Common Closure Principle](https://api.short-d.com/r/ccp)        | Classes that change together are packaged together.   |
+| [The Common Reuse Principle](https://api.short-d.com/r/crp)          | Classes that are used together are packaged together. |
+
+#### Package coupling
+
+| Principal                                                       | Description                                           |
+|-----------------------------------------------------------------|-------------------------------------------------------|
+| [Acyclic Dependencies Principle](https://api.short-d.com/r/adp) | The dependency graph of packages must have no cycles. |
+| [Stable Dependencies Principle](https://api.short-d.com/r/sdp)  | Depend in the direction of stability.                 |
+| [Stable Abstractions Principle](https://api.short-d.com/r/sap)  | Abstractness increases with stability.                |
+
+### Dependency Injection
+
+Short produces flexible and loosely coupled code, by explicitly providing components with all of the dependencies they need to work with.
+
+```go
+type Authenticator struct {
+	tokenizer          fw.CryptoTokenizer
+	timer              fw.Timer
+	tokenValidDuration time.Duration
+}
+
+func NewAuthenticator(
+	tokenizer fw.CryptoTokenizer,
+	timer fw.Timer,
+	tokenValidDuration time.Duration,
+) Authenticator {
+	return Authenticator{
+		tokenizer:          tokenizer,
+		timer:              timer,
+		tokenValidDuration: tokenValidDuration,
+	}
+}
+```
+
+Short also simplifies the management of the big block of order-dependent initialization code with [Wire](https://api.short-d.com/r/wire), a compile time depedency injection framework by Google.
+
+```go
+func InjectGraphQlService(
+	name string,
+	sqlDB *sql.DB,
+	graphqlPath provider.GraphQlPath,
+	secret provider.ReCaptchaSecret,
+	jwtSecret provider.JwtSecret,
+	bufferSize provider.KeyGenBufferSize,
+	kgsRPCConfig provider.KgsRPCConfig,
+) (mdservice.Service, error) {
+	wire.Build(
+		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
+		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
+		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
+		wire.Bind(new(repo.UserURLRelation), new(db.UserURLRelationSQL)),
+		wire.Bind(new(repo.URL), new(*db.URLSql)),
+		wire.Bind(new(keygen.KeyGenerator), new(keygen.Remote)),
+		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
+
+		observabilitySet,
+		authSet,
+
+		mdservice.New,
+		provider.NewGraphGophers,
+		mdhttp.NewClient,
+		mdrequest.NewHTTP,
+		mdtimer.NewTimer,
+
+		db.NewURLSql,
+		db.NewUserURLRelationSQL,
+		provider.NewRemote,
+		url.NewRetrieverPersist,
+		url.NewCreatorPersist,
+		provider.NewKgsRPC,
+		provider.NewReCaptchaService,
+		requester.NewVerifier,
+		graphql.NewShort,
+	)
+	return mdservice.Service{}, nil
+}
+```
+
 ### Database Modeling
 
 ![Entity Relation Diagram](doc/eng/db/er-v1.png)
+
 
 ## Deployment
 
@@ -224,7 +337,7 @@ discuss bugs, dev environment setup, tooling, and coding best practices.
 
 ## Author
 
-Harry Liu - *Initial work* - [byliuyang](https://github.com/byliuyang)
+Harry Liu - *Initial work* - [byliuyang](https://short-d.com/r/ghharry)
 
 ## License
 
