@@ -85,6 +85,7 @@ steps:
   - name: TEST build frontend service
     image: docker/compose:1.24.1
     commands:
+      - cp .env.dist .env
       - docker-compose build frontend
     volumes:
       - name: docker
