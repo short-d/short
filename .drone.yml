@@ -70,21 +70,21 @@ steps:
 #      event:
 #        - push
   - name: build backend service
-      image: docker/compose:1.24.1
-      environment:
-        DOCKERHUB_USERNAME:
-          from_secret: DOCKERHUB_USERNAME
-      commands:
-        - cp .env.dist .env
-        - docker-compose build backend
-      volumes:
-        - name: docker
-          path: /var/run/docker.sock
-      when:
-        branch:
-          - master
-        event:
-          - pull_request # push
+    image: docker/compose:1.24.1
+    environment:
+      DOCKERHUB_USERNAME:
+        from_secret: DOCKERHUB_USERNAME
+    commands:
+      - cp .env.dist .env
+      - docker-compose build backend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - pull_request # push
 
   - name: build frontend service
     image: docker/compose:1.24.1
