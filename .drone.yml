@@ -82,6 +82,19 @@ steps:
       event:
         - push
 
+  - name: TEST build frontend service
+    image: docker
+    commands:
+      - docker-compose build frontend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - pull_request
+
   - name: build backend service
     image: docker
     commands:
