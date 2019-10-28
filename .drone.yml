@@ -81,6 +81,7 @@ steps:
     volumes:
       - name: docker
         path: /var/run/docker.sock
+    when:
       branch:
         - master
       event:
