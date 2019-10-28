@@ -50,42 +50,48 @@ steps:
 #      event:
 #        - pull_request
 
-  - name: generate static assets
-    image: node:12.7.0-alpine
-    environment:
-      RECAPTCHA_SITE_KEY:
-        from_secret: RECAPTCHA_SITE_KEY
-    volumes:
-      - name: frontend-dep
-        path: /drone/src/frontend/node_modules
-    commands:
-      - apk add --no-cache bash git
-      - cd frontend
-      - yarn
-      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build
-    when:
-      branch:
-        - master
-      event:
-        - push
+# TODO REMOVE THIS STEP
+#  - name: generate static assets
+#    image: node:12.7.0-alpine
+#    environment:
+#      RECAPTCHA_SITE_KEY:
+#        from_secret: RECAPTCHA_SITE_KEY
+#    volumes:
+#      - name: frontend-dep
+#        path: /drone/src/frontend/node_modules
+#    commands:
+#      - apk add --no-cache bash git
+#      - cd frontend
+#      - yarn
+#      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build
+#    when:
+#      branch:
+#        - master
+#      event:
+#        - push
 
   - name: build frontend service
-    image: docker
+    image: docker/compose:1.24.1
+    environment:
+      DOCKERHUB_USERNAME:
+        from_secret: DOCKERHUB_USERNAME
     commands:
-      - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
+      - cp .env.dist .env
+      - REACT_APP_GIT_SHA=$DRONE_COMMIT docker-compose build frontend
     volumes:
       - name: docker
         path: /var/run/docker.sock
-    when:
       branch:
         - master
       event:
-        - push
+        - pull_request # push
 
-  - name: TEST build frontend service
-    image: docker/compose:1.24.1
+  - name: build backend service
+    image: docker
+    environment:
+      DOCKERHUB_USERNAME:
+        from_secret: DOCKERHUB_USERNAME
     commands:
-      - cp .env.dist .env
       - docker-compose build frontend
     volumes:
       - name: docker
@@ -94,20 +100,7 @@ steps:
       branch:
         - master
       event:
-        - pull_request
-
-  - name: build backend service
-    image: docker
-    commands:
-      - docker build -t short-backend:latest -f backend/Dockerfile backend
-    volumes:
-      - name: docker
-        path: /var/run/docker.sock
-    when:
-      branch:
-        - master
-      event:
-        - push
+        - pull_request # push
 
   - name: publish to Docker registry
     image: docker
@@ -118,10 +111,8 @@ steps:
         from_secret: DOCKERHUB_PASSWORD
     commands:
       - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-      - docker tag short-frontend:latest $DOCKERHUB_USERNAME/short-frontend:latest
-      - docker tag short-backend:latest $DOCKERHUB_USERNAME/short-backend:latest
-      - docker push $DOCKERHUB_USERNAME/short-frontend:latest
-      - docker push $DOCKERHUB_USERNAME/short-backend:latest
+      - docker push $DOCKERHUB_USERNAME/short-frontend:test
+      - docker push $DOCKERHUB_USERNAME/short-backend:test
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -129,7 +120,7 @@ steps:
       branch:
         - master
       event:
-        - push
+        - pull_request
 
   - name: upload docker-compose.yml
     image: appleboy/drone-scp

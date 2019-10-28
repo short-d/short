@@ -1,7 +1,7 @@
 version: '3'
 services:
   frontend:
-    image: ${DOCKERHUB_USERNAME}/short-frontend:latest
+    image: ${DOCKERHUB_USERNAME}/short-frontend:test
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -16,7 +16,7 @@ services:
       - backend
 
   backend:
-    image: ${DOCKERHUB_USERNAME}/short-backend:latest
+    image: ${DOCKERHUB_USERNAME}/short-backend:test
     build:
       context: ./backend
       dockerfile: Dockerfile
