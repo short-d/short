@@ -83,7 +83,7 @@ steps:
         - push
 
   - name: TEST build frontend service
-    image: compose
+    image: docker/compose:1.24.1
     commands:
       - build frontend
     volumes:
