@@ -31,27 +31,10 @@ git clone https://github.com/byliuyang/short.git
 
 ### Configure environmental variables
 
-1. Create `.env` file at project root with the following content:
-
-   ```env
-   DOCKERHUB_USERNAME=local
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
-   DB_NAME=your_db_name
-   RECAPTCHA_SECRET=your_recaptcha_secret
-   GITHUB_CLIENT_ID=your_Github_client_id
-   GITHUB_CLIENT_SECRET= your_Github_client_secret
-   JWT_SECRET= your_JWT_secret
-   WEB_FRONTEND_URL=http://localhost:3000
-   WEB_PORT=3000
-   HTTP_API_PORT=80
-   GRAPHQL_API_PORT=8080
-   ```
-
-Or just copy `.env.dist` to a new name:
-```
-cp .env.dist .env
-```
+1. Copy `.env.dist` file to `.env`:
+    ```
+    cp .env.dist .env
+    ```
    
 1. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
    configurations.
