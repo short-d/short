@@ -12,6 +12,8 @@ services:
         REACT_APP_RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY}
     ports:
       - "${WEB_PORT}:80"
+    volumes:
+      - node_modules:/web/node_modules
     depends_on:
       - backend
 
@@ -56,3 +58,4 @@ services:
       - 5400:5432
 volumes:
   db_data:
+  node_modules:
