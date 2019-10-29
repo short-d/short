@@ -94,7 +94,6 @@ steps:
       REACT_APP_RECAPTCHA_SITE_KEY:
         from_secret: RECAPTCHA_SITE_KEY
     commands:
-      - cp .env.dist .env
       - REACT_APP_GIT_SHA=$DRONE_COMMIT docker-compose build frontend
     volumes:
       - name: docker

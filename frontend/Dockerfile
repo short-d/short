@@ -14,7 +14,7 @@ ENV REACT_APP_RECAPTCHA_SITE_KEY=$REACT_APP_RECAPTCHA_SITE_KEY
 
 # Install dependencies
 COPY package.json yarn.lock ./
-RUN yarn install
+RUN yarn --pure-lockfile
 
 COPY . .
 
