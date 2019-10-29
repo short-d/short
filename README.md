@@ -142,7 +142,7 @@ Visit [http://localhost:3000](http://localhost:3000)
    RECAPTCHA_SECRET=your_recaptcha_secret
    GITHUB_CLIENT_ID=your_Github_client_id
    GITHUB_CLIENT_SECRET=your_Github_client_secret
-   FACEBOOK_CLIENT_ID=your_facebook_app_id
+   FACEBOOK_CLIENT_ID=your_Facebook_app_id
    FACEBOOK_CLIENT_SECRET=your_facebook_app_secret
    FACEBOOK_REDIRECT_URI=http://localhost/oauth/facebook/sign-in/callback
    JWT_SECRET=your_JWT_secret
