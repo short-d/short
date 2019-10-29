@@ -7,20 +7,17 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// GithubConfig contains Github OAuth config
 type GithubConfig struct {
 	ClientID     string
 	ClientSecret string
 }
 
+// FacebookConfig contains Facebook OAuth config
 type FacebookConfig struct {
 	ClientID     string
 	ClientSecret string
 	RedirectURI  string
-}
-
-type KgsRPCConfig struct {
-	Hostname string
-	Port     int
 }
 
 func start(
@@ -31,7 +28,7 @@ func start(
 	facebookConfig FacebookConfig,
 	jwtSecret string,
 	KeyGenBufferSize int,
-	KgsRPCConfig KgsRPCConfig,
+	KgsRPCConfig provider.KgsRPCConfig,
 	webFrontendURL string,
 	dbConnector fw.DBConnector,
 	dbMigrationTool fw.DBMigrationTool,

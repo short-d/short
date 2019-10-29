@@ -82,6 +82,7 @@ func NewGithubSignInCallback(
 	}
 }
 
+// NewFacebookSignIn handles Facebook sign-in call
 func NewFacebookSignIn(
 	logger fw.Logger,
 	tracer fw.Tracer,
@@ -100,6 +101,7 @@ func NewFacebookSignIn(
 	}
 }
 
+// NewFacebookSignInCallback handles oauth callback from Facebook
 func NewFacebookSignInCallback(
 	logger fw.Logger,
 	tracer fw.Tracer,

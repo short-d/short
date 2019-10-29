@@ -23,6 +23,7 @@ type fbAccessTokenResponse struct {
 	ExpiresIn   int    `json:"expires_in"`
 }
 
+// Facebook represents FB OAuth configuration
 type Facebook struct {
 	clientID     string
 	clientSecret string
@@ -30,6 +31,7 @@ type Facebook struct {
 	redirectURI  string
 }
 
+// GetAuthorizationURL returns an authorization URL to start FB authorization process
 func (g Facebook) GetAuthorizationURL() string {
 	escapedScope := url.QueryEscape(fbScopes)
 	clientID := g.clientID
@@ -40,6 +42,7 @@ func (g Facebook) GetAuthorizationURL() string {
 		fbAuthorizationAPI, clientID, redirectURI, escapedScope, responseType)
 }
 
+// RequestAccessToken performs a call to Facebook that converts OAuth code into access
 func (g Facebook) RequestAccessToken(authorizationCode string) (accessToken string, err error) {
 	clientID := g.clientID
 	clientSecret := g.clientSecret
@@ -60,10 +63,12 @@ func (g Facebook) RequestAccessToken(authorizationCode string) (accessToken stri
 	return apiRes.AccessToken, nil
 }
 
+// RedirectURI returns URL-escaped redirect_uri value
 func (g Facebook) RedirectURI() (redirectURI string) {
 	return url.QueryEscape(g.redirectURI)
 }
 
+// NewFacebook initializes Facebook object
 func NewFacebook(http fw.HTTPRequest, clientID string, clientSecret string, redirectURI string) Facebook {
 	return Facebook{
 		clientID:     clientID,
