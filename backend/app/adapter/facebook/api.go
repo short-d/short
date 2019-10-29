@@ -6,7 +6,7 @@ import (
 	fb "github.com/huandu/facebook"
 )
 
-// API access user's profile information through FB Graph API.
+// API accesses user's profile information through FB Graph API.
 type API struct {
 }
 
