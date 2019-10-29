@@ -89,7 +89,8 @@ git clone https://github.com/byliuyang/short.git
 ### Create Facebook Application
 
 1. Create a new app at
-   [Facebook Developers](https://short-d.com/r/fbdev) with the display name you like (f.e. `Short`)
+   [Facebook Developers](https://short-d.com/r/fbdev) with the display
+   name you like (f.e. `Short`)
 1. Add `Facebook Login` product to the app
 1. Copy `App ID` and `App Secret` on `Settings->Basic` tab
 1. Replace the value of `FACEBOOK_CLIENT_ID` in the `.env` file with `App ID`.
