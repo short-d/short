@@ -9,17 +9,20 @@ import (
 
 // ServiceConfig represents require parameters for the backend APIs
 type ServiceConfig struct {
-	MigrationRoot      string
-	RecaptchaSecret    string
-	GithubClientID     string
-	GithubClientSecret string
-	JwtSecret          string
-	WebFrontendURL     string
-	GraphQLAPIPort     int
-	HTTPAPIPort        int
-	KeyGenBufferSize   int
-	KgsHostname        string
-	KgsPort            int
+	MigrationRoot        string
+	RecaptchaSecret      string
+	GithubClientID       string
+	GithubClientSecret   string
+	FacebookClientID     string
+	FacebookClientSecret string
+	FacebookRedirectURI  string
+	JwtSecret            string
+	WebFrontendURL       string
+	GraphQLAPIPort       int
+	HTTPAPIPort          int
+	KeyGenBufferSize     int
+	KgsHostname          string
+	KgsPort              int
 }
 
 // Start launches the GraphQL & HTTP APIs
@@ -61,6 +64,9 @@ func Start(
 		db,
 		provider.GithubClientID(config.GithubClientID),
 		provider.GithubClientSecret(config.GithubClientSecret),
+		provider.FacebookClientID(config.FacebookClientID),
+		provider.FacebookClientSecret(config.FacebookClientSecret),
+		provider.FacebookRedirectURI(config.FacebookRedirectURI),
 		provider.JwtSecret(config.JwtSecret),
 		provider.WebFrontendURL(config.WebFrontendURL),
 	)
