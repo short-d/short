@@ -7,15 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"short/app/adapter/db"
-	"short/app/adapter/github"
-	"short/app/adapter/graphql"
-	"short/app/usecase/account"
-	"short/app/usecase/requester"
-	"short/app/usecase/url"
-	"short/dep/provider"
-	"time"
-
 	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdcli"
 	"github.com/byliuyang/app/modern/mddb"
@@ -27,6 +18,15 @@ import (
 	"github.com/byliuyang/app/modern/mdtimer"
 	"github.com/byliuyang/app/modern/mdtracer"
 	"github.com/google/wire"
+	"short/app/adapter/db"
+	"short/app/adapter/facebook"
+	"short/app/adapter/github"
+	"short/app/adapter/graphql"
+	"short/app/usecase/account"
+	"short/app/usecase/requester"
+	"short/app/usecase/url"
+	"short/dep/provider"
+	"time"
 )
 
 // Injectors from wire.go:
@@ -79,7 +79,7 @@ var (
 	_wireTokenValidDurationValue = provider.TokenValidDuration(oneDay)
 )
 
-func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL) mdservice.Service {
+func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	timer := mdtimer.NewTimer()
@@ -95,7 +95,9 @@ func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.Gi
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	repoService := account.NewRepoService(userSQL, timer)
-	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, oauthGithub, api, authenticator, repoService)
+	oauthFacebook := provider.NewFacebookOAuth(httpRequest, facebookClientID, facebookClientSecret, facebookRedirectURI)
+	facebookAPI := facebook.NewAPI()
+	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, oauthGithub, api, authenticator, repoService, oauthFacebook, facebookAPI)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service

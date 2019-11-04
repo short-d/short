@@ -2,6 +2,7 @@ package routing
 
 import (
 	netURL "net/url"
+	"short/app/adapter/facebook"
 	"short/app/adapter/github"
 	"short/app/adapter/oauth"
 	"short/app/usecase/auth"
@@ -25,16 +26,24 @@ type Github struct {
 	API   github.API
 }
 
+// Facebook groups Facebook oauth and public APIs.
+type Facebook struct {
+	OAuth oauth.Facebook
+	API   facebook.API
+}
+
 func NewShort(
 	observability Observability,
 	webFrontendURL string,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
 	github Github,
+	facebook Facebook,
 	authenticator auth.Authenticator,
 	accountService service.Account,
 ) []fw.Route {
 	githubSignIn := signin.NewOAuth(github.OAuth, github.API, accountService, authenticator)
+	facebookSignIn := signin.NewOAuth(facebook.OAuth, facebook.API, accountService, authenticator)
 	frontendURL, err := netURL.Parse(webFrontendURL)
 	if err != nil {
 		panic(err)
@@ -51,6 +60,16 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/github/sign-in/callback",
 			Handle: NewGithubSignInCallback(logger, tracer, githubSignIn, *frontendURL),
+		},
+		{
+			Method: "GET",
+			Path:   "/oauth/facebook/sign-in",
+			Handle: NewFacebookSignIn(logger, tracer, facebook.OAuth, authenticator, webFrontendURL),
+		},
+		{
+			Method: "GET",
+			Path:   "/oauth/facebook/sign-in/callback",
+			Handle: NewFacebookSignInCallback(logger, tracer, facebookSignIn, *frontendURL),
 		},
 		{
 			Method: "GET",
