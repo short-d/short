@@ -95,7 +95,7 @@ export class UrlService {
   }
 
   aliasToLink(alias: string): string {
-    return `${this.envService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
+    return `${window.location.protocol}//${window.location.hostname}/r/${alias}`;
   }
 
   private validateInputs(longLink?: string, customAlias?: string):
