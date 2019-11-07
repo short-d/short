@@ -1,0 +1,5 @@
+-- +migrate Up
+CREATE TABLE public_url (
+    alias CHARACTER VARYING,
+    FOREIGN KEY (alias) REFERENCES url (alias) ON DELETE CASCADE ON UPDATE CASCADE
+);
