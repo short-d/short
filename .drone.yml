@@ -167,7 +167,7 @@ steps:
         path: /var/run/docker.sock
     when:
       branch:
-        - master
+        - production
       event:
         - push
 
