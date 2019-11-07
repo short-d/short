@@ -54,7 +54,7 @@ steps:
     image: node:12.7.0-alpine
     environment:
       RECAPTCHA_SITE_KEY:
-        from_secret: RECAPTCHA_SITE_KEY
+        from_secret: STAGING_RECAPTCHA_SITE_KEY
     volumes:
       - name: frontend-dep
         path: /drone/src/frontend/node_modules
