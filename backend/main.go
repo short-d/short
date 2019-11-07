@@ -32,6 +32,10 @@ func main() {
 	kgsHostname := getEnv("KEY_GEN_HOSTNAME", "localhost")
 	kgsPort := mustInt(getEnv("KEY_GEN_PORT", "8080"))
 
+	facebookClientID := getEnv("FACEBOOK_CLIENT_ID", "")
+	facebookClientSecret := getEnv("FACEBOOK_CLIENT_SECRET", "")
+	facebookRedirectURI := getEnv("FACEBOOK_REDIRECT_URI", "")
+
 	cmdFactory := dep.InjectCommandFactory()
 	dbConnector := dep.InjectDBConnector()
 	dbMigrationTool := dep.InjectDBMigrationTool()
@@ -45,16 +49,19 @@ func main() {
 	}
 
 	serviceConfig := cmd.ServiceConfig{
-		RecaptchaSecret:    recaptchaSecret,
-		GithubClientID:     githubClientID,
-		GithubClientSecret: githubClientSecret,
-		JwtSecret:          jwtSecret,
-		WebFrontendURL:     webFrontendURL,
-		GraphQLAPIPort:     graphQLAPIPort,
-		HTTPAPIPort:        httpAPIPort,
-		KeyGenBufferSize:   keyGenBufferSize,
-		KgsHostname:        kgsHostname,
-		KgsPort:            kgsPort,
+		RecaptchaSecret:      recaptchaSecret,
+		GithubClientID:       githubClientID,
+		GithubClientSecret:   githubClientSecret,
+		FacebookClientID:     facebookClientID,
+		FacebookClientSecret: facebookClientSecret,
+		FacebookRedirectURI:  facebookRedirectURI,
+		JwtSecret:            jwtSecret,
+		WebFrontendURL:       webFrontendURL,
+		GraphQLAPIPort:       graphQLAPIPort,
+		HTTPAPIPort:          httpAPIPort,
+		KeyGenBufferSize:     keyGenBufferSize,
+		KgsHostname:          kgsHostname,
+		KgsPort:              kgsPort,
 	}
 
 	rootCmd := cmd.NewRootCmd(

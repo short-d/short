@@ -11,16 +11,19 @@ import (
 // ServiceConfig represents necessary parameters needed to initialize the
 // backend APIs.
 type ServiceConfig struct {
-	RecaptchaSecret    string
-	GithubClientID     string
-	GithubClientSecret string
-	JwtSecret          string
-	WebFrontendURL     string
-	GraphQLAPIPort     int
-	HTTPAPIPort        int
-	KeyGenBufferSize   int
-	KgsHostname        string
-	KgsPort            int
+	RecaptchaSecret      string
+	GithubClientID       string
+	GithubClientSecret   string
+	FacebookClientID     string
+	FacebookClientSecret string
+	FacebookRedirectURI  string
+	JwtSecret            string
+	WebFrontendURL       string
+	GraphQLAPIPort       int
+	HTTPAPIPort          int
+	KeyGenBufferSize     int
+	KgsHostname          string
+	KgsPort              int
 }
 
 func NewRootCmd(
@@ -39,17 +42,20 @@ func NewRootCmd(
 			OnExecute: func(cmd *fw.Command, args []string) {
 
 				serviceConfig := app.ServiceConfig{
-					MigrationRoot:      migrationRoot,
-					RecaptchaSecret:    config.RecaptchaSecret,
-					GithubClientID:     config.GithubClientID,
-					GithubClientSecret: config.GithubClientSecret,
-					JwtSecret:          config.JwtSecret,
-					WebFrontendURL:     config.WebFrontendURL,
-					GraphQLAPIPort:     config.GraphQLAPIPort,
-					HTTPAPIPort:        config.HTTPAPIPort,
-					KeyGenBufferSize:   config.KeyGenBufferSize,
-					KgsHostname:        config.KgsHostname,
-					KgsPort:            config.KgsPort,
+					MigrationRoot:        migrationRoot,
+					RecaptchaSecret:      config.RecaptchaSecret,
+					GithubClientID:       config.GithubClientID,
+					GithubClientSecret:   config.GithubClientSecret,
+					FacebookClientID:     config.FacebookClientID,
+					FacebookClientSecret: config.FacebookClientSecret,
+					FacebookRedirectURI:  config.FacebookRedirectURI,
+					JwtSecret:            config.JwtSecret,
+					WebFrontendURL:       config.WebFrontendURL,
+					GraphQLAPIPort:       config.GraphQLAPIPort,
+					HTTPAPIPort:          config.HTTPAPIPort,
+					KeyGenBufferSize:     config.KeyGenBufferSize,
+					KgsHostname:          config.KgsHostname,
+					KgsPort:              config.KgsPort,
 				}
 
 				app.Start(
