@@ -72,7 +72,7 @@ steps:
   - name: build staging frontend Docker image
     image: docker
     commands:
-      - docker build -t short-frontend-staging:latest -f frontend/Dockerfile frontend
+      - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -104,7 +104,7 @@ steps:
         from_secret: DOCKERHUB_PASSWORD
     commands:
       - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-      - docker tag short-frontend-staging:latest $DOCKERHUB_USERNAME/short-frontend-staging:latest
+      - docker tag short-frontend:latest $DOCKERHUB_USERNAME/short-frontend-staging:latest
       - docker tag short-backend:latest $DOCKERHUB_USERNAME/short-backend-staging:latest
       - docker push $DOCKERHUB_USERNAME/short-frontend-staging:latest
       - docker push $DOCKERHUB_USERNAME/short-backend-staging:latest
@@ -158,7 +158,7 @@ steps:
         from_secret: DOCKERHUB_PASSWORD
     commands:
       - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-      - docker tag short-frontend-staging:latest $DOCKERHUB_USERNAME/short-frontend:latest
+      - docker tag short-frontend:latest $DOCKERHUB_USERNAME/short-frontend:latest
       - docker tag short-backend:latest $DOCKERHUB_USERNAME/short-backend:latest
       - docker push $DOCKERHUB_USERNAME/short-frontend:latest
       - docker push $DOCKERHUB_USERNAME/short-backend:latest
