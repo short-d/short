@@ -23,6 +23,7 @@
   "scripts": {
     "start": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts start",
     "build": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` sh -ac '. .env.${REACT_APP_ENV}; react-scripts build'",
+    "build:development": "REACT_APP_ENV=development yarn build",
     "build:staging": "REACT_APP_ENV=staging yarn build",
     "build:production": "REACT_APP_ENV=production yarn build",
     "test": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts test",
