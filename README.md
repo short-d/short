@@ -32,6 +32,7 @@ git clone https://github.com/byliuyang/short.git
 ### Configure environmental variables
 
 1. Copy `.env.dist` file to `.env`:
+
     ```
     cp .env.dist .env
     ```
