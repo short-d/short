@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: staging
+  name: short-backend
+  labels:
+    app: short
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: short
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: short
+        tier: backend
+    spec:
+      containers:
+        - name: short-backend
+          image: byliuyang/short-backend-staging
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+            - containerPort: 8080
+          args:
+            - ./scripts/wait-for-it
+            - -s
+            - -t
+            - "0"
+            - localhost:5432
+            - --
+            - ./build/app
+            - start
+            - --migration
+            - app/adapter/migration
+          env:
+            - name: DB_HOST
+              value: localhost
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: short-db
+                  key: user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: short-db
+                  key: password
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: short-db
+                  key: name
+            - name: RECAPTCHA_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: short
+                  key: recaptcha-secret
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: short
+                  key: github-client-id
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: short
+                  key: github-client-secret
+            - name: FACEBOOK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: short
+                  key: facebook-client-id
+            - name: FACEBOOK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: short
+                  key: facebook-client-secret
+            - name: FACEBOOK_REDIRECT_URI
+              value: https://api-staging.short-d.com/oauth/facebook/sign-in/callback
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: short
+                  key: jwt-secret
+            - name: WEB_FRONTEND_URL
+              value: https://staging.short-d.com
+            - name: KEY_GEN_BUFFER_SIZE
+              value: "10"
+            - name: KEY_GEN_HOSTNAME
+              value: kgs-1
+            - name: KEY_GEN_PORT
+              value: "8080"
+        - name: db
+          image: postgres:12
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: short-db-data
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: short-db
+                  key: user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: short-db
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: short-db
+                  key: name
+      volumes:
+        - name: short-db-data
+          persistentVolumeClaim:
+            claimName: short-db-data
+      restartPolicy: Always

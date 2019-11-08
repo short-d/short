@@ -26,7 +26,7 @@ export class App extends Component<IProps> {
             path={'/r/:alias'}
             render={({match}) => {
               let alias = match.params['alias'];
-              window.location.href = this.props.urlService.aliasToLink(alias);
+              window.location.href = this.props.urlService.aliasToBackendLink(alias);
               return <div/>;
             }}
           />

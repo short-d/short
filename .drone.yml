@@ -50,11 +50,11 @@ steps:
       event:
         - pull_request
 
-  - name: generate static assets
+  - name: create staging frontend assets
     image: node:12.7.0-alpine
     environment:
       RECAPTCHA_SITE_KEY:
-        from_secret: RECAPTCHA_SITE_KEY
+        from_secret: STAGING_RECAPTCHA_SITE_KEY
     volumes:
       - name: frontend-dep
         path: /drone/src/frontend/node_modules
@@ -62,14 +62,14 @@ steps:
       - apk add --no-cache bash git
       - cd frontend
       - yarn
-      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build:staging
     when:
       branch:
         - master
       event:
         - push
 
-  - name: build frontend service
+  - name: build staging frontend Docker image
     image: docker
     commands:
       - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
@@ -82,7 +82,7 @@ steps:
       event:
         - push
 
-  - name: build backend service
+  - name: build backend Docker image
     image: docker
     commands:
       - docker build -t short-backend:latest -f backend/Dockerfile backend
@@ -95,7 +95,61 @@ steps:
       event:
         - push
 
-  - name: publish to Docker registry
+  - name: publish staging images to DockerHub
+    image: docker
+    environment:
+      DOCKERHUB_USERNAME:
+        from_secret: DOCKERHUB_USERNAME
+      DOCKERHUB_PASSWORD:
+        from_secret: DOCKERHUB_PASSWORD
+    commands:
+      - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - docker tag short-frontend:latest $DOCKERHUB_USERNAME/short-frontend-staging:latest
+      - docker tag short-backend:latest $DOCKERHUB_USERNAME/short-backend-staging:latest
+      - docker push $DOCKERHUB_USERNAME/short-frontend-staging:latest
+      - docker push $DOCKERHUB_USERNAME/short-backend-staging:latest
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  - name: create production frontend assets
+    image: node:12.7.0-alpine
+    environment:
+      RECAPTCHA_SITE_KEY:
+        from_secret: RECAPTCHA_SITE_KEY
+    volumes:
+      - name: frontend-dep
+        path: /drone/src/frontend/node_modules
+    commands:
+      - apk add --no-cache bash git
+      - cd frontend
+      - yarn
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build:production
+    when:
+      branch:
+        - production
+      event:
+        - push
+
+  - name: build production frontend Docker image
+    image: docker
+    commands:
+      - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - production
+      event:
+        - push
+
+  - name: publish production images to DockerHub
     image: docker
     environment:
       DOCKERHUB_USERNAME:
@@ -113,7 +167,7 @@ steps:
         path: /var/run/docker.sock
     when:
       branch:
-        - master
+        - production
       event:
         - push
 
