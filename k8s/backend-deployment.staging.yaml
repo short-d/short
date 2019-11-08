@@ -93,9 +93,9 @@ spec:
             - name: KEY_GEN_BUFFER_SIZE
               value: "10"
             - name: KEY_GEN_HOSTNAME
-              value: kgs1-staging.short-d.com
+              value: kgs-1
             - name: KEY_GEN_PORT
-              value: "443"
+              value: "8080"
         - name: db
           image: postgres:12
           imagePullPolicy: IfNotPresent
