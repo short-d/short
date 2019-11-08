@@ -89,8 +89,8 @@ git clone https://github.com/byliuyang/short.git
 ### Create Facebook Application
 
 1. Create a new app at
-   [Facebook Developers](https://short-d.com/r/fbdev) with the display
-   name you like (f.e. `Short`)
+   [Facebook Developers](https://short-d.com/r/fbdev) with
+   name `Short`
 1. Add `Facebook Login` product to the app
 1. Copy `App ID` and `App Secret` on `Settings->Basic` tab
 1. Replace the value of `FACEBOOK_CLIENT_ID` in the `.env` file with `App ID`.
@@ -151,7 +151,7 @@ Visit [http://localhost:3000](http://localhost:3000)
    ```
 
 1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
-   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`,\
+   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`,
    `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`
    with your own configurations.
 
@@ -313,8 +313,24 @@ func InjectGraphQlService(
 
 ## Deployment
 
-Merging from `master` branch to `production` branch on Github will automatically
-deploy the latest code to the production server. This is called continuous
+Short leverages [Kubernetes](https://kubernetes.io) to automate deployment, scaling,
+and management of containerized microservices.
+
+![Node overview](https://d33wubrfki0l68.cloudfront.net/5cb72d407cbe2755e581b6de757e0d81760d5b86/a9df9/docs/tutorials/kubernetes-basics/public/images/module_03_nodes.svg)
+
+Short adapted [GitOps](https://www.weave.works/technologies/gitops/) to version
+control Kubernetes configurations.
+![GitOps](https://images.contentstack.io/v3/assets/blt300387d93dabf50e/blt15812c9fe056ba3b/5ce4448f32fd88a3767ee9a3/download)
+
+### Staging
+
+Merging pull request into master branch on Github will automatically deploy the
+changes to [staging](https://staging.short-d.com) environment.
+
+### Production
+
+Merging from `master` branch to `production` branch will automatically
+deploy the latest code to the production. This is called continuous
 delivery in the DevOps world.
 
 ![Continuous Delivery](doc/eng/devops/continuous-delivery.png)
