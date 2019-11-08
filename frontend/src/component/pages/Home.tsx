@@ -83,7 +83,7 @@ export class Home extends Component<Props, State> {
 
       if (state.createdUrl && state.createdUrl.alias) {
         newState.qrCodeUrl = await this.props.qrCodeService.newQrCode(
-          this.props.urlService.aliasToLink(state.createdUrl.alias)
+          this.props.urlService.aliasToFrontendLink(state.createdUrl.alias)
         );
       }
 
@@ -186,7 +186,7 @@ export class Home extends Component<Props, State> {
             {this.state.createdUrl ? (
               <div className={'short-link-usage-wrapper'}>
                 <ShortLinkUsage
-                  shortLink={this.props.urlService.aliasToLink(
+                  shortLink={this.props.urlService.aliasToFrontendLink(
                     this.state.createdUrl.alias!
                   )}
                   originalUrl={this.state.createdUrl.originalUrl!}
