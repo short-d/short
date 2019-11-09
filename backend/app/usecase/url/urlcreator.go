@@ -16,8 +16,8 @@ func (e ErrAliasExist) Error() string {
 
 // Creator represents a URL alias creator
 type Creator interface {
-	CreateURL(url entity.URL, userEmail string) (entity.URL, error)
-	CreateURLWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error)
+	CreateURL(url entity.URL, userEmail string, isPublic bool) (entity.URL, error)
+	CreateURLWithCustomAlias(url entity.URL, alias string, userEmail string, isPublic bool) (entity.URL, error)
 }
 
 // CreatorPersist represents a URL alias creator which persist the generated
@@ -29,18 +29,19 @@ type CreatorPersist struct {
 }
 
 // CreateURL persists a new url with a generated alias in the repository.
-func (a CreatorPersist) CreateURL(url entity.URL, userEmail string) (entity.URL, error) {
+func (a CreatorPersist) CreateURL(url entity.URL, userEmail string, isPublic bool) (entity.URL, error) {
 	key, err := a.keyGen.NewKey()
 	if err != nil {
 		return entity.URL{}, err
 	}
 	randomAlias := string(key)
-	return a.CreateURLWithCustomAlias(url, randomAlias, userEmail)
+	return a.CreateURLWithCustomAlias(url, randomAlias, userEmail, isPublic)
 }
 
 // CreateURLWithCustomAlias persists a new url with a custom alias in
 // the repository.
-func (a CreatorPersist) CreateURLWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error) {
+// TODO add functionality for public URLs, to be done for #235
+func (a CreatorPersist) CreateURLWithCustomAlias(url entity.URL, alias string, userEmail string, isPublic bool) (entity.URL, error) {
 	url.Alias = alias
 
 	isExist, err := a.urlRepo.IsAliasExist(alias)

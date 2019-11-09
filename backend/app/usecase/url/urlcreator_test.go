@@ -18,6 +18,7 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 		urls        urlMap
 		alias       string
 		userEmail   string
+		isPublic    bool
 		url         entity.URL
 		hasErr      bool
 		expectedURL entity.URL
@@ -32,6 +33,7 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 			},
 			alias:     "220uFicCJj",
 			userEmail: "alpha@example.com",
+			isPublic:  false,
 			url:       entity.URL{},
 			hasErr:    true,
 		},
@@ -40,6 +42,7 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 			urls:      urlMap{},
 			alias:     "220uFicCJj",
 			userEmail: "alpha@example.com",
+			isPublic:  false,
 			url: entity.URL{
 				Alias:    "220uFicCJj",
 				ExpireAt: &now,
@@ -61,7 +64,7 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 			})
 
 			creator := NewCreatorPersist(&urlRepo, &userURLRepo, &keyGen)
-			url, err := creator.CreateURL(testCase.url, testCase.userEmail)
+			url, err := creator.CreateURL(testCase.url, testCase.userEmail, testCase.isPublic)
 
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)

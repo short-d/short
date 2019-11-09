@@ -16,6 +16,7 @@ func TestURLFakeCreator_CreateURL(t *testing.T) {
 		urls        urlMap
 		alias       []string
 		userEmail   string
+		isPublic    bool
 		url         entity.URL
 		hasErr      bool
 		expectedURL entity.URL
@@ -30,6 +31,7 @@ func TestURLFakeCreator_CreateURL(t *testing.T) {
 			},
 			alias:     []string{"220uFicCJj"},
 			userEmail: "alpha@example.com",
+			isPublic:  false,
 			url:       entity.URL{},
 			hasErr:    true,
 		},
@@ -38,6 +40,7 @@ func TestURLFakeCreator_CreateURL(t *testing.T) {
 			urls:      urlMap{},
 			alias:     []string{"220uFicCJj"},
 			userEmail: "alpha@example.com",
+			isPublic:  false,
 			url: entity.URL{
 				Alias:    "220uFicCJj",
 				ExpireAt: &now,
@@ -53,7 +56,7 @@ func TestURLFakeCreator_CreateURL(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeCreator := NewCreatorFake(testCase.urls, testCase.alias)
-			gotURL, err := fakeCreator.CreateURL(testCase.url, testCase.userEmail)
+			gotURL, err := fakeCreator.CreateURL(testCase.url, testCase.userEmail, testCase.isPublic)
 
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)

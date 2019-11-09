@@ -14,13 +14,13 @@ type FakeCreator struct {
 }
 
 // CreateURL persists a new url with a generated alias in the repository.
-func (f FakeCreator) CreateURL(url entity.URL, userEmail string) (entity.URL, error) {
+func (f FakeCreator) CreateURL(url entity.URL, userEmail string, isPublic bool) (entity.URL, error) {
 	key, err := f.keyGen.NewKey()
 	if err != nil {
 		return entity.URL{}, err
 	}
 	randomAlias := string(key)
-	return f.CreateURLWithCustomAlias(url, randomAlias, userEmail)
+	return f.CreateURLWithCustomAlias(url, randomAlias, userEmail, isPublic)
 }
 
 // CreateURLWithCustomAlias persists a new url with a custom alias in
@@ -29,6 +29,7 @@ func (f FakeCreator) CreateURLWithCustomAlias(
 	url entity.URL,
 	alias string,
 	userEmail string,
+	isPublic bool,
 ) (entity.URL, error) {
 	url.Alias = alias
 
