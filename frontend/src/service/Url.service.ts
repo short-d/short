@@ -94,7 +94,11 @@ export class UrlService {
     });
   }
 
-  aliasToLink(alias: string): string {
+  aliasToFrontendLink(alias: string): string {
+    return `${window.location.protocol}//${window.location.hostname}/r/${alias}`;
+  }
+
+  aliasToBackendLink(alias: string): string {
     return `${this.envService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
   }
 

@@ -40,14 +40,17 @@ git clone https://github.com/byliuyang/short.git
    DB_NAME=your_db_name
    RECAPTCHA_SECRET=your_recaptcha_secret
    GITHUB_CLIENT_ID=your_Github_client_id
-   GITHUB_CLIENT_SECRET= your_Github_client_secret
+   GITHUB_CLIENT_SECRET=your_Github_client_secret
+   FACEBOOK_CLIENT_ID=your_Facebook_app_id
+   FACEBOOK_CLIENT_SECRET=your_Facebook_app_secret
+   FACEBOOK_REDIRECT_URI=http://localhost/oauth/facebook/sign-in/callback
    JWT_SECRET= your_JWT_secret
    WEB_FRONTEND_URL=http://localhost:3000
    WEB_PORT=3000
    HTTP_API_PORT=80
    GRAPHQL_API_PORT=8080
    ```
-   
+
 1. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
    configurations.
 
@@ -71,7 +74,7 @@ git clone https://github.com/byliuyang/short.git
 1. Create a new OAuth app at
    [Github Developers](https://short-d.com/r/ghdev) with the
    following configurations:
-   
+
    | Field                      | Value                                            |
    |----------------------------|--------------------------------------------------|
    | Application Name           | `Short`                                          |
@@ -82,6 +85,16 @@ git clone https://github.com/byliuyang/short.git
 1. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
 1. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with
    `Client Secret`.
+
+### Create Facebook Application
+
+1. Create a new app at
+   [Facebook Developers](https://short-d.com/r/fbdev) with name `Short`
+1. Add `Facebook Login` product to the app
+1. Copy `App ID` and `App Secret` on `Settings->Basic` tab
+1. Replace the value of `FACEBOOK_CLIENT_ID` in the `.env` file with `App ID`.
+1. Replace the value of `FACEBOOK_CLIENT_SECRET` in the `.env` file with
+   `App Secret`.
 
 ### Generate static assets
 
@@ -129,12 +142,16 @@ Visit [http://localhost:3000](http://localhost:3000)
    RECAPTCHA_SECRET=your_recaptcha_secret
    GITHUB_CLIENT_ID=your_Github_client_id
    GITHUB_CLIENT_SECRET=your_Github_client_secret
+   FACEBOOK_CLIENT_ID=your_Facebook_app_id
+   FACEBOOK_CLIENT_SECRET=your_Facebook_app_secret
+   FACEBOOK_REDIRECT_URI=http://localhost/oauth/facebook/sign-in/callback
    JWT_SECRET=your_JWT_secret
    WEB_FRONTEND_URL=http://localhost:3000
    ```
-   
+
 1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
-   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`
+   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`,
+   `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`
    with your own configurations.
 
 1. Launch backend server
@@ -160,7 +177,7 @@ Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`
    cd frontend
    ./scripts/dev
    ```
-   
+
 1. Visit [http://localhost:3000](http://localhost:3000)
 
 ## System Design
@@ -295,8 +312,23 @@ func InjectGraphQlService(
 
 ## Deployment
 
-Merging from `master` branch to `production` branch on Github will automatically
-deploy the latest code to the production server. This is called continuous
+Short leverages [Kubernetes](https://kubernetes.io) to automate deployment, scaling,
+and management of containerized microservices.
+
+![Node overview](https://d33wubrfki0l68.cloudfront.net/5cb72d407cbe2755e581b6de757e0d81760d5b86/a9df9/docs/tutorials/kubernetes-basics/public/images/module_03_nodes.svg)
+
+Short uses [GitOps](https://github.com/byliuyang/gitops) to manage Kubernetes cluster.
+![GitOps](https://images.contentstack.io/v3/assets/blt300387d93dabf50e/blt15812c9fe056ba3b/5ce4448f32fd88a3767ee9a3/download)
+
+### Staging
+
+Merging pull request into master branch on Github will automatically deploy the
+changes to [staging](https://staging.short-d.com) environment.
+
+### Production
+
+Merging from `master` branch to `production` branch will automatically
+deploy the latest code to the production. This is called continuous
 delivery in the DevOps world.
 
 ![Continuous Delivery](doc/eng/devops/continuous-delivery.png)

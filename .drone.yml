@@ -50,11 +50,11 @@ steps:
       event:
         - pull_request
 
-  - name: generate static assets
+  - name: create staging frontend assets
     image: node:12.7.0-alpine
     environment:
       RECAPTCHA_SITE_KEY:
-        from_secret: RECAPTCHA_SITE_KEY
+        from_secret: STAGING_RECAPTCHA_SITE_KEY
     volumes:
       - name: frontend-dep
         path: /drone/src/frontend/node_modules
@@ -62,14 +62,14 @@ steps:
       - apk add --no-cache bash git
       - cd frontend
       - yarn
-      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build:staging
     when:
       branch:
         - master
       event:
         - push
 
-  - name: build frontend service
+  - name: build staging frontend Docker image
     image: docker
     commands:
       - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
@@ -82,7 +82,7 @@ steps:
       event:
         - push
 
-  - name: build backend service
+  - name: build backend Docker image
     image: docker
     commands:
       - docker build -t short-backend:latest -f backend/Dockerfile backend
@@ -95,7 +95,61 @@ steps:
       event:
         - push
 
-  - name: publish to Docker registry
+  - name: publish staging images to DockerHub
+    image: docker
+    environment:
+      DOCKERHUB_USERNAME:
+        from_secret: DOCKERHUB_USERNAME
+      DOCKERHUB_PASSWORD:
+        from_secret: DOCKERHUB_PASSWORD
+    commands:
+      - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - docker tag short-frontend:latest $DOCKERHUB_USERNAME/short-frontend-staging:latest
+      - docker tag short-backend:latest $DOCKERHUB_USERNAME/short-backend-staging:latest
+      - docker push $DOCKERHUB_USERNAME/short-frontend-staging:latest
+      - docker push $DOCKERHUB_USERNAME/short-backend-staging:latest
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  - name: create production frontend assets
+    image: node:12.7.0-alpine
+    environment:
+      RECAPTCHA_SITE_KEY:
+        from_secret: RECAPTCHA_SITE_KEY
+    volumes:
+      - name: frontend-dep
+        path: /drone/src/frontend/node_modules
+    commands:
+      - apk add --no-cache bash git
+      - cd frontend
+      - yarn
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build:production
+    when:
+      branch:
+        - production
+      event:
+        - push
+
+  - name: build production frontend Docker image
+    image: docker
+    commands:
+      - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - production
+      event:
+        - push
+
+  - name: publish production images to DockerHub
     image: docker
     environment:
       DOCKERHUB_USERNAME:
@@ -111,113 +165,6 @@ steps:
     volumes:
       - name: docker
         path: /var/run/docker.sock
-    when:
-      branch:
-        - master
-      event:
-        - push
-
-  - name: upload docker-compose.yml
-    image: appleboy/drone-scp
-    settings:
-      host:
-        from_secret: SERVER_HOST
-      username:
-        from_secret: SERVER_USER
-      password:
-        from_secret: SERVER_PASSWORD
-      port: 22
-      command_timeout: 2m
-      target:
-        from_secret: DEST_DIR
-      source:
-        - docker-compose.yml
-    when:
-      branch:
-        - production
-      event:
-        - push
-
-  - name: deploy service
-    image: appleboy/drone-ssh
-    environment:
-      DOCKERHUB_USERNAME:
-        from_secret: DOCKERHUB_USERNAME
-      DEST_DIR:
-        from_secret: DEST_DIR
-      DB_USER:
-        from_secret: DB_USER
-      DB_PASSWORD:
-        from_secret: DB_PASSWORD
-      DB_NAME:
-        from_secret: DB_NAME
-      RECAPTCHA_SECRET:
-        from_secret: RECAPTCHA_SECRET
-      GITHUB_CLIENT_ID:
-        from_secret: GITHUB_CLIENT_ID
-      GITHUB_CLIENT_SECRET:
-        from_secret: GITHUB_CLIENT_SECRET
-      WEB_PORT:
-        from_secret: WEB_PORT
-      HTTP_API_PORT:
-        from_secret: HTTP_API_PORT
-      GRAPHQL_API_PORT:
-        from_secret: GRAPHQL_API_PORT
-      JWT_SECRET:
-        from_secret: JWT_SECRET
-      WEB_FRONTEND_URL:
-        from_secret: WEB_FRONTEND_URL
-      KEY_GEN_BUFFER_SIZE:
-        from_secret: KEY_GEN_BUFFER_SIZE
-      KEY_GEN_HOSTNAME:
-        from_secret: KEY_GEN_HOSTNAME
-      KEY_GEN_PORT:
-        from_secret: KEY_GEN_PORT
-    settings:
-      host:
-        from_secret: SERVER_HOST
-      username:
-        from_secret: SERVER_USER
-      password:
-        from_secret: SERVER_PASSWORD
-      port: 22
-      envs:
-        - DOCKERHUB_USERNAME
-        - DEST_DIR
-        - DB_USER
-        - DB_PASSWORD
-        - DB_NAME
-        - RECAPTCHA_SECRET
-        - GITHUB_CLIENT_ID
-        - GITHUB_CLIENT_SECRET
-        - JWT_SECRET
-        - WEB_FRONTEND_URL
-        - WEB_PORT
-        - HTTP_API_PORT
-        - GRAPHQL_API_PORT
-        - KEY_GEN_BUFFER_SIZE
-        - KEY_GEN_HOSTNAME
-        - KEY_GEN_PORT
-      script:
-        - docker pull $DOCKERHUB_USERNAME/short-frontend
-        - docker pull $DOCKERHUB_USERNAME/short-backend
-        - cd $DEST_DIR;
-          DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME
-          DB_USER=$DB_USER
-          DB_PASSWORD=$DB_PASSWORD
-          DB_NAME=$DB_NAME
-          RECAPTCHA_SECRET=$RECAPTCHA_SECRET
-          GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID
-          GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
-          JWT_SECRET=$JWT_SECRET
-          WEB_FRONTEND_URL=$WEB_FRONTEND_URL
-          WEB_PORT=$WEB_PORT
-          HTTP_API_PORT=$HTTP_API_PORT
-          GRAPHQL_API_PORT=$GRAPHQL_API_PORT
-          KEY_GEN_BUFFER_SIZE=$KEY_GEN_BUFFER_SIZE
-          KEY_GEN_HOSTNAME=$KEY_GEN_HOSTNAME
-          KEY_GEN_PORT=$KEY_GEN_PORT
-          docker-compose up -d
     when:
       branch:
         - production
