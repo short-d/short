@@ -51,6 +51,9 @@ export class UIFactory {
   }
 
   public createGithubSignInButton(): ReactElement {
+    if (!this.featureDecisionService.includeGithubSignButton()) {
+      return <div/>;
+    }
     return <GithubSignInButton githubSignInLink={this.authService.githubSignInLink()} />;
   }
 
