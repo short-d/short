@@ -33,6 +33,7 @@ func (a Authenticator) getPayload(token string) (Payload, error) {
 	return payload, nil
 }
 
+// IsSignedIn checks whether user successfully signed in
 func (a Authenticator) IsSignedIn(token string) bool {
 	payload, err := a.getPayload(token)
 	if err != nil {
@@ -46,6 +47,7 @@ func (a Authenticator) IsSignedIn(token string) bool {
 	return true
 }
 
+// GetUser decodes authentication token to user data
 func (a Authenticator) GetUser(token string) (entity.User, error) {
 	payload, err := a.getPayload(token)
 	if err != nil {
@@ -64,6 +66,7 @@ func (a Authenticator) GetUser(token string) (entity.User, error) {
 	}, nil
 }
 
+// GenerateToken encodes part of user data into authentication token
 func (a Authenticator) GenerateToken(user entity.User) (string, error) {
 	issuedAt := a.timer.Now()
 	payload := newPayload(user.Email, issuedAt)
@@ -71,6 +74,7 @@ func (a Authenticator) GenerateToken(user entity.User) (string, error) {
 	return a.tokenizer.Encode(tokenPayload)
 }
 
+// NewAuthenticator initializes authenticator with custom token valid duration
 func NewAuthenticator(
 	tokenizer fw.CryptoTokenizer,
 	timer fw.Timer,
