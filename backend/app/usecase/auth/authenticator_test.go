@@ -117,7 +117,7 @@ func TestAuthenticator_GetUser(t *testing.T) {
 		currentTime        time.Time
 		tokenPayload       fw.TokenPayload
 		hasErr             bool
-		expUser           entity.User
+		expUser            entity.User
 	}{
 		{
 			name:               "Token payload empty",
@@ -126,7 +126,7 @@ func TestAuthenticator_GetUser(t *testing.T) {
 			currentTime:        now.Add(30 * time.Minute),
 			tokenPayload:       map[string]interface{}{},
 			hasErr:             true,
-			expUser:           entity.User{},
+			expUser:            entity.User{},
 		},
 		{
 			name:               "Token payload without email",
@@ -136,8 +136,8 @@ func TestAuthenticator_GetUser(t *testing.T) {
 			tokenPayload: map[string]interface{}{
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
-			hasErr:   true,
-			expUser:           entity.User{},
+			hasErr:  true,
+			expUser: entity.User{},
 		},
 		{
 			name:               "Token payload without issue_at",
@@ -147,8 +147,8 @@ func TestAuthenticator_GetUser(t *testing.T) {
 			tokenPayload: map[string]interface{}{
 				"email": "test@s.time4hacks.com",
 			},
-			hasErr:   true,
-			expUser:           entity.User{},
+			hasErr:  true,
+			expUser: entity.User{},
 		},
 		{
 			name:               "Token expired",
@@ -159,8 +159,8 @@ func TestAuthenticator_GetUser(t *testing.T) {
 				"email":     "test@s.time4hacks.com",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
-			hasErr:   true,
-			expUser:           entity.User{},
+			hasErr:  true,
+			expUser: entity.User{},
 		},
 		{
 			name:               "Valid token with empty email",
@@ -171,8 +171,8 @@ func TestAuthenticator_GetUser(t *testing.T) {
 				"email":     "",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
-			hasErr:   true,
-			expUser:           entity.User{},
+			hasErr:  true,
+			expUser: entity.User{},
 		},
 		{
 			name:               "Token valid with correct email",
@@ -183,9 +183,9 @@ func TestAuthenticator_GetUser(t *testing.T) {
 				"email":     "test@s.time4hacks.com",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
-			hasErr:   false,
+			hasErr: false,
 			expUser: entity.User{
-				Email:"test@s.time4hacks.com",
+				Email: "test@s.time4hacks.com",
 			},
 		},
 	}

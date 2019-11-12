@@ -36,7 +36,7 @@ func (o OAuth) SignIn(authorizationCode string) (string, error) {
 	}
 
 	user := entity.User{
-		Email:email,
+		Email: email,
 	}
 	authToken, err := o.authenticator.GenerateToken(user)
 	if err != nil {
