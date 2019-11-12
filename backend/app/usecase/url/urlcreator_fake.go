@@ -1,7 +1,6 @@
 package url
 
 import (
-	"fmt"
 	"short/app/entity"
 	"short/app/usecase/keygen"
 )
@@ -32,9 +31,6 @@ func (f FakeCreator) CreateURLWithCustomAlias(
 	user entity.User,
 ) (entity.URL, error) {
 	url.Alias = alias
-
-	fmt.Println(f.urls)
-
 	_, ok := f.urls[alias]
 	if ok {
 		return entity.URL{}, ErrAliasExist("usecase: url alias already exist")
