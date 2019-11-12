@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"short/app/entity"
 	"time"
 
 	"github.com/byliuyang/app/fw"
@@ -45,25 +46,27 @@ func (a Authenticator) IsSignedIn(token string) bool {
 	return true
 }
 
-func (a Authenticator) GetUserEmail(token string) (string, error) {
+func (a Authenticator) GetUser(token string) (entity.User, error) {
 	payload, err := a.getPayload(token)
 	if err != nil {
-		return "", err
+		return entity.User{}, err
 	}
 
 	if !a.isTokenValid(payload, a.tokenValidDuration) {
-		return "", errors.New("token expired")
+		return entity.User{}, errors.New("token expired")
 	}
 
 	if len(payload.email) < 1 {
-		return "", errors.New("email can't be empty")
+		return entity.User{}, errors.New("email can't be empty")
 	}
-	return payload.email, nil
+	return entity.User{
+		Email: payload.email,
+	}, nil
 }
 
-func (a Authenticator) GenerateToken(email string) (string, error) {
+func (a Authenticator) GenerateToken(user entity.User) (string, error) {
 	issuedAt := a.timer.Now()
-	payload := newPayload(email, issuedAt)
+	payload := newPayload(user.Email, issuedAt)
 	tokenPayload := payload.TokenPayload()
 	return a.tokenizer.Encode(tokenPayload)
 }

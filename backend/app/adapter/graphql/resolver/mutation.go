@@ -63,7 +63,7 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 
 	authToken := args.AuthToken
-	userEmail, err := m.authenticator.GetUserEmail(authToken)
+	user, err := m.authenticator.GetUser(authToken)
 	if err != nil {
 		m.logger.Error(err)
 		return nil, ErrInvalidAuthToken(authToken)
@@ -73,7 +73,7 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 		trace1 := trace.Next("CreateURL")
 		defer trace1.End()
 
-		newURL, err := m.urlCreator.CreateURL(u, userEmail)
+		newURL, err := m.urlCreator.CreateURL(u, user.Email)
 		if err != nil {
 			m.logger.Error(err)
 			return nil, ErrUnknown{}
@@ -85,7 +85,7 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	trace1 := trace.Next("CreateURLWithCustomAlias")
 	defer trace1.End()
 
-	newURL, err := m.urlCreator.CreateURLWithCustomAlias(u, *customAlias, userEmail)
+	newURL, err := m.urlCreator.CreateURLWithCustomAlias(u, *customAlias, user.Email)
 	if err == nil {
 		return &URL{url: newURL}, nil
 	}
