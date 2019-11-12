@@ -1,5 +1,7 @@
 package repo
 
+import "short/app/entity"
+
 var _ UserURLRelation = (*UserURLRelationFake)(nil)
 
 // UserURLRelationFake represents in memory implementation of User-URL relationship accessor.
@@ -7,7 +9,7 @@ type UserURLRelationFake struct {
 }
 
 // CreateRelation creates many to many relationship between User and URL.
-func (u UserURLRelationFake) CreateRelation(userEmail string, urlAlias string) error {
+func (u UserURLRelationFake) CreateRelation(user entity.User, urlAlias string) error {
 	return nil
 }
 

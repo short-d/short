@@ -17,9 +17,9 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 		name        string
 		urls        urlMap
 		alias       string
-		userEmail   string
+		user        entity.User
 		url         entity.URL
-		hasErr      bool
+		expHasErr   bool
 		expectedURL entity.URL
 	}{
 		{
@@ -30,21 +30,25 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			alias:     "220uFicCJj",
-			userEmail: "alpha@example.com",
+			alias: "220uFicCJj",
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
 			url:       entity.URL{},
-			hasErr:    true,
+			expHasErr: true,
 		},
 		{
-			name:      "create alias successfully",
-			urls:      urlMap{},
-			alias:     "220uFicCJj",
-			userEmail: "alpha@example.com",
+			name:  "create alias successfully",
+			urls:  urlMap{},
+			alias: "220uFicCJj",
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
 			url: entity.URL{
 				Alias:    "220uFicCJj",
 				ExpireAt: &now,
 			},
-			hasErr: false,
+			expHasErr: false,
 			expectedURL: entity.URL{
 				Alias:    "220uFicCJj",
 				ExpireAt: &now,
@@ -61,14 +65,31 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 			})
 
 			creator := NewCreatorPersist(&urlRepo, &userURLRepo, &keyGen)
-			url, err := creator.CreateURL(testCase.url, testCase.userEmail)
 
-			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
-				return
+			urlsCopy := copyURLMap(testCase.urls)
+			fakeCreator := NewCreatorFake(urlsCopy, []string{
+				testCase.alias,
+			})
+
+			creators := []Creator{creator, fakeCreator}
+
+			for _, c := range creators {
+				url, err := c.CreateURL(testCase.url, testCase.user)
+				if testCase.expHasErr {
+					mdtest.NotEqual(t, nil, err)
+					return
+				}
+				mdtest.Equal(t, nil, err)
+				mdtest.Equal(t, testCase.expectedURL, url)
 			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURL, url)
 		})
 	}
+}
+
+func copyURLMap(srcURLMap map[string]entity.URL) map[string]entity.URL {
+	urlsCopy := make(map[string]entity.URL)
+	for key, val := range srcURLMap {
+		urlsCopy[key] = val
+	}
+	return urlsCopy
 }

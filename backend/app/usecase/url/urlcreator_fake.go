@@ -1,6 +1,7 @@
 package url
 
 import (
+	"fmt"
 	"short/app/entity"
 	"short/app/usecase/keygen"
 )
@@ -14,13 +15,13 @@ type FakeCreator struct {
 }
 
 // CreateURL persists a new url with a generated alias in the repository.
-func (f FakeCreator) CreateURL(url entity.URL, userEmail string) (entity.URL, error) {
+func (f FakeCreator) CreateURL(url entity.URL, user entity.User) (entity.URL, error) {
 	key, err := f.keyGen.NewKey()
 	if err != nil {
 		return entity.URL{}, err
 	}
 	randomAlias := string(key)
-	return f.CreateURLWithCustomAlias(url, randomAlias, userEmail)
+	return f.CreateURLWithCustomAlias(url, randomAlias, user)
 }
 
 // CreateURLWithCustomAlias persists a new url with a custom alias in
@@ -28,9 +29,11 @@ func (f FakeCreator) CreateURL(url entity.URL, userEmail string) (entity.URL, er
 func (f FakeCreator) CreateURLWithCustomAlias(
 	url entity.URL,
 	alias string,
-	userEmail string,
+	user entity.User,
 ) (entity.URL, error) {
 	url.Alias = alias
+
+	fmt.Println(f.urls)
 
 	_, ok := f.urls[alias]
 	if ok {

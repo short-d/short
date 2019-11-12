@@ -16,8 +16,8 @@ func (e ErrAliasExist) Error() string {
 
 // Creator represents a URL alias creator
 type Creator interface {
-	CreateURL(url entity.URL, userEmail string) (entity.URL, error)
-	CreateURLWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error)
+	CreateURL(url entity.URL, user entity.User) (entity.URL, error)
+	CreateURLWithCustomAlias(url entity.URL, alias string, user entity.User) (entity.URL, error)
 }
 
 // CreatorPersist represents a URL alias creator which persist the generated
@@ -29,18 +29,18 @@ type CreatorPersist struct {
 }
 
 // CreateURL persists a new url with a generated alias in the repository.
-func (a CreatorPersist) CreateURL(url entity.URL, userEmail string) (entity.URL, error) {
+func (a CreatorPersist) CreateURL(url entity.URL, user entity.User) (entity.URL, error) {
 	key, err := a.keyGen.NewKey()
 	if err != nil {
 		return entity.URL{}, err
 	}
 	randomAlias := string(key)
-	return a.CreateURLWithCustomAlias(url, randomAlias, userEmail)
+	return a.CreateURLWithCustomAlias(url, randomAlias, user)
 }
 
 // CreateURLWithCustomAlias persists a new url with a custom alias in
 // the repository.
-func (a CreatorPersist) CreateURLWithCustomAlias(url entity.URL, alias string, userEmail string) (entity.URL, error) {
+func (a CreatorPersist) CreateURLWithCustomAlias(url entity.URL, alias string, user entity.User) (entity.URL, error) {
 	url.Alias = alias
 
 	isExist, err := a.urlRepo.IsAliasExist(alias)
@@ -57,7 +57,7 @@ func (a CreatorPersist) CreateURLWithCustomAlias(url entity.URL, alias string, u
 		return entity.URL{}, err
 	}
 
-	err = a.userURLRelationRepo.CreateRelation(userEmail, url.Alias)
+	err = a.userURLRelationRepo.CreateRelation(user, url.Alias)
 	return url, err
 }
 
