@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"short/app/entity"
 	"testing"
 	"time"
 
@@ -14,14 +15,16 @@ func TestAuthenticator_GenerateToken(t *testing.T) {
 	timer := mdtest.NewTimerFake(expIssuedAt)
 	authenticator := NewAuthenticator(tokenizer, timer, 2*time.Millisecond)
 
-	expEmail := "test@s.time4hacks.com"
-	token, err := authenticator.GenerateToken(expEmail)
+	expUser := entity.User{
+		Email: "test@s.time4hacks.com",
+	}
+	token, err := authenticator.GenerateToken(expUser)
 	mdtest.Equal(t, nil, err)
 
 	tokenPayload, err := tokenizer.Decode(token)
 	mdtest.Equal(t, nil, err)
 
-	mdtest.Equal(t, expEmail, tokenPayload["email"])
+	mdtest.Equal(t, expUser.Email, tokenPayload["email"])
 
 	expIssuedAtStr := expIssuedAt.Format(time.RFC3339Nano)
 	mdtest.Equal(t, expIssuedAtStr, tokenPayload["issued_at"])
@@ -104,7 +107,7 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 	}
 }
 
-func TestAuthenticator_GetUserEmail(t *testing.T) {
+func TestAuthenticator_GetUser(t *testing.T) {
 	now := time.Now()
 
 	testCases := []struct {
@@ -114,7 +117,7 @@ func TestAuthenticator_GetUserEmail(t *testing.T) {
 		currentTime        time.Time
 		tokenPayload       fw.TokenPayload
 		hasErr             bool
-		expEmail           string
+		expUser            entity.User
 	}{
 		{
 			name:               "Token payload empty",
@@ -123,7 +126,7 @@ func TestAuthenticator_GetUserEmail(t *testing.T) {
 			currentTime:        now.Add(30 * time.Minute),
 			tokenPayload:       map[string]interface{}{},
 			hasErr:             true,
-			expEmail:           "",
+			expUser:            entity.User{},
 		},
 		{
 			name:               "Token payload without email",
@@ -133,8 +136,8 @@ func TestAuthenticator_GetUserEmail(t *testing.T) {
 			tokenPayload: map[string]interface{}{
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
-			hasErr:   true,
-			expEmail: "",
+			hasErr:  true,
+			expUser: entity.User{},
 		},
 		{
 			name:               "Token payload without issue_at",
@@ -144,8 +147,8 @@ func TestAuthenticator_GetUserEmail(t *testing.T) {
 			tokenPayload: map[string]interface{}{
 				"email": "test@s.time4hacks.com",
 			},
-			hasErr:   true,
-			expEmail: "",
+			hasErr:  true,
+			expUser: entity.User{},
 		},
 		{
 			name:               "Token expired",
@@ -156,8 +159,8 @@ func TestAuthenticator_GetUserEmail(t *testing.T) {
 				"email":     "test@s.time4hacks.com",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
-			hasErr:   true,
-			expEmail: "",
+			hasErr:  true,
+			expUser: entity.User{},
 		},
 		{
 			name:               "Valid token with empty email",
@@ -168,8 +171,8 @@ func TestAuthenticator_GetUserEmail(t *testing.T) {
 				"email":     "",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
-			hasErr:   true,
-			expEmail: "",
+			hasErr:  true,
+			expUser: entity.User{},
 		},
 		{
 			name:               "Token valid with correct email",
@@ -180,8 +183,10 @@ func TestAuthenticator_GetUserEmail(t *testing.T) {
 				"email":     "test@s.time4hacks.com",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
-			hasErr:   false,
-			expEmail: "test@s.time4hacks.com",
+			hasErr: false,
+			expUser: entity.User{
+				Email: "test@s.time4hacks.com",
+			},
 		},
 	}
 
@@ -193,12 +198,12 @@ func TestAuthenticator_GetUserEmail(t *testing.T) {
 
 			token, err := tokenizer.Encode(testCase.tokenPayload)
 			mdtest.Equal(t, nil, err)
-			gotEmail, err := authenticator.GetUserEmail(token)
+			gotUser, err := authenticator.GetUser(token)
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, testCase.expEmail, gotEmail)
+			mdtest.Equal(t, testCase.expUser, gotUser)
 		})
 	}
 }
