@@ -1,6 +1,8 @@
 package repo
 
+import "short/app/entity"
+
 // UserURLRelation accesses User-URL relationship from storage, such as database.
 type UserURLRelation interface {
-	CreateRelation(userEmail string, urlAlias string) error
+	CreateRelation(user entity.User, urlAlias string) error
 }
