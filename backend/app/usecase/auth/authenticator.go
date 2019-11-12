@@ -40,11 +40,7 @@ func (a Authenticator) IsSignedIn(token string) bool {
 		return false
 	}
 
-	if !a.isTokenValid(payload, a.tokenValidDuration) {
-		return false
-	}
-
-	return true
+	return a.isTokenValid(payload, a.tokenValidDuration)
 }
 
 // GetUser decodes authentication token to user data
