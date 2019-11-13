@@ -30,7 +30,6 @@ func (e ErrInvalidCustomAlias) Error() string {
 // Creator represents a URL alias creator
 type Creator interface {
 	CreateURL(url entity.URL, alias *string, user entity.User) (entity.URL, error)
-	//CreateURLWithCustomAlias(url entity.URL, alias string, user entity.User) (entity.URL, error)
 }
 
 // CreatorPersist represents a URL alias creator which persist the generated
