@@ -15,15 +15,15 @@ import (
 )
 
 func TestGraphQlAPI(t *testing.T) {
-	sqlDb, _, err := mdtest.NewSQLStub()
+	sqlDB, _, err := mdtest.NewSQLStub()
 	mdtest.Equal(t, nil, err)
-	defer sqlDb.Close()
+	defer sqlDB.Close()
 
 	urls := map[string]entity.URL{}
 	retriever := url.NewRetrieverFake(urls)
 
-	urlRepo := db.NewURLSql(sqlDb)
-	urlRelationRepo := db.NewUserURLRelationSQL(sqlDb)
+	urlRepo := db.NewURLSql(sqlDB)
+	urlRelationRepo := db.NewUserURLRelationSQL(sqlDB)
 	keyGen := keygen.NewFake([]string{})
 	creator := url.NewCreatorPersist(urlRepo, urlRelationRepo, &keyGen)
 
