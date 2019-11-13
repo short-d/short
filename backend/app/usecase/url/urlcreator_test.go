@@ -10,7 +10,7 @@ import (
 	"github.com/byliuyang/app/mdtest"
 )
 
-func TestURLCreatorPersist_CreateUrl(t *testing.T) {
+func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	now := time.Now()
 
 	testCases := []struct {
