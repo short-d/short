@@ -14,6 +14,8 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	now := time.Now()
 
 	alias := "220uFicCJj"
+	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
+
 	testCases := []struct {
 		name        string
 		urls        urlMap
@@ -33,6 +35,21 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				},
 			},
 			alias: &alias,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			url:       entity.URL{},
+			expHasErr: true,
+		},
+		{
+			name: "alias too long",
+			urls: urlMap{
+				"220uFicCJj": entity.URL{
+					Alias:    "220uFicCJj",
+					ExpireAt: &now,
+				},
+			},
+			alias: &longAlias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
