@@ -9,18 +9,21 @@ import (
 
 var _ Creator = (*CreatorPersist)(nil)
 
+// ErrAliasExist represents alias unavailable error
 type ErrAliasExist string
 
 func (e ErrAliasExist) Error() string {
 	return string(e)
 }
 
+// ErrInvalidLongLink represents incorrect long link format error
 type ErrInvalidLongLink string
 
 func (e ErrInvalidLongLink) Error() string {
 	return string(e)
 }
 
+// ErrInvalidCustomAlias represents incorrect custom alias format error
 type ErrInvalidCustomAlias string
 
 func (e ErrInvalidCustomAlias) Error() string {
@@ -42,6 +45,7 @@ type CreatorPersist struct {
 	aliasValidator      input.Validator
 }
 
+// CreateURL persists a new url with a given or auto generated alias in the repository.
 func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user entity.User) (entity.URL, error) {
 	longLink := url.OriginalURL
 	if !c.longLinkValidator.IsValid(&longLink) {
@@ -58,7 +62,6 @@ func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user enti
 	return c.createURLWithCustomAlias(url, *customAlias, user)
 }
 
-// CreateURL persists a new url with a generated alias in the repository.
 func (c CreatorPersist) createURLWithAutoAlias(url entity.URL, user entity.User) (entity.URL, error) {
 	key, err := c.keyGen.NewKey()
 	if err != nil {
@@ -68,8 +71,6 @@ func (c CreatorPersist) createURLWithAutoAlias(url entity.URL, user entity.User)
 	return c.createURLWithCustomAlias(url, randomAlias, user)
 }
 
-// CreateURLWithCustomAlias persists a new url with a custom alias in
-// the repository.
 func (c CreatorPersist) createURLWithCustomAlias(url entity.URL, alias string, user entity.User) (entity.URL, error) {
 	url.Alias = alias
 
