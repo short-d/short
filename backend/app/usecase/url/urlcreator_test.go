@@ -17,14 +17,14 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
 
 	testCases := []struct {
-		name        string
-		urls        urlMap
-		alias       *string
+		name          string
+		urls          urlMap
+		alias         *string
 		availableKeys []string
-		user        entity.User
-		url         entity.URL
-		expHasErr   bool
-		expectedURL entity.URL
+		user          entity.User
+		url           entity.URL
+		expHasErr     bool
+		expectedURL   entity.URL
 	}{
 		{
 			name: "alias exists",
@@ -53,7 +53,9 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url:       entity.URL{},
+			url: entity.URL{
+				OriginalURL: "https://www.google.com",
+			},
 			expHasErr: true,
 		},
 		{
@@ -90,8 +92,30 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url:       entity.URL{
-				Alias:"test",
+			url: entity.URL{
+				OriginalURL: "https://www.google.com",
+			},
+			expHasErr: false,
+			expectedURL: entity.URL{
+				Alias:       "test",
+				OriginalURL: "https://www.google.com",
+			},
+		},
+		{
+			name: "no available key",
+			urls: urlMap{
+				"220uFicCJj": entity.URL{
+					Alias:    "220uFicCJj",
+					ExpireAt: &now,
+				},
+			},
+			availableKeys: []string{},
+			alias:         nil,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			url: entity.URL{
+				OriginalURL: "https://www.google.com",
 			},
 			expHasErr: true,
 		},
