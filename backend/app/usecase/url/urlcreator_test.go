@@ -13,10 +13,12 @@ import (
 func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	now := time.Now()
 
+	alias := "220uFicCJj"
 	testCases := []struct {
 		name        string
 		urls        urlMap
-		alias       string
+		alias       *string
+		availableKeys []string
 		user        entity.User
 		url         entity.URL
 		expHasErr   bool
@@ -30,7 +32,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			alias: "220uFicCJj",
+			alias: &alias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -40,7 +42,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		{
 			name:  "create alias successfully",
 			urls:  urlMap{},
-			alias: "220uFicCJj",
+			alias: &alias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -56,19 +58,37 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				ExpireAt:    &now,
 			},
 		},
+		{
+			name: "automatically generate alias",
+			urls: urlMap{
+				"220uFicCJj": entity.URL{
+					Alias:    "220uFicCJj",
+					ExpireAt: &now,
+				},
+			},
+			availableKeys: []string{
+				"test",
+			},
+			alias: nil,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			url:       entity.URL{
+				Alias:"test",
+			},
+			expHasErr: true,
+		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			urlRepo := repo.NewURLFake(testCase.urls)
 			userURLRepo := repo.NewUserURLRepoFake()
-			keyGen := keygen.NewFake([]string{
-				testCase.alias,
-			})
+			keyGen := keygen.NewFake(testCase.availableKeys)
 
 			creator := NewCreatorPersist(&urlRepo, &userURLRepo, &keyGen)
 
-			url, err := creator.CreateURL(testCase.url, &testCase.alias, testCase.user)
+			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user)
 			if testCase.expHasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
