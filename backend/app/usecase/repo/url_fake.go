@@ -45,8 +45,8 @@ func (u URLFake) GetByAlias(alias string) (entity.URL, error) {
 }
 
 // NewURLFake creates in memory URL repository
-func NewURLFake(urls map[string]entity.URL) *URLFake {
-	return &URLFake{
+func NewURLFake(urls map[string]entity.URL) URLFake {
+	return URLFake{
 		urls: urls,
 	}
 }
