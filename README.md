@@ -78,9 +78,9 @@ git clone https://github.com/byliuyang/short.git
 
 1. Copy `.env.dist` file to `.env`:
 
-    ```bash
-    cp .env.dist .env
-    ```
+   ```bash
+   cp .env.dist .env
+   ```
 
 1. Update Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
    `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`,
