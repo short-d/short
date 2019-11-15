@@ -7,7 +7,7 @@ import (
 
 var _ URL = (*URLFake)(nil)
 
-// URLSql accesses URL information in url table through SQL.
+// URLFake accesses URL information in url table through SQL.
 type URLFake struct {
 	urls map[string]entity.URL
 }
