@@ -10,14 +10,18 @@ import (
 
 var _ Retriever = (*RetrieverPersist)(nil)
 
+// Retriever represents URL retriever
 type Retriever interface {
 	GetURL(alias string, expiringAt *time.Time) (entity.URL, error)
 }
 
+// RetrieverPersist represents URL retriever that fetches URL from persistent
+// storage, such as database
 type RetrieverPersist struct {
 	urlRepo repo.URL
 }
 
+// GetURL retrieves URL from persistent storage given alias
 func (r RetrieverPersist) GetURL(alias string, expiringAt *time.Time) (entity.URL, error) {
 	if expiringAt == nil {
 		return r.getURL(alias)
@@ -51,6 +55,7 @@ func (r RetrieverPersist) getURL(alias string) (entity.URL, error) {
 	return url, nil
 }
 
+// NewRetrieverPersist creates persistent URL retriever
 func NewRetrieverPersist(urlRepo repo.URL) RetrieverPersist {
 	return RetrieverPersist{
 		urlRepo: urlRepo,
