@@ -78,7 +78,7 @@ git clone https://github.com/byliuyang/short.git
 
 1. Copy `.env.dist` file to `.env`:
 
-    ```
+    ```bash
     cp .env.dist .env
     ```
 
