@@ -28,6 +28,8 @@
     "build:production": "REACT_APP_ENV=production yarn build",
     "test": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts test",
     "eject": "react-scripts eject",
+    "build:docker": "docker build . --build-arg REACT_APP_GIT_SHA=`git rev-parse --short HEAD`",
+    "react:build": "react-scripts build",
     "prettier:base": "prettier --parser typescript --single-quote",
     "prettier:check": "yarn prettier:base --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "yarn prettier:base --write \"src/**/*.{ts,tsx}\"",
