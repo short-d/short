@@ -27,18 +27,10 @@ git clone https://github.com/byliuyang/short.git
 
 ### Prerequisites
 
-- Docker v19.03.2
-
-### Configure environmental variables
-
-1. Copy `.env.dist` file to `.env`:
-
-    ```
-    cp .env.dist .env
-    ```
-   
-1. Update `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `JWT_SECRET` with your own
-   configurations.
+- Go v1.13.1
+- Node.js v12.12.0
+- Yarn v1.19.1
+- Postgresql v12.0 ( or use [ElephantSQL](https://short-d.com/r/sql) instead )
 
 ### Create reCAPTCHA account
 
@@ -82,63 +74,18 @@ git clone https://github.com/byliuyang/short.git
 1. Replace the value of `FACEBOOK_CLIENT_SECRET` in the `.env` file with
    `App Secret`.
 
-### Generate static assets
-
-Run the following commands at project root:
-
-```bash
-docker build -t frontend-build -f Dockerfile-build .
-docker run -v $(pwd)/frontend/build:/app/build frontend-build:latest
-```
-
-### Build frontend & backend docker images
-
-```bash
-docker build -t short-frontend:latest -f frontend/Dockerfile frontend
-docker build -t short-backend:latest -f backend/Dockerfile backend
-```
-
-### Launch App
-
-```bash
-docker-compose up
-```
-
-Visit [http://localhost:3000](http://localhost:3000)
-
-## Development
-
-### Dependencies
-
-- Go v1.13.1
-- Node.js v12.12.0
-- Yarn v1.19.1
-- Postgresql v12.0 ( or use [ElephantSQL](https://short-d.com/r/sql) instead )
-
 ### Backend
 
-1. Create `.env` under `backend` directory with the following content:
+1. Copy `.env.dist` file to `.env`:
 
-   ```env
-   DB_HOST=your_db_host
-   DB_PORT=your_db_port
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
-   DB_NAME=your_db_name
-   RECAPTCHA_SECRET=your_recaptcha_secret
-   GITHUB_CLIENT_ID=your_Github_client_id
-   GITHUB_CLIENT_SECRET=your_Github_client_secret
-   FACEBOOK_CLIENT_ID=your_Facebook_app_id
-   FACEBOOK_CLIENT_SECRET=your_Facebook_app_secret
-   FACEBOOK_REDIRECT_URI=http://localhost/oauth/facebook/sign-in/callback
-   JWT_SECRET=your_JWT_secret
-   WEB_FRONTEND_URL=http://localhost:3000
-   ```
-
-1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
-   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`,
-   `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`
-   with your own configurations.
+    ```
+    cp .env.dist .env
+    ```
+   
+1. Update Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
+	`RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`,
+   `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI` with your 
+   own configurations.
 
 1. Launch backend server
 
