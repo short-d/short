@@ -6,26 +6,31 @@ import (
 	"short/app/entity"
 	"short/app/usecase/repo"
 	"time"
-
-	"github.com/byliuyang/app/fw"
 )
 
 var _ Retriever = (*RetrieverPersist)(nil)
 
+// Retriever represents URL retriever
 type Retriever interface {
-	GetAfter(trace fw.Segment, alias string, expiringAt time.Time) (entity.URL, error)
-	Get(trace fw.Segment, alias string) (entity.URL, error)
+	GetURL(alias string, expiringAt *time.Time) (entity.URL, error)
 }
 
+// RetrieverPersist represents URL retriever that fetches URL from persistent
+// storage, such as database
 type RetrieverPersist struct {
 	urlRepo repo.URL
 }
 
-func (u RetrieverPersist) GetAfter(trace fw.Segment, alias string, expiringAt time.Time) (entity.URL, error) {
-	trace1 := trace.Next("Get")
-	url, err := u.Get(trace1, alias)
-	trace1.End()
+// GetURL retrieves URL from persistent storage given alias
+func (r RetrieverPersist) GetURL(alias string, expiringAt *time.Time) (entity.URL, error) {
+	if expiringAt == nil {
+		return r.getURL(alias)
+	}
+	return r.getURLExpireAfter(alias, *expiringAt)
+}
 
+func (r RetrieverPersist) getURLExpireAfter(alias string, expiringAt time.Time) (entity.URL, error) {
+	url, err := r.getURL(alias)
 	if err != nil {
 		return entity.URL{}, err
 	}
@@ -41,11 +46,8 @@ func (u RetrieverPersist) GetAfter(trace fw.Segment, alias string, expiringAt ti
 	return url, nil
 }
 
-func (u RetrieverPersist) Get(trace fw.Segment, alias string) (entity.URL, error) {
-	trace1 := trace.Next("GetByAlias")
-	url, err := u.urlRepo.GetByAlias(alias)
-	trace1.End()
-
+func (r RetrieverPersist) getURL(alias string) (entity.URL, error) {
+	url, err := r.urlRepo.GetByAlias(alias)
 	if err != nil {
 		return entity.URL{}, err
 	}
@@ -53,6 +55,7 @@ func (u RetrieverPersist) Get(trace fw.Segment, alias string) (entity.URL, error
 	return url, nil
 }
 
+// NewRetrieverPersist creates persistent URL retriever
 func NewRetrieverPersist(urlRepo repo.URL) RetrieverPersist {
 	return RetrieverPersist{
 		urlRepo: urlRepo,

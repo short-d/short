@@ -24,7 +24,8 @@ func NewOriginalURL(
 		alias := params["alias"]
 
 		trace1 := trace.Next("GetUrlAfter")
-		u, err := urlRetriever.GetAfter(trace1, alias, timer.Now())
+		now := timer.Now()
+		u, err := urlRetriever.GetURL(alias, &now)
 		trace1.End()
 
 		if err != nil {

@@ -3,7 +3,6 @@ package graphql
 import (
 	"short/app/adapter/db"
 	"short/app/adapter/recaptcha"
-	"short/app/entity"
 	"short/app/usecase/auth"
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
@@ -19,10 +18,8 @@ func TestGraphQlAPI(t *testing.T) {
 	mdtest.Equal(t, nil, err)
 	defer sqlDB.Close()
 
-	urls := map[string]entity.URL{}
-	retriever := url.NewRetrieverFake(urls)
-
 	urlRepo := db.NewURLSql(sqlDB)
+	retriever := url.NewRetrieverPersist(urlRepo)
 	urlRelationRepo := db.NewUserURLRelationSQL(sqlDB)
 	keyGen := keygen.NewFake([]string{})
 	creator := url.NewCreatorPersist(urlRepo, urlRelationRepo, &keyGen)
