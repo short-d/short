@@ -2,6 +2,7 @@ package signin
 
 import (
 	"errors"
+	"short/app/entity"
 	"short/app/usecase/auth"
 	"short/app/usecase/service"
 )
@@ -34,7 +35,10 @@ func (o OAuth) SignIn(authorizationCode string) (string, error) {
 		return "", err
 	}
 
-	authToken, err := o.authenticator.GenerateToken(email)
+	user := entity.User{
+		Email: email,
+	}
+	authToken, err := o.authenticator.GenerateToken(user)
 	if err != nil {
 		return "", err
 	}

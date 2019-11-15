@@ -10,17 +10,21 @@ import (
 	"github.com/byliuyang/app/mdtest"
 )
 
-func TestURLCreatorPersist_CreateUrl(t *testing.T) {
+func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	now := time.Now()
 
+	alias := "220uFicCJj"
+	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
+
 	testCases := []struct {
-		name        string
-		urls        urlMap
-		alias       string
-		userEmail   string
-		url         entity.URL
-		hasErr      bool
-		expectedURL entity.URL
+		name          string
+		urls          urlMap
+		alias         *string
+		availableKeys []string
+		user          entity.User
+		url           entity.URL
+		expHasErr     bool
+		expectedURL   entity.URL
 	}{
 		{
 			name: "alias exists",
@@ -30,25 +34,90 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			alias:     "220uFicCJj",
-			userEmail: "alpha@example.com",
+			alias: &alias,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
 			url:       entity.URL{},
-			hasErr:    true,
+			expHasErr: true,
 		},
 		{
-			name:      "create alias successfully",
-			urls:      urlMap{},
-			alias:     "220uFicCJj",
-			userEmail: "alpha@example.com",
+			name: "alias too long",
+			urls: urlMap{
+				"220uFicCJj": entity.URL{
+					Alias:    "220uFicCJj",
+					ExpireAt: &now,
+				},
+			},
+			alias: &longAlias,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
 			url: entity.URL{
-				Alias:    "220uFicCJj",
-				ExpireAt: &now,
+				OriginalURL: "https://www.google.com",
 			},
-			hasErr: false,
+			expHasErr: true,
+		},
+		{
+			name:  "create alias successfully",
+			urls:  urlMap{},
+			alias: &alias,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			url: entity.URL{
+				Alias:       "220uFicCJj",
+				OriginalURL: "https://www.google.com",
+				ExpireAt:    &now,
+			},
+			expHasErr: false,
 			expectedURL: entity.URL{
-				Alias:    "220uFicCJj",
-				ExpireAt: &now,
+				Alias:       "220uFicCJj",
+				OriginalURL: "https://www.google.com",
+				ExpireAt:    &now,
 			},
+		},
+		{
+			name: "automatically generate alias",
+			urls: urlMap{
+				"220uFicCJj": entity.URL{
+					Alias:    "220uFicCJj",
+					ExpireAt: &now,
+				},
+			},
+			availableKeys: []string{
+				"test",
+			},
+			alias: nil,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			url: entity.URL{
+				OriginalURL: "https://www.google.com",
+			},
+			expHasErr: false,
+			expectedURL: entity.URL{
+				Alias:       "test",
+				OriginalURL: "https://www.google.com",
+			},
+		},
+		{
+			name: "no available key",
+			urls: urlMap{
+				"220uFicCJj": entity.URL{
+					Alias:    "220uFicCJj",
+					ExpireAt: &now,
+				},
+			},
+			availableKeys: []string{},
+			alias:         nil,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			url: entity.URL{
+				OriginalURL: "https://www.google.com",
+			},
+			expHasErr: true,
 		},
 	}
 
@@ -56,14 +125,12 @@ func TestURLCreatorPersist_CreateUrl(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			urlRepo := repo.NewURLFake(testCase.urls)
 			userURLRepo := repo.NewUserURLRepoFake()
-			keyGen := keygen.NewFake([]string{
-				testCase.alias,
-			})
+			keyGen := keygen.NewFake(testCase.availableKeys)
 
 			creator := NewCreatorPersist(&urlRepo, &userURLRepo, &keyGen)
-			url, err := creator.CreateURL(testCase.url, testCase.userEmail)
 
-			if testCase.hasErr {
+			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user)
+			if testCase.expHasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
 			}

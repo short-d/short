@@ -303,8 +303,7 @@ and management of containerized microservices.
 
 ![Node overview](https://d33wubrfki0l68.cloudfront.net/5cb72d407cbe2755e581b6de757e0d81760d5b86/a9df9/docs/tutorials/kubernetes-basics/public/images/module_03_nodes.svg)
 
-Short adapted [GitOps](https://www.weave.works/technologies/gitops/) to version
-control Kubernetes configurations.
+Short uses [GitOps](https://github.com/byliuyang/gitops) to manage Kubernetes cluster.
 ![GitOps](https://images.contentstack.io/v3/assets/blt300387d93dabf50e/blt15812c9fe056ba3b/5ce4448f32fd88a3767ee9a3/download)
 
 ### Staging

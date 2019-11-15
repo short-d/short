@@ -3,6 +3,7 @@ package resolver
 import (
 	"short/app/adapter/graphql/scalar"
 	"short/app/entity"
+	"short/app/usecase/repo"
 	"short/app/usecase/url"
 	"testing"
 	"time"
@@ -12,7 +13,7 @@ import (
 
 type urlMap = map[string]entity.URL
 
-func TestQuery_Url(t *testing.T) {
+func TestQuery_URL(t *testing.T) {
 	now := time.Now()
 	before := now.Add(-5 * time.Second)
 	after := now.Add(5 * time.Second)
@@ -76,7 +77,12 @@ func TestQuery_Url(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			retrieverFake := url.NewRetrieverFake(testCase.urls)
+			sqlDB, _, err := mdtest.NewSQLStub()
+			mdtest.Equal(t, nil, err)
+			defer sqlDB.Close()
+
+			fakeRepo := repo.NewURLFake(testCase.urls)
+			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
 			logger := mdtest.NewLoggerFake()
 			tracer := mdtest.NewTracerFake()
 			query := NewQuery(&logger, &tracer, retrieverFake)
