@@ -13,8 +13,12 @@ import {validateCustomAliasFormat} from '../validators/CustomAlias.validator';
 import {ErrorService, ErrUrl} from './Error.service';
 import {IErr} from '../entity/Err';
 
+interface AuthMutation {
+  createURL: Url
+}
+
 interface CreateURLData {
-  createURL: Url;
+  authMutation: AuthMutation
 }
 
 interface ICreateShortLinkErrs {
@@ -25,16 +29,14 @@ interface ICreateShortLinkErrs {
 const gqlCreateURL = gql`
       mutation params(
         $captchaResponse: String!
-        $urlInput: URLInput!
         $authToken: String!
+        $urlInput: URLInput!
       ) {
-        createURL(
-          captchaResponse: $captchaResponse
-          url: $urlInput
-          authToken: $authToken
-        ) {
-          alias
-          originalURL
+        authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
+          createURL(url: $urlInput) {
+            alias
+            originalURL
+          }
         }
       }
 `;
@@ -130,7 +132,6 @@ export class UrlService {
     const captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
     let alias = link.alias === '' ? null : link.alias!;
     let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
-
     return new Promise<Url>((resolve, reject: (errCodes: ErrUrl[]) => any) => {
       this.gqlClient
         .mutate({
@@ -141,7 +142,7 @@ export class UrlService {
           if (!res || !res.data) {
             return resolve({});
           }
-          resolve(res.data.createURL);
+          resolve(res.data.authMutation.createURL);
         })
         .catch(({graphQLErrors, networkError, message}) => {
           const errCodes = graphQLErrors.map(
