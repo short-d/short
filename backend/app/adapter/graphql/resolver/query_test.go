@@ -3,6 +3,7 @@ package resolver
 import (
 	"short/app/adapter/graphql/scalar"
 	"short/app/entity"
+	"short/app/usecase/auth"
 	"short/app/usecase/repo"
 	"short/app/usecase/url"
 	"testing"
@@ -82,10 +83,11 @@ func TestQuery_URL(t *testing.T) {
 			defer sqlDB.Close()
 
 			fakeRepo := repo.NewURLFake(testCase.urls)
+			authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
 			logger := mdtest.NewLoggerFake()
 			tracer := mdtest.NewTracerFake()
-			query := NewQuery(&logger, &tracer, retrieverFake)
+			query := NewQuery(&logger, &tracer, authenticator, retrieverFake)
 
 			urlArgs := &URLArgs{
 				Alias:       testCase.alias,
