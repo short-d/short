@@ -23,7 +23,7 @@ type URLInput struct {
 	ExpireAt    *time.Time
 }
 
-// ViewerMutationArgs represents possible arguments for viewer endpoint
+// AuthMutationArgs represents possible parameters for AuthMutation endpoint
 type AuthMutationArgs struct {
 	AuthToken       *string
 	CaptchaResponse string

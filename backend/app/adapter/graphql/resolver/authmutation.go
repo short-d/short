@@ -6,17 +6,20 @@ import (
 	"short/app/usecase/url"
 )
 
+// AuthMutation represents GraphQL mutation resolver that acts differently based
+// on the identify of the user
 type AuthMutation struct {
 	user       *entity.User
 	urlCreator url.Creator
 }
 
+// CreateURLArgs represents the possible parameters for CreateURL endpoint
 type CreateURLArgs struct {
-	CaptchaResponse string
 	URL             URLInput
-	AuthToken       string
 }
 
+// CreateURL creates mapping between an alias and a long link mapping for a
+// given user
 func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	if a.user == nil {
 		return nil, errors.New("unauthorized request")

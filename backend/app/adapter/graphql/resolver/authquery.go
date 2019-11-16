@@ -7,12 +7,14 @@ import (
 	"time"
 )
 
+// AuthQuery represents GraphQL query resolver that acts differently based
+// on the identify of the user
 type AuthQuery struct {
 	user         *entity.User
 	urlRetriever url.Retriever
 }
 
-// URLArgs represents possible argument for URL endpoint
+// URLArgs represents possible parameters for URL endpoint
 type URLArgs struct {
 	Alias       string
 	ExpireAfter *scalar.Time

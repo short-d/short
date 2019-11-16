@@ -15,13 +15,13 @@ type Query struct {
 	urlRetriever  url.Retriever
 }
 
-// ViewerQueryArgs represents possible arguments for viewer endpoint
-type ViewerQueryArgs struct {
+// AuthQueryArgs represents possible parameters for AuthQuery endpoint
+type AuthQueryArgs struct {
 	AuthToken *string
 }
 
 // AuthQuery extracts user information from authentication token
-func (q Query) AuthQuery(args *ViewerQueryArgs) (*AuthQuery, error) {
+func (q Query) AuthQuery(args *AuthQueryArgs) (*AuthQuery, error) {
 	user, err := viewer(args.AuthToken, q.authenticator)
 	if err != nil {
 		return nil, err
