@@ -106,23 +106,40 @@ func TestQuery_URL(t *testing.T) {
 }
 
 func TestQuery_Viewer(t *testing.T) {
+	authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
+	user := entity.User{
+		Email:"alpha@example.com",
+	}
+	authToken, err := authenticator.GenerateToken(user)
+	mdtest.Equal(t, nil, err)
+	randomToken := "random_token"
+
 	testCases := []struct {
 		name        string
-		user entity.User
+		authToken *string
 		expHasErr   bool
 		expUser *User
 	} {
 		{
-			name: "",
-			user: entity.User{
-				Email:"alpha@example.com",
-			},
+			name: "with valid auth token",
+			authToken: &authToken,
 			expHasErr: false,
 			expUser: &User{
 				entity.User{
 					Email:"alpha@example.com",
 				},
 			},
+		},
+		{
+			name: "with invalid auth token",
+			authToken: &randomToken,
+			expHasErr: true,
+		},
+		{
+			name: "without auth token",
+			authToken: nil,
+			expHasErr: false,
+			expUser: nil,
 		},
 	}
 
@@ -139,9 +156,8 @@ func TestQuery_Viewer(t *testing.T) {
 			tracer := mdtest.NewTracerFake()
 			query := NewQuery(&logger, &tracer, authenticator, retrieverFake)
 
-			authToken, err := authenticator.GenerateToken(testCase.user)
 			mdtest.Equal(t, nil, err)
-			viewerArgs := ViewerArgs{AuthToken: &authToken}
+			viewerArgs := ViewerArgs{AuthToken: testCase.authToken}
 			user, err := query.Viewer(&viewerArgs)
 			if testCase.expHasErr {
 				mdtest.NotEqual(t, nil, err)
