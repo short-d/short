@@ -8,6 +8,7 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// Mutation represents GraphQL mutation resolver
 type Mutation struct {
 	logger            fw.Logger
 	tracer            fw.Tracer
