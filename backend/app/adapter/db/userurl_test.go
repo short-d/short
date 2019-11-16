@@ -44,7 +44,7 @@ func TestNewUserURLRelationSQL(t *testing.T) {
 			userURLRelationRepo := NewUserURLRelationSQL(db)
 
 			url := entity.URL{
-				Alias:testCase.alias,
+				Alias: testCase.alias,
 			}
 			err = userURLRelationRepo.CreateRelation(testCase.user, url)
 

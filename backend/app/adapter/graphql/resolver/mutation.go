@@ -1,7 +1,6 @@
 package resolver
 
 import (
-	"short/app/entity"
 	"short/app/usecase/auth"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
@@ -24,19 +23,16 @@ type URLInput struct {
 	ExpireAt    *time.Time
 }
 
-type CreateURLArgs struct {
+// ViewerMutationArgs represents possible arguments for viewer endpoint
+type AuthMutationArgs struct {
+	AuthToken       *string
 	CaptchaResponse string
-	URL             URLInput
-	AuthToken       string
 }
 
-func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
-	trace := m.tracer.BeginTrace("Mutation.CreateURL")
-	defer trace.End()
-
+// AuthMutation extracts user information from authentication token
+func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
 	isHuman, err := m.requesterVerifier.IsHuman(args.CaptchaResponse)
 	if err != nil {
-		m.logger.Error(err)
 		return nil, ErrUnknown{}
 	}
 
@@ -44,42 +40,13 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 		return nil, ErrNotHuman{}
 	}
 
-	u := entity.URL{
-		OriginalURL: args.URL.OriginalURL,
-		ExpireAt:    args.URL.ExpireAt,
-	}
-
-	authToken := args.AuthToken
-	user, err := m.authenticator.GetUser(authToken)
+	user, err := viewer(args.AuthToken, m.authenticator)
 	if err != nil {
-		m.logger.Error(err)
-		return nil, ErrInvalidAuthToken(authToken)
+		return nil, err
 	}
 
-	customAlias := args.URL.CustomAlias
-
-	trace1 := trace.Next("CreateURL")
-	defer trace1.End()
-
-	newURL, err := m.urlCreator.CreateURL(u, customAlias, user)
-	if err == nil {
-		return &URL{url: newURL}, nil
-	}
-
-	switch err.(type) {
-	case url.ErrAliasExist:
-		m.logger.Error(err)
-		return nil, ErrURLAliasExist(*customAlias)
-	case url.ErrInvalidLongLink:
-		m.logger.Error(err)
-		return nil, ErrInvalidLongLink(u.OriginalURL)
-	case url.ErrInvalidCustomAlias:
-		m.logger.Error(err)
-		return nil, ErrInvalidCustomAlias(*customAlias)
-	default:
-		m.logger.Error(err)
-		return nil, ErrUnknown{}
-	}
+	authMutation := NewAuthMutation(user, m.urlCreator)
+	return &authMutation, nil
 }
 
 func NewMutation(

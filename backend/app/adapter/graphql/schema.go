@@ -7,12 +7,19 @@ schema {
 }
 
 type Query {
-	viewer(authToken: String): User
-	URL(alias: String!, expireAfter: Time): URL
+	authQuery(authToken: String): AuthQuery
 }
 
 type Mutation {
-	createURL(captchaResponse: String!, url: URLInput!, authToken: String!): URL
+	authMutation(authToken: String, captchaResponse: String!): AuthMutation
+}
+
+type AuthQuery {
+	URL(alias: String!, expireAfter: Time): URL
+}
+
+type AuthMutation {
+	createURL(url: URLInput!): URL
 }
 
 input URLInput {
@@ -25,10 +32,6 @@ type URL {
 	alias: String
 	originalURL: String
 	expireAt: Time
-}
-
-type User {
-	email: String
 }
 
 scalar Time
