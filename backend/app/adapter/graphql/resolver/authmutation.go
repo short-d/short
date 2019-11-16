@@ -14,6 +14,7 @@ type AuthMutation struct {
 	urlCreator url.Creator
 }
 
+// URLInput represents possible URL attributes
 type URLInput struct {
 	OriginalURL string
 	CustomAlias *string
