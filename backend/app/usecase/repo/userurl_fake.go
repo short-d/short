@@ -9,7 +9,7 @@ type UserURLRelationFake struct {
 }
 
 // CreateRelation creates many to many relationship between User and URL.
-func (u UserURLRelationFake) CreateRelation(user entity.User, urlAlias string) error {
+func (u UserURLRelationFake) CreateRelation(user entity.User, url entity.URL) error {
 	return nil
 }
 

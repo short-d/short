@@ -88,7 +88,7 @@ func (c CreatorPersist) createURLWithCustomAlias(url entity.URL, alias string, u
 		return entity.URL{}, err
 	}
 
-	err = c.userURLRelationRepo.CreateRelation(user, url.Alias)
+	err = c.userURLRelationRepo.CreateRelation(user, url)
 	return url, err
 }
 
