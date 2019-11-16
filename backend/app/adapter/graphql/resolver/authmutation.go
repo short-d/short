@@ -27,8 +27,7 @@ type CreateURLArgs struct {
 	IsPublic bool
 }
 
-// CreateURL creates mapping between an alias and a long link mapping for a
-// given user
+// CreateURL creates mapping between an alias and a long link for a given user
 func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	if a.user == nil {
 		return nil, errors.New("unauthorized request")
