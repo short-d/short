@@ -4,6 +4,7 @@ import (
 	"errors"
 	"short/app/entity"
 	"short/app/usecase/url"
+	"time"
 )
 
 // AuthMutation represents GraphQL mutation resolver that acts differently based
@@ -13,9 +14,16 @@ type AuthMutation struct {
 	urlCreator url.Creator
 }
 
+type URLInput struct {
+	OriginalURL string
+	CustomAlias *string
+	ExpireAt    *time.Time
+}
+
 // CreateURLArgs represents the possible parameters for CreateURL endpoint
 type CreateURLArgs struct {
-	URL URLInput
+	URL      URLInput
+	IsPublic bool
 }
 
 // CreateURL creates mapping between an alias and a long link mapping for a
@@ -31,7 +39,9 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 		ExpireAt:    args.URL.ExpireAt,
 	}
 
-	newURL, err := a.urlCreator.CreateURL(u, customAlias, *a.user)
+	isPublic := args.IsPublic
+
+	newURL, err := a.urlCreator.CreateURL(u, customAlias, *a.user, isPublic)
 	if err == nil {
 		return &URL{url: newURL}, nil
 	}

@@ -32,7 +32,7 @@ func (e ErrInvalidCustomAlias) Error() string {
 
 // Creator represents a URL alias creator
 type Creator interface {
-	CreateURL(url entity.URL, alias *string, user entity.User) (entity.URL, error)
+	CreateURL(url entity.URL, alias *string, user entity.User, isPublic bool) (entity.URL, error)
 }
 
 // CreatorPersist represents a URL alias creator which persist the generated
@@ -46,7 +46,8 @@ type CreatorPersist struct {
 }
 
 // CreateURL persists a new url with a given or auto generated alias in the repository.
-func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user entity.User) (entity.URL, error) {
+// TODO(issue#235): add functionality for public URLs
+func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user entity.User, isPublic bool) (entity.URL, error) {
 	longLink := url.OriginalURL
 	if !c.longLinkValidator.IsValid(&longLink) {
 		return entity.URL{}, ErrInvalidLongLink(longLink)

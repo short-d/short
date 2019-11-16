@@ -19,7 +19,7 @@ type AuthQuery {
 }
 
 type AuthMutation {
-	createURL(url: URLInput!): URL
+	createURL(url: URLInput!, isPublic: Boolean!): URL
 }
 
 input URLInput {

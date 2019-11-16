@@ -4,7 +4,6 @@ import (
 	"short/app/usecase/auth"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
-	"time"
 
 	"github.com/byliuyang/app/fw"
 )
@@ -15,12 +14,6 @@ type Mutation struct {
 	urlCreator        url.Creator
 	requesterVerifier requester.Verifier
 	authenticator     auth.Authenticator
-}
-
-type URLInput struct {
-	OriginalURL string
-	CustomAlias *string
-	ExpireAt    *time.Time
 }
 
 // AuthMutationArgs represents possible parameters for AuthMutation endpoint
