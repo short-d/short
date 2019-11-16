@@ -15,7 +15,7 @@ type AuthMutation struct {
 
 // CreateURLArgs represents the possible parameters for CreateURL endpoint
 type CreateURLArgs struct {
-	URL             URLInput
+	URL URLInput
 }
 
 // CreateURL creates mapping between an alias and a long link mapping for a
