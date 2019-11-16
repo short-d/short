@@ -21,6 +21,7 @@ type Mutation struct {
 type URLInput struct {
 	OriginalURL string
 	CustomAlias *string
+	IsPublic    bool
 	ExpireAt    *time.Time
 }
 
@@ -49,6 +50,8 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 		ExpireAt:    args.URL.ExpireAt,
 	}
 
+	isPublic := args.URL.IsPublic
+
 	authToken := args.AuthToken
 	user, err := m.authenticator.GetUser(authToken)
 	if err != nil {
@@ -61,7 +64,7 @@ func (m Mutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	trace1 := trace.Next("CreateURL")
 	defer trace1.End()
 
-	newURL, err := m.urlCreator.CreateURL(u, customAlias, user)
+	newURL, err := m.urlCreator.CreateURL(u, customAlias, user, isPublic)
 	if err == nil {
 		return &URL{url: newURL}, nil
 	}

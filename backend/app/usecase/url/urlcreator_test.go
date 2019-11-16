@@ -23,6 +23,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		availableKeys []string
 		user          entity.User
 		url           entity.URL
+		isPublic      bool
 		expHasErr     bool
 		expectedURL   entity.URL
 	}{
@@ -39,6 +40,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				Email: "alpha@example.com",
 			},
 			url:       entity.URL{},
+			isPublic:  false,
 			expHasErr: true,
 		},
 		{
@@ -70,6 +72,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				OriginalURL: "https://www.google.com",
 				ExpireAt:    &now,
 			},
+			isPublic:  false,
 			expHasErr: false,
 			expectedURL: entity.URL{
 				Alias:       "220uFicCJj",
@@ -129,7 +132,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 
 			creator := NewCreatorPersist(&urlRepo, &userURLRepo, &keyGen)
 
-			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user)
+			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
