@@ -169,7 +169,7 @@ export class UrlService {
         originalURL: link.originalUrl,
         customAlias: alias
       },
-      isPublic: isPublic
+      isPublic
     };
   }
 }
