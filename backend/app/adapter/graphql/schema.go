@@ -7,11 +7,18 @@ schema {
 }
 
 type Query {
+	viewer(authToken: String): User
 	URL(alias: String!, expireAfter: Time): URL
 }
 
 type Mutation {
 	createURL(captchaResponse: String!, url: URLInput!, authToken: String!): URL
+}
+
+input URLInput {
+	originalURL: String!
+	customAlias: String
+	expireAt: Time
 }
 
 type URL {
@@ -20,10 +27,8 @@ type URL {
 	expireAt: Time
 }
 
-input URLInput {
-	originalURL: String!
-	customAlias: String
-	expireAt: Time
+type User {
+	email: String
 }
 
 scalar Time

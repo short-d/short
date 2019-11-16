@@ -18,7 +18,7 @@ type UserURLRelationSQL struct {
 
 // CreateRelation establishes bi-directional relationship between a user and a
 // url in user_url_relation table.
-func (u UserURLRelationSQL) CreateRelation(user entity.User, urlAlias string) error {
+func (u UserURLRelationSQL) CreateRelation(user entity.User, url entity.URL) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s")
 VALUES ($1,$2)
@@ -28,7 +28,7 @@ VALUES ($1,$2)
 		table.UserURLRelation.ColumnURLAlias,
 	)
 
-	_, err := u.db.Exec(statement, user.Email, urlAlias)
+	_, err := u.db.Exec(statement, user.Email, url.Alias)
 	return err
 }
 

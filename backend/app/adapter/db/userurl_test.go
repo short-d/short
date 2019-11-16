@@ -42,7 +42,11 @@ func TestNewUserURLRelationSQL(t *testing.T) {
 			}
 
 			userURLRelationRepo := NewUserURLRelationSQL(db)
-			err = userURLRelationRepo.CreateRelation(testCase.user, testCase.alias)
+
+			url := entity.URL{
+				Alias:testCase.alias,
+			}
+			err = userURLRelationRepo.CreateRelation(testCase.user, url)
 
 			if testCase.expHasErr {
 				mdtest.NotEqual(t, nil, err)

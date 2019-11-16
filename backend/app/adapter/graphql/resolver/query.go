@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"short/app/adapter/graphql/scalar"
+	"short/app/usecase/auth"
 	"short/app/usecase/url"
 	"time"
 
@@ -10,18 +11,46 @@ import (
 
 // Query represents GraphQL query resolver
 type Query struct {
-	logger       fw.Logger
-	tracer       fw.Tracer
-	urlRetriever url.Retriever
+	logger        fw.Logger
+	tracer        fw.Tracer
+	authenticator auth.Authenticator
+	urlRetriever  url.Retriever
 }
 
 // NewQuery creates Query resolver
-func NewQuery(logger fw.Logger, tracer fw.Tracer, urlRetriever url.Retriever) Query {
+func NewQuery(
+	logger fw.Logger,
+	tracer fw.Tracer,
+	authenticator auth.Authenticator,
+	urlRetriever url.Retriever,
+) Query {
 	return Query{
-		logger:       logger,
-		tracer:       tracer,
-		urlRetriever: urlRetriever,
+		logger:        logger,
+		tracer:        tracer,
+		authenticator: authenticator,
+		urlRetriever:  urlRetriever,
 	}
+}
+
+// ViewerArgs represents possible arguments for viewer endpoint
+type ViewerArgs struct {
+	AuthToken *string
+}
+
+// Viewer extracts user information from authentication token
+func (q Query) Viewer(args *ViewerArgs) (*User, error) {
+	if args.AuthToken == nil {
+		return nil, nil
+	}
+
+	authToken := *args.AuthToken
+	user, err := q.authenticator.GetUser(authToken)
+	if err != nil {
+		return nil, err
+	}
+	return &User{
+		user: user,
+	}, nil
 }
 
 // URLArgs represents possible argument for URL endpoint
