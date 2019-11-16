@@ -32,7 +32,7 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 	return &URL{url: u}, nil
 }
 
-func NewAuthQuery(user *entity.User, urlRetriever url.Retriever) AuthQuery {
+func newAuthQuery(user *entity.User, urlRetriever url.Retriever) AuthQuery {
 	return AuthQuery{
 		user:         user,
 		urlRetriever: urlRetriever,

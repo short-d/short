@@ -45,11 +45,11 @@ func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
 		return nil, err
 	}
 
-	authMutation := NewAuthMutation(user, m.urlCreator)
+	authMutation := newAuthMutation(user, m.urlCreator)
 	return &authMutation, nil
 }
 
-func NewMutation(
+func newMutation(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	urlCreator url.Creator,

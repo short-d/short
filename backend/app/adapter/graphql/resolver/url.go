@@ -25,6 +25,6 @@ func (u URL) ExpireAt() *scalar.Time {
 	return &scalar.Time{Time: *u.url.ExpireAt}
 }
 
-func NewURL(url entity.URL) URL {
+func newURL(url entity.URL) URL {
 	return URL{url: url}
 }

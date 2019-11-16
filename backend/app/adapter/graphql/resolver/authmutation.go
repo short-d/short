@@ -45,7 +45,7 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 }
 
-func NewAuthMutation(user *entity.User, urlCreator url.Creator) AuthMutation {
+func newAuthMutation(user *entity.User, urlCreator url.Creator) AuthMutation {
 	return AuthMutation{
 		user:       user,
 		urlCreator: urlCreator,

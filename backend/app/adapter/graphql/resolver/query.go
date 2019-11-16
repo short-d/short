@@ -15,21 +15,6 @@ type Query struct {
 	urlRetriever  url.Retriever
 }
 
-// NewQuery creates Query resolver
-func NewQuery(
-	logger fw.Logger,
-	tracer fw.Tracer,
-	authenticator auth.Authenticator,
-	urlRetriever url.Retriever,
-) Query {
-	return Query{
-		logger:        logger,
-		tracer:        tracer,
-		authenticator: authenticator,
-		urlRetriever:  urlRetriever,
-	}
-}
-
 // ViewerQueryArgs represents possible arguments for viewer endpoint
 type ViewerQueryArgs struct {
 	AuthToken *string
@@ -42,6 +27,20 @@ func (q Query) AuthQuery(args *ViewerQueryArgs) (*AuthQuery, error) {
 		return nil, err
 	}
 
-	authQuery := NewAuthQuery(user, q.urlRetriever)
+	authQuery := newAuthQuery(user, q.urlRetriever)
 	return &authQuery, nil
+}
+
+func newQuery(
+	logger fw.Logger,
+	tracer fw.Tracer,
+	authenticator auth.Authenticator,
+	urlRetriever url.Retriever,
+) Query {
+	return Query{
+		logger:        logger,
+		tracer:        tracer,
+		authenticator: authenticator,
+		urlRetriever:  urlRetriever,
+	}
 }
