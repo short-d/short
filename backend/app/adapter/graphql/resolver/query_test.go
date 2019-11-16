@@ -58,11 +58,11 @@ func TestQuery_AuthQuery(t *testing.T) {
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
 			logger := mdtest.NewLoggerFake()
 			tracer := mdtest.NewTracerFake()
-			query := NewQuery(&logger, &tracer, authenticator, retrieverFake)
+			query := newQuery(&logger, &tracer, authenticator, retrieverFake)
 
 			mdtest.Equal(t, nil, err)
-			viewerArgs := ViewerQueryArgs{AuthToken: testCase.authToken}
-			authQuery, err := query.AuthQuery(&viewerArgs)
+			authQueryArgs := AuthQueryArgs{AuthToken: testCase.authToken}
+			authQuery, err := query.AuthQuery(&authQueryArgs)
 			if testCase.expHasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
