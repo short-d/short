@@ -13,8 +13,12 @@ import {validateCustomAliasFormat} from '../validators/CustomAlias.validator';
 import {ErrorService, ErrUrl} from './Error.service';
 import {IErr} from '../entity/Err';
 
-interface CreateURLData {
+interface IAuthMutation {
   createURL: Url;
+}
+
+interface ICreateURLData {
+  authMutation: IAuthMutation;
 }
 
 interface ICreateShortLinkErrs {
@@ -24,17 +28,16 @@ interface ICreateShortLinkErrs {
 
 const gqlCreateURL = gql`
       mutation params(
-        $captchaResponse: String!
-        $urlInput: URLInput!
-        $authToken: String!
+        $captchaResponse: String!,
+        $authToken: String!,
+        $urlInput: URLInput!,
+        $isPublic: Boolean!
       ) {
-        createURL(
-          captchaResponse: $captchaResponse
-          url: $urlInput
-          authToken: $authToken
-        ) {
-          alias
-          originalURL
+        authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
+          createURL(url: $urlInput, isPublic: $isPublic) {
+            alias
+            originalURL
+          }
         }
       }
 `;
@@ -130,20 +133,21 @@ export class UrlService {
     const captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
     let alias = link.alias === '' ? null : link.alias!;
     let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
-
     return new Promise<Url>((resolve, reject: (errCodes: ErrUrl[]) => any) => {
       this.gqlClient
         .mutate({
           variables: variables,
           mutation: gqlCreateURL
         })
-        .then((res: FetchResult<CreateURLData>) => {
+        .then((res: FetchResult<ICreateURLData>) => {
+          console.log(res);
           if (!res || !res.data) {
             return resolve({});
           }
-          resolve(res.data.createURL);
+          resolve(res.data.authMutation.createURL);
         })
         .catch(({graphQLErrors, networkError, message}) => {
+          console.log(graphQLErrors);
           const errCodes = graphQLErrors.map(
             (graphQLError: GraphQlError) => graphQLError.extensions.code
           );
@@ -155,15 +159,17 @@ export class UrlService {
   private gqlCreateURLVariable(
     captchaResponse: string,
     link: Url,
-    alias: string | null
+    alias: string | null,
+    isPublic: boolean = false
   ) {
     return {
       captchaResponse: captchaResponse,
+      authToken: this.authService.getAuthToken(),
       urlInput: {
         originalURL: link.originalUrl,
         customAlias: alias
       },
-      authToken: this.authService.getAuthToken()
+      isPublic
     };
   }
 }
