@@ -13,12 +13,12 @@ import {validateCustomAliasFormat} from '../validators/CustomAlias.validator';
 import {ErrorService, ErrUrl} from './Error.service';
 import {IErr} from '../entity/Err';
 
-interface AuthMutation {
-  createURL: Url
+interface IAuthMutation {
+  createURL: Url;
 }
 
-interface CreateURLData {
-  authMutation: AuthMutation
+interface ICreateURLData {
+  authMutation: IAuthMutation;
 }
 
 interface ICreateShortLinkErrs {
@@ -138,7 +138,7 @@ export class UrlService {
           variables: variables,
           mutation: gqlCreateURL
         })
-        .then((res: FetchResult<CreateURLData>) => {
+        .then((res: FetchResult<ICreateURLData>) => {
           if (!res || !res.data) {
             return resolve({});
           }
