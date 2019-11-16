@@ -28,12 +28,13 @@ interface ICreateShortLinkErrs {
 
 const gqlCreateURL = gql`
       mutation params(
-        $captchaResponse: String!
-        $authToken: String!
-        $urlInput: URLInput!
+        $captchaResponse: String!,
+        $authToken: String!,
+        $urlInput: URLInput!,
+        $isPublic: Boolean!
       ) {
         authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
-          createURL(url: $urlInput) {
+          createURL(url: $urlInput, isPublic: $isPublic) {
             alias
             originalURL
           }
@@ -139,12 +140,14 @@ export class UrlService {
           mutation: gqlCreateURL
         })
         .then((res: FetchResult<ICreateURLData>) => {
+          console.log(res);
           if (!res || !res.data) {
             return resolve({});
           }
           resolve(res.data.authMutation.createURL);
         })
         .catch(({graphQLErrors, networkError, message}) => {
+          console.log(graphQLErrors);
           const errCodes = graphQLErrors.map(
             (graphQLError: GraphQlError) => graphQLError.extensions.code
           );
@@ -156,15 +159,17 @@ export class UrlService {
   private gqlCreateURLVariable(
     captchaResponse: string,
     link: Url,
-    alias: string | null
+    alias: string | null,
+    isPublic: boolean = false
   ) {
     return {
       captchaResponse: captchaResponse,
+      authToken: this.authService.getAuthToken(),
       urlInput: {
         originalURL: link.originalUrl,
         customAlias: alias
       },
-      authToken: this.authService.getAuthToken()
+      isPublic: isPublic
     };
   }
 }
