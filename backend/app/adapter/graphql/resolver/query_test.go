@@ -104,3 +104,51 @@ func TestQuery_URL(t *testing.T) {
 		})
 	}
 }
+
+func TestQuery_Viewer(t *testing.T) {
+	testCases := []struct {
+		name        string
+		user entity.User
+		expHasErr   bool
+		expUser *User
+	} {
+		{
+			name: "",
+			user: entity.User{
+				Email:"alpha@example.com",
+			},
+			expHasErr: false,
+			expUser: &User{
+				entity.User{
+					Email:"alpha@example.com",
+				},
+			},
+		},
+	}
+
+	for _, testCase := range testCases{
+		t.Run(testCase.name, func(t *testing.T) {
+			sqlDB, _, err := mdtest.NewSQLStub()
+			mdtest.Equal(t, nil, err)
+			defer sqlDB.Close()
+
+			fakeRepo := repo.NewURLFake(map[string]entity.URL{})
+			authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
+			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
+			logger := mdtest.NewLoggerFake()
+			tracer := mdtest.NewTracerFake()
+			query := NewQuery(&logger, &tracer, authenticator, retrieverFake)
+
+			authToken, err := authenticator.GenerateToken(testCase.user)
+			mdtest.Equal(t, nil, err)
+			viewerArgs := ViewerArgs{AuthToken: &authToken}
+			user, err := query.Viewer(&viewerArgs)
+			if testCase.expHasErr {
+				mdtest.NotEqual(t, nil, err)
+				return
+			}
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expUser, user)
+		})
+	}
+}
