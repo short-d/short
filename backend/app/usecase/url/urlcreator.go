@@ -46,7 +46,7 @@ type CreatorPersist struct {
 }
 
 // CreateURL persists a new url with a given or auto generated alias in the repository.
-// TODO add functionality for public URLs, to be done for #235
+// TODO(issue#235): add functionality for public URLs
 func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user entity.User, isPublic bool) (entity.URL, error) {
 	longLink := url.OriginalURL
 	if !c.longLinkValidator.IsValid(&longLink) {
