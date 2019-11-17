@@ -1,4 +1,0 @@
-plugins:
-  tslint:
-    enabled: true
-    config: frontend/tslint.json
