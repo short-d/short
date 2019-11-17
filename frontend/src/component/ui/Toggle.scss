@@ -1,0 +1,14 @@
+@import "../styles/corner";
+@import "../styles/color";
+@import "../styles/font";
+
+.toggle {
+    background-color: $color-primary;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.toggle.active {
+    background-color: royalblue;
+}

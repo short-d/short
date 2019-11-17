@@ -5,6 +5,7 @@ import {Header} from './shared/Header';
 import {Section} from '../ui/Section';
 import {TextField} from '../form/TextField';
 import {Button} from '../ui/Button';
+import {Toggle} from '../ui/Toggle';
 import {Url} from '../../entity/Url';
 import {Footer} from './shared/Footer';
 import {ShortLinkUsage} from './shared/ShortLinkUsage';
@@ -52,6 +53,7 @@ interface State {
   qrCodeUrl?: string;
   err?: IErr;
   inputErr?: string;
+  isPublic?: boolean;
 }
 
 export class Home extends Component<Props, State> {
@@ -134,7 +136,7 @@ export class Home extends Component<Props, State> {
 
   handleCreateShortLinkClick = () => {
     const editingUrl = this.props.store.getState().editingUrl;
-    this.props.urlService.createShortLink(editingUrl)
+    this.props.urlService.createShortLink(editingUrl, this.state.isPublic)
       .then((createdUrl: Url) =>
         this.props.store.dispatch(updateCreatedUrl(createdUrl))
       )
@@ -145,6 +147,12 @@ export class Home extends Component<Props, State> {
         }
         this.props.store.dispatch(raiseCreateShortLinkError(createShortLinkErr));
       });
+  };
+
+  handlePublicToggle = (enabled: boolean) => {
+    this.setState({
+      isPublic: enabled
+    });
   };
 
   showError(error?: IErr) {
@@ -181,6 +189,7 @@ export class Home extends Component<Props, State> {
               <Button onClick={this.handleCreateShortLinkClick}>
                 Create Short Link
               </Button>
+              <Toggle onClick={this.handlePublicToggle}/>
             </div>
             <div className={'input-error'}>{this.state.inputErr}</div>
             {this.state.createdUrl ? (

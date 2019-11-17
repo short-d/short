@@ -63,7 +63,7 @@ export class UrlService {
     });
   }
 
-  createShortLink(editingUrl: Url): Promise<Url> {
+  createShortLink(editingUrl: Url, isPublic: boolean = false): Promise<Url> {
     return new Promise(async (resolve, reject) => {
       const longLink = editingUrl.originalUrl;
       const customAlias = editingUrl.alias;
@@ -76,7 +76,8 @@ export class UrlService {
 
       try {
         const url = await this.invokeCreateShortLinkApi(
-          editingUrl
+          editingUrl,
+          isPublic
         );
         resolve(url);
         return;
@@ -129,10 +130,10 @@ export class UrlService {
     return null;
   }
 
-  private async invokeCreateShortLinkApi(link: Url): Promise<Url> {
+  private async invokeCreateShortLinkApi(link: Url, isPublic: boolean): Promise<Url> {
     const captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
     let alias = link.alias === '' ? null : link.alias!;
-    let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
+    let variables = this.gqlCreateURLVariable(captchaResponse, link, alias, isPublic);
     return new Promise<Url>((resolve, reject: (errCodes: ErrUrl[]) => any) => {
       this.gqlClient
         .mutate({
