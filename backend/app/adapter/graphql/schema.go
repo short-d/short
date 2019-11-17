@@ -7,22 +7,30 @@ schema {
 }
 
 type Query {
-	URL(alias: String!, expireAfter: Time): URL
+	authQuery(authToken: String): AuthQuery
 }
 
 type Mutation {
-	createURL(captchaResponse: String!, url: URLInput!, authToken: String!): URL
+	authMutation(authToken: String, captchaResponse: String!): AuthMutation
 }
 
-type URL {
-	alias: String
-	originalURL: String
-	expireAt: Time
+type AuthQuery {
+	URL(alias: String!, expireAfter: Time): URL
+}
+
+type AuthMutation {
+	createURL(url: URLInput!, isPublic: Boolean!): URL
 }
 
 input URLInput {
 	originalURL: String!
 	customAlias: String
+	expireAt: Time
+}
+
+type URL {
+	alias: String
+	originalURL: String
 	expireAt: Time
 }
 

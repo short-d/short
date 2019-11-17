@@ -2,6 +2,22 @@ kind: pipeline
 name: default
 
 steps:
+  - name: lint frontend
+    image: docker
+    environment:
+      RECAPTCHA_SITE_KEY:
+        from_secret: RECAPTCHA_SITE_KEY
+    commands:
+      - docker build -t lint-frontend --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY -f frontend/Dockerfile-lint frontend
+      - docker run lint-frontend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - pull_request
   - name: test frontend
     image: docker
     environment:

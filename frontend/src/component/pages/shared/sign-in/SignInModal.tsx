@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 import './SignInModal.scss';
-import {Modal} from '../../../ui/Modal';
-import {UIFactory} from '../../../UIFactory';
+import { Modal } from '../../../ui/Modal';
+import { UIFactory } from '../../../UIFactory';
 
 interface IProps {
   uiFactory: UIFactory;
@@ -25,15 +25,9 @@ export class SignInModal extends Component<IProps> {
             Please sign in so that we know the short links created are yours.
           </div>
           <ul className={'sign-in-buttons'}>
-            <li>
-              {this.props.uiFactory.createGoogleSignInButton()}
-            </li>
-            <li>
-              {this.props.uiFactory.createGithubSignInButton()}
-            </li>
-            <li>
-              {this.props.uiFactory.createFacebookSignInButton()}
-            </li>
+            <li>{this.props.uiFactory.createGoogleSignInButton()}</li>
+            <li>{this.props.uiFactory.createGithubSignInButton()}</li>
+            <li>{this.props.uiFactory.createFacebookSignInButton()}</li>
           </ul>
         </div>
       </Modal>
@@ -49,5 +43,5 @@ export class SignInModal extends Component<IProps> {
       return;
     }
     this.modalRef.current[state]();
-  }
+  };
 }
