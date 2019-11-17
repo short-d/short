@@ -1,2 +1,3 @@
 service:
-  project-path: backend
+  analyzed-paths:
+    - backend/...
