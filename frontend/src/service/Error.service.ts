@@ -1,5 +1,4 @@
-
-import {IErr} from '../entity/Err';
+import { IErr } from '../entity/Err';
 
 export enum ErrUrl {
   AliasAlreadyExist = 'aliasAlreadyExist',

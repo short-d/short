@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {SignInButton} from './SignInButton';
+import React, { Component } from 'react';
+import { SignInButton } from './SignInButton';
 
 import facebookLogo from './facebook.svg';
 

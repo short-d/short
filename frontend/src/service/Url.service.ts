@@ -1,17 +1,17 @@
-import {Url} from '../entity/Url';
-import {ApolloClient} from 'apollo-client';
-import {HttpLink} from 'apollo-link-http';
-import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
-import {ApolloLink, FetchResult} from 'apollo-link';
+import { Url } from '../entity/Url';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
+import { ApolloLink, FetchResult } from 'apollo-link';
 import gql from 'graphql-tag';
-import {EnvService} from './Env.service';
-import {GraphQlError} from '../graphql/error';
-import {AuthService} from './Auth.service';
-import {CaptchaService, CREATE_SHORT_LINK} from './Captcha.service';
-import {validateLongLinkFormat} from '../validators/LongLink.validator';
-import {validateCustomAliasFormat} from '../validators/CustomAlias.validator';
-import {ErrorService, ErrUrl} from './Error.service';
-import {IErr} from '../entity/Err';
+import { EnvService } from './Env.service';
+import { GraphQlError } from '../graphql/error';
+import { AuthService } from './Auth.service';
+import { CaptchaService, CREATE_SHORT_LINK } from './Captcha.service';
+import { validateLongLinkFormat } from '../validators/LongLink.validator';
+import { validateCustomAliasFormat } from '../validators/CustomAlias.validator';
+import { ErrorService, ErrUrl } from './Error.service';
+import { IErr } from '../entity/Err';
 
 interface IAuthMutation {
   createURL: Url;
@@ -27,19 +27,19 @@ interface ICreateShortLinkErrs {
 }
 
 const gqlCreateURL = gql`
-      mutation params(
-        $captchaResponse: String!,
-        $authToken: String!,
-        $urlInput: URLInput!,
-        $isPublic: Boolean!
-      ) {
-        authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
-          createURL(url: $urlInput, isPublic: $isPublic) {
-            alias
-            originalURL
-          }
-        }
+  mutation params(
+    $captchaResponse: String!
+    $authToken: String!
+    $urlInput: URLInput!
+    $isPublic: Boolean!
+  ) {
+    authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
+      createURL(url: $urlInput, isPublic: $isPublic) {
+        alias
+        originalURL
       }
+    }
+  }
 `;
 
 export class UrlService {
@@ -75,9 +75,7 @@ export class UrlService {
       }
 
       try {
-        const url = await this.invokeCreateShortLinkApi(
-          editingUrl
-        );
+        const url = await this.invokeCreateShortLinkApi(editingUrl);
         resolve(url);
         return;
       } catch (errCodes) {
@@ -105,8 +103,10 @@ export class UrlService {
     return `${this.envService.getVal('HTTP_API_BASE_URL')}/r/${alias}`;
   }
 
-  private validateInputs(longLink?: string, customAlias?: string):
-    ICreateShortLinkErrs | null {
+  private validateInputs(
+    longLink?: string,
+    customAlias?: string
+  ): ICreateShortLinkErrs | null {
     let err = validateLongLinkFormat(longLink);
     if (err) {
       return {
@@ -130,7 +130,9 @@ export class UrlService {
   }
 
   private async invokeCreateShortLinkApi(link: Url): Promise<Url> {
-    const captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
+    const captchaResponse = await this.captchaService.execute(
+      CREATE_SHORT_LINK
+    );
     let alias = link.alias === '' ? null : link.alias!;
     let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
     return new Promise<Url>((resolve, reject: (errCodes: ErrUrl[]) => any) => {
@@ -146,7 +148,7 @@ export class UrlService {
           }
           resolve(res.data.authMutation.createURL);
         })
-        .catch(({graphQLErrors, networkError, message}) => {
+        .catch(({ graphQLErrors, networkError, message }) => {
           console.log(graphQLErrors);
           const errCodes = graphQLErrors.map(
             (graphQLError: GraphQlError) => graphQLError.extensions.code
