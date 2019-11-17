@@ -4,6 +4,6 @@ service:
     - backend/...
   golangci-lint-version: 1.12.x
   prepare:
-    - cd backend
+    - ls -alt
     - go mod tidy
     - go mod verify
