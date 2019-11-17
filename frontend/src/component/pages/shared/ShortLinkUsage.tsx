@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 import './ShortLinkUsage.scss';
 
@@ -20,7 +20,7 @@ export class ShortLinkUsage extends Component<Props> {
           &nbsp;in your browser to visit {this.props.originalUrl}.
         </div>
         <div className={'qr-code'}>
-          <img alt={this.props.shortLink} src={this.props.qrCodeUrl}/>
+          <img alt={this.props.shortLink} src={this.props.qrCodeUrl} />
         </div>
       </div>
     );

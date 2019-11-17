@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
 import './index.scss';
 import * as serviceWorker from './serviceWorker';
-import {initCaptchaService, initEnvService, initUIFactory} from './dep';
+import { initCaptchaService, initEnvService, initUIFactory } from './dep';
 
 const envService = initEnvService();
 const captchaService = initCaptchaService(envService);

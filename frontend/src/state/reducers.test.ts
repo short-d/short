@@ -1,6 +1,6 @@
-import {createStore} from 'redux';
-import {initialAppState, reducers} from './reducers';
-import {updateAlias, updateLongLink} from './actions';
+import { createStore } from 'redux';
+import { initialAppState, reducers } from './reducers';
+import { updateAlias, updateLongLink } from './actions';
 
 describe('createStore', () => {
   test('initializes app state', () => {
