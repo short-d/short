@@ -1,4 +1,4 @@
 service:
-  project-path: short
+  project-path: backend
   analyzed-paths:
     - backend/...
