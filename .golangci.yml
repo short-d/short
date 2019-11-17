@@ -1,6 +1,2 @@
-project-path: github.com/byliuyang/short
-  analyzed-paths:
-    - backend/...
-  prepare:
-    - make deps
-    - make generate
+service:
+  project-path: backend
