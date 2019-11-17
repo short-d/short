@@ -3,3 +3,6 @@ service:
   analyzed-paths:
     - backend/...
   golangci-lint-version: 1.12.x
+  prepare:
+    - go mod tidy
+    - go mod verify
