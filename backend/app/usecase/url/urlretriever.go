@@ -1,7 +1,6 @@
 package url
 
 import (
-	"errors"
 	"fmt"
 	"short/app/entity"
 	"short/app/usecase/repo"
@@ -40,7 +39,7 @@ func (r RetrieverPersist) getURLExpireAfter(alias string, expiringAt time.Time) 
 	}
 
 	if expiringAt.After(*url.ExpireAt) {
-		return entity.URL{}, errors.New(fmt.Sprintf("url expired (alias=%s,expiringAt=%v)", alias, expiringAt))
+		return entity.URL{}, fmt.Errorf("url expired (alias=%s,expiringAt=%v)", alias, expiringAt)
 	}
 
 	return url, nil
