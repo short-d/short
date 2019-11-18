@@ -16,7 +16,7 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 	testCases := []struct {
 		name              string
 		authorizationCode string
-		ssoUser       entity.SSOUser
+		ssoUser           entity.SSOUser
 		isAccountExist    bool
 		isAccountExistErr error
 		createAccountErr  error

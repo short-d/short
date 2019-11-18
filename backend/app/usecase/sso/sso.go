@@ -8,10 +8,10 @@ import (
 )
 
 type SingleSignOn struct {
-	identityProvider   service.IdentityProvider
+	identityProvider  service.IdentityProvider
 	ssoAccountService service.SSOAccount
-	accountService service.Account
-	authenticator  auth.Authenticator
+	accountService    service.Account
+	authenticator     auth.Authenticator
 }
 
 func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
@@ -56,15 +56,15 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 }
 
 func NewSingleSignOn(
-	identityProvider   service.IdentityProvider,
+	identityProvider service.IdentityProvider,
 	ssoAccountService service.SSOAccount,
 	accountService service.Account,
 	authenticator auth.Authenticator,
 ) SingleSignOn {
-	return SingleSignOn {
-		identityProvider: identityProvider,
+	return SingleSignOn{
+		identityProvider:  identityProvider,
 		ssoAccountService: ssoAccountService,
-		accountService: accountService,
-		authenticator:  authenticator,
+		accountService:    accountService,
+		authenticator:     authenticator,
 	}
 }
