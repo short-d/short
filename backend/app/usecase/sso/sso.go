@@ -16,7 +16,7 @@ type SingleSignOn struct {
 	authenticator     auth.Authenticator
 }
 
-// SignIn generates access token for a user given authorization code obtained
+// SignIn generates access token for a user using authorization code obtained
 // from external identity provider.
 func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 	if len(authorizationCode) < 1 {
@@ -59,7 +59,7 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 	return authToken, nil
 }
 
-// NewSingleSignOn initializes SingleSignOn service for a given external
+// NewSingleSignOn creates SingleSignOn service for a given external
 // identity provider.
 func NewSingleSignOn(
 	identityProvider service.IdentityProvider,
