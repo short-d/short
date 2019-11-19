@@ -151,8 +151,8 @@ export class UrlService {
         .catch(({ graphQLErrors, networkError, message }) => {
           console.log(graphQLErrors);
           const errCodes = graphQLErrors.map(
-            (graphQLError: GraphQlError) => graphQLError.extensions.code
-          );
+            (graphQLError: GraphQlError) => (graphQLError.extensions) ? graphQLError.extensions.code : null
+          ).filter((errCode: string) => errCode !== null);
           reject(errCodes);
         });
     });
