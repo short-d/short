@@ -4,7 +4,7 @@ import "short/app/entity"
 
 var _ SSOAccount = (*SSOAccountFake)(nil)
 
-// SSOAccount represents in memory implementation of account service that
+// SSOAccountFake represents in memory implementation of account service that
 // access account data from the identity provider.
 type SSOAccountFake struct {
 	user entity.SSOUser
