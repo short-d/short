@@ -40,7 +40,7 @@ const networkErr = {
   description: `
               Could not get a response from the server. Please ensure you are
               connected to the Internet and try again. If the problem persists,
-              please email byliuyang11@gmail.com.
+              please email byliuyang11@gmail.com with screenshots or logs.
               `
 };
 
