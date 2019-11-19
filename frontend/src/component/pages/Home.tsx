@@ -1,27 +1,27 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './Home.scss';
 
-import {Header} from './shared/Header';
-import {Section} from '../ui/Section';
-import {TextField} from '../form/TextField';
-import {Button} from '../ui/Button';
-import {Toggle} from '../ui/Toggle';
-import {Url} from '../../entity/Url';
-import {Footer} from './shared/Footer';
-import {ShortLinkUsage} from './shared/ShortLinkUsage';
-import {SignInModal} from './shared/sign-in/SignInModal';
-import {Modal} from '../ui/Modal';
-import {ExtPromo} from './shared/promos/ExtPromo';
-import {CaptchaService} from '../../service/Captcha.service';
-import {validateLongLinkFormat} from '../../validators/LongLink.validator';
-import {validateCustomAliasFormat} from '../../validators/CustomAlias.validator';
-import {Location} from 'history';
-import {AuthService} from '../../service/Auth.service';
-import {VersionService} from '../../service/Version.service';
-import {QrCodeService} from '../../service/QrCode.service';
-import {UIFactory} from '../UIFactory';
-import {IAppState} from '../../state/reducers';
-import {Store} from 'redux';
+import { Header } from './shared/Header';
+import { Section } from '../ui/Section';
+import { TextField } from '../form/TextField';
+import { Button } from '../ui/Button';
+import { Toggle } from '../ui/Toggle';
+import { Url } from '../../entity/Url';
+import { Footer } from './shared/Footer';
+import { ShortLinkUsage } from './shared/ShortLinkUsage';
+import { SignInModal } from './shared/sign-in/SignInModal';
+import { Modal } from '../ui/Modal';
+import { ExtPromo } from './shared/promos/ExtPromo';
+import { CaptchaService } from '../../service/Captcha.service';
+import { validateLongLinkFormat } from '../../validators/LongLink.validator';
+import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
+import { Location } from 'history';
+import { AuthService } from '../../service/Auth.service';
+import { VersionService } from '../../service/Version.service';
+import { QrCodeService } from '../../service/QrCode.service';
+import { UIFactory } from '../UIFactory';
+import { IAppState } from '../../state/reducers';
+import { Store } from 'redux';
 import {
   clearError,
   raiseCreateShortLinkError,
@@ -30,9 +30,9 @@ import {
   updateCreatedUrl,
   updateLongLink
 } from '../../state/actions';
-import {ErrorService} from '../../service/Error.service';
-import {IErr} from '../../entity/Err';
-import {UrlService} from '../../service/Url.service';
+import { ErrorService } from '../../service/Error.service';
+import { IErr } from '../../entity/Err';
+import { UrlService } from '../../service/Url.service';
 
 interface Props {
   uiFactory: UIFactory;
@@ -80,7 +80,7 @@ export class Home extends Component<Props, State> {
         alias: state.editingUrl.alias,
         err: state.err,
         createdUrl: state.createdUrl,
-        inputErr: state.inputErr,
+        inputErr: state.inputErr
       };
 
       if (state.createdUrl && state.createdUrl.alias) {
@@ -136,16 +136,19 @@ export class Home extends Component<Props, State> {
 
   handleCreateShortLinkClick = () => {
     const editingUrl = this.props.store.getState().editingUrl;
-    this.props.urlService.createShortLink(editingUrl, this.state.isPublic)
+    this.props.urlService
+      .createShortLink(editingUrl, this.state.isPublic)
       .then((createdUrl: Url) =>
         this.props.store.dispatch(updateCreatedUrl(createdUrl))
       )
-      .catch(({authorizationErr, createShortLinkErr}) => {
+      .catch(({ authorizationErr, createShortLinkErr }) => {
         if (authorizationErr) {
           this.requestSignIn();
           return;
         }
-        this.props.store.dispatch(raiseCreateShortLinkError(createShortLinkErr));
+        this.props.store.dispatch(
+          raiseCreateShortLinkError(createShortLinkErr)
+        );
       });
   };
 
@@ -165,8 +168,8 @@ export class Home extends Component<Props, State> {
   render = () => {
     return (
       <div className="home">
-        <ExtPromo/>
-        <Header/>
+        <ExtPromo />
+        <Header />
         <div className={'main'}>
           <Section title={'New Short Link'}>
             <div className={'control create-short-link'}>
@@ -213,22 +216,23 @@ export class Home extends Component<Props, State> {
           version={this.props.versionService.getAppVersion()}
         />
 
-        <SignInModal
-          ref={this.signInModal}
-          uiFactory={this.props.uiFactory}
-        />
+        <SignInModal ref={this.signInModal} uiFactory={this.props.uiFactory} />
         <Modal canClose={true} ref={this.errModal}>
-          {this.state.err ? <div className={'err'}>
-            <i
-              className={'material-icons close'}
-              title={'close'}
-              onClick={this.handleOnErrModalCloseClick}
-            >
-              close
-            </i>
-            <div className={'title'}>{this.state.err.name}</div>
-            <div className={'description'}>{this.state.err.description}</div>
-          </div> : false}
+          {this.state.err ? (
+            <div className={'err'}>
+              <i
+                className={'material-icons close'}
+                title={'close'}
+                onClick={this.handleOnErrModalCloseClick}
+              >
+                close
+              </i>
+              <div className={'title'}>{this.state.err.name}</div>
+              <div className={'description'}>{this.state.err.description}</div>
+            </div>
+          ) : (
+            false
+          )}
         </Modal>
       </div>
     );
