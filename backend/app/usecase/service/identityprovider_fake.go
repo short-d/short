@@ -2,8 +2,8 @@ package service
 
 var _ IdentityProvider = (*IdentityProviderFake)(nil)
 
-// IdentityProviderFake represents in memory implementation of an identity
-// provider.
+// IdentityProviderFake represents in memory implementation of an external
+// authentication service.
 type IdentityProviderFake struct {
 	authURL     string
 	accessToken string
