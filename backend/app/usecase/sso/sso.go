@@ -7,6 +7,8 @@ import (
 	"short/app/usecase/service"
 )
 
+// SingleSignOn enables sign in through external identity providers, such as
+// Github, Facebook, and Google.
 type SingleSignOn struct {
 	identityProvider  service.IdentityProvider
 	ssoAccountService service.SSOAccount
@@ -14,6 +16,8 @@ type SingleSignOn struct {
 	authenticator     auth.Authenticator
 }
 
+// SignIn generates access token for a user given authorization code obtained
+// from external identity provider.
 func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 	if len(authorizationCode) < 1 {
 		return "", errors.New("authorizationCode can't be empty")
@@ -55,6 +59,8 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 	return authToken, nil
 }
 
+// NewSingleSignOn initializes SingleSignOn service for a given external
+// identity provider.
 func NewSingleSignOn(
 	identityProvider service.IdentityProvider,
 	ssoAccountService service.SSOAccount,
