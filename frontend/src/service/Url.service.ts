@@ -10,7 +10,7 @@ import { AuthService } from './Auth.service';
 import { CaptchaService, CREATE_SHORT_LINK } from './Captcha.service';
 import { validateLongLinkFormat } from '../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../validators/CustomAlias.validator';
-import { ErrorService, ErrUrl } from './Error.service';
+import { ErrorService, Err } from './Error.service';
 import { IErr } from '../entity/Err';
 
 interface IAuthMutation {
@@ -80,7 +80,7 @@ export class UrlService {
         return;
       } catch (errCodes) {
         const errCode = errCodes[0];
-        if (errCode === ErrUrl.Unauthorized) {
+        if (errCode === Err.Unauthorized) {
           reject({
             authorizationErr: 'Unauthorized to create short link'
           });
@@ -135,7 +135,7 @@ export class UrlService {
     );
     let alias = link.alias === '' ? null : link.alias!;
     let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
-    return new Promise<Url>((resolve, reject: (errCodes: ErrUrl[]) => any) => {
+    return new Promise<Url>((resolve, reject: (errCodes: Err[]) => any) => {
       this.gqlClient
         .mutate({
           variables: variables,
@@ -149,14 +149,14 @@ export class UrlService {
           resolve(res.data.authMutation.createURL);
         })
         .catch(({ graphQLErrors, networkError, message }) => {
-          if (!graphQLErrors || graphQLErrors.length === 0) {
-            if (networkError) {
-              return reject([ErrUrl.NetworkError]);
-            }
-            return reject([ErrUrl.Unknown]);
+          if (networkError) {
+            return reject([Err.NetworkError]);
+          }
+          if (!graphQLErrors || graphQLErrors.length === 0) { 
+            return reject([Err.Unknown]);
           }
           const errCodes = graphQLErrors.map(
-            (graphQLError: GraphQlError) => (graphQLError.extensions) ? graphQLError.extensions.code : ErrUrl.Unknown
+            (graphQLError: GraphQlError) => (graphQLError.extensions) ? graphQLError.extensions.code : Err.Unknown
           );
           reject(errCodes);
         });

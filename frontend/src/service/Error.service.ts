@@ -1,6 +1,6 @@
 import { IErr } from '../entity/Err';
 
-export enum ErrUrl {
+export enum Err {
   AliasAlreadyExist = 'aliasAlreadyExist',
   UserNotHuman = 'requesterNotHuman',
   Unauthorized = 'invalidAuthToken',
@@ -45,15 +45,15 @@ const networkErr = {
 };
 
 export class ErrorService {
-  getErr(errCode: ErrUrl): IErr {
+  getErr(errCode: Err): IErr {
     switch (errCode) {
-      case ErrUrl.AliasAlreadyExist:
+      case Err.AliasAlreadyExist:
         return aliasNotAvailableErr;
-      case ErrUrl.UserNotHuman:
+      case Err.UserNotHuman:
         return userNotHumanErr;
-      case ErrUrl.NetworkError:
+      case Err.NetworkError:
         return networkErr;
-      case ErrUrl.Unknown:
+      case Err.Unknown:
       default:
         return unknownErr;
     }
