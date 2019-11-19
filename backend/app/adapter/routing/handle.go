@@ -3,9 +3,9 @@ package routing
 import (
 	"net/http"
 	netURL "net/url"
-	"short/app/adapter/oauth"
 	"short/app/usecase/auth"
-	"short/app/usecase/signin"
+	"short/app/usecase/service"
+	"short/app/usecase/sso"
 	"short/app/usecase/url"
 
 	"github.com/byliuyang/app/fw"
@@ -45,10 +45,10 @@ func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL)
 	http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 }
 
-func NewGithubSignIn(
+func NewSingleSignOnSignIn(
 	logger fw.Logger,
 	tracer fw.Tracer,
-	githubOAuth oauth.Github,
+	identityProvider service.IdentityProvider,
 	authenticator auth.Authenticator,
 	webFrontendURL string,
 ) fw.Handle {
@@ -58,63 +58,22 @@ func NewGithubSignIn(
 			http.Redirect(w, r, webFrontendURL, http.StatusSeeOther)
 			return
 		}
-		signInLink := githubOAuth.GetAuthorizationURL()
+		signInLink := identityProvider.GetAuthorizationURL()
 		http.Redirect(w, r, signInLink, http.StatusSeeOther)
 	}
 }
 
-func NewGithubSignInCallback(
+func NewSingleSignOnSignInCallback(
 	logger fw.Logger,
 	tracer fw.Tracer,
-	oauthSignIn signin.OAuth,
+	singleSignOn sso.SingleSignOn,
 	webFrontendURL netURL.URL,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		code := params["code"]
 
-		authToken, err := oauthSignIn.SignIn(code)
+		authToken, err := singleSignOn.SignIn(code)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		webFrontendURL = setToken(webFrontendURL, authToken)
-		http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
-	}
-}
-
-// NewFacebookSignIn handles Facebook sign-in call
-func NewFacebookSignIn(
-	logger fw.Logger,
-	tracer fw.Tracer,
-	FacebookOAuth oauth.Facebook,
-	authenticator auth.Authenticator,
-	webFrontendURL string,
-) fw.Handle {
-	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		token := getToken(params)
-		if authenticator.IsSignedIn(token) {
-			http.Redirect(w, r, webFrontendURL, http.StatusSeeOther)
-			return
-		}
-		signInLink := FacebookOAuth.GetAuthorizationURL()
-		http.Redirect(w, r, signInLink, http.StatusSeeOther)
-	}
-}
-
-// NewFacebookSignInCallback handles oauth callback from Facebook
-func NewFacebookSignInCallback(
-	logger fw.Logger,
-	tracer fw.Tracer,
-	oauthSignIn signin.OAuth,
-	webFrontendURL netURL.URL,
-) fw.Handle {
-	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		code := params["code"]
-
-		authToken, err := oauthSignIn.SignIn(code)
-		if err != nil {
-			logger.Error(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

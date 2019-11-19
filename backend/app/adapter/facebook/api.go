@@ -2,16 +2,19 @@ package facebook
 
 import (
 	"short/app/entity"
+	"short/app/usecase/service"
 
 	fb "github.com/huandu/facebook"
 )
 
-// API accesses user's profile information through FB Graph API.
+var _ service.SSOAccount = (*API)(nil)
+
+// API accesses user's account data through FB Graph API.
 type API struct {
 }
 
-// GetUserProfile retrieves user's email and name from Facebook.
-func (g API) GetUserProfile(accessToken string) (entity.UserProfile, error) {
+// GetSingleSignOnUser retrieves user's email and name from Facebook.
+func (g API) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error) {
 	type response struct {
 		Email string `json:"email"`
 		Name  string `json:"name"`
@@ -25,18 +28,21 @@ func (g API) GetUserProfile(accessToken string) (entity.UserProfile, error) {
 	})
 
 	if err != nil {
-		return entity.UserProfile{}, err
+		return entity.SSOUser{}, err
 	}
 
-	res.Decode(&fbResponse)
+	err = res.Decode(&fbResponse)
+	if err != nil {
+		return entity.SSOUser{}, err
+	}
 
-	return entity.UserProfile{
+	return entity.SSOUser{
 		Email: fbResponse.Email,
 		Name:  fbResponse.Name,
 	}, nil
 }
 
-// NewAPI initializes Github API access service.
+// NewAPI initializes Facebook API access service.
 func NewAPI() API {
 	return API{}
 }

@@ -1,9 +1,10 @@
-package oauth
+package github
 
 import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"short/app/usecase/service"
 	"strings"
 
 	"github.com/byliuyang/app/fw"
@@ -21,13 +22,17 @@ type accessTokenResponse struct {
 	TokenType   string `json:"token_type"`
 }
 
-type Github struct {
+var _ service.IdentityProvider = (*IdentityProvider)(nil)
+
+// IdentityProvider represents Github OAuth service.
+type IdentityProvider struct {
 	clientID     string
 	clientSecret string
 	http         fw.HTTPRequest
 }
 
-func (g Github) GetAuthorizationURL() string {
+// GetAuthorizationURL retrieves URL of Github sign in page.
+func (g IdentityProvider) GetAuthorizationURL() string {
 	scopes := strings.Join([]string{
 		readUserProfileScope,
 	}, " ")
@@ -36,7 +41,9 @@ func (g Github) GetAuthorizationURL() string {
 	return fmt.Sprintf("%s?client_id=%s&scope=%s", authorizationAPI, clientID, escapedScope)
 }
 
-func (g Github) RequestAccessToken(authorizationCode string) (accessToken string, err error) {
+// RequestAccessToken retrieves access token of user's Github account using
+// authorization code.
+func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessToken string, err error) {
 	clientID := g.clientID
 	clientSecret := g.clientSecret
 	body := fmt.Sprintf("client_id=%s&client_secret=%s&code=%s", clientID, clientSecret, authorizationCode)
@@ -54,8 +61,9 @@ func (g Github) RequestAccessToken(authorizationCode string) (accessToken string
 	return apiRes.AccessToken, nil
 }
 
-func NewGithub(http fw.HTTPRequest, clientID string, clientSecret string) Github {
-	return Github{
+// NewIdentityProvider initializes Github OAuth service.
+func NewIdentityProvider(http fw.HTTPRequest, clientID string, clientSecret string) IdentityProvider {
+	return IdentityProvider{
 		clientID:     clientID,
 		clientSecret: clientSecret,
 		http:         http,

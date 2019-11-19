@@ -86,6 +86,7 @@ func InjectGraphQlService(
 		wire.Bind(new(repo.URL), new(*db.URLSql)),
 		wire.Bind(new(keygen.KeyGenerator), new(keygen.Remote)),
 		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
+		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
 		authSet,
@@ -125,6 +126,7 @@ func InjectRoutingService(
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(repo.User), new(*(db.UserSQL))),
 		wire.Bind(new(repo.URL), new(*db.URLSql)),
+		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
 		authSet,
@@ -140,9 +142,11 @@ func InjectRoutingService(
 		db.NewURLSql,
 		url.NewRetrieverPersist,
 		account.NewRepoService,
-		provider.NewGithubOAuth,
+		github.NewGithub,
+		provider.NewGithubIdentityProvider,
 		github.NewAPI,
-		provider.NewFacebookOAuth,
+		facebook.NewFacebook,
+		provider.NewFacebookIdentityProvider,
 		facebook.NewAPI,
 		provider.NewShortRoutes,
 	)

@@ -3,19 +3,22 @@ package github
 import (
 	"fmt"
 	"short/app/entity"
+	"short/app/usecase/service"
 
 	"github.com/byliuyang/app/fw"
 )
 
 const githubAPI = "https://api.github.com/graphql"
 
+var _ service.SSOAccount = (*API)(nil)
+
 // API access user's account & repository information through Github API v4.
 type API struct {
 	graphql fw.GraphQlRequest
 }
 
-// GetUserProfile retrieves user's email and name from Github.
-func (g API) GetUserProfile(accessToken string) (entity.UserProfile, error) {
+// GetSingleSignOnUser retrieves user's email and name from Github.
+func (g API) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error) {
 	type response struct {
 		Viewer struct {
 			Email string `json:"email"`
@@ -38,10 +41,10 @@ query {
 
 	err := g.sendGraphQlRequest(accessToken, query, &profileResponse)
 	if err != nil {
-		return entity.UserProfile{}, err
+		return entity.SSOUser{}, err
 	}
 
-	return entity.UserProfile{
+	return entity.SSOUser{
 		Email: profileResponse.Viewer.Email,
 		Name:  profileResponse.Viewer.Name,
 	}, nil
