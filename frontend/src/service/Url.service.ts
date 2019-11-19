@@ -149,10 +149,15 @@ export class UrlService {
           resolve(res.data.authMutation.createURL);
         })
         .catch(({ graphQLErrors, networkError, message }) => {
-          console.log(graphQLErrors);
+          if (!graphQLErrors || graphQLErrors.length === 0) {
+            if (networkError) {
+              return reject([ErrUrl.NetworkError]);
+            }
+            return reject([ErrUrl.Unknown]);
+          }
           const errCodes = graphQLErrors.map(
-            (graphQLError: GraphQlError) => (graphQLError.extensions) ? graphQLError.extensions.code : null
-          ).filter((errCode: string) => errCode !== null);
+            (graphQLError: GraphQlError) => (graphQLError.extensions) ? graphQLError.extensions.code : ErrUrl.Unknown
+          );
           reject(errCodes);
         });
     });

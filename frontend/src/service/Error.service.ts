@@ -3,7 +3,9 @@ import { IErr } from '../entity/Err';
 export enum ErrUrl {
   AliasAlreadyExist = 'aliasAlreadyExist',
   UserNotHuman = 'requesterNotHuman',
-  Unauthorized = 'invalidAuthToken'
+  Unauthorized = 'invalidAuthToken',
+  NetworkError = 'networkError',
+  Unknown = 'unknownError',
 }
 
 const unknownErr = {
@@ -33,6 +35,15 @@ const userNotHumanErr = {
                 `
 };
 
+const networkErr = {
+  name: 'Network error',
+  description: `
+              Could not get a response from the server. Please ensure you are
+              connected to the Internet and try again. If the problem persists,
+              please email byliuyang11@gmail.com.
+              `
+};
+
 export class ErrorService {
   getErr(errCode: ErrUrl): IErr {
     switch (errCode) {
@@ -40,6 +51,9 @@ export class ErrorService {
         return aliasNotAvailableErr;
       case ErrUrl.UserNotHuman:
         return userNotHumanErr;
+      case ErrUrl.NetworkError:
+        return networkErr;
+      case ErrUrl.Unknown:
       default:
         return unknownErr;
     }
