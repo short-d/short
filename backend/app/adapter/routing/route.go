@@ -19,7 +19,7 @@ type Observability struct {
 	Tracer fw.Tracer
 }
 
-// NewShort creates HTTP API configurations, such as HTTP method, path, and
+// NewShort creates HTTP routing table.
 // handler.
 func NewShort(
 	observability Observability,
