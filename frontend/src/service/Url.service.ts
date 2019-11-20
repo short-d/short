@@ -154,11 +154,11 @@ export class UrlService {
             return;
           }
           if (!graphQLErrors || graphQLErrors.length === 0) { 
-           reject([Err.Unknown]);
-           return;
+            reject([Err.Unknown]);
+            return;
           }
           const errCodes = graphQLErrors.map(
-            (graphQLError: GraphQlError) => (graphQLError.extensions) ? graphQLError.extensions.code : Err.Unknown
+            (graphQLError: GraphQlError) => graphQLError.extensions ? graphQLError.extensions.code : Err.Unknown
           );
           reject(errCodes);
         });
