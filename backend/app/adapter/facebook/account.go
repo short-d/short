@@ -9,7 +9,7 @@ import (
 
 var _ service.SSOAccount = (*Account)(nil)
 
-// API accesses user's account data through FB Graph API.
+// Account accesses user's account data through FB Graph API.
 type Account struct {
 }
 
