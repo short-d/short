@@ -35,7 +35,7 @@ type IdentityProvider struct {
 	redirectURI  string
 }
 
-// GetAuthorizationURL retrieves URL of Facebook sign in page.
+// GetAuthorizationURL retrieves the  URL of Facebook sign in page.
 func (g IdentityProvider) GetAuthorizationURL() string {
 	escapedScope := url.QueryEscape(fbScopes)
 	clientID := g.clientID
