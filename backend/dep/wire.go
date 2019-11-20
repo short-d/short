@@ -45,6 +45,18 @@ var observabilitySet = wire.NewSet(
 	mdtracer.NewLocal,
 )
 
+var githubAPISet = wire.NewSet(
+	provider.NewGithubIdentityProvider,
+	github.NewAccount,
+	github.NewAPI,
+)
+
+var facebookAPISet = wire.NewSet(
+	provider.NewFacebookIdentityProvider,
+	facebook.NewAccount,
+	facebook.NewAPI,
+)
+
 func InjectCommandFactory() fw.CommandFactory {
 	wire.Build(
 		wire.Bind(new(fw.CommandFactory), new(mdcli.CobraFactory)),
@@ -86,6 +98,7 @@ func InjectGraphQlService(
 		wire.Bind(new(repo.URL), new(*db.URLSql)),
 		wire.Bind(new(keygen.KeyGenerator), new(keygen.Remote)),
 		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
+		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
 		authSet,
@@ -125,9 +138,12 @@ func InjectRoutingService(
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(repo.User), new(*(db.UserSQL))),
 		wire.Bind(new(repo.URL), new(*db.URLSql)),
+		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
 		authSet,
+		githubAPISet,
+		facebookAPISet,
 
 		mdservice.New,
 		mdrouting.NewBuiltIn,
@@ -140,10 +156,6 @@ func InjectRoutingService(
 		db.NewURLSql,
 		url.NewRetrieverPersist,
 		account.NewRepoService,
-		provider.NewGithubOAuth,
-		github.NewAPI,
-		provider.NewFacebookOAuth,
-		facebook.NewAPI,
 		provider.NewShortRoutes,
 	)
 	return mdservice.Service{}

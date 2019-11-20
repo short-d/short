@@ -63,8 +63,8 @@ func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.Graph
 	}
 	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, remote)
 	client := mdhttp.NewClient()
-	httpRequest := mdrequest.NewHTTP(client)
-	reCaptcha := provider.NewReCaptchaService(httpRequest, secret)
+	http := mdrequest.NewHTTP(client)
+	reCaptcha := provider.NewReCaptchaService(http, secret)
 	verifier := requester.NewVerifier(reCaptcha)
 	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	timer := mdtimer.NewTimer()
@@ -87,18 +87,20 @@ func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.Gi
 	urlSql := db.NewURLSql(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql)
 	client := mdhttp.NewClient()
-	httpRequest := mdrequest.NewHTTP(client)
-	oauthGithub := provider.NewGithubOAuth(httpRequest, githubClientID, githubClientSecret)
-	graphQlRequest := mdrequest.NewGraphQl(httpRequest)
-	api := github.NewAPI(graphQlRequest)
+	http := mdrequest.NewHTTP(client)
+	identityProvider := provider.NewGithubIdentityProvider(http, githubClientID, githubClientSecret)
+	graphQlRequest := mdrequest.NewGraphQl(http)
+	githubAccount := github.NewAccount(graphQlRequest)
+	api := github.NewAPI(identityProvider, githubAccount)
+	facebookIdentityProvider := provider.NewFacebookIdentityProvider(http, facebookClientID, facebookClientSecret, facebookRedirectURI)
+	facebookAccount := facebook.NewAccount()
+	facebookAPI := facebook.NewAPI(facebookIdentityProvider, facebookAccount)
 	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	repoService := account.NewRepoService(userSQL, timer)
-	oauthFacebook := provider.NewFacebookOAuth(httpRequest, facebookClientID, facebookClientSecret, facebookRedirectURI)
-	facebookAPI := facebook.NewAPI()
-	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, oauthGithub, api, authenticator, repoService, oauthFacebook, facebookAPI)
+	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, authenticator, repoService)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service
@@ -111,3 +113,7 @@ const oneDay = 24 * time.Hour
 var authSet = wire.NewSet(provider.NewJwtGo, wire.Value(provider.TokenValidDuration(oneDay)), provider.NewAuthenticator)
 
 var observabilitySet = wire.NewSet(mdlogger.NewLocal, mdtracer.NewLocal)
+
+var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAccount, github.NewAPI)
+
+var facebookAPISet = wire.NewSet(provider.NewFacebookIdentityProvider, facebook.NewAccount, facebook.NewAPI)
