@@ -51,7 +51,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
-			Handle: NewSingleSignOnSignIn(
+			Handle: NewSSOSignIn(
 				logger,
 				tracer,
 				githubAPI.IdentityProvider,
@@ -62,7 +62,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in/callback",
-			Handle: NewSingleSignOnSignInCallback(
+			Handle: NewSSOSignInCallback(
 				logger,
 				tracer,
 				githubSignIn,
@@ -72,7 +72,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in",
-			Handle: NewSingleSignOnSignIn(
+			Handle: NewSSOSignIn(
 				logger,
 				tracer,
 				facebookAPI.IdentityProvider,
@@ -83,7 +83,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in/callback",
-			Handle: NewSingleSignOnSignInCallback(
+			Handle: NewSSOSignInCallback(
 				logger,
 				tracer,
 				facebookSignIn,

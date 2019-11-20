@@ -45,7 +45,7 @@ func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL)
 	http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 }
 
-func NewSingleSignOnSignIn(
+func NewSSOSignIn(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	identityProvider service.IdentityProvider,
@@ -63,7 +63,7 @@ func NewSingleSignOnSignIn(
 	}
 }
 
-func NewSingleSignOnSignInCallback(
+func NewSSOSignInCallback(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	singleSignOn sso.SingleSignOn,
