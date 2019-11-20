@@ -45,6 +45,18 @@ var observabilitySet = wire.NewSet(
 	mdtracer.NewLocal,
 )
 
+var githubAPISet = wire.NewSet(
+	provider.NewGithubIdentityProvider,
+	github.NewAccount,
+	github.NewAPI,
+)
+
+var facebookAPISet = wire.NewSet(
+	provider.NewFacebookIdentityProvider,
+	facebook.NewAccount,
+	facebook.NewAPI,
+)
+
 func InjectCommandFactory() fw.CommandFactory {
 	wire.Build(
 		wire.Bind(new(fw.CommandFactory), new(mdcli.CobraFactory)),
@@ -130,6 +142,8 @@ func InjectRoutingService(
 
 		observabilitySet,
 		authSet,
+		githubAPISet,
+		facebookAPISet,
 
 		mdservice.New,
 		mdrouting.NewBuiltIn,
@@ -142,12 +156,6 @@ func InjectRoutingService(
 		db.NewURLSql,
 		url.NewRetrieverPersist,
 		account.NewRepoService,
-		github.NewGithub,
-		provider.NewGithubIdentityProvider,
-		github.NewAPI,
-		facebook.NewFacebook,
-		provider.NewFacebookIdentityProvider,
-		facebook.NewAPI,
 		provider.NewShortRoutes,
 	)
 	return mdservice.Service{}

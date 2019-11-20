@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"short/app/entity"
 	"short/app/usecase/service"
 
 	"github.com/byliuyang/app/fw"
@@ -23,6 +24,11 @@ type fbAccessTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	TokenType   string `json:"token_type"`
 	ExpiresIn   int    `json:"expires_in"`
+}
+
+type SearchResponse struct {
+	entity.URL
+	searchSpeedSeconds int
 }
 
 var _ service.IdentityProvider = (*IdentityProvider)(nil)

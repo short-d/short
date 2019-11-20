@@ -21,8 +21,8 @@ func NewShortRoutes(
 	webFrontendURL WebFrontendURL,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
-	gh github.Github,
-	fb facebook.Facebook,
+	githubAPI github.API,
+	facebookAPI facebook.API,
 	authenticator auth.Authenticator,
 	accountService service.Account,
 ) []fw.Route {
@@ -36,8 +36,8 @@ func NewShortRoutes(
 		string(webFrontendURL),
 		timer,
 		urlRetriever,
-		gh,
-		fb,
+		githubAPI,
+		facebookAPI,
 		authenticator,
 		accountService,
 	)

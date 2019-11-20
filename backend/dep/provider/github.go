@@ -22,7 +22,3 @@ func NewGithubIdentityProvider(
 ) github.IdentityProvider {
 	return github.NewIdentityProvider(req, string(clientID), string(clientSecret))
 }
-
-func NewGithubAPI(graphql fw.GraphQlRequest) github.API {
-	return github.NewAPI(graphql)
-}
