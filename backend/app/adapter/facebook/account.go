@@ -42,7 +42,7 @@ func (g Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 	}, nil
 }
 
-// NewAccount initializes Facebook account access API.
+// NewAccount initializes Facebook account API client.
 func NewAccount() Account {
 	return Account{}
 }
