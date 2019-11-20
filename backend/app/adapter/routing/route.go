@@ -20,7 +20,6 @@ type Observability struct {
 }
 
 // NewShort creates HTTP routing table.
-// handler.
 func NewShort(
 	observability Observability,
 	webFrontendURL string,
