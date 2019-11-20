@@ -39,7 +39,7 @@ const networkErr = {
   name: 'Network error',
   description: `
               Unable to reach the server. Please double check your Internet connection and try again.
-              If this happens consistently, please email byliuyang11@gmail.com screenshots and the necessary steps to reproduce the error.
+              If this happens consistently, please email byliuyang11@gmail.com with screenshots and the necessary steps to reproduce the error.
               `
 };
 
