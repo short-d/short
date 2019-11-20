@@ -150,10 +150,12 @@ export class UrlService {
         })
         .catch(({ graphQLErrors, networkError, message }) => {
           if (networkError) {
-            return reject([Err.NetworkError]);
+            reject([Err.NetworkError]);
+            return;
           }
           if (!graphQLErrors || graphQLErrors.length === 0) { 
-            return reject([Err.Unknown]);
+           reject([Err.Unknown]);
+           return;
           }
           const errCodes = graphQLErrors.map(
             (graphQLError: GraphQlError) => (graphQLError.extensions) ? graphQLError.extensions.code : Err.Unknown

@@ -38,9 +38,8 @@ const userNotHumanErr = {
 const networkErr = {
   name: 'Network error',
   description: `
-              Could not get a response from the server. Please ensure you are
-              connected to the Internet and try again. If the problem persists,
-              please email byliuyang11@gmail.com with screenshots or logs.
+              Unable to reach the server. Please double check your Internet connection and try again.
+              If this happens consistently, please email byliuyang11@gmail.com screenshots and the necessary steps to reproduce the error.
               `
 };
 
