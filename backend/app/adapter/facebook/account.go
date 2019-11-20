@@ -13,7 +13,7 @@ var _ service.SSOAccount = (*Account)(nil)
 type Account struct {
 }
 
-// GetSingleSignOnUser retrieves user's email and name from Facebook.
+// GetSingleSignOnUser retrieves user's email and name from Facebook API.
 func (g Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error) {
 	type response struct {
 		Email string `json:"email"`
