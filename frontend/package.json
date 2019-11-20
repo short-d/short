@@ -28,6 +28,8 @@
     "build:production": "REACT_APP_ENV=production yarn build",
     "test": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts test",
     "eject": "react-scripts eject",
+    "tslint:lint": "yarn tslint -c tslint.json 'src/**/*.ts'",
+    "stylelint:lint": "yarn stylelint --config=.stylelintrc src/**/*.{scss,css}",
     "prettier:base": "prettier --parser typescript --single-quote",
     "prettier:check": "yarn prettier:base --list-different \"src/**/*.{ts,tsx}\"",
     "prettier:write": "yarn prettier:base --write \"src/**/*.{ts,tsx}\"",
@@ -60,8 +62,13 @@
     "prettier": "1.18.2",
     "react-scripts": "3.2.0",
     "stylelint": "^11.1.1",
+    "stylelint-config-prettier": "^6.0.0",
     "stylelint-config-standard": "^19.0.0",
+    "stylelint-prettier": "^1.1.1",
     "stylelint-scss": "^3.11.1",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
     "typescript": "^3.6.4"
   }
 }

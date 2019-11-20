@@ -1,4 +1,4 @@
-package signin
+package sso
 
 import (
 	"encoding/json"
@@ -12,11 +12,11 @@ import (
 	"github.com/byliuyang/app/mdtest"
 )
 
-func TestOAuth_SignIn(t *testing.T) {
+func TestSingleSignOn_SignIn(t *testing.T) {
 	testCases := []struct {
 		name              string
 		authorizationCode string
-		userProfile       entity.UserProfile
+		ssoUser           entity.SSOUser
 		isAccountExist    bool
 		isAccountExistErr error
 		createAccountErr  error
@@ -30,7 +30,7 @@ func TestOAuth_SignIn(t *testing.T) {
 		{
 			name:              "account found",
 			authorizationCode: "authorized",
-			userProfile: entity.UserProfile{
+			ssoUser: entity.SSOUser{
 				Email: "alpha@example.com",
 				Name:  "Alpha",
 			},
@@ -40,7 +40,7 @@ func TestOAuth_SignIn(t *testing.T) {
 		{
 			name:              "account not exist",
 			authorizationCode: "authorized",
-			userProfile: entity.UserProfile{
+			ssoUser: entity.SSOUser{
 				Email: "alpha@example.com",
 				Name:  "Alpha",
 			},
@@ -50,7 +50,7 @@ func TestOAuth_SignIn(t *testing.T) {
 		{
 			name:              "check account existence error",
 			authorizationCode: "authorized",
-			userProfile: entity.UserProfile{
+			ssoUser: entity.SSOUser{
 				Email: "alpha@example.com",
 				Name:  "Alpha",
 			},
@@ -62,8 +62,8 @@ func TestOAuth_SignIn(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			oauthService := service.NewOAuthFake("http://localhost/sign-in", "")
-			profileService := service.NewProfileFake(testCase.userProfile)
+			identityProvider := service.NewIdentityProviderFake("http://localhost/sign-in", "")
+			profileService := service.NewSSOAccountFake(testCase.ssoUser)
 			accountService := service.NewAccountFake(
 				testCase.isAccountExist,
 				testCase.isAccountExistErr,
@@ -73,15 +73,15 @@ func TestOAuth_SignIn(t *testing.T) {
 			now := time.Now()
 			authenticator := auth.NewAuthenticatorFake(now, time.Minute)
 
-			oauth := NewOAuth(oauthService, profileService, accountService, authenticator)
-			gotAuthToken, err := oauth.SignIn(testCase.authorizationCode)
+			singleSignOn := NewSingleSignOn(identityProvider, profileService, accountService, authenticator)
+			gotAuthToken, err := singleSignOn.SignIn(testCase.authorizationCode)
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
 			}
 
 			values := map[string]string{
-				"email":     testCase.userProfile.Email,
+				"email":     testCase.ssoUser.Email,
 				"issued_at": now.Format(time.RFC3339Nano),
 			}
 

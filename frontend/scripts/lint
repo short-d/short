@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+yarn tslint:lint
+yarn stylelint:lint

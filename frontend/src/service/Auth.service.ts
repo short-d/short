@@ -1,12 +1,12 @@
 import { EnvService } from './Env.service';
 import { CookieService } from './Cookie.service';
-import {RoutingService} from './Routing.service';
+import { RoutingService } from './Routing.service';
 
 export class AuthService {
   constructor(
     private cookieService: CookieService,
     private envService: EnvService,
-    private routingService: RoutingService,
+    private routingService: RoutingService
   ) {}
 
   cacheAuthToken(pageUrl: string) {
@@ -40,14 +40,20 @@ export class AuthService {
   }
 
   githubSignInLink(): string {
-    return `${this.envService.getVal('HTTP_API_BASE_URL')}/oauth/github/sign-in`;
+    return `${this.envService.getVal(
+      'HTTP_API_BASE_URL'
+    )}/oauth/github/sign-in`;
   }
 
   googleSignInLink(): string {
-    return `${this.envService.getVal('HTTP_API_BASE_URL')}/oauth/google/sign-in`;
+    return `${this.envService.getVal(
+      'HTTP_API_BASE_URL'
+    )}/oauth/google/sign-in`;
   }
 
   facebookSignInLink(): string {
-    return `${this.envService.getVal('HTTP_API_BASE_URL')}/oauth/facebook/sign-in`;
+    return `${this.envService.getVal(
+      'HTTP_API_BASE_URL'
+    )}/oauth/facebook/sign-in`;
   }
 }

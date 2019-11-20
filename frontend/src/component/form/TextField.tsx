@@ -1,4 +1,4 @@
-import React, {ChangeEvent, Component} from 'react';
+import React, { ChangeEvent, Component } from 'react';
 import './TextField.scss';
 
 interface Props {
