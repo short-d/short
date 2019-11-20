@@ -65,7 +65,7 @@ func NewSSOSignIn(
 	}
 }
 
-// NewSSOSignInCallback generates authentication token given authorization code.
+// NewSSOSignInCallback generates Short's authentication token given identity provider's authorization code.
 func NewSSOSignInCallback(
 	logger fw.Logger,
 	tracer fw.Tracer,
