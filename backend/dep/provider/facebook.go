@@ -12,7 +12,7 @@ type FacebookClientID string
 // FacebookClientSecret represents client secret used for Facebook OAuth.
 type FacebookClientSecret string
 
-// FacebookRedirectURI represents redirect_uri for facebook
+// FacebookRedirectURI represents redirect URL for facebook single sign on.
 type FacebookRedirectURI string
 
 // NewFacebookIdentityProvider creates a new Facebook OAuth client with
