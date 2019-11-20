@@ -11,6 +11,7 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// NewOriginalURL translates alias to the original long link.
 func NewOriginalURL(
 	logger fw.Logger,
 	tracer fw.Tracer,
@@ -45,6 +46,7 @@ func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL)
 	http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 }
 
+// NewSSOSignIn redirects user to sign in page.
 func NewSSOSignIn(
 	logger fw.Logger,
 	tracer fw.Tracer,
@@ -63,6 +65,7 @@ func NewSSOSignIn(
 	}
 }
 
+// NewSSOSignInCallback generates authentication token given authorization code.
 func NewSSOSignInCallback(
 	logger fw.Logger,
 	tracer fw.Tracer,

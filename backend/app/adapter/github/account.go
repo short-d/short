@@ -12,7 +12,7 @@ const githubAPI = "https://api.github.com/graphql"
 
 var _ service.SSOAccount = (*Account)(nil)
 
-// Account access user's account data through Github API v4.
+// Account accesses user's account data through Github API v4.
 type Account struct {
 	graphql fw.GraphQlRequest
 }

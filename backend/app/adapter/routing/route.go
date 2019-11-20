@@ -13,12 +13,14 @@ import (
 )
 
 // Observability represents a set of tools to improves observability of the
-// system.
+// system, such as logger and tracer.
 type Observability struct {
 	Logger fw.Logger
 	Tracer fw.Tracer
 }
 
+// NewShort creates HTTP API configurations, such as HTTP method, path, and
+// handler.
 func NewShort(
 	observability Observability,
 	webFrontendURL string,
