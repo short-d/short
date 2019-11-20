@@ -46,7 +46,7 @@ func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL)
 	http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 }
 
-// NewSSOSignIn redirects user to sign in page.
+// NewSSOSignIn redirects user to the sign in page.
 func NewSSOSignIn(
 	logger fw.Logger,
 	tracer fw.Tracer,
