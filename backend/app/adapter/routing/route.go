@@ -12,7 +12,7 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
-// Observability represents a set of tools to improves observability of the
+// Observability represents a set of metrics data producers which improve the observability of the
 // system, such as logger and tracer.
 type Observability struct {
 	Logger fw.Logger
