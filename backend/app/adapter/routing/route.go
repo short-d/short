@@ -24,20 +24,20 @@ func NewShort(
 	webFrontendURL string,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
-	github github.Github,
-	facebook facebook.Facebook,
+	githubAPI github.API,
+	facebookAPI facebook.API,
 	authenticator auth.Authenticator,
 	accountService service.Account,
 ) []fw.Route {
 	githubSignIn := sso.NewSingleSignOn(
-		github.IdentityProvider,
-		github.API,
+		githubAPI.IdentityProvider,
+		githubAPI.Account,
 		accountService,
 		authenticator,
 	)
 	facebookSignIn := sso.NewSingleSignOn(
-		facebook.IdentityProvider,
-		facebook.API,
+		facebookAPI.IdentityProvider,
+		facebookAPI.Account,
 		accountService,
 		authenticator,
 	)
@@ -54,7 +54,7 @@ func NewShort(
 			Handle: NewSingleSignOnSignIn(
 				logger,
 				tracer,
-				github.IdentityProvider,
+				githubAPI.IdentityProvider,
 				authenticator,
 				webFrontendURL,
 			),
@@ -75,7 +75,7 @@ func NewShort(
 			Handle: NewSingleSignOnSignIn(
 				logger,
 				tracer,
-				facebook.IdentityProvider,
+				facebookAPI.IdentityProvider,
 				authenticator,
 				webFrontendURL,
 			),
