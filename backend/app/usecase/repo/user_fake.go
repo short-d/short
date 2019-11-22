@@ -43,6 +43,7 @@ func (u *UserFake) CreateUser(user entity.User) error {
 	return nil
 }
 
+// UpdateUserID updates the ID of an user in the repository.
 func (u UserFake) UpdateUserID(email string, userID string) error {
 	for _, user := range u.users {
 		if user.Email == user.Email {
