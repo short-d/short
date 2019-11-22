@@ -7,4 +7,5 @@ type User interface {
 	IsEmailExist(email string) (bool, error)
 	GetUserByEmail(email string) (entity.User, error)
 	CreateUser(user entity.User) error
+	UpdateUserID(email string, userID string) error
 }

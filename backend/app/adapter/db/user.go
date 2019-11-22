@@ -88,6 +88,20 @@ VALUES ($1, $2, $3, $4, $5)
 	return err
 }
 
+// UpdateUserID updates the unique ID of an user with given email address.
+func (u UserSQL) UpdateUserID(email string, userID string) error {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1
+WHERE "%s"=$2
+`,
+	table.User.TableName,
+	table.User.ColumnID,
+	table.User.ColumnEmail)
+	_, err := u.db.Exec(statement, userID, email)
+	return err
+}
+
 // NewUserSQL creates UserSQL
 func NewUserSQL(db *sql.DB) *UserSQL {
 	return &UserSQL{
