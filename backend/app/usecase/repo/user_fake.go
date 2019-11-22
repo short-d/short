@@ -43,6 +43,16 @@ func (u *UserFake) CreateUser(user entity.User) error {
 	return nil
 }
 
+// UpdateUserID updates the ID of an user in the repository.
+func (u UserFake) UpdateUserID(email string, userID string) error {
+	for _, user := range u.users {
+		if user.Email == user.Email {
+			user.ID = userID
+		}
+	}
+	return errors.New("email does not exist")
+}
+
 // NewUserFake create in memory user repository implementation.
 func NewUserFake(users []entity.User) UserFake {
 	return UserFake{

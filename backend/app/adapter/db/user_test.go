@@ -54,7 +54,7 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 	}
 }
 
-func TestUserSql_GetByEmail(t *testing.T) {
+func TestUserSql_GetUserByEmail(t *testing.T) {
 	testCases := []struct {
 		name      string
 		tableRows *mdtest.TableRows
@@ -99,7 +99,9 @@ func TestUserSql_GetByEmail(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
-			expQuery := fmt.Sprintf(`^SELECT ".+",".+",".+",".+",".+" FROM "%s" WHERE "%s"=.+$`, table.User.TableName, table.User.ColumnEmail)
+			expQuery := fmt.Sprintf(
+				`^SELECT\s+".+",".+",".+",".+",".+"\s+FROM\s+"%s"\s+WHERE\s+"%s"=.+$`,
+				table.User.TableName, table.User.ColumnEmail)
 			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
 			userRepo := NewUserSQL(db)
@@ -115,7 +117,7 @@ func TestUserSql_GetByEmail(t *testing.T) {
 	}
 }
 
-func TestUserSql_Create(t *testing.T) {
+func TestUserSql_CreateUser(t *testing.T) {
 	testCases := []struct {
 		name     string
 		user     entity.User
@@ -147,7 +149,7 @@ func TestUserSql_Create(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
-			expStatement := fmt.Sprintf(`INSERT\s*INTO\s*"%s"`, table.User.TableName)
+			expStatement := fmt.Sprintf(`INSERT\s+INTO\s+"%s"`, table.User.TableName)
 			if testCase.rowExist {
 				stub.ExpectExec(expStatement).WillReturnError(errors.New("row exists"))
 			} else {
@@ -157,6 +159,56 @@ func TestUserSql_Create(t *testing.T) {
 			userRepo := NewUserSQL(db)
 
 			err = userRepo.CreateUser(testCase.user)
+			if testCase.hasErr {
+				mdtest.NotEqual(t, nil, err)
+				return
+			}
+			mdtest.Equal(t, nil, err)
+		})
+	}
+}
+
+func TestUserSQL_UpdateUserID(t *testing.T) {
+	testCases := []struct {
+		name     string
+		email    string
+		rowExist bool
+		hasErr   bool
+	}{
+		{
+			name:     "user not found",
+			email:    "alpha@example.com",
+			rowExist: false,
+			hasErr:   true,
+		},
+		{
+			name:     "update user ID successfully",
+			email:    "alpha@example.com",
+			rowExist: true,
+			hasErr:   false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			db, stub, err := mdtest.NewSQLStub()
+			mdtest.Equal(t, nil, err)
+			defer db.Close()
+
+			expStatement := fmt.Sprintf(
+				`UPDATE\s+"%s"\s+SET\s+"%s"=.+ WHERE\s+"%s"=.+`,
+				table.User.TableName,
+				table.User.ColumnID,
+				table.User.ColumnEmail)
+			if testCase.rowExist {
+				stub.ExpectExec(expStatement).WillReturnResult(driver.ResultNoRows)
+			} else {
+				stub.ExpectExec(expStatement).WillReturnError(errors.New("row not found"))
+			}
+
+			userRepo := NewUserSQL(db)
+
+			err = userRepo.UpdateUserID(testCase.email, "userID")
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
