@@ -88,7 +88,7 @@ VALUES ($1, $2, $3, $4, $5)
 	return err
 }
 
-// UpdateUserID updates the unique ID of an user with given email address.
+// UpdateUserID updates the ID of an user in user table with given email address.
 func (u UserSQL) UpdateUserID(email string, userID string) error {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
