@@ -95,9 +95,9 @@ UPDATE "%s"
 SET "%s"=$1
 WHERE "%s"=$2
 `,
-	table.User.TableName,
-	table.User.ColumnID,
-	table.User.ColumnEmail)
+		table.User.TableName,
+		table.User.ColumnID,
+		table.User.ColumnEmail)
 	_, err := u.db.Exec(statement, userID, email)
 	return err
 }
