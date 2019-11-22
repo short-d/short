@@ -26,7 +26,7 @@ func (r RepoService) CreateAccount(email string, name string) error {
 		Name:      name,
 		CreatedAt: &now,
 	}
-	return r.userRepo.Create(user)
+	return r.userRepo.CreateUser(user)
 }
 
 func NewRepoService(userRepo repo.User, timer fw.Timer) RepoService {

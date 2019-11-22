@@ -104,7 +104,7 @@ func TestUserSql_GetByEmail(t *testing.T) {
 
 			userRepo := NewUserSQL(db)
 
-			gotUser, err := userRepo.GetByEmail(testCase.email)
+			gotUser, err := userRepo.GetUserByEmail(testCase.email)
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
@@ -156,7 +156,7 @@ func TestUserSql_Create(t *testing.T) {
 
 			userRepo := NewUserSQL(db)
 
-			err = userRepo.Create(testCase.user)
+			err = userRepo.CreateUser(testCase.user)
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
 				return

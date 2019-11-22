@@ -37,8 +37,8 @@ WHERE "%s"=$1;
 	return true, nil
 }
 
-// GetByEmail finds an User in user table given email.
-func (u UserSQL) GetByEmail(email string) (entity.User, error) {
+// GetUserByEmail finds an User in user table given email.
+func (u UserSQL) GetUserByEmail(email string) (entity.User, error) {
 	query := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s"
 FROM "%s" 
@@ -70,8 +70,8 @@ WHERE "%s"=$1;
 	return user, nil
 }
 
-// Create inserts a new User into user table.
-func (u *UserSQL) Create(user entity.User) error {
+// CreateUser inserts a new User into user table.
+func (u *UserSQL) CreateUser(user entity.User) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5)
