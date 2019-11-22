@@ -99,7 +99,9 @@ func TestUserSql_GetUserByEmail(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
-			expQuery := fmt.Sprintf(`^SELECT ".+",".+",".+",".+",".+" FROM "%s" WHERE "%s"=.+$`, table.User.TableName, table.User.ColumnEmail)
+			expQuery := fmt.Sprintf(
+				`^SELECT\s+".+",".+",".+",".+",".+"\s+FROM\s+"%s"\s+WHERE\s+"%s"=.+$`,
+				table.User.TableName, table.User.ColumnEmail)
 			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
 
 			userRepo := NewUserSQL(db)
@@ -147,7 +149,7 @@ func TestUserSql_CreateUser(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			defer db.Close()
 
-			expStatement := fmt.Sprintf(`INSERT\s*INTO\s*"%s"`, table.User.TableName)
+			expStatement := fmt.Sprintf(`INSERT\s+INTO\s+"%s"`, table.User.TableName)
 			if testCase.rowExist {
 				stub.ExpectExec(expStatement).WillReturnError(errors.New("row exists"))
 			} else {
@@ -169,21 +171,21 @@ func TestUserSql_CreateUser(t *testing.T) {
 func TestUserSQL_UpdateUserID(t *testing.T) {
 	testCases := []struct {
 		name     string
-		email     string
+		email    string
 		rowExist bool
 		hasErr   bool
-	} {
+	}{
 		{
-			name: "user not found",
-			email: "alpha@example.com",
+			name:     "user not found",
+			email:    "alpha@example.com",
 			rowExist: false,
-			hasErr: true,
+			hasErr:   true,
 		},
 		{
-			name: "user not found",
-			email: "alpha@example.com",
+			name:     "update user ID successfully",
+			email:    "alpha@example.com",
 			rowExist: true,
-			hasErr: false,
+			hasErr:   false,
 		},
 	}
 
@@ -194,7 +196,7 @@ func TestUserSQL_UpdateUserID(t *testing.T) {
 			defer db.Close()
 
 			expStatement := fmt.Sprintf(
-				`UPDATE\s+"%s"\s+SET\s+"%s"=$1\s+WHERE\+"%s"=$2`,
+				`UPDATE\s+"%s"\s+SET\s+"%s"=.+ WHERE\s+"%s"=.+`,
 				table.User.TableName,
 				table.User.ColumnID,
 				table.User.ColumnEmail)
