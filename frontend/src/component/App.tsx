@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import {UrlService} from '../service/Url.service';
-import {UIFactory} from './UIFactory';
-import {NotFoundPage} from './pages/NotFoundPage';
+import { UrlService } from '../service/Url.service';
+import { UIFactory } from './UIFactory';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 interface IProps {
   urlService: UrlService;
@@ -18,19 +18,21 @@ export class App extends Component<IProps> {
           <Route
             path={'/'}
             exact
-            render={({location}) =>
+            render={({ location }) =>
               this.props.uiFactory.createHomePage(location)
             }
           />
           <Route
             path={'/r/:alias'}
-            render={({match}) => {
+            render={({ match }) => {
               let alias = match.params['alias'];
-              window.location.href = this.props.urlService.aliasToBackendLink(alias);
-              return <div/>;
+              window.location.href = this.props.urlService.aliasToBackendLink(
+                alias
+              );
+              return <div />;
             }}
           />
-          <Route component={NotFoundPage}/>
+          <Route component={NotFoundPage} />
         </Switch>
       </Router>
     );

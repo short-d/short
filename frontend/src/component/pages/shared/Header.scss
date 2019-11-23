@@ -2,32 +2,32 @@
 @import '../../styles/dimension';
 
 header {
-	@include default-font();
+  @include default-font();
 
-	background-color: #c2185b;
-	color: white;
-	display: flex;
-	justify-content: center;
-	position: relative;
+  background-color: #c2185b;
+  color: white;
+  display: flex;
+  justify-content: center;
+  position: relative;
 
-	.center {
-		display: flex;
-		padding: 10px 0;
-		width: $content-width;
-	}
+  .center {
+    display: flex;
+    padding: 10px 0;
+    width: $content-width;
+  }
 
-	.sign-out-btn {
-		position: absolute;
-		top: 8px;
-		right: 6px;
-		padding: 0px 20px;
-		height: 34px;
-	}
+  .sign-out-btn {
+    position: absolute;
+    top: 8px;
+    right: 6px;
+    padding: 0 20px;
+    height: 34px;
+  }
 
-	#logo {
-		font-size: 30px;
-		font-weight: $font-weight-semi-bold;
-		letter-spacing: 2px;
-		line-height: 30px;
-	}
+  #logo {
+    font-size: 30px;
+    font-weight: $font-weight-semi-bold;
+    letter-spacing: 2px;
+    line-height: 30px;
+  }
 }
