@@ -64,7 +64,7 @@ func TestProvider_CreateAccount(t *testing.T) {
 			expectedHasErr: false,
 		},
 		{
-			name: "successfully created account",
+			name: "account exists",
 			users: []entity.User{
 				{Email: "alpha@example.com"},
 			},
