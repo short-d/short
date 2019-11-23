@@ -1,57 +1,46 @@
 package resolver
 
 import (
-	"short/app/adapter/graphql/scalar"
+	"short/app/usecase/auth"
 	"short/app/usecase/url"
 
 	"github.com/byliuyang/app/fw"
 )
 
+// Query represents GraphQL query resolver
 type Query struct {
-	logger       fw.Logger
-	tracer       fw.Tracer
-	urlRetriever url.Retriever
+	logger        fw.Logger
+	tracer        fw.Tracer
+	authenticator auth.Authenticator
+	urlRetriever  url.Retriever
 }
 
-func NewQuery(logger fw.Logger, tracer fw.Tracer, urlRetriever url.Retriever) Query {
-	return Query{
-		logger:       logger,
-		tracer:       tracer,
-		urlRetriever: urlRetriever,
-	}
+// AuthQueryArgs represents possible parameters for AuthQuery endpoint
+type AuthQueryArgs struct {
+	AuthToken *string
 }
 
-type URLArgs struct {
-	Alias       string
-	ExpireAfter *scalar.Time
-}
-
-func (q Query) URL(args *URLArgs) (*URL, error) {
-	trace := q.tracer.BeginTrace("Query.Url")
-
-	if args.ExpireAfter == nil {
-		trace1 := trace.Next("Get")
-		u, err := q.urlRetriever.Get(trace1, args.Alias)
-		trace1.End()
-
-		if err != nil {
-			q.logger.Error(err)
-			return nil, err
-		}
-
-		trace.End()
-		return &URL{url: u}, nil
-	}
-
-	trace1 := trace.Next("GetAfter")
-	u, err := q.urlRetriever.GetAfter(trace1, args.Alias, args.ExpireAfter.Time)
-	trace1.End()
-
+// AuthQuery extracts user information from authentication token
+func (q Query) AuthQuery(args *AuthQueryArgs) (*AuthQuery, error) {
+	user, err := viewer(args.AuthToken, q.authenticator)
 	if err != nil {
-		q.logger.Error(err)
 		return nil, err
 	}
 
-	trace.End()
-	return &URL{url: u}, nil
+	authQuery := newAuthQuery(user, q.urlRetriever)
+	return &authQuery, nil
+}
+
+func newQuery(
+	logger fw.Logger,
+	tracer fw.Tracer,
+	authenticator auth.Authenticator,
+	urlRetriever url.Retriever,
+) Query {
+	return Query{
+		logger:        logger,
+		tracer:        tracer,
+		authenticator: authenticator,
+		urlRetriever:  urlRetriever,
+	}
 }

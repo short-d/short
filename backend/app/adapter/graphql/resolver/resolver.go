@@ -22,8 +22,8 @@ func NewResolver(
 	authenticator auth.Authenticator,
 ) Resolver {
 	return Resolver{
-		Query: NewQuery(logger, tracer, urlRetriever),
-		Mutation: NewMutation(
+		Query: newQuery(logger, tracer, authenticator, urlRetriever),
+		Mutation: newMutation(
 			logger,
 			tracer,
 			urlCreator,

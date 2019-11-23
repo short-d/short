@@ -11,18 +11,22 @@ import (
 
 var _ fw.GraphQlAPI = (*Short)(nil)
 
+// Short represents GraphQL API config
 type Short struct {
 	resolver *resolver.Resolver
 }
 
+// GetSchema retrieves GraphQL schema
 func (t Short) GetSchema() string {
 	return schema
 }
 
+// GetResolver retrieves GraphQL resolver
 func (t Short) GetResolver() interface{} {
 	return t.resolver
 }
 
+// NewShort creates GraphQL API config
 func NewShort(
 	logger fw.Logger,
 	tracer fw.Tracer,
