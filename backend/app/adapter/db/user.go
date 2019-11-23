@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"short/app/adapter/db/table"
 	"short/app/entity"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 )
 
-var _ repo.User = (*UserSQL)(nil)
+var _ repository.User = (*UserSQL)(nil)
 
 // UserSQL accesses User information in user table through SQL.
 type UserSQL struct {

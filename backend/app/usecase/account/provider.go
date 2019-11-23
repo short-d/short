@@ -2,14 +2,14 @@ package account
 
 import (
 	"short/app/entity"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 
 	"github.com/byliuyang/app/fw"
 )
 
 // Provider providers user account service.
 type Provider struct {
-	userRepo repo.User
+	userRepo repository.User
 	timer    fw.Timer
 }
 
@@ -30,7 +30,7 @@ func (r Provider) CreateAccount(email string, name string) error {
 }
 
 // NewProvider creates user account service provider.
-func NewProvider(userRepo repo.User, timer fw.Timer) Provider {
+func NewProvider(userRepo repository.User, timer fw.Timer) Provider {
 	return Provider{
 		userRepo: userRepo,
 		timer:    timer,

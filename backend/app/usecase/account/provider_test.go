@@ -2,7 +2,7 @@ package account
 
 import (
 	"short/app/entity"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 	"testing"
 	"time"
 
@@ -36,7 +36,7 @@ func TestProvider_IsAccountExist(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			fakeUserRepo := repo.NewUserFake(testCase.users)
+			fakeUserRepo := repository.NewUserFake(testCase.users)
 			fakeTimer := mdtest.NewTimerFake(now)
 			accountProvider := NewProvider(&fakeUserRepo, fakeTimer)
 			gotIsExist, err := accountProvider.IsAccountExist(testCase.userEmail)
@@ -76,7 +76,7 @@ func TestProvider_CreateAccount(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			fakeUserRepo := repo.NewUserFake(testCase.users)
+			fakeUserRepo := repository.NewUserFake(testCase.users)
 			fakeTimer := mdtest.NewTimerFake(now)
 			accountProvider := NewProvider(&fakeUserRepo, fakeTimer)
 			err := accountProvider.CreateAccount(testCase.email, testCase.userName)

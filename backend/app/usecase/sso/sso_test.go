@@ -5,7 +5,7 @@ import (
 	"short/app/entity"
 	"short/app/usecase/account"
 	"short/app/usecase/auth"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 	"short/app/usecase/service"
 	"testing"
 	"time"
@@ -54,7 +54,7 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			identityProvider := service.NewIdentityProviderFake("http://localhost/sign-in", "")
 			profileService := service.NewSSOAccountFake(testCase.ssoUser)
-			fakeUserRepo := repo.NewUserFake(testCase.users)
+			fakeUserRepo := repository.NewUserFake(testCase.users)
 			fakeTimer := mdtest.NewTimerFake(time.Now())
 			accountProvider := account.NewProvider(&fakeUserRepo, fakeTimer)
 

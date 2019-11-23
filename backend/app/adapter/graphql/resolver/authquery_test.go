@@ -3,7 +3,7 @@ package resolver
 import (
 	"short/app/adapter/graphql/scalar"
 	"short/app/entity"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 	"short/app/usecase/url"
 	"testing"
 	"time"
@@ -82,7 +82,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			defer sqlDB.Close()
 
-			fakeRepo := repo.NewURLFake(testCase.urls)
+			fakeRepo := repository.NewURLFake(testCase.urls)
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
 			query := newAuthQuery(&testCase.user, retrieverFake)
 

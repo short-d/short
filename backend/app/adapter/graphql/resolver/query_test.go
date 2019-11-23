@@ -3,7 +3,7 @@ package resolver
 import (
 	"short/app/entity"
 	"short/app/usecase/auth"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 	"short/app/usecase/url"
 	"testing"
 	"time"
@@ -53,7 +53,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			defer sqlDB.Close()
 
-			fakeRepo := repo.NewURLFake(map[string]entity.URL{})
+			fakeRepo := repository.NewURLFake(map[string]entity.URL{})
 			authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
 			logger := mdtest.NewLoggerFake()
