@@ -77,10 +77,10 @@ git clone https://github.com/byliuyang/short.git
 
 ### Backend
 
-1. Copy `.env.dist` file to `.env`:
+1. Copy `backend/.env.dist` file to `backend/.env`:
 
    ```bash
-   cp .env.dist .env
+   cp backend/.env.dist backend/.env
    ```
 
 1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,

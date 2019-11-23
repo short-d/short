@@ -4,3 +4,5 @@ tmp
 vendor
 .idea/workspace.xml
 .idea/misc.xml
+backend/.env
+frontend/.env.development
