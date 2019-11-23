@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"short/app/adapter/db/table"
 	"short/app/entity"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 )
 
-var _ repo.User = (*UserSQL)(nil)
+var _ repository.User = (*UserSQL)(nil)
 
 // UserSQL accesses User information in user table through SQL.
 type UserSQL struct {
@@ -37,8 +37,8 @@ WHERE "%s"=$1;
 	return true, nil
 }
 
-// GetByEmail finds an User in user table given email.
-func (u UserSQL) GetByEmail(email string) (entity.User, error) {
+// GetUserByEmail finds an User in user table given email.
+func (u UserSQL) GetUserByEmail(email string) (entity.User, error) {
 	query := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s"
 FROM "%s" 
@@ -70,8 +70,8 @@ WHERE "%s"=$1;
 	return user, nil
 }
 
-// Create inserts a new User into user table.
-func (u *UserSQL) Create(user entity.User) error {
+// CreateUser inserts a new User into user table.
+func (u *UserSQL) CreateUser(user entity.User) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5)
@@ -85,6 +85,20 @@ VALUES ($1, $2, $3, $4, $5)
 	)
 
 	_, err := u.db.Exec(statement, user.Email, user.Name, user.LastSignedInAt, user.CreatedAt, user.UpdatedAt)
+	return err
+}
+
+// UpdateUserID updates the ID of an user in user table with given email address.
+func (u UserSQL) UpdateUserID(email string, userID string) error {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1
+WHERE "%s"=$2
+`,
+		table.User.TableName,
+		table.User.ColumnID,
+		table.User.ColumnEmail)
+	_, err := u.db.Exec(statement, userID, email)
 	return err
 }
 

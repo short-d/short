@@ -3,10 +3,9 @@ package provider
 import (
 	"short/app/adapter/facebook"
 	"short/app/adapter/github"
-	"short/app/adapter/oauth"
 	"short/app/adapter/routing"
+	"short/app/usecase/account"
 	"short/app/usecase/auth"
-	"short/app/usecase/service"
 	"short/app/usecase/url"
 
 	"github.com/byliuyang/app/fw"
@@ -22,33 +21,24 @@ func NewShortRoutes(
 	webFrontendURL WebFrontendURL,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
-	githubOAuth oauth.Github,
 	githubAPI github.API,
-	authenticator auth.Authenticator,
-	accountService service.Account,
-	facebookOAuth oauth.Facebook,
 	facebookAPI facebook.API,
+	authenticator auth.Authenticator,
+	accountProvider account.Provider,
 ) []fw.Route {
 	observability := routing.Observability{
 		Logger: logger,
 		Tracer: tracer,
 	}
-	gh := routing.Github{
-		OAuth: githubOAuth,
-		API:   githubAPI,
-	}
-	fb := routing.Facebook{
-		OAuth: facebookOAuth,
-		API:   facebookAPI,
-	}
+
 	return routing.NewShort(
 		observability,
 		string(webFrontendURL),
 		timer,
 		urlRetriever,
-		gh,
-		fb,
+		githubAPI,
+		facebookAPI,
 		authenticator,
-		accountService,
+		accountProvider,
 	)
 }

@@ -11,10 +11,11 @@ import (
 	"short/app/adapter/kgs"
 	"short/app/usecase/account"
 	"short/app/usecase/keygen"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 	"short/app/usecase/requester"
 	"short/app/usecase/service"
 	"short/app/usecase/url"
+	"short/app/usecase/validator"
 	"short/dep/provider"
 	"time"
 
@@ -43,6 +44,18 @@ var authSet = wire.NewSet(
 var observabilitySet = wire.NewSet(
 	mdlogger.NewLocal,
 	mdtracer.NewLocal,
+)
+
+var githubAPISet = wire.NewSet(
+	provider.NewGithubIdentityProvider,
+	github.NewAccount,
+	github.NewAPI,
+)
+
+var facebookAPISet = wire.NewSet(
+	provider.NewFacebookIdentityProvider,
+	facebook.NewAccount,
+	facebook.NewAPI,
 )
 
 func InjectCommandFactory() fw.CommandFactory {
@@ -82,10 +95,11 @@ func InjectGraphQlService(
 		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
-		wire.Bind(new(repo.UserURLRelation), new(db.UserURLRelationSQL)),
-		wire.Bind(new(repo.URL), new(*db.URLSql)),
+		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
+		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(keygen.KeyGenerator), new(keygen.Remote)),
 		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
+		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
 		authSet,
@@ -99,6 +113,8 @@ func InjectGraphQlService(
 		db.NewURLSql,
 		db.NewUserURLRelationSQL,
 		provider.NewRemote,
+		validator.NewLongLink,
+		validator.NewCustomAlias,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
 		provider.NewKgsRPC,
@@ -121,13 +137,15 @@ func InjectRoutingService(
 	webFrontendURL provider.WebFrontendURL,
 ) mdservice.Service {
 	wire.Build(
-		wire.Bind(new(service.Account), new(account.RepoService)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repo.User), new(*(db.UserSQL))),
-		wire.Bind(new(repo.URL), new(*db.URLSql)),
+		wire.Bind(new(repository.User), new(*(db.UserSQL))),
+		wire.Bind(new(repository.URL), new(*db.URLSql)),
+		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
 		authSet,
+		githubAPISet,
+		facebookAPISet,
 
 		mdservice.New,
 		mdrouting.NewBuiltIn,
@@ -139,11 +157,7 @@ func InjectRoutingService(
 		db.NewUserSQL,
 		db.NewURLSql,
 		url.NewRetrieverPersist,
-		account.NewRepoService,
-		provider.NewGithubOAuth,
-		github.NewAPI,
-		provider.NewFacebookOAuth,
-		facebook.NewAPI,
+		account.NewProvider,
 		provider.NewShortRoutes,
 	)
 	return mdservice.Service{}

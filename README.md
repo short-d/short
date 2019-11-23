@@ -5,6 +5,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/408644627586328ddd6c/maintainability)](https://codeclimate.com/github/byliuyang/short/maintainability)
 [![Go Report Card](https://goreportcard.com/badge/github.com/byliuyang/short)](https://goreportcard.com/report/github.com/byliuyang/short)
 [![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)](https://github.com/byliuyang/short)
+[![Floobits Status](https://floobits.com/byliuyang/short.svg)](https://floobits.com/byliuyang/short/redirect)
 
 ![Demo](promo/marquee.png)
 
@@ -121,7 +122,8 @@ Short backend is built on top of
 [Uncle Bob's Clean Architecture](https://api.short-d.com/r/ca), the central
 objective of which is separation of concerns.
 
-![Clean Architecture](doc/eng/architecture/clean-architecture.jpg)
+![Clean Architecture](doc/eng/clean-architecture/clean-architecture.jpg)
+![Boundary](doc/eng/clean-architecture/boundary.jpg)
 
 It enables the developers to modify a single component of the system at a time
 while leaving the rest unchanged. This minizes the amount of changes have to
@@ -129,13 +131,16 @@ be made in order to support new requirements as the system grows. Clean
 Architecture also improves the testability of system, which in turn saves
 precious time when creating automated tests.
 
+Here is an exmample of finance app using clean architecture:
+
+
 ### Service Level Archtecture
 
 Short adopts [Microservices Architecture](https://api.short-d.com/r/ms) to
 organize dependent services around business capabilities and to enable
 independent deployment of each service.
 
-![Microservice Architecture](doc/eng/architecture/microservices.jpg)
+![Microservice Architecture](doc/eng/microservices.jpg)
 
 ### Dependency Management
 

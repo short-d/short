@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"short/app/adapter/db/table"
 	"short/app/entity"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 )
 
-var _ repo.UserURLRelation = (*UserURLRelationSQL)(nil)
+var _ repository.UserURLRelation = (*UserURLRelationSQL)(nil)
 
 // UserURLRelationSQL accesses UserURLRelation information in user_url_relation
 // table.

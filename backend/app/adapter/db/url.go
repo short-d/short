@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"short/app/adapter/db/table"
 	"short/app/entity"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 )
 
-var _ repo.URL = (*URLSql)(nil)
+var _ repository.URL = (*URLSql)(nil)
 
 // URLSql accesses URL information in url table through SQL.
 type URLSql struct {
