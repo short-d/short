@@ -3,7 +3,7 @@ package url
 import (
 	"short/app/entity"
 	"short/app/usecase/keygen"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 	"short/app/usecase/validator"
 	"testing"
 	"time"
@@ -127,8 +127,8 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			urlRepo := repo.NewURLFake(testCase.urls)
-			userURLRepo := repo.NewUserURLRepoFake()
+			urlRepo := repository.NewURLFake(testCase.urls)
+			userURLRepo := repository.NewUserURLRepoFake()
 			keyGen := keygen.NewFake(testCase.availableKeys)
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()

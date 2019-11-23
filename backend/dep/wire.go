@@ -11,7 +11,7 @@ import (
 	"short/app/adapter/kgs"
 	"short/app/usecase/account"
 	"short/app/usecase/keygen"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 	"short/app/usecase/requester"
 	"short/app/usecase/service"
 	"short/app/usecase/url"
@@ -95,8 +95,8 @@ func InjectGraphQlService(
 		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
-		wire.Bind(new(repo.UserURLRelation), new(db.UserURLRelationSQL)),
-		wire.Bind(new(repo.URL), new(*db.URLSql)),
+		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
+		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(keygen.KeyGenerator), new(keygen.Remote)),
 		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
@@ -138,8 +138,8 @@ func InjectRoutingService(
 ) mdservice.Service {
 	wire.Build(
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repo.User), new(*(db.UserSQL))),
-		wire.Bind(new(repo.URL), new(*db.URLSql)),
+		wire.Bind(new(repository.User), new(*(db.UserSQL))),
+		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,

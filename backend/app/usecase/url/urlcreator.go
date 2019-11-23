@@ -3,7 +3,7 @@ package url
 import (
 	"short/app/entity"
 	"short/app/usecase/keygen"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 	"short/app/usecase/validator"
 )
 
@@ -38,8 +38,8 @@ type Creator interface {
 // CreatorPersist represents a URL alias creator which persist the generated
 // alias in the repository
 type CreatorPersist struct {
-	urlRepo             repo.URL
-	userURLRelationRepo repo.UserURLRelation
+	urlRepo             repository.URL
+	userURLRelationRepo repository.UserURLRelation
 	keyGen              keygen.KeyGenerator
 	longLinkValidator   validator.LongLink
 	aliasValidator      validator.CustomAlias
@@ -95,8 +95,8 @@ func (c CreatorPersist) createURLWithCustomAlias(url entity.URL, alias string, u
 
 // NewCreatorPersist creates CreatorPersist
 func NewCreatorPersist(
-	urlRepo repo.URL,
-	userURLRelationRepo repo.UserURLRelation,
+	urlRepo repository.URL,
+	userURLRelationRepo repository.UserURLRelation,
 	keyGen keygen.KeyGenerator,
 	longLinkValidator validator.LongLink,
 	aliasValidator validator.CustomAlias,
