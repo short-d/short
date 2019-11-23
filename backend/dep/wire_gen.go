@@ -99,8 +99,8 @@ func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.Gi
 	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
-	repoService := account.NewRepoService(userSQL, timer)
-	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, authenticator, repoService)
+	accountProvider := account.NewProvider(userSQL, timer)
+	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, authenticator, accountProvider)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service
