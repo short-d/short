@@ -14,6 +14,7 @@ import (
 	"short/app/usecase/account"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
+	"short/app/usecase/validator"
 	"short/dep/provider"
 	"time"
 
@@ -61,7 +62,9 @@ func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.Graph
 	if err != nil {
 		return mdservice.Service{}, err
 	}
-	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, remote)
+	longLink := validator.NewLongLink()
+	customAlias := validator.NewCustomAlias()
+	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, remote, longLink, customAlias)
 	client := mdhttp.NewClient()
 	http := mdrequest.NewHTTP(client)
 	reCaptcha := provider.NewReCaptchaService(http, secret)

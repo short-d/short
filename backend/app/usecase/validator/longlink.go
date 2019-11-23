@@ -1,10 +1,8 @@
-package input
+package validator
 
 import "regexp"
 
 const longLinkMaxLength = 200
-
-var _ Validator = (*LongLink)(nil)
 
 type LongLink struct {
 	uriPattern *regexp.Regexp

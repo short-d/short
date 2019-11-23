@@ -2,9 +2,9 @@ package url
 
 import (
 	"short/app/entity"
-	"short/app/usecase/input"
 	"short/app/usecase/keygen"
 	"short/app/usecase/repo"
+	"short/app/usecase/validator"
 )
 
 var _ Creator = (*CreatorPersist)(nil)
@@ -41,8 +41,8 @@ type CreatorPersist struct {
 	urlRepo             repo.URL
 	userURLRelationRepo repo.UserURLRelation
 	keyGen              keygen.KeyGenerator
-	longLinkValidator   input.Validator
-	aliasValidator      input.Validator
+	longLinkValidator   validator.LongLink
+	aliasValidator      validator.CustomAlias
 }
 
 // CreateURL persists a new url with a given or auto generated alias in the repository.
@@ -98,12 +98,14 @@ func NewCreatorPersist(
 	urlRepo repo.URL,
 	userURLRelationRepo repo.UserURLRelation,
 	keyGen keygen.KeyGenerator,
+	longLinkValidator validator.LongLink,
+	aliasValidator validator.CustomAlias,
 ) CreatorPersist {
 	return CreatorPersist{
 		urlRepo:             urlRepo,
 		userURLRelationRepo: userURLRelationRepo,
 		keyGen:              keyGen,
-		longLinkValidator:   input.NewLongLink(),
-		aliasValidator:      input.NewCustomAlias(),
+		longLinkValidator:   longLinkValidator,
+		aliasValidator:      aliasValidator,
 	}
 }

@@ -1,12 +1,10 @@
-package input
+package validator
 
 import "regexp"
 
 const (
 	customAliasMaxLength = 50
 )
-
-var _ Validator = (*CustomAlias)(nil)
 
 type CustomAlias struct {
 	uriPattern *regexp.Regexp

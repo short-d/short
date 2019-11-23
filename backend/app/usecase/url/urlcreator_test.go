@@ -4,6 +4,7 @@ import (
 	"short/app/entity"
 	"short/app/usecase/keygen"
 	"short/app/usecase/repo"
+	"short/app/usecase/validator"
 	"testing"
 	"time"
 
@@ -129,8 +130,16 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			urlRepo := repo.NewURLFake(testCase.urls)
 			userURLRepo := repo.NewUserURLRepoFake()
 			keyGen := keygen.NewFake(testCase.availableKeys)
+			longLinkValidator := validator.NewLongLink()
+			aliasValidator := validator.NewCustomAlias()
 
-			creator := NewCreatorPersist(&urlRepo, &userURLRepo, &keyGen)
+			creator := NewCreatorPersist(
+				&urlRepo,
+				&userURLRepo,
+				&keyGen,
+				longLinkValidator,
+				aliasValidator,
+			)
 
 			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
