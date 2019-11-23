@@ -15,6 +15,7 @@ import (
 	"short/app/usecase/requester"
 	"short/app/usecase/service"
 	"short/app/usecase/url"
+	"short/app/usecase/validator"
 	"short/dep/provider"
 	"time"
 
@@ -112,6 +113,8 @@ func InjectGraphQlService(
 		db.NewURLSql,
 		db.NewUserURLRelationSQL,
 		provider.NewRemote,
+		validator.NewLongLink,
+		validator.NewCustomAlias,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
 		provider.NewKgsRPC,
