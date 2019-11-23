@@ -4,7 +4,7 @@ import "regexp"
 
 const longLinkMaxLength = 200
 
-// CustomAlias represents format validator for original long link
+// LongLink represents format validator for original long link
 type LongLink struct {
 	uriPattern *regexp.Regexp
 }
