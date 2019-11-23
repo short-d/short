@@ -3,6 +3,7 @@ package sso
 import (
 	"errors"
 	"short/app/entity"
+	"short/app/usecase/account"
 	"short/app/usecase/auth"
 	"short/app/usecase/service"
 )
@@ -12,7 +13,7 @@ import (
 type SingleSignOn struct {
 	identityProvider  service.IdentityProvider
 	ssoAccountService service.SSOAccount
-	accountService    service.Account
+	accountProvider   account.Provider
 	authenticator     auth.Authenticator
 }
 
@@ -34,7 +35,7 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 	}
 
 	email := ssoUser.Email
-	isExist, err := o.accountService.IsAccountExist(email)
+	isExist, err := o.accountProvider.IsAccountExist(email)
 	if err != nil {
 		return "", err
 	}
@@ -51,7 +52,7 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 		return authToken, nil
 	}
 
-	err = o.accountService.CreateAccount(email, ssoUser.Name)
+	err = o.accountProvider.CreateAccount(email, ssoUser.Name)
 	if err != nil {
 		return "", nil
 	}
@@ -64,13 +65,13 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 func NewSingleSignOn(
 	identityProvider service.IdentityProvider,
 	ssoAccountService service.SSOAccount,
-	accountService service.Account,
+	accountProvider account.Provider,
 	authenticator auth.Authenticator,
 ) SingleSignOn {
 	return SingleSignOn{
 		identityProvider:  identityProvider,
 		ssoAccountService: ssoAccountService,
-		accountService:    accountService,
+		accountProvider:   accountProvider,
 		authenticator:     authenticator,
 	}
 }
