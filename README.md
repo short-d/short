@@ -45,10 +45,10 @@ git clone https://github.com/byliuyang/short.git
    | Domains         | `localhost`    |
 
    ![Register Site](doc/recaptcha/register-site.png)
-   
+
 1. Open settings. Copy `SITE KEY` and `SECRET KEY`.
 
-   ![Register Site](doc/recaptcha/settings.png)
+   ![Settings](doc/recaptcha/settings.png)
 
    ![Credentials](doc/recaptcha/credentials.png)
 
