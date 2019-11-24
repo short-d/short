@@ -43,14 +43,14 @@ git clone https://github.com/byliuyang/short.git
    | Label           | `Short`        |
    | reCAPTCHA type  | `reCAPTCHAv3`  |
    | Domains         | `localhost`    |
-   
+
    ![Register Site](doc/recaptcha/register-site.png)
    
 1. Open settings. Copy `SITE KEY` and `SECRET KEY`.
 
    ![Register Site](doc/recaptcha/settings.png)
-   
-   ![Register Site](doc/recaptcha/credentials.png)
+
+   ![Credentials](doc/recaptcha/credentials.png)
 
 1. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
