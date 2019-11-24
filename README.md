@@ -69,12 +69,12 @@ git clone https://github.com/byliuyang/short.git
 
 1. Create a new app at
    [Facebook Developers](https://short-d.com/r/fbdev) with the following configurations:
-   
-   | Field                      | Value                                            |
-   |----------------------------|--------------------------------------------------|
-   | Display Name           | `Short Test`                                          |
-   | Contact Email               | your email                             |
-   
+
+   | Field         | Value        |
+   |---------------|--------------|
+   | Display Name  | `Short Test` |
+   | Contact Email | your_email   |
+
 1. Add `Facebook Login` to the app.
    ![Login](doc/facebook/login.png)
 1. Copy `App ID` and `App Secret` on `Settings` > `Basic` tab.
@@ -93,7 +93,7 @@ git clone https://github.com/byliuyang/short.git
 
 1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
    `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `FACEBOOK_CLIENT_ID`,
-   `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`, `JWT_SECRET`, 
+   `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`, `JWT_SECRET`,
     with your own configurations.
 
 1. Launch backend server
