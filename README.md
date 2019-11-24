@@ -76,9 +76,13 @@ git clone https://github.com/byliuyang/short.git
    | Contact Email | your_email   |
 
 1. Add `Facebook Login` to the app.
+
    ![Login](doc/facebook/login.png)
+
 1. Copy `App ID` and `App Secret` on `Settings` > `Basic` tab.
+
    ![Credentials](doc/facebook/credentials.png)
+
 1. Replace the value of `FACEBOOK_CLIENT_ID` in `backend/.env` file with `App ID`.
 1. Replace the value of `FACEBOOK_CLIENT_SECRET` in `backend/.env` file with
    `App Secret`.
