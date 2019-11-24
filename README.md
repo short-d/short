@@ -52,7 +52,8 @@ git clone https://github.com/byliuyang/short.git
 
    ![Credentials](doc/recaptcha/credentials.png)
 
-1. Replace the value of `RECAPTCHA_SECRET` in the `backend/.env` file with `SECRET KEY`.
+1. Replace the value of `RECAPTCHA_SECRET` in the `backend/.env` file with
+   `SECRET KEY`.
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
    `frontend/.env.development` file with `SITE KEY`.
 
@@ -69,7 +70,8 @@ git clone https://github.com/byliuyang/short.git
    | Application description    | `URL shortening service written in Go and React` |
    | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
-1. Replace the value of `GITHUB_CLIENT_ID` in the `backend/.env` file with `Client ID`.
+1. Replace the value of `GITHUB_CLIENT_ID` in the `backend/.env` file with
+   `Client ID`.
 1. Replace the value of `GITHUB_CLIENT_SECRET` in the `backend/.env` file with
    `Client Secret`.
 
