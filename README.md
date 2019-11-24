@@ -46,7 +46,7 @@ git clone https://github.com/byliuyang/short.git
 
    ![Register Site](doc/recaptcha/register-site.png)
 
-1. Open settings. Copy `SITE KEY` and `SECRET KEY`.
+1. Open `settings`. Copy `SITE KEY` and `SECRET KEY`.
 
    ![Settings](doc/recaptcha/settings.png)
 
