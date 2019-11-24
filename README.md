@@ -68,11 +68,19 @@ git clone https://github.com/byliuyang/short.git
 ### Create Facebook Application
 
 1. Create a new app at
-   [Facebook Developers](https://short-d.com/r/fbdev) with name `Short`
-1. Add `Facebook Login` product to the app
-1. Copy `App ID` and `App Secret` on `Settings->Basic` tab
-1. Replace the value of `FACEBOOK_CLIENT_ID` in the `.env` file with `App ID`.
-1. Replace the value of `FACEBOOK_CLIENT_SECRET` in the `.env` file with
+   [Facebook Developers](https://short-d.com/r/fbdev) with the following configurations:
+
+   | Field         | Value        |
+   |---------------|--------------|
+   | Display Name  | `Short Test` |
+   | Contact Email | your_email   |
+
+1. Add `Facebook Login` to the app.
+   ![Login](doc/facebook/login.png)
+1. Copy `App ID` and `App Secret` on `Settings` > `Basic` tab.
+   ![Credentials](doc/facebook/credentials.png)
+1. Replace the value of `FACEBOOK_CLIENT_ID` in `backend/.env` file with `App ID`.
+1. Replace the value of `FACEBOOK_CLIENT_SECRET` in `backend/.env` file with
    `App Secret`.
 
 ### Backend
@@ -84,9 +92,9 @@ git clone https://github.com/byliuyang/short.git
    ```
 
 1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
-   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`,
-   `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI` with
-   your own configurations.
+   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `FACEBOOK_CLIENT_ID`,
+   `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`, `JWT_SECRET`,
+    with your own configurations.
 
 1. Launch backend server
 
