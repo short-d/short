@@ -44,9 +44,18 @@ git clone https://github.com/byliuyang/short.git
    | reCAPTCHA type  | `reCAPTCHAv3`  |
    | Domains         | `localhost`    |
 
-1. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
+   ![Register Site](doc/recaptcha/register-site.png)
+
+1. Open `settings`. Copy `SITE KEY` and `SECRET KEY`.
+
+   ![Settings](doc/recaptcha/settings.png)
+
+   ![Credentials](doc/recaptcha/credentials.png)
+
+1. Replace the value of `RECAPTCHA_SECRET` in the `backend/.env` file with
+   `SECRET KEY`.
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
-   `frontend/.env.development` file with `SITE_KEY`.
+   `frontend/.env.development` file with `SITE KEY`.
 
 ### Create Github OAuth application
 
@@ -61,8 +70,9 @@ git clone https://github.com/byliuyang/short.git
    | Application description    | `URL shortening service written in Go and React` |
    | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
-1. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
-1. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with
+1. Replace the value of `GITHUB_CLIENT_ID` in the `backend/.env` file with
+   `Client ID`.
+1. Replace the value of `GITHUB_CLIENT_SECRET` in the `backend/.env` file with
    `Client Secret`.
 
 ### Create Facebook Application
@@ -76,9 +86,13 @@ git clone https://github.com/byliuyang/short.git
    | Contact Email | your_email   |
 
 1. Add `Facebook Login` to the app.
+
    ![Login](doc/facebook/login.png)
+
 1. Copy `App ID` and `App Secret` on `Settings` > `Basic` tab.
+
    ![Credentials](doc/facebook/credentials.png)
+
 1. Replace the value of `FACEBOOK_CLIENT_ID` in `backend/.env` file with `App ID`.
 1. Replace the value of `FACEBOOK_CLIENT_SECRET` in `backend/.env` file with
    `App Secret`.
