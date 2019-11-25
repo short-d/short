@@ -76,7 +76,7 @@ git clone https://github.com/byliuyang/short.git
 
 1. Copy `Client ID` and `Client Secret`.
 
-	![Credentials](doc/github/credentials.png)
+   ![Credentials](doc/github/credentials.png)
 
 1. Replace the value of `GITHUB_CLIENT_ID` in the `backend/.env` file with
    `Client ID`.
