@@ -278,6 +278,27 @@ func InjectGraphQlService(
 
 ![Entity Relation Diagram](doc/eng/db/er-v1.jpg)
 
+### Search Engine Optimization
+
+In order to improve the quality and quantity of the website's traffic, Short 
+increases its visibility to web search engines through HTML meta tags.
+
+```html
+<!-- ./frontend/public/index.html -->
+<title>Short: Free online link shortening service</title>
+
+<!-- Search Engine Optimization -->
+<meta name="description"
+      content="Short enables people to type less for their favorite web sites">
+<meta name="robots" content="index, follow">
+<link href="https://short-d.com" rel="canonical">
+```
+
+If you search `short-d.com` on Google, you should see Short showing up as 
+the first result:
+
+![Google Search Result](doc/seo/google.jpg)
+
 ## Deployment
 
 Short leverages [Kubernetes](https://kubernetes.io) to automate deployment, scaling,
