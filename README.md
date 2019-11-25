@@ -70,6 +70,14 @@ git clone https://github.com/byliuyang/short.git
    | Application description    | `URL shortening service written in Go and React` |
    | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
+   ![OAuth Apps](doc/github/oauth-apps.png)
+
+   ![New OAuth App](doc/github/new-oauth-app.png)
+
+1. Copy `Client ID` and `Client Secret`.
+
+   ![Credentials](doc/github/credentials.png)
+
 1. Replace the value of `GITHUB_CLIENT_ID` in the `backend/.env` file with
    `Client ID`.
 1. Replace the value of `GITHUB_CLIENT_SECRET` in the `backend/.env` file with
