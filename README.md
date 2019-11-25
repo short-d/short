@@ -294,10 +294,54 @@ increases its visibility to web search engines through HTML meta tags.
 <link href="https://short-d.com" rel="canonical">
 ```
 
-If you search `short-d.com` on Google, you should see Short showing up as
+If you search `short-d.com` on Google, you should see Short shows up as
 the first result:
 
 ![Google Search Result](doc/seo/google.jpg)
+
+### Social Media Summary Card
+
+#### Facebook & LinkedIn
+
+Short leverages `Open Graph` tags to control what content shows up in
+the summary card when the website is shared on Facebook or LinkedIn:
+
+```html
+<!-- ./frontend/public/index.html -->
+<!-- Open Graph -->
+<meta property="og:title" content="Short: Free link shortening service"/>
+<meta property="og:description"
+      content="Short enables people to type less for their favorite web sites"/>
+<meta property="og:image"
+      content="https://short-d.com/promo/small-tile.png"/>
+<meta property="og:url" content="https://short-d.com"/>
+<meta property="og:type" content="website"/>
+```
+
+Shared on Facebook:
+
+![Facebook Card](doc/social-media-card/facebook.jpg)
+
+Shared on LinkedIn:
+
+![LinkedIn Card](doc/social-media-card/linkedin.jpg)
+
+#### Twitter
+
+Twitter uses its own meta tags to determine what will show up when
+the website is mentioned in a Tweet:
+
+```html
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:site" content="@byliuyang11"/>
+<meta name="twitter:title" content="Short: Free link shortening service"/>
+<meta name="twitter:description"
+      content="Short enables people to type less for their favorite web sites"/>
+<meta name="twitter:image" content="https://short-d.com/promo/twitter-card.png"/>
+```
+
+![Twitter Card](doc/social-media-card/twitter.jpg)
 
 ## Deployment
 
