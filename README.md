@@ -280,7 +280,7 @@ func InjectGraphQlService(
 
 ### Search Engine Optimization
 
-In order to improve the quality and quantity of the website's traffic, Short 
+In order to improve the quality and quantity of the website's traffic, Short
 increases its visibility to web search engines through HTML meta tags.
 
 ```html
@@ -294,7 +294,7 @@ increases its visibility to web search engines through HTML meta tags.
 <link href="https://short-d.com" rel="canonical">
 ```
 
-If you search `short-d.com` on Google, you should see Short showing up as 
+If you search `short-d.com` on Google, you should see Short showing up as
 the first result:
 
 ![Google Search Result](doc/seo/google.jpg)
