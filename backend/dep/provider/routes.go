@@ -4,8 +4,8 @@ import (
 	"short/app/adapter/facebook"
 	"short/app/adapter/github"
 	"short/app/adapter/routing"
+	"short/app/usecase/account"
 	"short/app/usecase/auth"
-	"short/app/usecase/service"
 	"short/app/usecase/url"
 
 	"github.com/byliuyang/app/fw"
@@ -24,7 +24,7 @@ func NewShortRoutes(
 	githubAPI github.API,
 	facebookAPI facebook.API,
 	authenticator auth.Authenticator,
-	accountService service.Account,
+	accountProvider account.Provider,
 ) []fw.Route {
 	observability := routing.Observability{
 		Logger: logger,
@@ -39,6 +39,6 @@ func NewShortRoutes(
 		githubAPI,
 		facebookAPI,
 		authenticator,
-		accountService,
+		accountProvider,
 	)
 }

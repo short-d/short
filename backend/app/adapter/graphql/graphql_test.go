@@ -7,6 +7,7 @@ import (
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
 	"short/app/usecase/url"
+	"short/app/usecase/validator"
 	"testing"
 	"time"
 
@@ -22,7 +23,15 @@ func TestGraphQlAPI(t *testing.T) {
 	retriever := url.NewRetrieverPersist(urlRepo)
 	urlRelationRepo := db.NewUserURLRelationSQL(sqlDB)
 	keyGen := keygen.NewFake([]string{})
-	creator := url.NewCreatorPersist(urlRepo, urlRelationRepo, &keyGen)
+	longLinkValidator := validator.NewLongLink()
+	customAliasValidator := validator.NewCustomAlias()
+	creator := url.NewCreatorPersist(
+		urlRepo,
+		urlRelationRepo,
+		&keyGen,
+		longLinkValidator,
+		customAliasValidator,
+	)
 
 	s := recaptcha.NewFake()
 	verifier := requester.NewVerifier(s)

@@ -2,7 +2,7 @@ package url
 
 import (
 	"short/app/entity"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 	"testing"
 	"time"
 
@@ -81,7 +81,7 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			fakeRepo := repo.NewURLFake(testCase.urls)
+			fakeRepo := repository.NewURLFake(testCase.urls)
 			retriever := NewRetrieverPersist(&fakeRepo)
 			url, err := retriever.GetURL(testCase.alias, testCase.expiringAt)
 

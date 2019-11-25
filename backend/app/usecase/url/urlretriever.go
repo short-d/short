@@ -3,7 +3,7 @@ package url
 import (
 	"fmt"
 	"short/app/entity"
-	"short/app/usecase/repo"
+	"short/app/usecase/repository"
 	"time"
 )
 
@@ -17,7 +17,7 @@ type Retriever interface {
 // RetrieverPersist represents URL retriever that fetches URL from persistent
 // storage, such as database
 type RetrieverPersist struct {
-	urlRepo repo.URL
+	urlRepo repository.URL
 }
 
 // GetURL retrieves URL from persistent storage given alias
@@ -55,7 +55,7 @@ func (r RetrieverPersist) getURL(alias string) (entity.URL, error) {
 }
 
 // NewRetrieverPersist creates persistent URL retriever
-func NewRetrieverPersist(urlRepo repo.URL) RetrieverPersist {
+func NewRetrieverPersist(urlRepo repository.URL) RetrieverPersist {
 	return RetrieverPersist{
 		urlRepo: urlRepo,
 	}

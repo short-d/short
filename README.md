@@ -5,6 +5,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/408644627586328ddd6c/maintainability)](https://codeclimate.com/github/byliuyang/short/maintainability)
 [![Go Report Card](https://goreportcard.com/badge/github.com/byliuyang/short)](https://goreportcard.com/report/github.com/byliuyang/short)
 [![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)](https://github.com/byliuyang/short)
+[![Floobits Status](https://floobits.com/byliuyang/short.svg)](https://floobits.com/byliuyang/short/redirect)
 
 ![Demo](promo/marquee.png)
 
@@ -43,9 +44,18 @@ git clone https://github.com/byliuyang/short.git
    | reCAPTCHA type  | `reCAPTCHAv3`  |
    | Domains         | `localhost`    |
 
-1. Replace the value of `RECAPTCHA_SECRET` in the `.env` file with `SECRET KEY`.
+   ![Register Site](doc/recaptcha/register-site.jpg)
+
+1. Open `settings`. Copy `SITE KEY` and `SECRET KEY`.
+
+   ![Settings](doc/recaptcha/settings.jpg)
+
+   ![Credentials](doc/recaptcha/credentials.jpg)
+
+1. Replace the value of `RECAPTCHA_SECRET` in the `backend/.env` file with
+   `SECRET KEY`.
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
-   `frontend/.env.development` file with `SITE_KEY`.
+   `frontend/.env.development` file with `SITE KEY`.
 
 ### Create Github OAuth application
 
@@ -60,32 +70,53 @@ git clone https://github.com/byliuyang/short.git
    | Application description    | `URL shortening service written in Go and React` |
    | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
-1. Replace the value of `GITHUB_CLIENT_ID` in the `.env` file with `Client ID`.
-1. Replace the value of `GITHUB_CLIENT_SECRET` in the `.env` file with
+   ![OAuth Apps](doc/github/oauth-apps.jpg)
+
+   ![New OAuth App](doc/github/new-oauth-app.jpg)
+
+1. Copy `Client ID` and `Client Secret`.
+
+   ![Credentials](doc/github/credentials.jpg)
+
+1. Replace the value of `GITHUB_CLIENT_ID` in the `backend/.env` file with
+   `Client ID`.
+1. Replace the value of `GITHUB_CLIENT_SECRET` in the `backend/.env` file with
    `Client Secret`.
 
 ### Create Facebook Application
 
 1. Create a new app at
-   [Facebook Developers](https://short-d.com/r/fbdev) with name `Short`
-1. Add `Facebook Login` product to the app
-1. Copy `App ID` and `App Secret` on `Settings->Basic` tab
-1. Replace the value of `FACEBOOK_CLIENT_ID` in the `.env` file with `App ID`.
-1. Replace the value of `FACEBOOK_CLIENT_SECRET` in the `.env` file with
+   [Facebook Developers](https://short-d.com/r/fbdev) with the following configurations:
+
+   | Field         | Value        |
+   |---------------|--------------|
+   | Display Name  | `Short Test` |
+   | Contact Email | your_email   |
+
+1. Add `Facebook Login` to the app.
+
+   ![Login](doc/facebook/login.jpg)
+
+1. Copy `App ID` and `App Secret` on `Settings` > `Basic` tab.
+
+   ![Credentials](doc/facebook/credentials.jpg)
+
+1. Replace the value of `FACEBOOK_CLIENT_ID` in `backend/.env` file with `App ID`.
+1. Replace the value of `FACEBOOK_CLIENT_SECRET` in `backend/.env` file with
    `App Secret`.
 
 ### Backend
 
-1. Copy `.env.dist` file to `.env`:
+1. Copy `backend/.env.dist` file to `backend/.env`:
 
    ```bash
-   cp .env.dist .env
+   cp backend/.env.dist backend/.env
    ```
 
 1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
-   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `JWT_SECRET`,
-   `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI` with
-   your own configurations.
+   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `FACEBOOK_CLIENT_ID`,
+   `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`, `JWT_SECRET`,
+    with your own configurations.
 
 1. Launch backend server
 
@@ -121,7 +152,8 @@ Short backend is built on top of
 [Uncle Bob's Clean Architecture](https://api.short-d.com/r/ca), the central
 objective of which is separation of concerns.
 
-![Clean Architecture](doc/eng/architecture/clean-architecture.jpg)
+![Clean Architecture](doc/eng/clean-architecture/clean-architecture.jpg)
+![Boundary](doc/eng/clean-architecture/boundary.jpg)
 
 It enables the developers to modify a single component of the system at a time
 while leaving the rest unchanged. This minizes the amount of changes have to
@@ -129,13 +161,16 @@ be made in order to support new requirements as the system grows. Clean
 Architecture also improves the testability of system, which in turn saves
 precious time when creating automated tests.
 
+Here is an exmample of finance app using clean architecture:
+
+
 ### Service Level Archtecture
 
 Short adopts [Microservices Architecture](https://api.short-d.com/r/ms) to
 organize dependent services around business capabilities and to enable
 independent deployment of each service.
 
-![Microservice Architecture](doc/eng/architecture/microservices.jpg)
+![Microservice Architecture](doc/eng/microservices.jpg)
 
 ### Dependency Management
 
@@ -241,7 +276,7 @@ func InjectGraphQlService(
 
 ### Database Modeling
 
-![Entity Relation Diagram](doc/eng/db/er-v1.png)
+![Entity Relation Diagram](doc/eng/db/er-v1.jpg)
 
 ## Deployment
 
