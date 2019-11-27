@@ -420,7 +420,7 @@ and the process for submitting pull requests to us.
 ### Mentoring
 
 Code review can have an important function of teaching developers something new
-about a language, a framework, or general software design principles. 
+about a language, a framework, or general software design principles.
 
 If the comment is purely educational, but not critical to meeting the standards
 above, prefix it with "Nit: ".
