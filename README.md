@@ -386,14 +386,15 @@ and the process for submitting pull requests to us.
 
 ## Code Review Guideline
 
-### What to look for in a code review?
+### What to look for in a code review
 
 - The code is well-designed.
 - The functionality is good for the users of the code.
 - Any UI changes are sensible and look good.
 - Any parallel programming is done safely.
 - The code isn’t more complex than it needs to be.
-- The developer isn’t implementing things they might need in the future but don’t know they need now.
+- The developer isn’t implementing things they might need in the future but don’t
+  know they need now.
 - Code has appropriate unit tests.
 - Tests are well-designed.
 - The developer used clear names for everything.
@@ -456,7 +457,7 @@ the CL, for future readers.)
 Don’t let a PR sit around because the author and the reviewer can’t come to an
 agreement.
 
-**Note: This guideline is derived from [Google Engineering Practices Documentation](https://github.com/google/eng-practices)**
+Note: This guideline is derived from [Google Engineering Practices Documentation](https://github.com/google/eng-practices)
 
 ## Author
 
