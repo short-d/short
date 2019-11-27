@@ -18,15 +18,16 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
 
 	testCases := []struct {
-		name          string
-		urls          urlMap
-		alias         *string
-		availableKeys []string
-		user          entity.User
-		url           entity.URL
-		isPublic      bool
-		expHasErr     bool
-		expectedURL   entity.URL
+		name            string
+		urls            urlMap
+		alias           *string
+		availableKeys   []string
+		user            entity.User
+		url             entity.URL
+		userURLRelation map[string]string
+		isPublic        bool
+		expHasErr       bool
+		expectedURL     entity.URL
 	}{
 		{
 			name: "alias exists",
@@ -128,7 +129,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			urlRepo := repository.NewURLFake(testCase.urls)
-			userURLRepo := repository.NewUserURLRepoFake()
+			userURLRepo := repository.NewUserURLRepoFake(testCase.userURLRelation)
 			keyGen := keygen.NewFake(testCase.availableKeys)
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
