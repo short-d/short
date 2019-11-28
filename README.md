@@ -210,7 +210,7 @@ independent deployment of each service.
 ### Object Oriented Design
 
 Short leverages class design, package cohesion, and package coupling princiapls
-to manage logical dependencies.
+to manage logical dependency between internal components.
 
 #### Class Design
 
