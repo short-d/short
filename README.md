@@ -36,6 +36,10 @@ from [source](https://short-d.com/r/ext-code)
    1. [Database Modeling](#database-modeling)
    1. [Search Engine Optimization](#search-engine-optimization)
    1. [Social Media Summary Card](#social-media-summary-card)
+1. [Testing](#testing)
+   1. [Test Automation](#test-automation)
+   1. [Unit Testing](#unit-testing)
+   1. [The Test Pyramid](#the-test-pyramid)
 1. [Deployment](#deployment)
    1. [Kubernetes](#kubernetes)
    1. [Staging](#staging)
@@ -380,6 +384,8 @@ the website is mentioned in a Tweet:
 
 ## Testing
 
+### Test Automation
+
 Short is maintained by a small team of talented software engineers working
 at Google, Uber, and Vmware as a side project. The team wants to deliver new
 features faster without sacrificing its quality. Testing ever-increasing
@@ -413,7 +419,7 @@ A test method should be composed of 3As: Arrange, Act, and Assert.
 - [A]ct: Invoke the actual method under test.
 - [A]ssert: A test method should test for a single logical outcome.
 
-#### The Test Pyramid
+### The Test Pyramid
 
 Please read [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) for detailed introductions on:
 
