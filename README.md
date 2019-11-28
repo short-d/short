@@ -405,10 +405,9 @@ Test automation is our only way forward.
 - [R]epeatable: A repeatable test is one that produces the same results
    each time you run it.
 - [S]elf-validating: There must be no manual interpretation of the results.
-- [T]imely/[T]horoughly:
-
-  - Unit test must be included for every pull request of a new feature.
-  - Unit test should cover edge cases, errors, and bad inputs.
+- [T]imely/[T]horoughly: Unit test must be included for every pull request
+   of a new feature. Unit test should cover edge cases, errors, and bad
+   inputs.
 
 #### Test Structure
 
