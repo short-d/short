@@ -155,8 +155,12 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
 				mdtest.NotEqual(t, nil, err)
-				_, err = urlRepo.GetByAlias(url.Alias)
+
+				_, err = urlRepo.GetByAlias(testCase.expectedURL.Alias)
 				mdtest.NotEqual(t, nil, err)
+
+				isExist := userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
+				mdtest.Equal(t, false, isExist)
 				return
 			}
 			mdtest.Equal(t, nil, err)
