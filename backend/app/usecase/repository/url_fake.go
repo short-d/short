@@ -38,7 +38,7 @@ func (u URLFake) GetByAlias(alias string) (entity.URL, error) {
 		return entity.URL{}, err
 	}
 	if !isExist {
-		return entity.URL{}, errors.New("alias exists")
+		return entity.URL{}, errors.New("alias not found")
 	}
 	url := u.urls[alias]
 	return url, nil
