@@ -197,6 +197,7 @@ precious time when creating automated tests.
 
 Here is an exmample of finance app using clean architecture:
 
+![Finance App](doc/eng/clean-architecture/finance-app.jpg)
 
 ### Service Level Archtecture
 
