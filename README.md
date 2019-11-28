@@ -31,7 +31,7 @@ from [source](https://short-d.com/r/ext-code)
 1. [System Design](#system-design)
    1. [App Level Architecture](#app-level-architecture)
    1. [Service Level Archtecture](#service-level-archtecture)
-   1. [Dependency Management](#dependency-management)
+   1. [Object Oriendted Design](#object-oriendted-design)
    1. [Dependency Injection](#dependency-injection)
    1. [Database Modeling](#database-modeling)
    1. [Search Engine Optimization](#search-engine-optimization)
@@ -207,10 +207,9 @@ independent deployment of each service.
 
 ![Microservice Architecture](doc/eng/microservices.jpg)
 
-### Dependency Management
+### Object Oriendted Design
 
-Short leverages class design, package cohesion, and package coupling princiapls
-from C++ world to manage its internal dependencies.
+Short leverages class design, package cohesion, and package coupling princiapls to manage logical dependencies.
 
 #### Class Design
 
