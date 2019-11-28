@@ -378,6 +378,53 @@ the website is mentioned in a Tweet:
 
 ![Twitter Card](doc/social-media-card/twitter.jpg)
 
+## Testing
+
+Short is maintained by a small team of talented software engineers working
+at Google, Uber, and Vmware as a side project. The team wants to deliver new
+features faster without sacrificing its quality. Testing ever-increasing
+amount of features manually soon becomes impossible — unless we want
+to spend all our time with manual, repetitive work instead of delivering
+working features.
+
+Test automation is our only way forward.
+
+### Unit Testing
+
+#### The FIRST Principal
+
+- [F]ast: Unit tests should be fast otherwise they will slow down
+   development & deployment.
+- [I]ndependent: Never ever write tests which depend on other test cases.
+- [R]epeatable: A repeatable test is one that produces the same results
+   each time you run it.
+- [S]elf-validating: There must be no manual interpretation of the results.
+- [T]imely/[T]horoughly: 
+	- Unit test must be included for every pull request of a new feature.
+	- Unit test should cover edge cases, errors, and bad inputs.
+
+#### Test Structure
+
+A test method should be composed of 3As: Arrange, Act, and Assert. 
+
+- [A]rrange: All the data needed for a test should be arranged as part
+  of the test. The data used in a test should not depend on the environment
+  in which the test is running.
+- [A]ct: Invoke the actual method under test.
+- [A]ssert: A test method should test for a single logical outcome.
+
+#### The Test Pyramid
+
+Please read [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) for detailed introductions on:
+
+- Unit Tests
+- Integration Tests
+- Contract Tests
+- UI Tests
+- End-to-End Tests
+- Acceptance Tests
+- Exploratory Testing
+
 ## Deployment
 
 ### Kubernetes
