@@ -36,6 +36,10 @@ from [source](https://short-d.com/r/ext-code)
    1. [Database Modeling](#database-modeling)
    1. [Search Engine Optimization](#search-engine-optimization)
    1. [Social Media Summary Card](#social-media-summary-card)
+1. [Testing](#testing)
+   1. [Test Automation](#test-automation)
+   1. [Unit Testing](#unit-testing)
+   1. [The Test Pyramid](#the-test-pyramid)
 1. [Deployment](#deployment)
    1. [Kubernetes](#kubernetes)
    1. [Staging](#staging)
@@ -378,6 +382,55 @@ the website is mentioned in a Tweet:
 
 ![Twitter Card](doc/social-media-card/twitter.jpg)
 
+## Testing
+
+### Test Automation
+
+Short is maintained by a small team of talented software engineers working
+at Google, Uber, and Vmware as a side project. The team wants to deliver new
+features faster without sacrificing its quality. Testing ever-increasing
+amount of features manually soon becomes impossible — unless we want
+to spend all our time with manual, repetitive work instead of delivering
+working features.
+
+Test automation is the only way forward.
+
+### Unit Testing
+
+#### The FIRST Principal
+
+- [F]ast: Unit tests should be fast otherwise they will slow down
+   development & deployment.
+- [I]ndependent: Never ever write tests which depend on other test cases.
+- [R]epeatable: A repeatable test is one that produces the same results
+   each time you run it.
+- [S]elf-validating: There must be no manual interpretation of the results.
+- [T]imely/[T]horoughly: Unit tests must be included for every pull request
+   of a new feature and cover edge cases, errors, and bad inputs.
+
+#### Test Structure
+
+A automated test method should be composed of 3As: Arrange, Act, and Assert.
+
+- [A]rrange: All the data needed for a test should be arranged as part
+  of the test. The data used in a test should not depend on the environment
+  in which the test is running.
+- [A]ct: Invoke the actual method under test.
+- [A]ssert: A test method should test for a single logical outcome.
+
+### The Test Pyramid
+
+Please read [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html)
+for a detailed introduction on:
+
+- Unit Tests
+- Integration Tests
+- Contract Tests
+- UI Tests
+- End-to-End Tests
+- Acceptance Tests
+- Exploratory Testing
+
 ## Deployment
 
 ### Kubernetes
@@ -418,8 +471,8 @@ continuous deployment instead.
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct,
-and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code
+of conduct, and the process for submitting pull requests to us.
 
 ## Code Review Guideline
 
