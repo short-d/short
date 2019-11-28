@@ -209,7 +209,8 @@ independent deployment of each service.
 
 ### Object Oriendted Design
 
-Short leverages class design, package cohesion, and package coupling princiapls to manage logical dependencies.
+Short leverages class design, package cohesion, and package coupling princiapls
+to manage logical dependencies.
 
 #### Class Design
 
