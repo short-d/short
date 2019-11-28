@@ -393,7 +393,7 @@ amount of features manually soon becomes impossible — unless we want
 to spend all our time with manual, repetitive work instead of delivering
 working features.
 
-Test automation is our only way forward.
+Test automation is the only way forward.
 
 ### Unit Testing
 
@@ -406,8 +406,7 @@ Test automation is our only way forward.
    each time you run it.
 - [S]elf-validating: There must be no manual interpretation of the results.
 - [T]imely/[T]horoughly: Unit test must be included for every pull request
-   of a new feature. Unit test should cover edge cases, errors, and bad
-   inputs.
+   of a new feature and cover edge cases, errors, and bad inputs.
 
 #### Test Structure
 
@@ -422,7 +421,7 @@ A test method should be composed of 3As: Arrange, Act, and Assert.
 ### The Test Pyramid
 
 Please read [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html)
-for detailed introductions on:
+for a detailed introduction on:
 
 - Unit Tests
 - Integration Tests
