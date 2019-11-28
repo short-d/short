@@ -19,6 +19,7 @@ Install it from [Chrome Web Store](https://short-d.com/r/ext) or build it
 from [source](https://short-d.com/r/ext-code)
 
 ## Table of Contents
+
 1. [Getting Started](#getting-started)
    1. [Accessing the source code](#accessing-the-source-code)
    1. [Prerequisites](#prerequisites)
