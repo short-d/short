@@ -15,7 +15,7 @@ func (u UserURLRelationFake) CreateRelation(user entity.User, url entity.URL) er
 	return nil
 }
 
-// FindAliasesByUser fetches all the aliases corresponding to the given user.
+// FindAliasesByUser fetches the aliases of all the URLs created by the given user.
 func (u UserURLRelationFake) FindAliasesByUser(user entity.User) ([]string, error) {
 	var aliases []string
 	for alias := range u.userURLRelations {
