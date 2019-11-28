@@ -35,6 +35,7 @@ func (u UserURLRelationFake) FindAliasesByUser(user entity.User) ([]string, erro
 	return aliases, nil
 }
 
+// IsRelationExist checks whether the an URL is own by a given user.
 func (u UserURLRelationFake) IsRelationExist(user entity.User, url entity.URL) bool {
 	for idx, currUser := range u.users {
 		if currUser.ID != user.ID {
