@@ -18,16 +18,17 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
 
 	testCases := []struct {
-		name            string
-		urls            urlMap
-		alias           *string
-		availableKeys   []string
-		user            entity.User
-		url             entity.URL
-		userURLRelation map[string]string
-		isPublic        bool
-		expHasErr       bool
-		expectedURL     entity.URL
+		name          string
+		urls          urlMap
+		alias         *string
+		availableKeys []string
+		user          entity.User
+		url           entity.URL
+		relationUsers []entity.User
+		relationURLs  []entity.URL
+		isPublic      bool
+		expHasErr     bool
+		expectedURL   entity.URL
 	}{
 		{
 			name: "alias exists",
@@ -129,7 +130,10 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			urlRepo := repository.NewURLFake(testCase.urls)
-			userURLRepo := repository.NewUserURLRepoFake(testCase.userURLRelation)
+			userURLRepo := repository.NewUserURLRepoFake(
+				testCase.relationUsers,
+				testCase.relationURLs,
+			)
 			keyGen := keygen.NewFake(testCase.availableKeys)
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
@@ -142,13 +146,28 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				aliasValidator,
 			)
 
+			savedURL, err := urlRepo.GetByAlias(testCase.url.Alias)
+			mdtest.NotEqual(t, nil, err)
+
+			isExist := userURLRepo.IsRelationExist(testCase.user, testCase.url)
+			mdtest.Equal(t, false, isExist)
+
 			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
+				mdtest.NotEqual(t, nil, err)
+				_, err = urlRepo.GetByAlias(url.Alias)
 				mdtest.NotEqual(t, nil, err)
 				return
 			}
 			mdtest.Equal(t, nil, err)
 			mdtest.Equal(t, testCase.expectedURL, url)
+
+			savedURL, err = urlRepo.GetByAlias(testCase.expectedURL.Alias)
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expectedURL, savedURL)
+
+			isExist = userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
+			mdtest.Equal(t, true, isExist)
 		})
 	}
 }
