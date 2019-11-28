@@ -18,6 +18,40 @@
 Install it from [Chrome Web Store](https://short-d.com/r/ext) or build it
 from [source](https://short-d.com/r/ext-code)
 
+## Table of Contents
+
+1. [Getting Started](#getting-started)
+   1. [Accessing the source code](#accessing-the-source-code)
+   1. [Prerequisites](#prerequisites)
+   1. [Create reCAPTCHA account](#create-recaptcha-account)
+   1. [Create Github OAuth application](#create-github-oauth-application)
+   1. [Create Facebook Application](#create-facebook-application)
+   1. [Backend](#backend)
+   1. [Frontend](#frontend)
+1. [System Design](#system-design)
+   1. [App Level Architecture](#app-level-architecture)
+   1. [Service Level Archtecture](#service-level-archtecture)
+   1. [Dependency Management](#dependency-management)
+   1. [Dependency Injection](#dependency-injection)
+   1. [Database Modeling](#database-modeling)
+   1. [Search Engine Optimization](#search-engine-optimization)
+   1. [Social Media Summary Card](#social-media-summary-card)
+1. [Deployment](#deployment)
+   1. [Kubernetes](#kubernetes)
+   1. [Staging](#staging)
+   1. [Production](#production)
+1. [Tools We Use](#tools-we-use)
+1. [Contributing](#contributing)
+1. [Code Review Guideline](#code-review-guideline)
+   1. [What to look for in a code review](#what-to-look-for-in-a-code-review)
+   1. [The Standard](#the-standard)
+   1. [Mentoring](#mentoring)
+   1. [Principles](#principles)
+   1. [Showing Apprecaition](#showing-apprecaition)
+   1. [Resolving Conflicts](#resolving-conflicts)
+1. [Author](#author)
+1. [License](#license)
+
 ## Getting Started
 
 ### Accessing the source code
@@ -345,6 +379,8 @@ the website is mentioned in a Tweet:
 
 ## Deployment
 
+### Kubernetes
+
 Short leverages [Kubernetes](https://kubernetes.io) to automate deployment, scaling,
 and management of containerized microservices.
 
@@ -439,7 +475,7 @@ above, prefix it with "Nit: ".
   with what is in the current codebase, as long as that doesn’t worsen the overall
   code health of the system.
 
-### Showing apprecaition
+### Showing Apprecaition
 
 If you see something nice in the PR, tell the developer, especially when they
 addressed one of your comments in a great way. Code reviews should offer
