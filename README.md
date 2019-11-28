@@ -421,7 +421,8 @@ A test method should be composed of 3As: Arrange, Act, and Assert.
 
 ### The Test Pyramid
 
-Please read [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) for detailed introductions on:
+Please read [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html)
+for detailed introductions on:
 
 - Unit Tests
 - Integration Tests
