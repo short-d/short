@@ -405,13 +405,13 @@ Test automation is our only way forward.
 - [R]epeatable: A repeatable test is one that produces the same results
    each time you run it.
 - [S]elf-validating: There must be no manual interpretation of the results.
-- [T]imely/[T]horoughly: 
-  - Unit test must be included for every pull request of a new feature.
-  - Unit test should cover edge cases, errors, and bad inputs.
+- [T]imely/[T]horoughly:
+   - Unit test must be included for every pull request of a new feature.
+   - Unit test should cover edge cases, errors, and bad inputs.
 
 #### Test Structure
 
-A test method should be composed of 3As: Arrange, Act, and Assert. 
+A test method should be composed of 3As: Arrange, Act, and Assert.
 
 - [A]rrange: All the data needed for a test should be arranged as part
   of the test. The data used in a test should not depend on the environment
