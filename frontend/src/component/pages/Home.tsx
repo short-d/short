@@ -95,6 +95,11 @@ export class Home extends Component<Props, State> {
     });
   }
 
+  handleSignOut = () => {
+    this.props.authService.signOut();
+    this.showSignInModal();
+  };
+
   showSignInModal() {
     if (!this.signInModal.current) {
       return;
@@ -161,7 +166,7 @@ export class Home extends Component<Props, State> {
     return (
       <div className="home">
         <ExtPromo />
-        <Header />
+        <Header onSignOut={this.handleSignOut} />
         <div className={'main'}>
           <Section title={'New Short Link'}>
             <div className={'control create-short-link'}>

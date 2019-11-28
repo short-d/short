@@ -8,11 +8,20 @@ header {
   color: white;
   display: flex;
   justify-content: center;
+  position: relative;
 
   .center {
     display: flex;
     padding: 10px 0;
     width: $content-width;
+  }
+
+  .sign-out-btn {
+    position: absolute;
+    top: 8px;
+    right: 6px;
+    padding: 0 20px;
+    height: 34px;
   }
 
   #logo {
