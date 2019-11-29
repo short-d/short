@@ -358,7 +358,7 @@ export class UIFactory {
 
 Short also provides `IFeatureDecisionService` interface, allowing the developers
 to switch to dynamic feature toggle backend in the future by simply swapping
-the dependencies injected.
+the dependency injected.
 
 ```typescript
 // FeatureDecision.service.ts
