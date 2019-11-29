@@ -320,8 +320,8 @@ func InjectGraphQlService(
 
 ### Feature Toggle
 
-Short uses `feature toggles` to modify system behavior without changing code.
-UI components controled by the feature toggles are created inside a centralized
+Short employs `feature toggles` to modify system behavior without changing code.
+UI components controlled by the feature toggles are created inside a centralized
 `UIFactory` in order to avoid having nested `if` `else` statement across the
 code base:
 
