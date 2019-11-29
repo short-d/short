@@ -34,6 +34,7 @@ from [source](https://short-d.com/r/ext-code)
    1. [Object Oriented Design](#object-oriented-design)
    1. [Dependency Injection](#dependency-injection)
    1. [Database Modeling](#database-modeling)
+   1. [Feature Toggle](#feature-toggle)
    1. [Search Engine Optimization](#search-engine-optimization)
    1. [Social Media Summary Card](#social-media-summary-card)
 1. [Testing](#testing)
@@ -316,6 +317,92 @@ func InjectGraphQlService(
 ### Database Modeling
 
 ![Entity Relation Diagram](doc/eng/db/er-v1.jpg)
+
+### Feature Toggle
+
+Short uses `feature toggles` to modify system behavior without changing code.
+UI components controled by the feature toggles are created inside a centralized
+`UIFactory` in order to avoid having nested `if` `else` statement across the
+code base:
+
+```typescript
+// UIFactory.tsx
+export class UIFactory {
+  constructor(
+    private featureDecisionService: IFeatureDecisionService
+  ) {}
+
+  public createGoogleSignInButton(): ReactElement {
+    if (!this.featureDecisionService.includeGoogleSignButton()) {
+      return <div />;
+    }
+    return (
+      <GoogleSignInButton
+        googleSignInLink={this.authService.googleSignInLink()}
+      />
+    );
+  }
+
+  public createGithubSignInButton(): ReactElement {
+    if (!this.featureDecisionService.includeGithubSignButton()) {
+      return <div />;
+    }
+    return (
+      <GithubSignInButton
+        githubSignInLink={this.authService.githubSignInLink()}
+      />
+    );
+  }
+}
+```
+
+Short also provides `IFeatureDecisionService` interface, allowing the developers
+to switch to dynamic feature toggle backend in the future by simply swapping
+the dependency injected.
+
+```typescript
+// FeatureDecision.service.ts
+export interface IFeatureDecisionService {
+  includeGithubSignButton(): boolean;
+  includeGoogleSignButton(): boolean;
+  includeFacebookSignButton(): boolean;
+}
+```
+
+```typescript
+// StaticConfigDecision.service.ts
+import { IFeatureDecisionService } from './FeatureDecision.service';
+
+export class StaticConfigDecisionService implements IFeatureDecisionService {
+  includeGithubSignButton(): boolean {
+    return false;
+  }
+  includeGoogleSignButton(): boolean {
+    return false;
+  }
+  includeFacebookSignButton(): boolean {
+    return true;
+  }
+}
+```
+
+```typescript
+// dep.ts
+export function initUIFactory(
+  ...
+): UIFactory {
+  ...
+  const staticConfigDecision = new StaticConfigDecisionService();
+  ...
+  return new UIFactory(
+    ...,
+    staticConfigDecision
+  );
+}
+```
+
+You can read about the detailed feature toggle design on
+[this article](https://martinfowler.com/articles/feature-toggles.html).
 
 ### Search Engine Optimization
 
