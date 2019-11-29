@@ -320,7 +320,7 @@ func InjectGraphQlService(
 
 ### Feature Toggle
 
-Short uses feature toggles to modify system behavior without changing code. 
+Short uses feature toggles to modify system behavior without changing code.
 UI components controled by the feature toggles are created inside a centralized
 `UIFactory` in order to avoid having nested `if` `else` statement across the
 code base:
@@ -342,7 +342,7 @@ export class UIFactory {
       />
     );
   }
-  
+
   public createGithubSignInButton(): ReactElement {
     if (!this.featureDecisionService.includeGithubSignButton()) {
       return <div />;
@@ -384,7 +384,6 @@ export class StaticConfigDecisionService implements IFeatureDecisionService {
     return true;
   }
 }
-
 ```
 
 ```typescript
