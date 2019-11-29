@@ -320,7 +320,7 @@ func InjectGraphQlService(
 
 ### Feature Toggle
 
-Short uses feature toggles to modify system behavior without changing code.
+Short uses `feature toggles` to modify system behavior without changing code.
 UI components controled by the feature toggles are created inside a centralized
 `UIFactory` in order to avoid having nested `if` `else` statement across the
 code base:
@@ -401,7 +401,7 @@ export function initUIFactory(
 }
 ```
 
-You can read about a detailed introduction to feature toggle design on
+You can read about the detailed feature toggle design on
 [this article](https://martinfowler.com/articles/feature-toggles.html).
 
 ### Search Engine Optimization
