@@ -402,7 +402,8 @@ export function initUIFactory(
 }
 ```
 
-You can read more on Short's feature toggle architecture [here](https://martinfowler.com/articles/feature-toggles.html).
+You can read about a detailed introduction to feature toggle design on
+[this article](https://martinfowler.com/articles/feature-toggles.html).
 
 ### Search Engine Optimization
 
