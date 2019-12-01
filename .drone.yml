@@ -64,6 +64,7 @@ steps:
       branch:
         - master
       event:
+        - push
         - pull_request
 
   - name: create staging frontend assets
