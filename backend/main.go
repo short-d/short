@@ -36,6 +36,10 @@ func main() {
 	facebookClientSecret := getEnv("FACEBOOK_CLIENT_SECRET", "")
 	facebookRedirectURI := getEnv("FACEBOOK_REDIRECT_URI", "")
 
+	googleClientID := getEnv("GOOGLE_CLIENT_ID", "")
+	googleClientSecret := getEnv("GOOGLE_CLIENT_SECRET", "")
+	googleRedirectURI := getEnv("GOOGLE_REDIRECT_URI", "")
+
 	cmdFactory := dep.InjectCommandFactory()
 	dbConnector := dep.InjectDBConnector()
 	dbMigrationTool := dep.InjectDBMigrationTool()
@@ -55,6 +59,9 @@ func main() {
 		FacebookClientID:     facebookClientID,
 		FacebookClientSecret: facebookClientSecret,
 		FacebookRedirectURI:  facebookRedirectURI,
+		GoogleClientID:		  googleClientID,
+		GoogleClientSecret:	  googleClientSecret,
+		GoogleRedirectURI:	  googleRedirectURI,
 		JwtSecret:            jwtSecret,
 		WebFrontendURL:       webFrontendURL,
 		GraphQLAPIPort:       graphQLAPIPort,

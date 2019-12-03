@@ -1,6 +1,7 @@
 package routing
 
 import (
+	"fmt"
 	"net/http"
 	netURL "net/url"
 	"short/app/usecase/auth"
@@ -77,6 +78,7 @@ func NewSSOSignInCallback(
 
 		authToken, err := singleSignOn.SignIn(code)
 		if err != nil {
+			fmt.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

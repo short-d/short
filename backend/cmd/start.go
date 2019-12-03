@@ -20,12 +20,21 @@ type FacebookConfig struct {
 	RedirectURI  string
 }
 
+// GoogleConfig contains Facebook OAuth config
+type GoogleConfig struct {
+	ClientID     string
+	ClientSecret string
+	RedirectURI  string
+}
+
+
 func start(
 	dbConfig fw.DBConfig,
 	migrationRoot string,
 	recaptchaSecret string,
 	githubConfig GithubConfig,
 	facebookConfig FacebookConfig,
+	googleConfig GoogleConfig,
 	jwtSecret string,
 	KeyGenBufferSize int,
 	KgsRPCConfig provider.KgsRPCConfig,
@@ -65,6 +74,9 @@ func start(
 		provider.FacebookClientID(facebookConfig.ClientID),
 		provider.FacebookClientSecret(facebookConfig.ClientSecret),
 		provider.FacebookRedirectURI(facebookConfig.RedirectURI),
+		provider.GoogleClientID(googleConfig.ClientID),
+		provider.GoogleClientSecret(googleConfig.ClientSecret),
+		provider.GoogleRedirectURI(googleConfig.RedirectURI),
 		provider.JwtSecret(jwtSecret),
 		provider.WebFrontendURL(webFrontendURL),
 	)
