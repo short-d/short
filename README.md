@@ -38,8 +38,13 @@ from [source](https://short-d.com/r/ext-code)
    1. [Search Engine Optimization](#search-engine-optimization)
    1. [Social Media Summary Card](#social-media-summary-card)
 1. [Testing](#testing)
-   1. [Test Automation](#test-automation)
+   1. [The Importance Of Automation](#the-importance-of-automation)
+   1. [Testing Strategy](#testing-strategy)
    1. [Unit Testing](#unit-testing)
+   1. [Integration Testing](#integration-testing)
+   1. [Component Testing](#component-testing)
+   1. [Contract Testing](#contract-testing)
+   1. [End To End Testing](#end-to-end-testing)
    1. [The Test Pyramid](#the-test-pyramid)
 1. [Deployment](#deployment)
    1. [Kubernetes](#kubernetes)
@@ -471,7 +476,7 @@ the website is mentioned in a Tweet:
 
 ## Testing
 
-### Test Automation
+### The Importance Of Automation
 
 Short is maintained by a small team of talented software engineers working
 at Google, Uber, and Vmware as a side project. The team wants to deliver new
@@ -482,7 +487,23 @@ working features.
 
 Test automation is the only way forward.
 
+### Testing Strategy
+
+![Test Strategy](doc/testing/test-strategy.png)
+
+Please read [Testing Strategies in a Microservice Architecture](https://martinfowler.com/articles/microservice-testing)
+for a detailed introduction on test strategies.
+
 ### Unit Testing
+
+A unit test exercises the smallest piece of testable software in the
+application to determine whether it behaves as expected.
+
+![Unit Test](doc/testing/unit-test.png)
+
+#### Sociable And Solitary
+
+![Two Types of Unit Test](doc/testing/unit-test-two-types.png)
 
 #### The FIRST Principal
 
@@ -505,18 +526,42 @@ A automated test method should be composed of 3As: Arrange, Act, and Assert.
 - [A]ct: Invoke the actual method under test.
 - [A]ssert: A test method should test for a single logical outcome.
 
+### Integration Testing
+
+An integration test verifies the communication paths and interactions
+between components to detect interface defects.
+
+![Integration Test](doc/testing/integration-test.png)
+
+### Component Testing
+
+A component test limits the scope of the exercised software to a portion
+of the system under test, manipulating the system through internal code
+interfaces and using test doubles to isolate the code under test from
+other components.
+
+#### In Process
+
+![Component Test](doc/testing/component-test-in-process.png)
+
+#### Out Of Process
+
+![Component Test](doc/testing/component-test-out-of-process.png)
+
+### Contract Testing
+
+An integration contract test is a test at the boundary of an external
+service verifying that it meets the contract expected by a consuming
+service.
+
+### End To End Testing
+
+An end-to-end test verifies that a system meets external requirements
+and achieves its goals, testing the entire system, from end to end.
+
 ### The Test Pyramid
 
-Please read [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html)
-for a detailed introduction on:
-
-- Unit Tests
-- Integration Tests
-- Contract Tests
-- UI Tests
-- End-to-End Tests
-- Acceptance Tests
-- Exploratory Testing
+![Test Pyramid](doc/testing/test-pyramid.png)
 
 ## Deployment
 
