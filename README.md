@@ -686,6 +686,14 @@ Note: This guideline is derived from [Google Engineering Practices Documentation
 
 Harry Liu - *Initial work* - [byliuyang](https://short-d.com/r/ghharry)
 
+As the tech lead of Short, I am responsible for the overall planning, execution
+and success of complex software solutions to meet users' needs.
+
+As a leader, I deeply believe in and acting on the right column of the following
+diagram:
+
+![Manager vs Leader](doc/leader-vs-manager.jpg)
+
 ## License
 
 This project is maintained under MIT license
