@@ -158,7 +158,7 @@ func TestLinker_LinkAccount(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 
 			linker := NewLinker(&keyGen, &fakeUserRepo, &accountMappingRepo)
-			err = linker.LinkAccount(testCase.ssoUser)
+			err = linker.CreateAndLinkAccount(testCase.ssoUser)
 			mdtest.Equal(t, nil, err)
 
 			gotIsRelationExist := accountMappingRepo.IsRelationExist(testCase.ssoUser, testCase.user)

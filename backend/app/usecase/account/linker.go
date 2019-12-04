@@ -19,10 +19,10 @@ func (l Linker) IsAccountLinked(ssoUser entity.SSOUser) (bool, error) {
 	return l.accountMappingRepo.IsSSOUserExist(ssoUser)
 }
 
-// EnsureAndLinkAccount creates an internal account when there is no internal
+// CreateAndLinkAccount creates an internal account when there is no internal
 // account sharing the same email as the given external account and link them
 // together afterwards.
-func (l Linker) EnsureAndLinkAccount(ssoUser entity.SSOUser) error {
+func (l Linker) CreateAndLinkAccount(ssoUser entity.SSOUser) error {
 	isAccountLinked, err := l.IsAccountLinked(ssoUser)
 	if err != nil {
 		return err
