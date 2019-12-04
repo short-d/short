@@ -12,7 +12,7 @@ type UserFake struct {
 	users []entity.User
 }
 
-// IsEmailExist checks whether an user with given email exist in the repository.
+// IsEmailExist checks whether an user with given email exists in the repository.
 func (u UserFake) IsEmailExist(email string) (bool, error) {
 	for _, user := range u.users {
 		if user.Email == email {
@@ -20,6 +20,16 @@ func (u UserFake) IsEmailExist(email string) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+// IsUserIDExist checks whether an user with given ID exists in the repository.
+func (u UserFake) IsUserIDExist(userID string) bool {
+	for _, user := range u.users {
+		if user.ID == userID {
+			return true
+		}
+	}
+	return false
 }
 
 // GetUserByEmail find an user with a given email.
@@ -44,10 +54,11 @@ func (u *UserFake) CreateUser(user entity.User) error {
 }
 
 // UpdateUserID updates the ID of an user in the repository.
-func (u UserFake) UpdateUserID(email string, userID string) error {
-	for _, user := range u.users {
-		if user.Email == user.Email {
-			user.ID = userID
+func (u *UserFake) UpdateUserID(email string, userID string) error {
+	for idx, user := range u.users {
+		if user.Email == email {
+			u.users[idx].ID = userID
+			return nil
 		}
 	}
 	return errors.New("email does not exist")
