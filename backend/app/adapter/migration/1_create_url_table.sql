@@ -7,3 +7,6 @@ CREATE TABLE "Url"
     "createdAt"   TIMESTAMP WITH TIME ZONE,
     "updatedAt"   TIMESTAMP WITH TIME ZONE
 );
+
+-- +migrate Down
+DROP TABLE "Url";
