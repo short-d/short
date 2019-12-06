@@ -22,6 +22,7 @@ import (
 	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdcli"
 	"github.com/byliuyang/app/modern/mddb"
+	"github.com/byliuyang/app/modern/mdenv"
 	"github.com/byliuyang/app/modern/mdhttp"
 	"github.com/byliuyang/app/modern/mdlogger"
 	"github.com/byliuyang/app/modern/mdrequest"
@@ -72,6 +73,14 @@ func InjectDBConnector() fw.DBConnector {
 		mddb.NewPostgresConnector,
 	)
 	return mddb.PostgresConnector{}
+}
+
+func InjectEnvironment() fw.Environment {
+	wire.Build(
+		wire.Bind(new(fw.Environment), new(mdenv.GoDotEnv)),
+		mdenv.NewGoDotEnv,
+	)
+	return mdenv.GoDotEnv{}
 }
 
 func InjectDBMigrationTool() fw.DBMigrationTool {

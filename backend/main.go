@@ -1,40 +1,38 @@
 package main
 
 import (
-	"log"
-	"os"
 	"short/cmd"
 	"short/dep"
 	"strconv"
 
 	"github.com/byliuyang/app/fw"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	autoLoadEnv()
+	env := dep.InjectEnvironment()
+	env.AutoLoadDotEnvFile()
 
-	host := getEnv("DB_HOST", "localhost")
-	portStr := getEnv("DB_PORT", "5432")
+	host := env.GetEnv("DB_HOST", "localhost")
+	portStr := env.GetEnv("DB_PORT", "5432")
 	port := mustInt(portStr)
-	user := getEnv("DB_USER", "postgres")
-	password := getEnv("DB_PASSWORD", "password")
-	dbName := getEnv("DB_NAME", "short")
-	recaptchaSecret := getEnv("RECAPTCHA_SECRET", "")
-	githubClientID := getEnv("GITHUB_CLIENT_ID", "")
-	githubClientSecret := getEnv("GITHUB_CLIENT_SECRET", "")
-	jwtSecret := getEnv("JWT_SECRET", "")
-	webFrontendURL := getEnv("WEB_FRONTEND_URL", "")
-	graphQLAPIPort := mustInt(getEnv("GRAPHQL_API_PORT", "8080"))
-	httpAPIPort := mustInt(getEnv("HTTP_API_PORT", "80"))
+	user := env.GetEnv("DB_USER", "postgres")
+	password := env.GetEnv("DB_PASSWORD", "password")
+	dbName := env.GetEnv("DB_NAME", "short")
+	recaptchaSecret := env.GetEnv("RECAPTCHA_SECRET", "")
+	githubClientID := env.GetEnv("GITHUB_CLIENT_ID", "")
+	githubClientSecret := env.GetEnv("GITHUB_CLIENT_SECRET", "")
+	jwtSecret := env.GetEnv("JWT_SECRET", "")
+	webFrontendURL := env.GetEnv("WEB_FRONTEND_URL", "")
+	graphQLAPIPort := mustInt(env.GetEnv("GRAPHQL_API_PORT", "8080"))
+	httpAPIPort := mustInt(env.GetEnv("HTTP_API_PORT", "80"))
 
-	keyGenBufferSize := mustInt(getEnv("KEY_GEN_BUFFER_SIZE", "50"))
-	kgsHostname := getEnv("KEY_GEN_HOSTNAME", "localhost")
-	kgsPort := mustInt(getEnv("KEY_GEN_PORT", "8080"))
+	keyGenBufferSize := mustInt(env.GetEnv("KEY_GEN_BUFFER_SIZE", "50"))
+	kgsHostname := env.GetEnv("KEY_GEN_HOSTNAME", "localhost")
+	kgsPort := mustInt(env.GetEnv("KEY_GEN_PORT", "8080"))
 
-	facebookClientID := getEnv("FACEBOOK_CLIENT_ID", "")
-	facebookClientSecret := getEnv("FACEBOOK_CLIENT_SECRET", "")
-	facebookRedirectURI := getEnv("FACEBOOK_REDIRECT_URI", "")
+	facebookClientID := env.GetEnv("FACEBOOK_CLIENT_ID", "")
+	facebookClientSecret := env.GetEnv("FACEBOOK_CLIENT_SECRET", "")
+	facebookRedirectURI := env.GetEnv("FACEBOOK_REDIRECT_URI", "")
 
 	cmdFactory := dep.InjectCommandFactory()
 	dbConnector := dep.InjectDBConnector()
@@ -72,26 +70,6 @@ func main() {
 		dbMigrationTool,
 	)
 	cmd.Execute(rootCmd)
-}
-
-func autoLoadEnv() {
-	_, err := os.Stat(".env")
-	if os.IsNotExist(err) {
-		return
-	}
-
-	err = godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-}
-
-func getEnv(varName string, defaultVal string) string {
-	val := os.Getenv(varName)
-	if val == "" {
-		return defaultVal
-	}
-	return val
 }
 
 func mustInt(numStr string) int {
