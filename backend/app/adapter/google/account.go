@@ -1,50 +1,38 @@
 package google
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
-	"net/url"
 	"short/app/entity"
 	"short/app/usecase/service"
-	"strings"
+
+	"github.com/byliuyang/app/fw"
+)
+
+const (
+	googleApiURL = "https://www.googleapis.com/drive/v2/files"
 )
 
 var _ service.SSOAccount = (*Account)(nil)
 
-// Account accesses user's account data through FB Graph API.
+// Account accesses user's account data through Google API.
 type Account struct {
+	http fw.HTTPRequest
 }
 
-// GetSingleSignOnUser retrieves user's email and name from Facebook API.
+// GetSingleSignOnUser retrieves user's email and name from Google API.
 func (g Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error) {
 	type response struct {
 		Email string `json:"email"`
 		Name  string `json:"name"`
 	}
 
-	form := url.Values{}
-
-	req, err := http.NewRequest("GET", "https://www.googleapis.com/drive/v2/files", strings.NewReader(form.Encode()))
-	req.PostForm = form
-	req.Header.Add("Authorization", "Bearer " + accessToken)
-	if err != nil {
-		return entity.SSOUser{}, err
-	}
-
-	hc := http.Client{}
-	resp, err := hc.Do(req)
-	if err != nil {
-		return entity.SSOUser{}, err
-	}
-
-	defer resp.Body.Close()
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return entity.SSOUser{}, err
-	}
 	var result response
-	if err := json.Unmarshal(data, &result); err != nil {
+
+	headers := map[string]string{
+		"Authorization": "Bearer " + accessToken,
+	}
+	err := g.http.JSON(http.MethodGet, googleApiURL, headers, "", &result)
+	if err != nil {
 		return entity.SSOUser{}, err
 	}
 
@@ -54,7 +42,9 @@ func (g Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 	}, nil
 }
 
-// NewAccount initializes Facebook account API client.
-func NewAccount() Account {
-	return Account{}
+// NewAccount initializes Google account API client.
+func NewAccount(http fw.HTTPRequest) Account {
+	return Account{
+		http: http,
+	}
 }

@@ -27,7 +27,6 @@ type GoogleConfig struct {
 	RedirectURI  string
 }
 
-
 func start(
 	dbConfig fw.DBConfig,
 	migrationRoot string,

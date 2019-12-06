@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/byliuyang/app/fw"
 	"os"
 	"short/app"
+
+	"github.com/byliuyang/app/fw"
 )
 
 // ServiceConfig represents necessary parameters needed to initialize the
@@ -16,9 +17,9 @@ type ServiceConfig struct {
 	FacebookClientID     string
 	FacebookClientSecret string
 	FacebookRedirectURI  string
-	GoogleClientID     string
-	GoogleClientSecret string
-	GoogleRedirectURI  string
+	GoogleClientID       string
+	GoogleClientSecret   string
+	GoogleRedirectURI    string
 	JwtSecret            string
 	WebFrontendURL       string
 	GraphQLAPIPort       int
@@ -51,9 +52,9 @@ func NewRootCmd(
 					FacebookClientID:     config.FacebookClientID,
 					FacebookClientSecret: config.FacebookClientSecret,
 					FacebookRedirectURI:  config.FacebookRedirectURI,
-					GoogleClientID:		  config.GoogleClientID,
-					GoogleClientSecret:	  config.GoogleClientSecret,
-					GoogleRedirectURI:	  config.GoogleRedirectURI,
+					GoogleClientID:       config.GoogleClientID,
+					GoogleClientSecret:   config.GoogleClientSecret,
+					GoogleRedirectURI:    config.GoogleRedirectURI,
 					JwtSecret:            config.JwtSecret,
 					WebFrontendURL:       config.WebFrontendURL,
 					GraphQLAPIPort:       config.GraphQLAPIPort,

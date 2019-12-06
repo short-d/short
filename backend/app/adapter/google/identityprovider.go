@@ -10,16 +10,15 @@ import (
 )
 
 const (
-	authorizationAPI     = "https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.metadata.readonly&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri=http%3A%2F%2Flocalhost%2Foauth%2Fgoogle%2Fsign-in%2Fcallback&response_type=code"
-	accessTokenAPI       = "https://www.googleapis.com/oauth2/v3/token"
-	grantType			 = "authorization_code"
+	authorizationAPI = "https://accounts.google.com/o/oauth2/v2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.metadata.readonly&access_type=offline&include_granted_scopes=true&redirect_uri=http%3A%2F%2Flocalhost%2Foauth%2Fgoogle%2Fsign-in%2Fcallback&response_type=code"
+	accessTokenAPI   = "https://www.googleapis.com/oauth2/v3/token"
+	grantType        = "authorization_code"
 )
 
 type accessTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	TokenType   string `json:"token_type"`
 }
-
 
 var _ service.IdentityProvider = (*IdentityProvider)(nil)
 
@@ -39,7 +38,7 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 
 // RequestAccessToken retrieves access token of user's Google account using
 // authorization code.
-func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string,  error) {
+func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, error) {
 	clientID := g.clientID
 	clientSecret := g.clientSecret
 	redirectURI := g.redirectURI
@@ -64,7 +63,7 @@ func NewIdentityProvider(http fw.HTTPRequest, clientID string, clientSecret stri
 	return IdentityProvider{
 		clientID:     clientID,
 		clientSecret: clientSecret,
-		http:		  http,
+		http:         http,
 		redirectURI:  url.QueryEscape(redirectURI),
 	}
 }
