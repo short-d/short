@@ -7,3 +7,6 @@ CREATE TABLE user_url_relation
     FOREIGN KEY (user_email) REFERENCES "user" (email) ON UPDATE CASCADE,
     FOREIGN KEY (url_alias) REFERENCES url (alias) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- +migrate Down
+DROP TABLE user_url_relation;
