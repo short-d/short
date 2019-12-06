@@ -12,4 +12,4 @@ ALTER TABLE url RENAME COLUMN created_at TO "createdAt";
 ALTER TABLE url RENAME COLUMN expire_at TO "expireAt";
 ALTER TABLE url ALTER COLUMN original_url TYPE TEXT;
 ALTER TABLE url RENAME COLUMN original_url TO "originalUrl";
-ALTER TABLE "url" RENAME TO "Url";
+ALTER TABLE url RENAME TO "Url";
