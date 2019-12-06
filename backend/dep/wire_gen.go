@@ -44,14 +44,14 @@ func InjectDBConnector() fw.DBConnector {
 	return postgresConnector
 }
 
-func InjectEnvironment() fw.Environment {
-	goDotEnv := mdenv.NewGoDotEnv()
-	return goDotEnv
-}
-
 func InjectDBMigrationTool() fw.DBMigrationTool {
 	postgresMigrationTool := mddb.NewPostgresMigrationTool()
 	return postgresMigrationTool
+}
+
+func InjectEnvironment() fw.Environment {
+	goDotEnv := mdenv.NewGoDotEnv()
+	return goDotEnv
 }
 
 func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (mdservice.Service, error) {

@@ -37,7 +37,7 @@ func Start(
 		panic(err)
 	}
 
-	err = dbMigrationTool.Migrate(db, config.MigrationRoot)
+	err = dbMigrationTool.MigrateUp(db, config.MigrationRoot)
 	if err != nil {
 		panic(err)
 	}
