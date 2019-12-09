@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	authorizationAPI     = "https://accounts.google.com/o/oauth2/v2/auth?"
+	authorizationAPI     = "https://accounts.google.com/o/oauth2/v2/auth"
 	accessTokenAPI       = "https://www.googleapis.com/oauth2/v3/token"
 	grantType            = "authorization_code"
 	scope                = "https://www.googleapis.com/auth/userinfo.email"
