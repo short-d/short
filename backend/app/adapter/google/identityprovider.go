@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	authorizationAPI     = "https://accounts.google.com/o/oauth2/v2/auth"
-	accessTokenAPI       = "https://www.googleapis.com/oauth2/v3/token"
+	authorizationAPI     = "accounts.google.com"
+	accessTokenAPI       = "www.googleapis.com"
 	grantType            = "authorization_code"
 	scope                = "https://www.googleapis.com/auth/userinfo.email"
 	accessType           = "offline"
@@ -41,6 +41,7 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 	u := &url.URL{
 		Scheme: "https",
 		Host:   authorizationAPI,
+		Path:   "o/oauth2/v2/auth",
 		RawQuery: fmt.Sprintf("&client_id=%s&redirect_uri=%s&scope=%s&access_type=%s&include_granted_scopes=%s&response_type=%s",
 			clientID, redirectURI, scope, accessType, includeGrantedScopes, responseType),
 	}
@@ -57,6 +58,7 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 	u := &url.URL{
 		Scheme: "https",
 		Host:   accessTokenAPI,
+		Path:   "oauth2/v3/token",
 		RawQuery: fmt.Sprintf("code=%s&client_id=%s&client_secret=%s&redirect_uri=%s&grant_type=%s",
 			authorizationCode, clientID, clientSecret, redirectURI, grantType),
 	}
