@@ -30,7 +30,7 @@ var _ service.IdentityProvider = (*IdentityProvider)(nil)
 type IdentityProvider struct {
 	clientID     string
 	clientSecret string
-	http         fw.HTTPRequest
+	httpRequest         fw.HTTPRequest
 	redirectURI  string
 }
 
