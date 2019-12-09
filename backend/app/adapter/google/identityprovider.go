@@ -39,8 +39,8 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 	clientID := g.clientID
 	redirectURI := g.redirectURI
 	u := &url.URL{
-		Scheme:   "https",
-		Host:     authorizationAPI,
+		Scheme: "https",
+		Host:   authorizationAPI,
 		RawQuery: fmt.Sprintf("&client_id=%s&redirect_uri=%s&scope=%s&access_type=%s&include_granted_scopes=%s&response_type=%s",
 			clientID, redirectURI, scope, accessType, includeGrantedScopes, responseType),
 	}
@@ -55,8 +55,8 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 	redirectURI := g.redirectURI
 
 	u := &url.URL{
-		Scheme:   "https",
-		Host:     accessTokenAPI,
+		Scheme: "https",
+		Host:   accessTokenAPI,
 		RawQuery: fmt.Sprintf("code=%s&client_id=%s&client_secret=%s&redirect_uri=%s&grant_type=%s",
 			authorizationCode, clientID, clientSecret, redirectURI, grantType),
 	}
