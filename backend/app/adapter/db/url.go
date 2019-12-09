@@ -31,9 +31,9 @@ WHERE "%s"=$1;`,
 		return false, nil
 	}
 	if err != nil {
-		return false, nil
+		return false, err
 	}
-	return true, err
+	return true, nil
 }
 
 // Create inserts a new URL into url table.
