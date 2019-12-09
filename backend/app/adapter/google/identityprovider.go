@@ -30,7 +30,7 @@ var _ service.IdentityProvider = (*IdentityProvider)(nil)
 type IdentityProvider struct {
 	clientID     string
 	clientSecret string
-	httpRequest         fw.HTTPRequest
+	httpRequest  fw.HTTPRequest
 	redirectURI  string
 }
 
@@ -38,8 +38,13 @@ type IdentityProvider struct {
 func (g IdentityProvider) GetAuthorizationURL() string {
 	clientID := g.clientID
 	redirectURI := g.redirectURI
-	return fmt.Sprintf("%s&client_id=%s&redirect_uri=%s&scope=%s&access_type=%s&include_granted_scopes=%s&response_type=%s",
-		authorizationAPI, clientID, redirectURI, scope, accessType, includeGrantedScopes, responseType)
+	u := &url.URL{
+		Scheme:   "https",
+		Host:     authorizationAPI,
+		RawQuery: fmt.Sprintf("&client_id=%s&redirect_uri=%s&scope=%s&access_type=%s&include_granted_scopes=%s&response_type=%s",
+			clientID, redirectURI, scope, accessType, includeGrantedScopes, responseType),
+	}
+	return u.String()
 }
 
 // RequestAccessToken retrieves access token of user's Google account using
@@ -49,14 +54,16 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 	clientSecret := g.clientSecret
 	redirectURI := g.redirectURI
 
-	u := fmt.Sprintf("%s?code=%s&client_id=%s&client_secret=%s&redirect_uri=%s&grant_type=%s",
-		accessTokenAPI, authorizationCode, clientID, clientSecret, redirectURI, grantType)
-	headers := map[string]string{
-		"Content-Type": "application/x-www-form-urlencoded",
+	u := &url.URL{
+		Scheme:   "https",
+		Host:     accessTokenAPI,
+		RawQuery: fmt.Sprintf("code=%s&client_id=%s&client_secret=%s&redirect_uri=%s&grant_type=%s",
+			authorizationCode, clientID, clientSecret, redirectURI, grantType),
 	}
+	headers := map[string]string{}
 
 	apiRes := accessTokenResponse{}
-	err := g.http.JSON(http.MethodPost, u, headers, "", &apiRes)
+	err := g.httpRequest.JSON(http.MethodPost, u.String(), headers, "", &apiRes)
 	if err != nil {
 		return "", err
 	}
@@ -69,7 +76,7 @@ func NewIdentityProvider(http fw.HTTPRequest, clientID string, clientSecret stri
 	return IdentityProvider{
 		clientID:     clientID,
 		clientSecret: clientSecret,
-		http:         http,
+		httpRequest:  http,
 		redirectURI:  url.QueryEscape(redirectURI),
 	}
 }
