@@ -1,7 +1,6 @@
 package google
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"short/app/usecase/service"
@@ -10,13 +9,10 @@ import (
 )
 
 const (
-	authorizationAPI     = "accounts.google.com"
-	accessTokenAPI       = "www.googleapis.com"
+	authorizationAPI     = "https://accounts.google.com/o/oauth2/v2/auth"
+	accessTokenAPI       = "https://www.googleapis.com/oauth2/v4/token"
 	grantType            = "authorization_code"
 	scope                = "https://www.googleapis.com/auth/userinfo.email"
-	accessType           = "offline"
-	includeGrantedScopes = "true"
-	responseType         = "code"
 )
 
 type accessTokenResponse struct {
@@ -38,13 +34,20 @@ type IdentityProvider struct {
 func (g IdentityProvider) GetAuthorizationURL() string {
 	clientID := g.clientID
 	redirectURI := g.redirectURI
+	includeGrantedScopes := "true"
+	responseType := "code"
+
 	u := &url.URL{
-		Scheme: "https",
 		Host:   authorizationAPI,
-		Path:   "o/oauth2/v2/auth",
-		RawQuery: fmt.Sprintf("&client_id=%s&redirect_uri=%s&scope=%s&access_type=%s&include_granted_scopes=%s&response_type=%s",
-			clientID, redirectURI, scope, accessType, includeGrantedScopes, responseType),
 	}
+	q := u.Query()
+	q.Set("client_id", clientID)
+	q.Set("redirect_uri", redirectURI)
+	q.Set("scope", scope)
+	q.Set("include_granted_scopes", includeGrantedScopes)
+	q.Set("response_type", responseType)
+	u.RawQuery = q.Encode()
+
 	return u.String()
 }
 
@@ -56,13 +59,19 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 	redirectURI := g.redirectURI
 
 	u := &url.URL{
-		Scheme: "https",
 		Host:   accessTokenAPI,
-		Path:   "oauth2/v3/token",
-		RawQuery: fmt.Sprintf("code=%s&client_id=%s&client_secret=%s&redirect_uri=%s&grant_type=%s",
-			authorizationCode, clientID, clientSecret, redirectURI, grantType),
 	}
-	headers := map[string]string{}
+	q := u.Query()
+	q.Set("code", authorizationCode)
+	q.Set("client_id", clientID)
+	q.Set("client_secret", clientSecret)
+	q.Set("redirect_uri", redirectURI)
+	q.Set("grant_type", grantType)
+	u.RawQuery = q.Encode()
+
+	headers := map[string]string{
+		"Content-Type": "application/x-www-form-urlencoded",
+	}
 
 	apiRes := accessTokenResponse{}
 	err := g.httpRequest.JSON(http.MethodPost, u.String(), headers, "", &apiRes)
