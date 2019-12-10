@@ -1,6 +1,7 @@
 package google
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"short/app/usecase/service"
@@ -9,10 +10,8 @@ import (
 )
 
 const (
-	authorizationAPI     = "https://accounts.google.com/o/oauth2/v2/auth"
-	accessTokenAPI       = "https://www.googleapis.com/oauth2/v4/token"
-	grantType            = "authorization_code"
-	scope                = "https://www.googleapis.com/auth/userinfo.email"
+	authorizationAPI = "https://accounts.google.com/o/oauth2/v2/auth"
+	accessTokenAPI   = "https://www.googleapis.com/oauth2/v4/token"
 )
 
 type accessTokenResponse struct {
@@ -32,14 +31,21 @@ type IdentityProvider struct {
 
 // GetAuthorizationURL retrieves the URL of Google sign in page.
 func (g IdentityProvider) GetAuthorizationURL() string {
-	clientID := g.clientID
-	redirectURI := g.redirectURI
+	scope := "profile"
 	includeGrantedScopes := "true"
 	responseType := "code"
-
-	u := &url.URL{
-		Host:   authorizationAPI,
+	clientID := g.clientID
+	redirectURI, err := url.QueryUnescape(g.redirectURI)
+	if err != nil {
+		return ""
 	}
+	fmt.Println(redirectURI)
+	fmt.Println(g.redirectURI)
+	u, err := url.Parse(authorizationAPI)
+	if err != nil {
+		return ""
+	}
+
 	q := u.Query()
 	q.Set("client_id", clientID)
 	q.Set("redirect_uri", redirectURI)
@@ -54,27 +60,40 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 // RequestAccessToken retrieves access token of user's Google account using
 // authorization code.
 func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, error) {
+	grantType := "authorization_code"
 	clientID := g.clientID
 	clientSecret := g.clientSecret
-	redirectURI := g.redirectURI
-
-	u := &url.URL{
-		Host:   accessTokenAPI,
+	redirectURI, err := url.QueryUnescape(g.redirectURI)
+	if err != nil {
+		return "", err
 	}
-	q := u.Query()
-	q.Set("code", authorizationCode)
-	q.Set("client_id", clientID)
-	q.Set("client_secret", clientSecret)
-	q.Set("redirect_uri", redirectURI)
-	q.Set("grant_type", grantType)
-	u.RawQuery = q.Encode()
+
+	u, err := url.Parse(accessTokenAPI)
+	if err != nil {
+		return "", err
+	}
+
+	query := u.Query()
+	query.Set("code", authorizationCode)
+	query.Set("client_id", clientID)
+	query.Set("client_secret", clientSecret)
+	query.Set("redirect_uri", redirectURI)
+	query.Set("grant_type", grantType)
+	u.RawQuery = query.Encode()
+
+	body := url.Values{}
+	body.Set("code", authorizationCode)
+	body.Set("client_id", clientID)
+	body.Set("client_secret", clientSecret)
+	body.Set("redirect_uri", redirectURI)
+	body.Set("grant_type", grantType)
 
 	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
 
 	apiRes := accessTokenResponse{}
-	err := g.httpRequest.JSON(http.MethodPost, u.String(), headers, "", &apiRes)
+	err = g.httpRequest.JSON(http.MethodPost, u.String(), headers, body.Encode(), &apiRes)
 	if err != nil {
 		return "", err
 	}
