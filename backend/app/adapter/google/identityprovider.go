@@ -1,7 +1,6 @@
 package google
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"short/app/usecase/service"
@@ -35,12 +34,8 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 	includeGrantedScopes := "true"
 	responseType := "code"
 	clientID := g.clientID
-	redirectURI, err := url.QueryUnescape(g.redirectURI)
-	if err != nil {
-		return ""
-	}
-	fmt.Println(redirectURI)
-	fmt.Println(g.redirectURI)
+	redirectURI := g.redirectURI
+
 	u, err := url.Parse(authorizationAPI)
 	if err != nil {
 		return ""
@@ -63,10 +58,7 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 	grantType := "authorization_code"
 	clientID := g.clientID
 	clientSecret := g.clientSecret
-	redirectURI, err := url.QueryUnescape(g.redirectURI)
-	if err != nil {
-		return "", err
-	}
+	redirectURI := g.redirectURI
 
 	u, err := url.Parse(accessTokenAPI)
 	if err != nil {
@@ -107,6 +99,6 @@ func NewIdentityProvider(http fw.HTTPRequest, clientID string, clientSecret stri
 		clientID:     clientID,
 		clientSecret: clientSecret,
 		httpRequest:  http,
-		redirectURI:  url.QueryEscape(redirectURI),
+		redirectURI:  redirectURI,
 	}
 }
