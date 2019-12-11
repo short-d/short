@@ -13,11 +13,6 @@ const (
 	accessTokenAPI   = "https://www.googleapis.com/oauth2/v4/token"
 )
 
-type accessTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-}
-
 var _ service.IdentityProvider = (*IdentityProvider)(nil)
 
 // IdentityProvider represents Google OAuth service.
@@ -30,9 +25,6 @@ type IdentityProvider struct {
 
 // GetAuthorizationURL retrieves the URL of Google sign in page.
 func (g IdentityProvider) GetAuthorizationURL() string {
-	scope := "profile"
-	includeGrantedScopes := "true"
-	responseType := "code"
 	clientID := g.clientID
 	redirectURI := g.redirectURI
 
@@ -41,13 +33,13 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 		return ""
 	}
 
-	q := u.Query()
-	q.Set("client_id", clientID)
-	q.Set("redirect_uri", redirectURI)
-	q.Set("scope", scope)
-	q.Set("include_granted_scopes", includeGrantedScopes)
-	q.Set("response_type", responseType)
-	u.RawQuery = q.Encode()
+	query := u.Query()
+	query.Set("client_id", clientID)
+	query.Set("redirect_uri", redirectURI)
+	query.Set("scope", "profile")
+	query.Set("include_granted_scopes", "true")
+	query.Set("response_type", "code")
+	u.RawQuery = query.Encode()
 
 	return u.String()
 }
@@ -91,6 +83,11 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 	}
 
 	return apiRes.AccessToken, nil
+}
+
+type accessTokenResponse struct {
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
 }
 
 // NewIdentityProvider initializes Google OAuth service.
