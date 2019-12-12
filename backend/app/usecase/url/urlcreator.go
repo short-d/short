@@ -84,12 +84,18 @@ func (c CreatorPersist) createURLWithCustomAlias(url entity.URL, alias string, u
 		return entity.URL{}, ErrAliasExist("url alias already exist")
 	}
 
-	err = c.urlRepo.Create(url)
+	tx, err := c.userURLRelationRepo.NewTransaction()
+	defer tx.Rollback()
+
+	err = c.urlRepo.CreateWithTransaction(tx, url)
 	if err != nil {
 		return entity.URL{}, err
 	}
 
-	err = c.userURLRelationRepo.CreateRelation(user, url)
+	err = c.userURLRelationRepo.CreateRelationWithTransaction(tx, user, url)
+	if err := tx.Commit(); err != nil {
+		return entity.URL{}, err
+	}
 	return url, err
 }
 

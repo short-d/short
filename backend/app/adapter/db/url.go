@@ -52,6 +52,25 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
+// CreateWithTransaction executes a transaction statement which inserts a new URL into url table.
+func (u *URLSql) CreateWithTransaction(tx *sql.Tx, url entity.URL) error {
+	statement := fmt.Sprintf(`
+INSERT INTO "%s" ("%s","%s","%s","%s","%s")
+VALUES ($1, $2, $3, $4, $5);`,
+		table.URL.TableName,
+		table.URL.ColumnAlias,
+		table.URL.ColumnOriginalURL,
+		table.URL.ColumnExpireAt,
+		table.URL.ColumnCreatedAt,
+		table.URL.ColumnUpdatedAt,
+	)
+	_, err := tx.Exec(statement, url.Alias, url.OriginalURL, url.ExpireAt, url.CreatedAt, url.UpdatedAt)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetByAlias finds an URL in url table given alias.
 func (u URLSql) GetByAlias(alias string) (entity.URL, error) {
 	statement := fmt.Sprintf(`

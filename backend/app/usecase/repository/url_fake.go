@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"errors"
 	"short/app/entity"
 )
@@ -10,6 +11,10 @@ var _ URL = (*URLFake)(nil)
 // URLFake accesses URL information in url table through SQL.
 type URLFake struct {
 	urls map[string]entity.URL
+}
+
+func (u URLFake) CreateWithTransaction(tx *sql.Tx, url entity.URL) error {
+	panic("implement me")
 }
 
 // IsAliasExist checks whether a given alias exist in url table.

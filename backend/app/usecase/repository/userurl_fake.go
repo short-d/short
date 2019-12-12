@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"errors"
 	"short/app/entity"
 )
@@ -11,6 +12,14 @@ var _ UserURLRelation = (*UserURLRelationFake)(nil)
 type UserURLRelationFake struct {
 	users []entity.User
 	urls  []entity.URL
+}
+
+func (u *UserURLRelationFake) NewTransaction() (*sql.Tx, error) {
+	panic("implement me")
+}
+
+func (u *UserURLRelationFake) CreateRelationWithTransaction(tx *sql.Tx, user entity.User, url entity.URL) error {
+	panic("implement me")
 }
 
 // CreateRelation creates many to many relationship between User and URL.

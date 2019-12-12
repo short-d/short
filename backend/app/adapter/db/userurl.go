@@ -32,6 +32,23 @@ VALUES ($1,$2)
 	return err
 }
 
+func (u UserURLRelationSQL) CreateRelationWithTransaction(tx *sql.Tx, user entity.User, url entity.URL) error {
+	statement := fmt.Sprintf(`
+INSERT INTO "%s" ("%s","%s")
+VALUES ($1,$2)
+`,
+		table.UserURLRelation.TableName,
+		table.UserURLRelation.ColumnUserEmail,
+		table.UserURLRelation.ColumnURLAlias,
+	)
+
+	_, err := tx.Exec(statement, user.Email, url.Alias)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // FindAliasesByUser fetches the aliases of all the URLs created by the given user.
 // TODO(issue#260): allow API client to filter urls based on visibility.
 func (u UserURLRelationSQL) FindAliasesByUser(user entity.User) ([]string, error) {
@@ -59,6 +76,11 @@ func (u UserURLRelationSQL) FindAliasesByUser(user entity.User) ([]string, error
 	}
 
 	return aliases, nil
+}
+
+// NewTransaction creates a new db transaction
+func (u UserURLRelationSQL) NewTransaction() (*sql.Tx, error) {
+	return u.db.Begin()
 }
 
 // NewUserURLRelationSQL creates UserURLRelationSQL
