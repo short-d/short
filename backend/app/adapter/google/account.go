@@ -1,6 +1,7 @@
 package google
 
 import (
+	"fmt"
 	"net/http"
 	"short/app/entity"
 	"short/app/usecase/service"
@@ -8,7 +9,7 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
-const googleAPI = "https://www.googleapis.com/oauth2/v3/userinfo"
+const userInfoAPI = "https://www.googleapis.com/oauth2/v3/userinfo"
 
 var _ service.SSOAccount = (*Account)(nil)
 
@@ -22,22 +23,24 @@ func (a Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 	type response struct {
 		Email string `json:"email"`
 		Name  string `json:"name"`
+		ID    string `json:"id"`
 	}
 
-	var result response
+	var res response
 
 	headers := map[string]string{
-		"Authorization": "Bearer " + accessToken,
+		"Authorization": fmt.Sprintf("Bearer %s", accessToken),
 	}
 
-	err := a.http.JSON(http.MethodGet, googleAPI, headers, "", &result)
+	err := a.http.JSON(http.MethodGet, userInfoAPI, headers, "", &res)
 	if err != nil {
 		return entity.SSOUser{}, err
 	}
 
 	return entity.SSOUser{
-		Email: result.Email,
-		Name:  result.Name,
+		Email: res.Email,
+		Name:  res.Name,
+		ID:    res.ID,
 	}, nil
 }
 
