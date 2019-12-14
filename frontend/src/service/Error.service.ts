@@ -5,7 +5,7 @@ export enum Err {
   UserNotHuman = 'requesterNotHuman',
   Unauthorized = 'invalidAuthToken',
   NetworkError = 'networkError',
-  Unknown = 'unknownError',
+  Unknown = 'unknownError'
 }
 
 const unknownErr = {
