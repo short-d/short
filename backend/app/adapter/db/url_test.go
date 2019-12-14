@@ -4,10 +4,10 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
+	"short/app/adapter/db/sqltest"
 	"short/app/adapter/db/table"
 	"short/app/entity"
 	"testing"
-	"time"
 
 	"github.com/byliuyang/app/mdtest"
 )
@@ -86,14 +86,14 @@ func TestURLSql_GetByAlias(t *testing.T) {
 			}).AddRow(
 				"220uFicCJj",
 				"http://www.google.com",
-				mustParseSQLTime("2019-05-01 08:02:16"),
-				mustParseSQLTime("2017-05-01 08:02:16"),
+				sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
+				sqltest.MustParseSQLTime("2017-05-01 08:02:16"),
 				nil,
 			).AddRow(
 				"yDOBcj5HIPbUAsw",
 				"http://www.facebook.com",
-				mustParseSQLTime("2018-04-02 08:02:16"),
-				mustParseSQLTime("2017-05-01 08:02:16"),
+				sqltest.MustParseSQLTime("2018-04-02 08:02:16"),
+				sqltest.MustParseSQLTime("2017-05-01 08:02:16"),
 				nil,
 			),
 			alias:  "220uFicCJj",
@@ -101,8 +101,8 @@ func TestURLSql_GetByAlias(t *testing.T) {
 			expectedURL: entity.URL{
 				Alias:       "220uFicCJj",
 				OriginalURL: "http://www.google.com",
-				ExpireAt:    mustParseSQLTime("2019-05-01 08:02:16"),
-				CreatedAt:   mustParseSQLTime("2017-05-01 08:02:16"),
+				ExpireAt:    sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
+				CreatedAt:   sqltest.MustParseSQLTime("2017-05-01 08:02:16"),
 				UpdatedAt:   nil,
 			},
 		},
@@ -142,7 +142,7 @@ func TestURLSql_Create(t *testing.T) {
 			url: entity.URL{
 				Alias:       "220uFicCJj",
 				OriginalURL: "http://www.google.com",
-				ExpireAt:    mustParseSQLTime("2019-05-01 08:02:16"),
+				ExpireAt:    sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
 			},
 			rowExist: true,
 			hasErr:   true,
@@ -152,7 +152,7 @@ func TestURLSql_Create(t *testing.T) {
 			url: entity.URL{
 				Alias:       "220uFicCJj",
 				OriginalURL: "http://www.google.com",
-				ExpireAt:    mustParseSQLTime("2019-05-01 08:02:16"),
+				ExpireAt:    sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
 			},
 			rowExist: false,
 			hasErr:   false,
@@ -184,18 +184,4 @@ func TestURLSql_Create(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 		})
 	}
-}
-
-var dateTimeFmt = "2006-01-02 15:04:05"
-
-func mustParseSQLTime(dateTime string) *time.Time {
-	if dateTime == "NULL" {
-		return nil
-	}
-
-	dt, err := time.Parse(dateTimeFmt, dateTime)
-	if err != nil {
-		panic(err)
-	}
-	return &dt
 }
