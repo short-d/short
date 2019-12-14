@@ -4,6 +4,7 @@ import "time"
 
 var dateTimeFmt = "2006-01-02 15:04:05"
 
+// MustParseSQLTime parses time.Time from SQL time string.
 func MustParseSQLTime(dateTime string) *time.Time {
 	if dateTime == "NULL" {
 		return nil
