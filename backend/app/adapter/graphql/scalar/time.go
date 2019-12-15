@@ -20,7 +20,7 @@ func (Time) ImplementsGraphQLType(name string) bool {
 	return name == "Time"
 }
 
-// ImplementsGraphQLType parses GraphQL Time scalar from various data format.
+// UnmarshalGraphQL parses GraphQL Time scalar from various data format.
 func (t *Time) UnmarshalGraphQL(input interface{}) error {
 	var timeTmp time.Time
 	var err error
