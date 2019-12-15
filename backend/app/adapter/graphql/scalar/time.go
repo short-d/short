@@ -3,7 +3,6 @@ package scalar
 import (
 	"encoding/json"
 	"errors"
-	"short/app/adapter/graphql/parser"
 	"time"
 
 	"github.com/byliuyang/app/fw"
@@ -11,14 +10,17 @@ import (
 
 var _ fw.Scalar = &Time{}
 
+// Time maps GraphQL Time scalar to time.Time.
 type Time struct {
 	time.Time
 }
 
+// ImplementsGraphQLType checks whether a given GraphQL scalar is Time.
 func (Time) ImplementsGraphQLType(name string) bool {
 	return name == "Time"
 }
 
+// ImplementsGraphQLType parses GraphQL Time scalar from various data format.
 func (t *Time) UnmarshalGraphQL(input interface{}) error {
 	var timeTmp time.Time
 	var err error
@@ -28,11 +30,11 @@ func (t *Time) UnmarshalGraphQL(input interface{}) error {
 		timeTmp = input
 		err = nil
 	case string:
-		timeTmp, err = parser.NewStringTime().FromVal(input)
+		timeTmp, err = timeFromString(input)
 	case int:
-		timeTmp, err = parser.NewIntTime().FromVal(input)
+		timeTmp, err = timeFromInt(input)
 	case float64:
-		timeTmp, err = parser.NewFloatTime().FromVal(input)
+		timeTmp, err = timeFromFloat(input)
 	default:
 		err = errors.New("wrong type")
 	}
@@ -45,6 +47,19 @@ func (t *Time) UnmarshalGraphQL(input interface{}) error {
 	return nil
 }
 
+// MarshalJSON serializes GraphQL Time to JSON.
 func (t Time) MarshalJSON() ([]byte, error) {
 	return json.Marshal(t.Time)
+}
+
+func timeFromString(val interface{}) (time.Time, error) {
+	return time.Parse(time.RFC3339, val.(string))
+}
+
+func timeFromInt(val interface{}) (time.Time, error) {
+	return time.Unix(int64(val.(int)), 0), nil
+}
+
+func timeFromFloat(val interface{}) (time.Time, error) {
+	return time.Unix(int64(val.(int)), 0), nil
 }
