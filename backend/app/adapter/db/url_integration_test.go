@@ -4,8 +4,6 @@ package db_test
 
 import (
 	"database/sql"
-	"database/sql/driver"
-	"errors"
 	"fmt"
 	"path"
 	"short/app/adapter/db"
@@ -156,57 +154,66 @@ func TestURLSql_GetByAlias(t *testing.T) {
 }
 
 func TestURLSql_Create(t *testing.T) {
+	now := mustParseTime(t, "2019-05-01T08:02:16")
+
 	testCases := []struct {
-		name     string
-		url      entity.URL
-		rowExist bool
-		hasErr   bool
+		name      string
+		tableRows []tableRow
+		url       entity.URL
+		hasErr    bool
 	}{
 		{
-			name: "url exists",
+			name: "alias exists",
+			tableRows: []tableRow{
+				{
+					alias:    "220uFicCJj",
+					longLink: "http://www.facebook.com",
+					expireAt: now,
+				},
+			},
 			url: entity.URL{
 				Alias:       "220uFicCJj",
 				OriginalURL: "http://www.google.com",
-				ExpireAt:    sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
+				ExpireAt:    &now,
 			},
-			rowExist: true,
-			hasErr:   true,
+			hasErr: true,
 		},
 		{
 			name: "successfully create url",
+			tableRows: []tableRow{
+				{
+					alias:    "abc",
+					longLink: "http://www.google.com",
+					expireAt: now,
+				},
+			},
 			url: entity.URL{
 				Alias:       "220uFicCJj",
 				OriginalURL: "http://www.google.com",
-				ExpireAt:    sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
+				ExpireAt:    &now,
 			},
-			rowExist: false,
-			hasErr:   false,
+			hasErr: false,
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			sqlDB, stub, err := mdtest.NewSQLStub()
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					urlRepo := db.NewURLSql(sqlDB)
+					err := urlRepo.Create(testCase.url)
 
-			mdtest.Equal(t, nil, err)
-			defer sqlDB.Close()
-
-			statement := fmt.Sprintf(`INSERT INTO "%s" .+ VALUES .+`, table.URL.TableName)
-
-			if testCase.rowExist {
-				stub.ExpectExec(statement).WillReturnError(errors.New("row exists"))
-			} else {
-				stub.ExpectExec(statement).WillReturnResult(driver.ResultNoRows)
-			}
-
-			urlRepo := db.NewURLSql(sqlDB)
-			err = urlRepo.Create(testCase.url)
-
-			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
-				return
-			}
-			mdtest.Equal(t, nil, err)
+					if testCase.hasErr {
+						mdtest.NotEqual(t, nil, err)
+						return
+					}
+					mdtest.Equal(t, nil, err)
+				},
+			)
 		})
 	}
 }
