@@ -1,58 +1,99 @@
 // +build integration
 
-package db
+package db_test
 
 import (
+	"database/sql"
 	"database/sql/driver"
 	"errors"
 	"fmt"
+	"path"
+	"short/app/adapter/db"
 	"short/app/adapter/db/sqltest"
 	"short/app/adapter/db/table"
 	"short/app/entity"
+	"short/dep"
+	"strconv"
 	"testing"
+	"time"
 
+	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/mdtest"
 )
+
+var dbConnector fw.DBConnector
+var dbMigrationTool fw.DBMigrationTool
+
+var dbConfig fw.DBConfig
+var dbMigrationRoot string
+
+var insertRowSQL = fmt.Sprintf(`
+INSERT INTO %s (%s, %s, %s, %s, %s)
+VALUES ($1, $2, $3, $4, $5)`,
+	table.URL.TableName,
+	table.URL.ColumnAlias,
+	table.URL.ColumnOriginalURL,
+	table.URL.ColumnCreatedAt,
+	table.URL.ColumnExpireAt,
+	table.URL.ColumnUpdatedAt,
+)
+
+type tableRow struct {
+	alias     string
+	longLink  string
+	createdAt time.Time
+	expireAt  time.Time
+	updatedAt time.Time
+}
 
 func TestURLSql_IsAliasExist(t *testing.T) {
 	testCases := []struct {
 		name       string
-		tableRows  *mdtest.TableRows
+		tableRows  []tableRow
 		alias      string
 		expIsExist bool
 	}{
 		{
-			name:  "alias doesn't exist",
-			alias: "gg",
-			tableRows: mdtest.NewTableRows([]string{
-				table.URL.ColumnAlias,
-			}),
+			name:       "alias doesn't exist",
+			alias:      "gg",
+			tableRows:  []tableRow{},
 			expIsExist: false,
 		},
 		{
 			name:  "alias found",
 			alias: "gg",
-			tableRows: mdtest.NewTableRows([]string{
-				table.URL.ColumnAlias,
-			}).
-				AddRow("gg"),
+			tableRows: []tableRow{
+				{alias: "gg"},
+			},
 			expIsExist: true,
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			db, stub, err := mdtest.NewSQLStub()
-			mdtest.Equal(t, nil, err)
-			defer db.Close()
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					for _, tableRow := range testCase.tableRows {
+						_, err := sqlDB.Exec(
+							insertRowSQL,
+							tableRow.alias,
+							tableRow.longLink,
+							tableRow.createdAt,
+							tableRow.expireAt,
+							tableRow.updatedAt,
+						)
+						mdtest.Equal(t, nil, err)
+					}
 
-			expQuery := fmt.Sprintf(`^SELECT ".+" FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
-			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
-
-			urlRepo := NewURLSql(db)
-			gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expIsExist, gotIsExist)
+					urlRepo := db.NewURLSql(sqlDB)
+					gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
+					mdtest.Equal(t, nil, err)
+					mdtest.Equal(t, testCase.expIsExist, gotIsExist)
+				})
 		})
 	}
 }
@@ -112,14 +153,14 @@ func TestURLSql_GetByAlias(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			db, stub, err := mdtest.NewSQLStub()
+			sqlDB, stub, err := mdtest.NewSQLStub()
 			mdtest.Equal(t, nil, err)
-			defer db.Close()
+			defer sqlDB.Close()
 
 			statement := fmt.Sprintf(`^SELECT .+ FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
 			stub.ExpectQuery(statement).WillReturnRows(testCase.tableRows)
 
-			urlRepo := NewURLSql(db)
+			urlRepo := db.NewURLSql(sqlDB)
 			url, err := urlRepo.GetByAlias("220uFicCJj")
 
 			if testCase.hasErr {
@@ -163,10 +204,10 @@ func TestURLSql_Create(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			db, stub, err := mdtest.NewSQLStub()
+			sqlDB, stub, err := mdtest.NewSQLStub()
 
 			mdtest.Equal(t, nil, err)
-			defer db.Close()
+			defer sqlDB.Close()
 
 			statement := fmt.Sprintf(`INSERT INTO "%s" .+ VALUES .+`, table.URL.TableName)
 
@@ -176,7 +217,7 @@ func TestURLSql_Create(t *testing.T) {
 				stub.ExpectExec(statement).WillReturnResult(driver.ResultNoRows)
 			}
 
-			urlRepo := NewURLSql(db)
+			urlRepo := db.NewURLSql(sqlDB)
 			err = urlRepo.Create(testCase.url)
 
 			if testCase.hasErr {
@@ -186,4 +227,39 @@ func TestURLSql_Create(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 		})
 	}
+}
+
+func TestMain(m *testing.M) {
+	env := dep.InjectEnvironment()
+	env.AutoLoadDotEnvFile()
+
+	host := env.GetEnv("DB_HOST", "")
+	portStr := env.GetEnv("DB_PORT", "")
+	port := mustInt(portStr)
+	user := env.GetEnv("DB_USER", "")
+	password := env.GetEnv("DB_PASSWORD", "")
+	dbName := env.GetEnv("DB_NAME", "")
+
+	dbConfig = fw.DBConfig{
+		Host:     host,
+		Port:     port,
+		User:     user,
+		Password: password,
+		DbName:   dbName,
+	}
+
+	dbMigrationRoot = path.Join(env.GetEnv("MIGRATION_ROOT", ""))
+
+	dbConnector = dep.InjectDBConnector()
+	dbMigrationTool = dep.InjectDBMigrationTool()
+
+	m.Run()
+}
+
+func mustInt(numStr string) int {
+	num, err := strconv.Atoi(numStr)
+	if err != nil {
+		panic(err)
+	}
+	return num
 }
