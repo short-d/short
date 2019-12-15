@@ -77,17 +77,7 @@ func TestURLSql_IsAliasExist(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					for _, tableRow := range testCase.tableRows {
-						_, err := sqlDB.Exec(
-							insertRowSQL,
-							tableRow.alias,
-							tableRow.longLink,
-							tableRow.createdAt,
-							tableRow.expireAt,
-							tableRow.updatedAt,
-						)
-						mdtest.Equal(t, nil, err)
-					}
+					insertTableRows(t, sqlDB, testCase.tableRows)
 
 					urlRepo := db.NewURLSql(sqlDB)
 					gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
@@ -226,6 +216,20 @@ func TestURLSql_Create(t *testing.T) {
 			}
 			mdtest.Equal(t, nil, err)
 		})
+	}
+}
+
+func insertTableRows(t *testing.T, sqlDB *sql.DB, tableRows []tableRow) {
+	for _, tableRow := range tableRows {
+		_, err := sqlDB.Exec(
+			insertRowSQL,
+			tableRow.alias,
+			tableRow.longLink,
+			tableRow.createdAt,
+			tableRow.expireAt,
+			tableRow.updatedAt,
+		)
+		mdtest.Equal(t, nil, err)
 	}
 }
 
