@@ -91,44 +91,33 @@ func TestURLSql_IsAliasExist(t *testing.T) {
 func TestURLSql_GetByAlias(t *testing.T) {
 	testCases := []struct {
 		name        string
-		tableRows   *mdtest.TableRows
+		tableRows   []tableRow
 		alias       string
 		hasErr      bool
 		expectedURL entity.URL
 	}{
 		{
-			name: "alias not found",
-			tableRows: mdtest.NewTableRows([]string{
-				table.URL.ColumnAlias,
-				table.URL.ColumnOriginalURL,
-				table.URL.ColumnExpireAt,
-				table.URL.ColumnCreatedAt,
-				table.URL.ColumnUpdatedAt,
-			}),
-			alias:  "220uFicCJj",
-			hasErr: true,
+			name:      "alias not found",
+			tableRows: []tableRow{},
+			alias:     "220uFicCJj",
+			hasErr:    true,
 		},
 		{
 			name: "found url",
-			tableRows: mdtest.NewTableRows([]string{
-				table.URL.ColumnAlias,
-				table.URL.ColumnOriginalURL,
-				table.URL.ColumnExpireAt,
-				table.URL.ColumnCreatedAt,
-				table.URL.ColumnUpdatedAt,
-			}).AddRow(
-				"220uFicCJj",
-				"http://www.google.com",
-				sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
-				sqltest.MustParseSQLTime("2017-05-01 08:02:16"),
-				nil,
-			).AddRow(
-				"yDOBcj5HIPbUAsw",
-				"http://www.facebook.com",
-				sqltest.MustParseSQLTime("2018-04-02 08:02:16"),
-				sqltest.MustParseSQLTime("2017-05-01 08:02:16"),
-				nil,
-			),
+			tableRows: []tableRow{
+				{
+					alias:     "220uFicCJj",
+					longLink:  "http://www.google.com",
+					createdAt: mustParseTime(t, "2019-05-01T08:02:16"),
+					expireAt:  mustParseTime(t, "2017-05-01 08:02:16"),
+				},
+				{
+					alias:     "yDOBcj5HIPbUAsw",
+					longLink:  "http://www.facebook.com",
+					createdAt: mustParseTime(t, "2019-05-01T08:02:16"),
+					expireAt:  mustParseTime(t, "2017-05-01 08:02:16"),
+				},
+			},
 			alias:  "220uFicCJj",
 			hasErr: false,
 			expectedURL: entity.URL{
@@ -143,22 +132,25 @@ func TestURLSql_GetByAlias(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			sqlDB, stub, err := mdtest.NewSQLStub()
-			mdtest.Equal(t, nil, err)
-			defer sqlDB.Close()
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertTableRows(t, sqlDB, testCase.tableRows)
 
-			statement := fmt.Sprintf(`^SELECT .+ FROM "%s" WHERE "%s"=.+$`, table.URL.TableName, table.URL.ColumnAlias)
-			stub.ExpectQuery(statement).WillReturnRows(testCase.tableRows)
+					urlRepo := db.NewURLSql(sqlDB)
+					url, err := urlRepo.GetByAlias("220uFicCJj")
 
-			urlRepo := db.NewURLSql(sqlDB)
-			url, err := urlRepo.GetByAlias("220uFicCJj")
-
-			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
-				return
-			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURL, url)
+					if testCase.hasErr {
+						mdtest.NotEqual(t, nil, err)
+						return
+					}
+					mdtest.Equal(t, nil, err)
+					mdtest.Equal(t, testCase.expectedURL, url)
+				},
+			)
 		})
 	}
 }
@@ -231,6 +223,12 @@ func insertTableRows(t *testing.T, sqlDB *sql.DB, tableRows []tableRow) {
 		)
 		mdtest.Equal(t, nil, err)
 	}
+}
+
+func mustParseTime(t *testing.T, timeString string) time.Time {
+	parsedTime, err := time.Parse(time.RFC3339, timeString)
+	mdtest.Equal(t, nil, err)
+	return parsedTime
 }
 
 func TestMain(m *testing.M) {
