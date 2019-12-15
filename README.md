@@ -501,6 +501,13 @@ application to determine whether it behaves as expected.
 
 ![Unit Test](doc/testing/unit-test.png)
 
+Run unit tests for backend:
+
+```bash
+cd backend
+./scripts/test
+```
+
 #### Sociable And Solitary
 
 ![Two Types of Unit Test](doc/testing/unit-test-two-types.png)
@@ -532,6 +539,13 @@ An integration test verifies the communication paths and interactions
 between components to detect interface defects.
 
 ![Integration Test](doc/testing/integration-test.png)
+
+Run integration tests for backend:
+
+```bash
+cd backend
+./scripts/integration-test
+```
 
 ### Component Testing
 
