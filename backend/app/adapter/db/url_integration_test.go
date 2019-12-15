@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"path"
 	"short/app/adapter/db"
-	"short/app/adapter/db/sqltest"
 	"short/app/adapter/db/table"
 	"short/app/entity"
 	"short/dep"
@@ -87,6 +86,9 @@ func TestURLSql_IsAliasExist(t *testing.T) {
 }
 
 func TestURLSql_GetByAlias(t *testing.T) {
+	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16Z")
+	now := mustParseTime(t, "2019-05-01T08:02:16Z")
+
 	testCases := []struct {
 		name        string
 		tableRows   []tableRow
@@ -106,14 +108,14 @@ func TestURLSql_GetByAlias(t *testing.T) {
 				{
 					alias:     "220uFicCJj",
 					longLink:  "http://www.google.com",
-					createdAt: mustParseTime(t, "2017-05-01T08:02:16"),
-					expireAt:  mustParseTime(t, "2019-05-01T08:02:16"),
+					createdAt: twoYearsAgo,
+					expireAt:  now,
 				},
 				{
 					alias:     "yDOBcj5HIPbUAsw",
 					longLink:  "http://www.facebook.com",
-					createdAt: mustParseTime(t, "2017-05-01T08:02:16"),
-					expireAt:  mustParseTime(t, "2019-05-01T08:02:16"),
+					createdAt: twoYearsAgo,
+					expireAt:  now,
 				},
 			},
 			alias:  "220uFicCJj",
@@ -121,8 +123,8 @@ func TestURLSql_GetByAlias(t *testing.T) {
 			expectedURL: entity.URL{
 				Alias:       "220uFicCJj",
 				OriginalURL: "http://www.google.com",
-				CreatedAt:   sqltest.MustParseSQLTime("2017-05-01T08:02:16"),
-				ExpireAt:    sqltest.MustParseSQLTime("2019-05-01T08:02:16"),
+				CreatedAt:   &twoYearsAgo,
+				ExpireAt:    &now,
 				UpdatedAt:   nil,
 			},
 		},
@@ -139,7 +141,7 @@ func TestURLSql_GetByAlias(t *testing.T) {
 					insertTableRows(t, sqlDB, testCase.tableRows)
 
 					urlRepo := db.NewURLSql(sqlDB)
-					url, err := urlRepo.GetByAlias("220uFicCJj")
+					url, err := urlRepo.GetByAlias(testCase.alias)
 
 					if testCase.hasErr {
 						mdtest.NotEqual(t, nil, err)
@@ -154,7 +156,7 @@ func TestURLSql_GetByAlias(t *testing.T) {
 }
 
 func TestURLSql_Create(t *testing.T) {
-	now := mustParseTime(t, "2019-05-01T08:02:16")
+	now := mustParseTime(t, "2019-05-01T08:02:16Z")
 
 	testCases := []struct {
 		name      string
