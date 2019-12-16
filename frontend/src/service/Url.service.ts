@@ -153,12 +153,12 @@ export class UrlService {
             reject([Err.NetworkError]);
             return;
           }
-          if (!graphQLErrors || graphQLErrors.length === 0) { 
+          if (!graphQLErrors || graphQLErrors.length === 0) {
             reject([Err.Unknown]);
             return;
           }
-          const errCodes = graphQLErrors.map(
-            (graphQLError: GraphQlError) => graphQLError.extensions ? graphQLError.extensions.code : Err.Unknown
+          const errCodes = graphQLErrors.map((graphQLError: GraphQlError) =>
+            graphQLError.extensions ? graphQLError.extensions.code : Err.Unknown
           );
           reject(errCodes);
         });

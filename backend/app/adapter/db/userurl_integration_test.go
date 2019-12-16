@@ -1,7 +1,10 @@
+// +build integration
+
 package db
 
 import (
 	"fmt"
+	"short/app/adapter/db/sqltest"
 	"short/app/adapter/db/table"
 	"short/app/entity"
 	"testing"
@@ -15,9 +18,9 @@ func TestListURLSql_FindAliasesByUser(t *testing.T) {
 	mockedUser := entity.User{
 		Name:           "mockedUser",
 		Email:          "test@example.com",
-		LastSignedInAt: mustParseSQLTime("2019-05-01 08:02:16"),
-		CreatedAt:      mustParseSQLTime("2019-05-01 08:00:16"),
-		UpdatedAt:      mustParseSQLTime("2019-05-01 08:02:16"),
+		LastSignedInAt: sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
+		CreatedAt:      sqltest.MustParseSQLTime("2019-05-01 08:00:16"),
+		UpdatedAt:      sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
 	}
 
 	alias := "abcd-123-xyz"
