@@ -27,7 +27,6 @@ func (a Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 	}
 
 	var res response
-
 	headers := map[string]string{
 		"Authorization": fmt.Sprintf("Bearer %s", accessToken),
 	}
