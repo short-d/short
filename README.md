@@ -18,6 +18,12 @@
 Install it from [Chrome Web Store](https://short-d.com/r/ext) or build it
 from [source](https://short-d.com/r/ext-code)
 
+## Dependent Projects
+
+- [app](): Reusable framework for Go apps & command line tools.
+- [kgs](https://github.com/byliuyang/kgs): Offline unique key generation service.
+- [toggle](https://github.com/byliuyang/toggle): Dynamic system behavior controller.
+
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
