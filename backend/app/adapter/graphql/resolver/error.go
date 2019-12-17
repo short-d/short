@@ -24,7 +24,7 @@ type ErrUnknown struct{}
 
 var _ GraphQlError = (*ErrUnknown)(nil)
 
-// Extensions keeps structured error metadata so that the clients can gracefully
+// Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
 func (e ErrUnknown) Extensions() map[string]interface{} {
 	return map[string]interface{}{
