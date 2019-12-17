@@ -35,7 +35,7 @@ func TestGraphQlAPI(t *testing.T) {
 		customAliasValidator,
 	)
 
-	s := service.NewFake()
+	s := service.NewReCaptchaFake(service.VerifyResponse{})
 	verifier := requester.NewVerifier(s)
 	authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
 

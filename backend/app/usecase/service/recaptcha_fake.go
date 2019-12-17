@@ -1,14 +1,19 @@
 package service
 
-var _ ReCaptcha = (*Fake)(nil)
+var _ ReCaptcha = (*ReCaptchaFake)(nil)
 
-type Fake struct {
+// ReCaptchaFake represents in memory implementation of ReCaptcha service.
+type ReCaptchaFake struct {
+	verifyResponse VerifyResponse
 }
 
-func (v Fake) Verify(recaptchaResponse string) (VerifyResponse, error) {
-	panic("implement me")
+// ReCaptcha verifies captcha response.
+func (r ReCaptchaFake) Verify(recaptchaResponse string) (VerifyResponse, error) {
+	return r.verifyResponse, nil
 }
 
-func NewFake() Fake {
-	return Fake{}
+// NewReCaptchaFake creates in memory fake reCaptcha service with predefined
+// response.
+func NewReCaptchaFake(verifyResponse VerifyResponse) ReCaptchaFake {
+	return ReCaptchaFake{verifyResponse:verifyResponse}
 }
