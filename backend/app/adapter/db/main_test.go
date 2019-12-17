@@ -5,6 +5,9 @@ import (
 	"short/dep"
 	"strconv"
 	"testing"
+	"time"
+
+	"github.com/byliuyang/app/mdtest"
 
 	"github.com/byliuyang/app/fw"
 )
@@ -48,4 +51,10 @@ func mustInt(numStr string) int {
 		panic(err)
 	}
 	return num
+}
+
+func mustParseTime(t *testing.T, timeString string) time.Time {
+	parsedTime, err := time.Parse(time.RFC3339, timeString)
+	mdtest.Equal(t, nil, err)
+	return parsedTime
 }

@@ -223,9 +223,3 @@ func insertURLTableRows(t *testing.T, sqlDB *sql.DB, tableRows []urlTableRow) {
 		mdtest.Equal(t, nil, err)
 	}
 }
-
-func mustParseTime(t *testing.T, timeString string) time.Time {
-	parsedTime, err := time.Parse(time.RFC3339, timeString)
-	mdtest.Equal(t, nil, err)
-	return parsedTime
-}
