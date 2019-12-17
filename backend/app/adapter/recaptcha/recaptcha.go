@@ -12,7 +12,7 @@ const verifyAPI = "https://www.google.com/recaptcha/api/siteverify"
 
 var _ service.ReCaptcha = (*Service)(nil)
 
-// ReCaptcha consumes with Google ReCaptcha V3 APIs through network.
+// Service consumes with Google ReCaptcha V3 APIs through network.
 // https://developers.google.com/recaptcha/docs/verify
 type Service struct {
 	http   fw.HTTPRequest

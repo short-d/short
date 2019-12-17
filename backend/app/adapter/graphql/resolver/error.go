@@ -37,7 +37,7 @@ func (e ErrUnknown) Error() string {
 	return "unknown err"
 }
 
-// ErrURLAliasExist signifies a wanted short link is not available.
+// ErrURLAliasExist signifies a wanted short link alias is not available.
 type ErrURLAliasExist string
 
 var _ GraphQlError = (*ErrURLAliasExist)(nil)

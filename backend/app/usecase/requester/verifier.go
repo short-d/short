@@ -9,7 +9,7 @@ type Verifier struct {
 	service service.ReCaptcha
 }
 
-// IsHuman checks whether the request is sent by human user.
+// IsHuman checks whether the request is sent by a human user.
 func (r Verifier) IsHuman(recaptchaResponse string) (bool, error) {
 	apiRes, err := r.service.Verify(recaptchaResponse)
 	if err != nil {

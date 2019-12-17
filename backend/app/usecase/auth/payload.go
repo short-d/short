@@ -13,7 +13,7 @@ type Payload struct {
 	issuedAt time.Time
 }
 
-// TokenPayload retrieves key-value pairs representation of payload.
+// TokenPayload retrieves key-value pairs representation of the payload.
 func (p Payload) TokenPayload() fw.TokenPayload {
 	return map[string]interface{}{
 		"email":     p.email,
