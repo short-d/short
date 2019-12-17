@@ -26,6 +26,7 @@ type ServiceConfig struct {
 	KgsPort              int
 }
 
+// NewRootCmd creates the base command.
 func NewRootCmd(
 	dbConfig fw.DBConfig,
 	config ServiceConfig,
@@ -83,6 +84,7 @@ func NewRootCmd(
 	return rootCmd
 }
 
+// Execute runs the root command.
 func Execute(rootCmd fw.Command) {
 	err := rootCmd.Execute()
 	if err != nil {

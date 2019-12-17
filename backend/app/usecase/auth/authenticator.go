@@ -8,6 +8,7 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// Authenticator securely authenticates an user's identity.
 type Authenticator struct {
 	tokenizer          fw.CryptoTokenizer
 	timer              fw.Timer
