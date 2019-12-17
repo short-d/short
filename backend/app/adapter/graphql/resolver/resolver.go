@@ -8,7 +8,7 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
-// Resolver represents GraphQL request handlers.
+// Resolver contains GraphQL request handlers.
 type Resolver struct {
 	Query
 	Mutation
