@@ -1,6 +1,6 @@
 package resolver
 
-// ErrCode represents unique strings identifying GraphQL api errors.
+// ErrCode represents an unique string identifying a GraphQL api error.
 type ErrCode string
 
 const (
