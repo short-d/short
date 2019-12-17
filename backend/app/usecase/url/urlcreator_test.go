@@ -148,7 +148,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				aliasValidator,
 			)
 
-			savedURL, err := urlRepo.GetByAlias(testCase.url.Alias)
+			_, err := urlRepo.GetByAlias(testCase.url.Alias)
 			mdtest.NotEqual(t, nil, err)
 
 			isExist := userURLRepo.IsRelationExist(testCase.user, testCase.url)
