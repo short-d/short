@@ -98,7 +98,7 @@ type ErrInvalidCustomAlias string
 
 var _ GraphQlError = (*ErrInvalidCustomAlias)(nil)
 
-// Extensions keeps structured error metadata so that the clients can gracefully
+// Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
 func (e ErrInvalidCustomAlias) Extensions() map[string]interface{} {
 	return map[string]interface{}{
