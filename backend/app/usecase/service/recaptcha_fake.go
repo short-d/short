@@ -7,7 +7,7 @@ type ReCaptchaFake struct {
 	verifyResponse VerifyResponse
 }
 
-// ReCaptchaFake verifies captcha response.
+// Verify verifies captcha response.
 func (r ReCaptchaFake) Verify(recaptchaResponse string) (VerifyResponse, error) {
 	return r.verifyResponse, nil
 }
