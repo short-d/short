@@ -12,7 +12,7 @@ const (
 	ErrCodeInvalidAuthToken           = "invalidAuthToken"
 )
 
-// GraphQlError represents GraphAPI error.
+// GraphQlError represents a GraphAPI error.
 type GraphQlError interface {
 	Extensions() map[string]interface{}
 	Error() string
