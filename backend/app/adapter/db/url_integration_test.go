@@ -64,7 +64,7 @@ func TestURLSql_IsAliasExist(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					insertTableRows(t, sqlDB, testCase.tableRows)
+					insertURLTableRows(t, sqlDB, testCase.tableRows)
 
 					urlRepo := db.NewURLSql(sqlDB)
 					gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
@@ -128,7 +128,7 @@ func TestURLSql_GetByAlias(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					insertTableRows(t, sqlDB, testCase.tableRows)
+					insertURLTableRows(t, sqlDB, testCase.tableRows)
 
 					urlRepo := db.NewURLSql(sqlDB)
 					url, err := urlRepo.GetByAlias(testCase.alias)
