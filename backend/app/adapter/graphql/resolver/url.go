@@ -5,7 +5,7 @@ import (
 	"short/app/entity"
 )
 
-// URL retrieves queried fields of URL entity.
+// URL retrieves requested fields of URL entity.
 type URL struct {
 	url entity.URL
 }
