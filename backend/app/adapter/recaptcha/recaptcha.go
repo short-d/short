@@ -12,12 +12,14 @@ const verifyAPI = "https://www.google.com/recaptcha/api/siteverify"
 
 var _ service.ReCaptcha = (*Service)(nil)
 
+// ReCaptcha consumes with Google ReCaptcha V3 APIs through network.
 // https://developers.google.com/recaptcha/docs/verify
 type Service struct {
 	http   fw.HTTPRequest
 	secret string
 }
 
+// Verify checks whether a captcha response is valid.
 func (r Service) Verify(captchaResponse string) (service.VerifyResponse, error) {
 	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
@@ -31,6 +33,7 @@ func (r Service) Verify(captchaResponse string) (service.VerifyResponse, error) 
 	return apiRes, nil
 }
 
+// NewService initializes ReCaptcha API consumer.
 func NewService(http fw.HTTPRequest, secret string) Service {
 	return Service{
 		http:   http,
