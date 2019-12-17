@@ -73,7 +73,7 @@ func (e ErrNotHuman) Error() string {
 	return "requester is not human"
 }
 
-// ErrNotHuman signifies that the provided long link has incorrect format.
+// ErrInvalidLongLink signifies that the provided long link has incorrect format.
 type ErrInvalidLongLink string
 
 var _ GraphQlError = (*ErrInvalidLongLink)(nil)
@@ -92,7 +92,8 @@ func (e ErrInvalidLongLink) Error() string {
 	return "long link is invalid"
 }
 
-// ErrNotHuman signifies that the provided custom alias has incorrect format.
+// ErrInvalidCustomAlias signifies that the provided custom alias has incorrect
+// format.
 type ErrInvalidCustomAlias string
 
 var _ GraphQlError = (*ErrInvalidCustomAlias)(nil)
@@ -111,7 +112,7 @@ func (e ErrInvalidCustomAlias) Error() string {
 	return "custom alias is invalid"
 }
 
-// ErrNotHuman signifies that the provided authentication is invalid.
+// ErrInvalidAuthToken signifies that the provided authentication is invalid.
 type ErrInvalidAuthToken string
 
 var _ GraphQlError = (*ErrInvalidAuthToken)(nil)
