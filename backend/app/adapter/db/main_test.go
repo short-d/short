@@ -1,11 +1,12 @@
 package db_test
 
 import (
-	"github.com/byliuyang/app/fw"
 	"path"
 	"short/dep"
 	"strconv"
 	"testing"
+
+	"github.com/byliuyang/app/fw"
 )
 
 var dbConnector fw.DBConnector
