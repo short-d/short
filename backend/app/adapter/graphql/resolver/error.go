@@ -3,6 +3,7 @@ package resolver
 // ErrCode represents an unique string identifying a GraphQL api error.
 type ErrCode string
 
+// The constants enumerate all supported error codes.
 const (
 	ErrCodeUnknown            ErrCode = "unknown"
 	ErrCodeAliasAlreadyExist          = "aliasAlreadyExist"
