@@ -60,7 +60,7 @@ type ErrNotHuman struct{}
 
 var _ GraphQlError = (*ErrNotHuman)(nil)
 
-// Extensions keeps structured error metadata so that the clients can gracefully
+// Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
 func (e ErrNotHuman) Extensions() map[string]interface{} {
 	return map[string]interface{}{
