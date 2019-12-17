@@ -112,7 +112,7 @@ func (e ErrInvalidCustomAlias) Error() string {
 	return "custom alias is invalid"
 }
 
-// ErrInvalidAuthToken signifies that the provided authentication is invalid.
+// ErrInvalidAuthToken signifies the provided authentication is invalid.
 type ErrInvalidAuthToken string
 
 var _ GraphQlError = (*ErrInvalidAuthToken)(nil)
