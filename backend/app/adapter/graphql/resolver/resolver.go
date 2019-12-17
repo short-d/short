@@ -8,11 +8,13 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
+// Resolver represents GraphQL request handlers.
 type Resolver struct {
 	Query
 	Mutation
 }
 
+// NewResolver creates a new GraphQL resolver.
 func NewResolver(
 	logger fw.Logger,
 	tracer fw.Tracer,
