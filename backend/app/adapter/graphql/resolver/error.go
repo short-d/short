@@ -41,7 +41,7 @@ type ErrURLAliasExist string
 
 var _ GraphQlError = (*ErrURLAliasExist)(nil)
 
-// Extensions keeps structured error metadata so that the clients can gracefully
+// Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
 func (e ErrURLAliasExist) Extensions() map[string]interface{} {
 	return map[string]interface{}{
