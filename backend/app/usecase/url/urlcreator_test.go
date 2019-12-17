@@ -168,7 +168,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			mdtest.Equal(t, testCase.expectedURL, url)
 
-			savedURL, err = urlRepo.GetByAlias(testCase.expectedURL.Alias)
+			savedURL, err := urlRepo.GetByAlias(testCase.expectedURL.Alias)
 			mdtest.Equal(t, nil, err)
 			mdtest.Equal(t, testCase.expectedURL, savedURL)
 
