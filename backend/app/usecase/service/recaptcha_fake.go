@@ -7,7 +7,7 @@ type ReCaptchaFake struct {
 	verifyResponse VerifyResponse
 }
 
-// ReCaptcha verifies captcha response.
+// ReCaptchaFake verifies captcha response.
 func (r ReCaptchaFake) Verify(recaptchaResponse string) (VerifyResponse, error) {
 	return r.verifyResponse, nil
 }
@@ -15,5 +15,5 @@ func (r ReCaptchaFake) Verify(recaptchaResponse string) (VerifyResponse, error) 
 // NewReCaptchaFake creates in memory fake reCaptcha service with predefined
 // response.
 func NewReCaptchaFake(verifyResponse VerifyResponse) ReCaptchaFake {
-	return ReCaptchaFake{verifyResponse:verifyResponse}
+	return ReCaptchaFake{verifyResponse: verifyResponse}
 }
