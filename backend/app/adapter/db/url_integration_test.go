@@ -5,26 +5,16 @@ package db_test
 import (
 	"database/sql"
 	"fmt"
-	"path"
 	"short/app/adapter/db"
 	"short/app/adapter/db/table"
 	"short/app/entity"
-	"short/dep"
-	"strconv"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/mdtest"
 )
 
-var dbConnector fw.DBConnector
-var dbMigrationTool fw.DBMigrationTool
-
-var dbConfig fw.DBConfig
-var dbMigrationRoot string
-
-var insertRowSQL = fmt.Sprintf(`
+var insertURLRowSQL = fmt.Sprintf(`
 INSERT INTO %s (%s, %s, %s, %s, %s)
 VALUES ($1, $2, $3, $4, $5)`,
 	table.URL.TableName,
@@ -35,7 +25,7 @@ VALUES ($1, $2, $3, $4, $5)`,
 	table.URL.ColumnUpdatedAt,
 )
 
-type tableRow struct {
+type urlTableRow struct {
 	alias     string
 	longLink  string
 	createdAt time.Time
@@ -46,20 +36,20 @@ type tableRow struct {
 func TestURLSql_IsAliasExist(t *testing.T) {
 	testCases := []struct {
 		name       string
-		tableRows  []tableRow
+		tableRows  []urlTableRow
 		alias      string
 		expIsExist bool
 	}{
 		{
 			name:       "alias doesn't exist",
 			alias:      "gg",
-			tableRows:  []tableRow{},
+			tableRows:  []urlTableRow{},
 			expIsExist: false,
 		},
 		{
 			name:  "alias found",
 			alias: "gg",
-			tableRows: []tableRow{
+			tableRows: []urlTableRow{
 				{alias: "gg"},
 			},
 			expIsExist: true,
@@ -91,20 +81,20 @@ func TestURLSql_GetByAlias(t *testing.T) {
 
 	testCases := []struct {
 		name        string
-		tableRows   []tableRow
+		tableRows   []urlTableRow
 		alias       string
 		hasErr      bool
 		expectedURL entity.URL
 	}{
 		{
 			name:      "alias not found",
-			tableRows: []tableRow{},
+			tableRows: []urlTableRow{},
 			alias:     "220uFicCJj",
 			hasErr:    true,
 		},
 		{
 			name: "found url",
-			tableRows: []tableRow{
+			tableRows: []urlTableRow{
 				{
 					alias:     "220uFicCJj",
 					longLink:  "http://www.google.com",
@@ -160,13 +150,13 @@ func TestURLSql_Create(t *testing.T) {
 
 	testCases := []struct {
 		name      string
-		tableRows []tableRow
+		tableRows []urlTableRow
 		url       entity.URL
 		hasErr    bool
 	}{
 		{
 			name: "alias exists",
-			tableRows: []tableRow{
+			tableRows: []urlTableRow{
 				{
 					alias:    "220uFicCJj",
 					longLink: "http://www.facebook.com",
@@ -182,7 +172,7 @@ func TestURLSql_Create(t *testing.T) {
 		},
 		{
 			name: "successfully create url",
-			tableRows: []tableRow{
+			tableRows: []urlTableRow{
 				{
 					alias:    "abc",
 					longLink: "http://www.google.com",
@@ -220,10 +210,10 @@ func TestURLSql_Create(t *testing.T) {
 	}
 }
 
-func insertTableRows(t *testing.T, sqlDB *sql.DB, tableRows []tableRow) {
+func insertURLTableRows(t *testing.T, sqlDB *sql.DB, tableRows []urlTableRow) {
 	for _, tableRow := range tableRows {
 		_, err := sqlDB.Exec(
-			insertRowSQL,
+			insertURLRowSQL,
 			tableRow.alias,
 			tableRow.longLink,
 			tableRow.createdAt,
@@ -238,39 +228,4 @@ func mustParseTime(t *testing.T, timeString string) time.Time {
 	parsedTime, err := time.Parse(time.RFC3339, timeString)
 	mdtest.Equal(t, nil, err)
 	return parsedTime
-}
-
-func TestMain(m *testing.M) {
-	env := dep.InjectEnvironment()
-	env.AutoLoadDotEnvFile()
-
-	host := env.GetEnv("DB_HOST", "")
-	portStr := env.GetEnv("DB_PORT", "")
-	port := mustInt(portStr)
-	user := env.GetEnv("DB_USER", "")
-	password := env.GetEnv("DB_PASSWORD", "")
-	dbName := env.GetEnv("DB_NAME", "")
-
-	dbConfig = fw.DBConfig{
-		Host:     host,
-		Port:     port,
-		User:     user,
-		Password: password,
-		DbName:   dbName,
-	}
-
-	dbMigrationRoot = path.Join(env.GetEnv("MIGRATION_ROOT", ""))
-
-	dbConnector = dep.InjectDBConnector()
-	dbMigrationTool = dep.InjectDBMigrationTool()
-
-	m.Run()
-}
-
-func mustInt(numStr string) int {
-	num, err := strconv.Atoi(numStr)
-	if err != nil {
-		panic(err)
-	}
-	return num
 }
