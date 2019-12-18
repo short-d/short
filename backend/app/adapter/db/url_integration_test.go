@@ -76,8 +76,8 @@ func TestURLSql_IsAliasExist(t *testing.T) {
 }
 
 func TestURLSql_GetByAlias(t *testing.T) {
-	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16Z")
-	now := mustParseTime(t, "2019-05-01T08:02:16Z")
+	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
+	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
 	testCases := []struct {
 		name        string
@@ -100,12 +100,14 @@ func TestURLSql_GetByAlias(t *testing.T) {
 					longLink:  "http://www.google.com",
 					createdAt: twoYearsAgo,
 					expireAt:  now,
+					updatedAt: now,
 				},
 				{
 					alias:     "yDOBcj5HIPbUAsw",
 					longLink:  "http://www.facebook.com",
 					createdAt: twoYearsAgo,
 					expireAt:  now,
+					updatedAt: now,
 				},
 			},
 			alias:  "220uFicCJj",
@@ -115,7 +117,7 @@ func TestURLSql_GetByAlias(t *testing.T) {
 				OriginalURL: "http://www.google.com",
 				CreatedAt:   &twoYearsAgo,
 				ExpireAt:    &now,
-				UpdatedAt:   nil,
+				UpdatedAt:   &now,
 			},
 		},
 	}
@@ -146,7 +148,7 @@ func TestURLSql_GetByAlias(t *testing.T) {
 }
 
 func TestURLSql_Create(t *testing.T) {
-	now := mustParseTime(t, "2019-05-01T08:02:16Z")
+	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
 	testCases := []struct {
 		name      string
@@ -196,6 +198,8 @@ func TestURLSql_Create(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertURLTableRows(t, sqlDB, testCase.tableRows)
+
 					urlRepo := db.NewURLSql(sqlDB)
 					err := urlRepo.Create(testCase.url)
 

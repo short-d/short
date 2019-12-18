@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
 	"github.com/byliuyang/app/fw"
+	"github.com/byliuyang/app/mdtest"
 )
 
 var dbConnector fw.DBConnector
@@ -55,5 +55,5 @@ func mustInt(numStr string) int {
 func mustParseTime(t *testing.T, timeString string) time.Time {
 	parsedTime, err := time.Parse(time.RFC3339, timeString)
 	mdtest.Equal(t, nil, err)
-	return parsedTime
+	return parsedTime.UTC()
 }
