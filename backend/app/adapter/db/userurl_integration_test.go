@@ -1,10 +1,11 @@
 // +build integration
 
-package db
+package db_test
 
 import (
+	"database/sql"
 	"fmt"
-	"short/app/adapter/db/sqltest"
+	"short/app/adapter/db"
 	"short/app/adapter/db/table"
 	"short/app/entity"
 	"testing"
@@ -12,70 +13,94 @@ import (
 	"github.com/byliuyang/app/mdtest"
 )
 
-func TestListURLSql_FindAliasesByUser(t *testing.T) {
-	var mockedEmptyAliases []string
-	var mockedAliases []string
-	mockedUser := entity.User{
-		Name:           "mockedUser",
-		Email:          "test@example.com",
-		LastSignedInAt: sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
-		CreatedAt:      sqltest.MustParseSQLTime("2019-05-01 08:00:16"),
-		UpdatedAt:      sqltest.MustParseSQLTime("2019-05-01 08:02:16"),
-	}
+var insertUserURLRelationRowSQL = fmt.Sprintf(`
+INSERT INTO %s (%s, %s)
+VALUES ($1, $2)`,
+	table.UserURLRelation.TableName,
+	table.UserURLRelation.ColumnURLAlias,
+	table.UserURLRelation.ColumnUserEmail,
+)
 
-	alias := "abcd-123-xyz"
-	mockedAliases = append(mockedAliases, alias)
+type userURLRelationTableRow struct {
+	alias     string
+	userEmail string
+}
+
+func TestListURLSql_FindAliasesByUser(t *testing.T) {
+	now := mustParseTime(t, "2019-05-01T08:02:16Z")
 
 	testCases := []struct {
 		name            string
-		tableRows       *mdtest.TableRows
+		tableRows       []userURLRelationTableRow
 		user            entity.User
 		hasErr          bool
 		expectedAliases []string
 	}{
 		{
-			name: "no alias found",
-			tableRows: mdtest.NewTableRows([]string{
-				table.URL.ColumnAlias,
-			}),
-			user:            mockedUser,
+			name:      "no alias found",
+			tableRows: []userURLRelationTableRow{},
+			user: entity.User{
+				Name:           "mockedUser",
+				Email:          "test@example.com",
+				LastSignedInAt: &now,
+				CreatedAt:      &now,
+				UpdatedAt:      &now,
+			},
 			hasErr:          false,
-			expectedAliases: mockedEmptyAliases,
+			expectedAliases: []string{},
 		},
 		{
 			name: "aliases found",
-			tableRows: mdtest.NewTableRows([]string{
-				table.URL.ColumnAlias,
-			}).AddRow(
+			tableRows: []userURLRelationTableRow{
+				{alias: "abcd-123-xyz"},
+			},
+			user: entity.User{
+				Name:           "mockedUser",
+				Email:          "test@example.com",
+				LastSignedInAt: &now,
+				CreatedAt:      &now,
+				UpdatedAt:      &now,
+			},
+			hasErr: false,
+			expectedAliases: []string{
 				"abcd-123-xyz",
-			),
-			user:            mockedUser,
-			hasErr:          false,
-			expectedAliases: mockedAliases,
+			},
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			db, stub, err := mdtest.NewSQLStub()
-			mdtest.Equal(t, nil, err)
-			defer db.Close()
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					userURLRelationRepo := db.NewUserURLRelationSQL(sqlDB)
+					result, err := userURLRelationRepo.FindAliasesByUser(testCase.user)
 
-			expQuery := fmt.Sprintf(`^SELECT "%s" FROM "%s" WHERE "%s"=.+$`,
-				table.UserURLRelation.ColumnURLAlias,
-				table.UserURLRelation.TableName,
-				table.UserURLRelation.ColumnUserEmail)
-			stub.ExpectQuery(expQuery).WillReturnRows(testCase.tableRows)
-
-			userURLRelationRepo := NewUserURLRelationSQL(db)
-			result, err := userURLRelationRepo.FindAliasesByUser(testCase.user)
-
-			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
-				return
-			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedAliases, result)
+					if testCase.hasErr {
+						mdtest.NotEqual(t, nil, err)
+						return
+					}
+					mdtest.Equal(t, nil, err)
+					mdtest.Equal(t, testCase.expectedAliases, result)
+				})
 		})
+	}
+}
+
+func insertUserURLRelationTableRows(
+	t *testing.T,
+	sqlDB *sql.DB,
+	tableRows []userURLRelationTableRow,
+) {
+	for _, tableRow := range tableRows {
+		_, err := sqlDB.Exec(
+			insertUserURLRelationRowSQL,
+			tableRow.alias,
+			tableRow.userEmail,
+		)
+		mdtest.Equal(t, nil, err)
 	}
 }
