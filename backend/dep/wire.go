@@ -59,6 +59,12 @@ var facebookAPISet = wire.NewSet(
 	facebook.NewAPI,
 )
 
+var googleAPISet = wire.NewSet(
+	provider.NewFacebookIdentityProvider,
+	google.NewAccount,
+	google.NewAPI,
+)
+
 // InjectCommandFactory creates CommandFactory with configured dependencies.
 func InjectCommandFactory() fw.CommandFactory {
 	wire.Build(
@@ -148,6 +154,9 @@ func InjectRoutingService(
 	facebookClientID provider.FacebookClientID,
 	facebookClientSecret provider.FacebookClientSecret,
 	facebookRedirectURI provider.FacebookRedirectURI,
+	googleClientID provider.GoogleClientID,
+	googleClientSecret provider.GoogleClientSecret,
+	googleRedirectURI provider.GoogleRedirectURI,
 	jwtSecret provider.JwtSecret,
 	webFrontendURL provider.WebFrontendURL,
 ) mdservice.Service {
@@ -161,6 +170,7 @@ func InjectRoutingService(
 		authSet,
 		githubAPISet,
 		facebookAPISet,
+		googleAPISet,
 
 		mdservice.New,
 		mdrouting.NewBuiltIn,
