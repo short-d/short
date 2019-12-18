@@ -48,7 +48,14 @@ VALUES ($1, $2, $3, $4, $5);`,
 		table.URL.ColumnCreatedAt,
 		table.URL.ColumnUpdatedAt,
 	)
-	_, err := u.db.Exec(statement, url.Alias, url.OriginalURL, url.ExpireAt, url.CreatedAt, url.UpdatedAt)
+	_, err := u.db.Exec(
+		statement,
+		url.Alias,
+		url.OriginalURL,
+		url.ExpireAt,
+		url.CreatedAt,
+		url.UpdatedAt,
+	)
 	return err
 }
 
@@ -70,10 +77,25 @@ WHERE "%s"=$1;`,
 	row := u.db.QueryRow(statement, alias)
 
 	url := entity.URL{}
-	err := row.Scan(&url.Alias, &url.OriginalURL, &url.ExpireAt, &url.CreatedAt, &url.UpdatedAt)
+	err := row.Scan(
+		&url.Alias,
+		&url.OriginalURL,
+		&url.ExpireAt,
+		&url.CreatedAt,
+		&url.UpdatedAt,
+	)
 	if err != nil {
 		return entity.URL{}, err
 	}
+
+	createdAt := url.CreatedAt.UTC()
+	url.CreatedAt = &createdAt
+
+	updatedAt := url.UpdatedAt.UTC()
+	url.UpdatedAt = &updatedAt
+
+	expireAt := url.ExpireAt.UTC()
+	url.ExpireAt = &expireAt
 
 	return url, nil
 }
