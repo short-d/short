@@ -55,5 +55,5 @@ func mustInt(numStr string) int {
 func mustParseTime(t *testing.T, timeString string) time.Time {
 	parsedTime, err := time.Parse(time.RFC3339, timeString)
 	mdtest.Equal(t, nil, err)
-	return parsedTime
+	return parsedTime.UTC()
 }

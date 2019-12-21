@@ -15,7 +15,7 @@ import (
 )
 
 var insertUserRowSQL = fmt.Sprintf(`
-INSERT INTO %s (%s, %s, %s, %s, %s, %s)
+INSERT INTO "%s" (%s, %s, %s, %s, %s, %s)
 VALUES ($1, $2, $3, $4, $5, $6)`,
 	table.User.TableName,
 	table.User.ColumnID,
@@ -76,6 +76,8 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 }
 
 func TestUserSql_GetUserByEmail(t *testing.T) {
+	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
+
 	testCases := []struct {
 		name      string
 		tableRows []userTableRow
@@ -85,20 +87,31 @@ func TestUserSql_GetUserByEmail(t *testing.T) {
 	}{
 		{
 			name:      "email doesn't exist",
-			email:     "user@example.com",
+			email:     "alpha@example.com",
 			tableRows: []userTableRow{},
 			hasErr:    true,
 		},
 		{
 			name:  "email found",
-			email: "user@example.com",
+			email: "alpha@example.com",
 			tableRows: []userTableRow{
-				{email: "alpha@example.com", name: "Alpha"},
+				{
+					id:           "alpha",
+					email:        "alpha@example.com",
+					name:         "Alpha",
+					lastSignedIn: twoYearsAgo,
+					createdAt:    twoYearsAgo,
+					updatedAt:    twoYearsAgo,
+				},
 			},
 			hasErr: false,
 			expUser: entity.User{
-				Name:  "Alpha",
-				Email: "alpha@example.com",
+				ID:             "alpha",
+				Name:           "Alpha",
+				Email:          "alpha@example.com",
+				LastSignedInAt: &twoYearsAgo,
+				CreatedAt:      &twoYearsAgo,
+				UpdatedAt:      &twoYearsAgo,
 			},
 		},
 	}
@@ -114,7 +127,6 @@ func TestUserSql_GetUserByEmail(t *testing.T) {
 					insertUserTableRows(t, sqlDB, testCase.tableRows)
 
 					userRepo := db.NewUserSQL(sqlDB)
-
 					gotUser, err := userRepo.GetUserByEmail(testCase.email)
 					if testCase.hasErr {
 						mdtest.NotEqual(t, nil, err)
@@ -213,7 +225,7 @@ func TestUserSQL_UpdateUserID(t *testing.T) {
 
 					userRepo := db.NewUserSQL(sqlDB)
 
-					err := userRepo.UpdateUserID(testCase.email, "userID")
+					err := userRepo.UpdateUserID(testCase.email, "alpha")
 					if testCase.hasErr {
 						mdtest.NotEqual(t, nil, err)
 						return

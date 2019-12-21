@@ -30,15 +30,19 @@ func TestListURLSql_FindAliasesByUser(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16Z")
 
 	testCases := []struct {
-		name            string
-		tableRows       []userURLRelationTableRow
-		user            entity.User
-		hasErr          bool
-		expectedAliases []string
+		name              string
+		userTableRows     []userTableRow
+		urlTableRows      []urlTableRow
+		relationTableRows []userURLRelationTableRow
+		user              entity.User
+		hasErr            bool
+		expectedAliases   []string
 	}{
 		{
-			name:      "no alias found",
-			tableRows: []userURLRelationTableRow{},
+			name:              "no alias found",
+			userTableRows:     []userTableRow{},
+			urlTableRows:      []urlTableRow{},
+			relationTableRows: []userURLRelationTableRow{},
 			user: entity.User{
 				Name:           "mockedUser",
 				Email:          "test@example.com",
@@ -47,12 +51,21 @@ func TestListURLSql_FindAliasesByUser(t *testing.T) {
 				UpdatedAt:      &now,
 			},
 			hasErr:          false,
-			expectedAliases: []string{},
+			expectedAliases: nil,
 		},
 		{
 			name: "aliases found",
-			tableRows: []userURLRelationTableRow{
+			userTableRows: []userTableRow{
+				{email: "test@example.com"},
+			},
+			urlTableRows: []urlTableRow{
 				{alias: "abcd-123-xyz"},
+			},
+			relationTableRows: []userURLRelationTableRow{
+				{
+					alias:     "abcd-123-xyz",
+					userEmail: "test@example.com",
+				},
 			},
 			user: entity.User{
 				Name:           "mockedUser",
@@ -76,6 +89,10 @@ func TestListURLSql_FindAliasesByUser(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
+					insertURLTableRows(t, sqlDB, testCase.urlTableRows)
+					insertUserURLRelationTableRows(t, sqlDB, testCase.relationTableRows)
+
 					userURLRelationRepo := db.NewUserURLRelationSQL(sqlDB)
 					result, err := userURLRelationRepo.FindAliasesByUser(testCase.user)
 
