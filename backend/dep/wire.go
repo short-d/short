@@ -7,6 +7,7 @@ import (
 	"short/app/adapter/db"
 	"short/app/adapter/facebook"
 	"short/app/adapter/github"
+	"short/app/adapter/google"
 	"short/app/adapter/graphql"
 	"short/app/adapter/kgs"
 	"short/app/usecase/account"
@@ -60,7 +61,7 @@ var facebookAPISet = wire.NewSet(
 )
 
 var googleAPISet = wire.NewSet(
-	provider.NewFacebookIdentityProvider,
+	provider.NewGoogleIdentityProvider,
 	google.NewAccount,
 	google.NewAPI,
 )

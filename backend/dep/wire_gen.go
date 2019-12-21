@@ -7,17 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"short/app/adapter/db"
-	"short/app/adapter/facebook"
-	"short/app/adapter/github"
-	"short/app/adapter/graphql"
-	"short/app/usecase/account"
-	"short/app/usecase/requester"
-	"short/app/usecase/url"
-	"short/app/usecase/validator"
-	"short/dep/provider"
-	"time"
-
 	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdcli"
 	"github.com/byliuyang/app/modern/mddb"
@@ -30,6 +19,17 @@ import (
 	"github.com/byliuyang/app/modern/mdtimer"
 	"github.com/byliuyang/app/modern/mdtracer"
 	"github.com/google/wire"
+	"short/app/adapter/db"
+	"short/app/adapter/facebook"
+	"short/app/adapter/github"
+	"short/app/adapter/google"
+	"short/app/adapter/graphql"
+	"short/app/usecase/account"
+	"short/app/usecase/requester"
+	"short/app/usecase/url"
+	"short/app/usecase/validator"
+	"short/dep/provider"
+	"time"
 )
 
 // Injectors from wire.go:
@@ -89,7 +89,7 @@ var (
 	_wireTokenValidDurationValue = provider.TokenValidDuration(oneDay)
 )
 
-func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL) mdservice.Service {
+func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL) mdservice.Service {
 	logger := mdlogger.NewLocal()
 	tracer := mdtracer.NewLocal()
 	timer := mdtimer.NewTimer()
@@ -126,3 +126,5 @@ var observabilitySet = wire.NewSet(mdlogger.NewLocal, mdtracer.NewLocal)
 var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAccount, github.NewAPI)
 
 var facebookAPISet = wire.NewSet(provider.NewFacebookIdentityProvider, facebook.NewAccount, facebook.NewAPI)
+
+var googleAPISet = wire.NewSet(provider.NewGoogleIdentityProvider, google.NewAccount, google.NewAPI)
