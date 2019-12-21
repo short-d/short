@@ -10,7 +10,6 @@ import (
 	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdcli"
 	"github.com/byliuyang/app/modern/mddb"
-	"github.com/byliuyang/app/modern/mdenv"
 	"github.com/byliuyang/app/modern/mdhttp"
 	"github.com/byliuyang/app/modern/mdlogger"
 	"github.com/byliuyang/app/modern/mdrequest"
@@ -47,11 +46,6 @@ func InjectDBConnector() fw.DBConnector {
 func InjectDBMigrationTool() fw.DBMigrationTool {
 	postgresMigrationTool := mddb.NewPostgresMigrationTool()
 	return postgresMigrationTool
-}
-
-func InjectEnvironment() fw.Environment {
-	goDotEnv := mdenv.NewGoDotEnv()
-	return goDotEnv
 }
 
 func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (mdservice.Service, error) {
@@ -104,12 +98,15 @@ func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.Gi
 	facebookIdentityProvider := provider.NewFacebookIdentityProvider(http, facebookClientID, facebookClientSecret, facebookRedirectURI)
 	facebookAccount := facebook.NewAccount()
 	facebookAPI := facebook.NewAPI(facebookIdentityProvider, facebookAccount)
+	googleIdentityProvider := provider.NewGoogleIdentityProvider(http, googleClientID, googleClientSecret, googleRedirectURI)
+	googleAccount := google.NewAccount(http)
+	googleAPI := google.NewAPI(googleIdentityProvider, googleAccount)
 	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	accountProvider := account.NewProvider(userSQL, timer)
-	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, authenticator, accountProvider)
+	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service

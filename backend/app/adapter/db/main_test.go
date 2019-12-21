@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
 	"github.com/byliuyang/app/fw"
+	"github.com/byliuyang/app/mdtest"
 )
 
 var dbConnector fw.DBConnector
