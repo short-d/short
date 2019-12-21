@@ -3,8 +3,8 @@ package routing
 import (
 	netURL "net/url"
 	"short/app/adapter/facebook"
-	"short/app/adapter/google"
 	"short/app/adapter/github"
+	"short/app/adapter/google"
 	"short/app/usecase/account"
 	"short/app/usecase/auth"
 	"short/app/usecase/sso"
