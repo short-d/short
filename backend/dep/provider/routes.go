@@ -3,6 +3,7 @@ package provider
 import (
 	"short/app/adapter/facebook"
 	"short/app/adapter/github"
+	"short/app/adapter/google"
 	"short/app/adapter/routing"
 	"short/app/usecase/account"
 	"short/app/usecase/auth"
@@ -23,6 +24,7 @@ func NewShortRoutes(
 	urlRetriever url.Retriever,
 	githubAPI github.API,
 	facebookAPI facebook.API,
+	googleAPI google.API,
 	authenticator auth.Authenticator,
 	accountProvider account.Provider,
 ) []fw.Route {
@@ -38,6 +40,7 @@ func NewShortRoutes(
 		urlRetriever,
 		githubAPI,
 		facebookAPI,
+		googleAPI,
 		authenticator,
 		accountProvider,
 	)
