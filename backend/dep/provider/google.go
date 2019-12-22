@@ -6,13 +6,13 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
-// GoogleClientID represents client ID used for Github OAuth.
+// GoogleClientID represents client ID used for Google OAuth.
 type GoogleClientID string
 
-// GoogleClientSecret represents client secret used for Github OAuth.
+// GoogleClientSecret represents client secret used for Google OAuth.
 type GoogleClientSecret string
 
-// GoogleRedirectURI represents redirect URL for facebook single sign on.
+// GoogleRedirectURI represents redirect URL for Google single sign on.
 type GoogleRedirectURI string
 
 // NewGoogleIdentityProvider creates a new Google OAuth client with
