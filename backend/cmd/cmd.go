@@ -17,6 +17,9 @@ type ServiceConfig struct {
 	FacebookClientID     string
 	FacebookClientSecret string
 	FacebookRedirectURI  string
+	GoogleClientID       string
+	GoogleClientSecret   string
+	GoogleRedirectURI    string
 	JwtSecret            string
 	WebFrontendURL       string
 	GraphQLAPIPort       int
@@ -50,6 +53,9 @@ func NewRootCmd(
 					FacebookClientID:     config.FacebookClientID,
 					FacebookClientSecret: config.FacebookClientSecret,
 					FacebookRedirectURI:  config.FacebookRedirectURI,
+					GoogleClientID:       config.GoogleClientID,
+					GoogleClientSecret:   config.GoogleClientSecret,
+					GoogleRedirectURI:    config.GoogleRedirectURI,
 					JwtSecret:            config.JwtSecret,
 					WebFrontendURL:       config.WebFrontendURL,
 					GraphQLAPIPort:       config.GraphQLAPIPort,
