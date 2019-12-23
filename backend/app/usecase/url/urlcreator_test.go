@@ -14,6 +14,8 @@ import (
 )
 
 func TestURLCreatorPersist_CreateURL(t *testing.T) {
+	t.Parallel()
+
 	now := time.Now()
 
 	alias := "220uFicCJj"
@@ -130,7 +132,10 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
 			urlRepo := repository.NewURLFake(testCase.urls)
 			userURLRepo := repository.NewUserURLRepoFake(
 				testCase.relationUsers,
