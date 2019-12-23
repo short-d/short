@@ -50,7 +50,9 @@ func TestLongLink_IsValid(t *testing.T) {
 
 	validator := NewLongLink()
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			mdtest.Equal(t, testCase.expIsValid, validator.IsValid(&testCase.longLink))
 		})
 	}

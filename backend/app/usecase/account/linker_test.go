@@ -12,6 +12,8 @@ import (
 )
 
 func TestLinker_IsAccountLinked(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name             string
 		keys             []string
@@ -60,7 +62,10 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
 			keyGen := keygen.NewFake(testCase.keys)
 			userRepo := repository.NewUserFake(testCase.users)
 			accountMappingRepo, err :=
