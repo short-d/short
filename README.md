@@ -20,7 +20,8 @@ from [source](https://short-d.com/r/ext-code)
 
 ## Dependent Projects
 
-- [app](): Reusable framework for Go apps & command line tools.
+- [app](https://github.com/byliuyang/app): Reusable framework for Go apps & command
+   line tools.
 - [kgs](https://github.com/byliuyang/kgs): Offline unique key generation service.
 - [toggle](https://github.com/byliuyang/toggle): Dynamic system behavior controller.
 
