@@ -69,14 +69,9 @@ WHERE "%s"=$1;
 		return user, err
 	}
 
-	createdAt := user.CreatedAt.UTC()
-	user.CreatedAt = &createdAt
-
-	updatedAt := user.UpdatedAt.UTC()
-	user.UpdatedAt = &updatedAt
-
-	lastSignedInAt := user.LastSignedInAt.UTC()
-	user.LastSignedInAt = &lastSignedInAt
+	user.CreatedAt = utc(user.CreatedAt)
+	user.UpdatedAt = utc(user.UpdatedAt)
+	user.LastSignedInAt = utc(user.LastSignedInAt)
 
 	return user, nil
 }
