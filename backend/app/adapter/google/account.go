@@ -20,10 +20,11 @@ type Account struct {
 
 // GetSingleSignOnUser retrieves user's email and name from Google API.
 func (a Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error) {
+	// https://developers.google.com/identity/protocols/OpenIDConnect#obtainuserinfo
 	type response struct {
 		Email string `json:"email"`
 		Name  string `json:"name"`
-		ID    string `json:"id"`
+		ID    string `json:"sub"`
 	}
 
 	var res response
