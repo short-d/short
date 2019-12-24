@@ -20,9 +20,8 @@ const unknownErr = {
 const aliasNotAvailableErr = {
   name: 'Alias not available',
   description: `
-                The alias you choose is not available, please choose a 
-                different one. Leaving custom alias field empty will automatically 
-                generate a available alias.
+                The alias you choose is not available. Please choose a different 
+                alias, or leave alias field empty to automatically generate one.
                 `
 };
 
