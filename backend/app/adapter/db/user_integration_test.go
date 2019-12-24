@@ -115,7 +115,7 @@ func TestUserSql_GetUserByEmail(t *testing.T) {
 			},
 		},
 		{
-			name:  "nil times",
+			name:  "nil time",
 			email: "alpha@example.com",
 			tableRows: []userTableRow{
 				{
