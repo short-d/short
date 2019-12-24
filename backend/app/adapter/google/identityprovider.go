@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"short/app/usecase/service"
+	"strings"
 
 	"github.com/byliuyang/app/fw"
 )
@@ -14,6 +15,13 @@ const (
 )
 
 var _ service.IdentityProvider = (*IdentityProvider)(nil)
+
+type scope = string
+
+const (
+	email   = "email"
+	profile = "profile"
+)
 
 // IdentityProvider represents Google OAuth service.
 type IdentityProvider struct {
@@ -33,10 +41,12 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 		return ""
 	}
 
+	scopes := []scope{email, profile}
+
 	query := u.Query()
 	query.Set("client_id", clientID)
 	query.Set("redirect_uri", redirectURI)
-	query.Set("scope", "profile")
+	query.Set("scope", strings.Join(scopes, " "))
 	query.Set("include_granted_scopes", "true")
 	query.Set("response_type", "code")
 	u.RawQuery = query.Encode()
