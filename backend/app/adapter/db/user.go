@@ -40,10 +40,11 @@ WHERE "%s"=$1;
 // GetUserByEmail finds an User in user table given email.
 func (u UserSQL) GetUserByEmail(email string) (entity.User, error) {
 	query := fmt.Sprintf(`
-SELECT "%s","%s","%s","%s","%s"
+SELECT "%s","%s","%s","%s","%s", "%s"
 FROM "%s" 
 WHERE "%s"=$1;
 `,
+		table.User.ColumnID,
 		table.User.ColumnEmail,
 		table.User.ColumnName,
 		table.User.ColumnLastSignedInAt,
@@ -57,6 +58,7 @@ WHERE "%s"=$1;
 
 	user := entity.User{}
 	err := row.Scan(
+		&user.ID,
 		&user.Email,
 		&user.Name,
 		&user.LastSignedInAt,
@@ -67,16 +69,21 @@ WHERE "%s"=$1;
 		return user, err
 	}
 
+	user.CreatedAt = utc(user.CreatedAt)
+	user.UpdatedAt = utc(user.UpdatedAt)
+	user.LastSignedInAt = utc(user.LastSignedInAt)
+
 	return user, nil
 }
 
 // CreateUser inserts a new User into user table.
 func (u *UserSQL) CreateUser(user entity.User) error {
 	statement := fmt.Sprintf(`
-INSERT INTO "%s" ("%s","%s","%s","%s","%s")
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO "%s" ("%s", "%s","%s","%s","%s","%s")
+VALUES ($1, $2, $3, $4, $5, $6)
 `,
 		table.User.TableName,
+		table.User.ColumnID,
 		table.User.ColumnEmail,
 		table.User.ColumnName,
 		table.User.ColumnLastSignedInAt,
@@ -84,12 +91,28 @@ VALUES ($1, $2, $3, $4, $5)
 		table.User.ColumnUpdatedAt,
 	)
 
-	_, err := u.db.Exec(statement, user.Email, user.Name, user.LastSignedInAt, user.CreatedAt, user.UpdatedAt)
+	_, err := u.db.Exec(
+		statement,
+		user.ID,
+		user.Email,
+		user.Name,
+		user.LastSignedInAt,
+		user.CreatedAt,
+		user.UpdatedAt,
+	)
 	return err
 }
 
 // UpdateUserID updates the ID of an user in user table with given email address.
 func (u UserSQL) UpdateUserID(email string, userID string) error {
+	isExist, err := u.IsEmailExist(email)
+	if err != nil {
+		return err
+	}
+
+	if !isExist {
+		return fmt.Errorf("email %s does not exist", email)
+	}
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1
@@ -98,7 +121,7 @@ WHERE "%s"=$2
 		table.User.TableName,
 		table.User.ColumnID,
 		table.User.ColumnEmail)
-	_, err := u.db.Exec(statement, userID, email)
+	_, err = u.db.Exec(statement, userID, email)
 	return err
 }
 

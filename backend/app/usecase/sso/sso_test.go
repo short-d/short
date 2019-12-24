@@ -1,3 +1,5 @@
+// +build !integration
+
 package sso
 
 import (
@@ -14,6 +16,8 @@ import (
 )
 
 func TestSingleSignOn_SignIn(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name              string
 		authorizationCode string
@@ -51,7 +55,10 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
 			identityProvider := service.NewIdentityProviderFake("http://localhost/sign-in", "")
 			profileService := service.NewSSOAccountFake(testCase.ssoUser)
 			fakeUserRepo := repository.NewUserFake(testCase.users)

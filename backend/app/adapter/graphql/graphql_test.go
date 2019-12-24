@@ -1,11 +1,13 @@
+// +build !integration
+
 package graphql
 
 import (
 	"short/app/adapter/db"
-	"short/app/adapter/recaptcha"
 	"short/app/usecase/auth"
 	"short/app/usecase/keygen"
 	"short/app/usecase/requester"
+	"short/app/usecase/service"
 	"short/app/usecase/url"
 	"short/app/usecase/validator"
 	"testing"
@@ -33,7 +35,7 @@ func TestGraphQlAPI(t *testing.T) {
 		customAliasValidator,
 	)
 
-	s := recaptcha.NewFake()
+	s := service.NewReCaptchaFake(service.VerifyResponse{})
 	verifier := requester.NewVerifier(s)
 	authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
 

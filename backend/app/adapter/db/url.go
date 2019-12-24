@@ -31,9 +31,9 @@ WHERE "%s"=$1;`,
 		return false, nil
 	}
 	if err != nil {
-		return false, nil
+		return false, err
 	}
-	return true, err
+	return true, nil
 }
 
 // Create inserts a new URL into url table.
@@ -48,7 +48,14 @@ VALUES ($1, $2, $3, $4, $5);`,
 		table.URL.ColumnCreatedAt,
 		table.URL.ColumnUpdatedAt,
 	)
-	_, err := u.db.Exec(statement, url.Alias, url.OriginalURL, url.ExpireAt, url.CreatedAt, url.UpdatedAt)
+	_, err := u.db.Exec(
+		statement,
+		url.Alias,
+		url.OriginalURL,
+		url.ExpireAt,
+		url.CreatedAt,
+		url.UpdatedAt,
+	)
 	return err
 }
 
@@ -70,10 +77,20 @@ WHERE "%s"=$1;`,
 	row := u.db.QueryRow(statement, alias)
 
 	url := entity.URL{}
-	err := row.Scan(&url.Alias, &url.OriginalURL, &url.ExpireAt, &url.CreatedAt, &url.UpdatedAt)
+	err := row.Scan(
+		&url.Alias,
+		&url.OriginalURL,
+		&url.ExpireAt,
+		&url.CreatedAt,
+		&url.UpdatedAt,
+	)
 	if err != nil {
 		return entity.URL{}, err
 	}
+
+	url.CreatedAt = utc(url.CreatedAt)
+	url.UpdatedAt = utc(url.UpdatedAt)
+	url.ExpireAt = utc(url.ExpireAt)
 
 	return url, nil
 }

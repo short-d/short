@@ -32,6 +32,35 @@ VALUES ($1,$2)
 	return err
 }
 
+// FindAliasesByUser fetches the aliases of all the URLs created by the given user.
+// TODO(issue#260): allow API client to filter urls based on visibility.
+func (u UserURLRelationSQL) FindAliasesByUser(user entity.User) ([]string, error) {
+	statement := fmt.Sprintf(`SELECT "%s" FROM "%s" WHERE "%s"=$1;`,
+		table.UserURLRelation.ColumnURLAlias,
+		table.UserURLRelation.TableName,
+		table.UserURLRelation.ColumnUserEmail,
+	)
+
+	var aliases []string
+	rows, err := u.db.Query(statement, user.Email)
+	defer rows.Close()
+	if err != nil {
+		return aliases, nil
+	}
+
+	for rows.Next() {
+		var alias string
+		err = rows.Scan(&alias)
+		if err != nil {
+			return aliases, err
+		}
+
+		aliases = append(aliases, alias)
+	}
+
+	return aliases, nil
+}
+
 // NewUserURLRelationSQL creates UserURLRelationSQL
 func NewUserURLRelationSQL(db *sql.DB) UserURLRelationSQL {
 	return UserURLRelationSQL{

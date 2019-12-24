@@ -16,6 +16,9 @@ type ServiceConfig struct {
 	FacebookClientID     string
 	FacebookClientSecret string
 	FacebookRedirectURI  string
+	GoogleClientID       string
+	GoogleClientSecret   string
+	GoogleRedirectURI    string
 	JwtSecret            string
 	WebFrontendURL       string
 	GraphQLAPIPort       int
@@ -37,7 +40,7 @@ func Start(
 		panic(err)
 	}
 
-	err = dbMigrationTool.Migrate(db, config.MigrationRoot)
+	err = dbMigrationTool.MigrateUp(db, config.MigrationRoot)
 	if err != nil {
 		panic(err)
 	}
@@ -67,6 +70,9 @@ func Start(
 		provider.FacebookClientID(config.FacebookClientID),
 		provider.FacebookClientSecret(config.FacebookClientSecret),
 		provider.FacebookRedirectURI(config.FacebookRedirectURI),
+		provider.GoogleClientID(config.GoogleClientID),
+		provider.GoogleClientSecret(config.GoogleClientSecret),
+		provider.GoogleRedirectURI(config.GoogleRedirectURI),
 		provider.JwtSecret(config.JwtSecret),
 		provider.WebFrontendURL(config.WebFrontendURL),
 	)

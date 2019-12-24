@@ -7,3 +7,6 @@ CREATE TABLE "User"
     "createdAt"      TIMESTAMP WITH TIME ZONE,
     "updatedAt"      TIMESTAMP WITH TIME ZONE
 );
+
+-- +migrate Down
+DROP TABLE "User";

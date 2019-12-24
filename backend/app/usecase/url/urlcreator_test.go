@@ -1,3 +1,5 @@
+// +build !integration
+
 package url
 
 import (
@@ -12,6 +14,8 @@ import (
 )
 
 func TestURLCreatorPersist_CreateURL(t *testing.T) {
+	t.Parallel()
+
 	now := time.Now()
 
 	alias := "220uFicCJj"
@@ -24,6 +28,8 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		availableKeys []string
 		user          entity.User
 		url           entity.URL
+		relationUsers []entity.User
+		relationURLs  []entity.URL
 		isPublic      bool
 		expHasErr     bool
 		expectedURL   entity.URL
@@ -126,9 +132,15 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
 			urlRepo := repository.NewURLFake(testCase.urls)
-			userURLRepo := repository.NewUserURLRepoFake()
+			userURLRepo := repository.NewUserURLRepoFake(
+				testCase.relationUsers,
+				testCase.relationURLs,
+			)
 			keyGen := keygen.NewFake(testCase.availableKeys)
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
@@ -141,13 +153,32 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				aliasValidator,
 			)
 
+			_, err := urlRepo.GetByAlias(testCase.url.Alias)
+			mdtest.NotEqual(t, nil, err)
+
+			isExist := userURLRepo.IsRelationExist(testCase.user, testCase.url)
+			mdtest.Equal(t, false, isExist)
+
 			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
 				mdtest.NotEqual(t, nil, err)
+
+				_, err = urlRepo.GetByAlias(testCase.expectedURL.Alias)
+				mdtest.NotEqual(t, nil, err)
+
+				isExist := userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
+				mdtest.Equal(t, false, isExist)
 				return
 			}
 			mdtest.Equal(t, nil, err)
 			mdtest.Equal(t, testCase.expectedURL, url)
+
+			savedURL, err := urlRepo.GetByAlias(testCase.expectedURL.Alias)
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expectedURL, savedURL)
+
+			isExist = userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
+			mdtest.Equal(t, true, isExist)
 		})
 	}
 }

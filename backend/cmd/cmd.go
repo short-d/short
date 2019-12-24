@@ -17,6 +17,9 @@ type ServiceConfig struct {
 	FacebookClientID     string
 	FacebookClientSecret string
 	FacebookRedirectURI  string
+	GoogleClientID       string
+	GoogleClientSecret   string
+	GoogleRedirectURI    string
 	JwtSecret            string
 	WebFrontendURL       string
 	GraphQLAPIPort       int
@@ -26,6 +29,7 @@ type ServiceConfig struct {
 	KgsPort              int
 }
 
+// NewRootCmd creates the base command.
 func NewRootCmd(
 	dbConfig fw.DBConfig,
 	config ServiceConfig,
@@ -49,6 +53,9 @@ func NewRootCmd(
 					FacebookClientID:     config.FacebookClientID,
 					FacebookClientSecret: config.FacebookClientSecret,
 					FacebookRedirectURI:  config.FacebookRedirectURI,
+					GoogleClientID:       config.GoogleClientID,
+					GoogleClientSecret:   config.GoogleClientSecret,
+					GoogleRedirectURI:    config.GoogleRedirectURI,
 					JwtSecret:            config.JwtSecret,
 					WebFrontendURL:       config.WebFrontendURL,
 					GraphQLAPIPort:       config.GraphQLAPIPort,
@@ -83,6 +90,7 @@ func NewRootCmd(
 	return rootCmd
 }
 
+// Execute runs the root command.
 func Execute(rootCmd fw.Command) {
 	err := rootCmd.Execute()
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"short/app/adapter/db"
 	"short/app/adapter/facebook"
 	"short/app/adapter/github"
+	"short/app/adapter/google"
 	"short/app/adapter/graphql"
 	"short/app/adapter/kgs"
 	"short/app/usecase/account"
@@ -22,6 +23,7 @@ import (
 	"github.com/byliuyang/app/fw"
 	"github.com/byliuyang/app/modern/mdcli"
 	"github.com/byliuyang/app/modern/mddb"
+	"github.com/byliuyang/app/modern/mdenv"
 	"github.com/byliuyang/app/modern/mdhttp"
 	"github.com/byliuyang/app/modern/mdlogger"
 	"github.com/byliuyang/app/modern/mdrequest"
@@ -58,6 +60,13 @@ var facebookAPISet = wire.NewSet(
 	facebook.NewAPI,
 )
 
+var googleAPISet = wire.NewSet(
+	provider.NewGoogleIdentityProvider,
+	google.NewAccount,
+	google.NewAPI,
+)
+
+// InjectCommandFactory creates CommandFactory with configured dependencies.
 func InjectCommandFactory() fw.CommandFactory {
 	wire.Build(
 		wire.Bind(new(fw.CommandFactory), new(mdcli.CobraFactory)),
@@ -66,6 +75,7 @@ func InjectCommandFactory() fw.CommandFactory {
 	return mdcli.CobraFactory{}
 }
 
+// InjectDBConnector creates DBConnector with configured dependencies.
 func InjectDBConnector() fw.DBConnector {
 	wire.Build(
 		wire.Bind(new(fw.DBConnector), new(mddb.PostgresConnector)),
@@ -74,6 +84,7 @@ func InjectDBConnector() fw.DBConnector {
 	return mddb.PostgresConnector{}
 }
 
+// InjectDBMigrationTool creates DBMigrationTool with configured dependencies.
 func InjectDBMigrationTool() fw.DBMigrationTool {
 	wire.Build(
 		wire.Bind(new(fw.DBMigrationTool), new(mddb.PostgresMigrationTool)),
@@ -82,6 +93,16 @@ func InjectDBMigrationTool() fw.DBMigrationTool {
 	return mddb.PostgresMigrationTool{}
 }
 
+// InjectEnvironment creates Environment with configured dependencies.
+func InjectEnvironment() fw.Environment {
+	wire.Build(
+		wire.Bind(new(fw.Environment), new(mdenv.GoDotEnv)),
+		mdenv.NewGoDotEnv,
+	)
+	return mdenv.GoDotEnv{}
+}
+
+// InjectGraphQlService creates GraphQL service with configured dependencies.
 func InjectGraphQlService(
 	name string,
 	sqlDB *sql.DB,
@@ -125,6 +146,7 @@ func InjectGraphQlService(
 	return mdservice.Service{}, nil
 }
 
+// InjectRoutingService creates routing service with configured dependencies.
 func InjectRoutingService(
 	name string,
 	sqlDB *sql.DB,
@@ -133,6 +155,9 @@ func InjectRoutingService(
 	facebookClientID provider.FacebookClientID,
 	facebookClientSecret provider.FacebookClientSecret,
 	facebookRedirectURI provider.FacebookRedirectURI,
+	googleClientID provider.GoogleClientID,
+	googleClientSecret provider.GoogleClientSecret,
+	googleRedirectURI provider.GoogleRedirectURI,
 	jwtSecret provider.JwtSecret,
 	webFrontendURL provider.WebFrontendURL,
 ) mdservice.Service {
@@ -146,6 +171,7 @@ func InjectRoutingService(
 		authSet,
 		githubAPISet,
 		facebookAPISet,
+		googleAPISet,
 
 		mdservice.New,
 		mdrouting.NewBuiltIn,

@@ -1,3 +1,5 @@
+// +build !integration
+
 package account
 
 import (
@@ -10,6 +12,8 @@ import (
 )
 
 func TestProvider_IsAccountExist(t *testing.T) {
+	t.Parallel()
+
 	now := time.Now()
 
 	testCases := []struct {
@@ -35,7 +39,10 @@ func TestProvider_IsAccountExist(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
 			fakeUserRepo := repository.NewUserFake(testCase.users)
 			fakeTimer := mdtest.NewTimerFake(now)
 			accountProvider := NewProvider(&fakeUserRepo, fakeTimer)
@@ -47,6 +54,8 @@ func TestProvider_IsAccountExist(t *testing.T) {
 }
 
 func TestProvider_CreateAccount(t *testing.T) {
+	t.Parallel()
+
 	now := time.Now()
 
 	testCases := []struct {
@@ -75,7 +84,10 @@ func TestProvider_CreateAccount(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
 			fakeUserRepo := repository.NewUserFake(testCase.users)
 			fakeTimer := mdtest.NewTimerFake(now)
 			accountProvider := NewProvider(&fakeUserRepo, fakeTimer)

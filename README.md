@@ -18,6 +18,57 @@
 Install it from [Chrome Web Store](https://short-d.com/r/ext) or build it
 from [source](https://short-d.com/r/ext-code)
 
+## Dependent Projects
+
+- [app](https://github.com/byliuyang/app): Reusable framework for Go apps & command
+   line tools.
+- [kgs](https://github.com/byliuyang/kgs): Offline unique key generation service.
+- [toggle](https://github.com/byliuyang/toggle): Dynamic system behavior controller.
+
+## Table of Contents
+
+1. [Getting Started](#getting-started)
+   1. [Accessing the source code](#accessing-the-source-code)
+   1. [Prerequisites](#prerequisites)
+   1. [Create reCAPTCHA account](#create-recaptcha-account)
+   1. [Create Github OAuth application](#create-github-oauth-application)
+   1. [Create Facebook Application](#create-facebook-application)
+   1. [Backend](#backend)
+   1. [Frontend](#frontend)
+1. [System Design](#system-design)
+   1. [App Level Architecture](#app-level-architecture)
+   1. [Service Level Archtecture](#service-level-archtecture)
+   1. [Object Oriented Design](#object-oriented-design)
+   1. [Dependency Injection](#dependency-injection)
+   1. [Database Modeling](#database-modeling)
+   1. [Feature Toggle](#feature-toggle)
+   1. [Search Engine Optimization](#search-engine-optimization)
+   1. [Social Media Summary Card](#social-media-summary-card)
+1. [Testing](#testing)
+   1. [The Importance Of Automation](#the-importance-of-automation)
+   1. [Testing Strategy](#testing-strategy)
+   1. [Unit Testing](#unit-testing)
+   1. [Integration Testing](#integration-testing)
+   1. [Component Testing](#component-testing)
+   1. [Contract Testing](#contract-testing)
+   1. [End To End Testing](#end-to-end-testing)
+   1. [The Test Pyramid](#the-test-pyramid)
+1. [Deployment](#deployment)
+   1. [Kubernetes](#kubernetes)
+   1. [Staging](#staging)
+   1. [Production](#production)
+1. [Tools We Use](#tools-we-use)
+1. [Contributing](#contributing)
+1. [Code Review Guideline](#code-review-guideline)
+   1. [What to look for in a code review](#what-to-look-for-in-a-code-review)
+   1. [The Standard](#the-standard)
+   1. [Mentoring](#mentoring)
+   1. [Principles](#principles)
+   1. [Showing Apprecaition](#showing-apprecaition)
+   1. [Resolving Conflicts](#resolving-conflicts)
+1. [Author](#author)
+1. [License](#license)
+
 ## Getting Started
 
 ### Accessing the source code
@@ -163,6 +214,7 @@ precious time when creating automated tests.
 
 Here is an exmample of finance app using clean architecture:
 
+![Finance App](doc/eng/clean-architecture/finance-app.jpg)
 
 ### Service Level Archtecture
 
@@ -172,10 +224,10 @@ independent deployment of each service.
 
 ![Microservice Architecture](doc/eng/microservices.jpg)
 
-### Dependency Management
+### Object Oriented Design
 
 Short leverages class design, package cohesion, and package coupling princiapls
-from C++ world to manage its internal dependencies.
+to manage logical dependency between internal components.
 
 #### Class Design
 
@@ -278,7 +330,263 @@ func InjectGraphQlService(
 
 ![Entity Relation Diagram](doc/eng/db/er-v1.jpg)
 
+### Feature Toggle
+
+Short employs `feature toggles` to modify system behavior without changing code.
+UI components controlled by the feature toggles are created inside a centralized
+`UIFactory` in order to avoid having nested `if` `else` statement across the
+code base:
+
+```typescript
+// UIFactory.tsx
+export class UIFactory {
+  constructor(
+    private featureDecisionService: IFeatureDecisionService
+  ) {}
+
+  public createGoogleSignInButton(): ReactElement {
+    if (!this.featureDecisionService.includeGoogleSignButton()) {
+      return <div />;
+    }
+    return (
+      <GoogleSignInButton
+        googleSignInLink={this.authService.googleSignInLink()}
+      />
+    );
+  }
+
+  public createGithubSignInButton(): ReactElement {
+    if (!this.featureDecisionService.includeGithubSignButton()) {
+      return <div />;
+    }
+    return (
+      <GithubSignInButton
+        githubSignInLink={this.authService.githubSignInLink()}
+      />
+    );
+  }
+}
+```
+
+Short also provides `IFeatureDecisionService` interface, allowing the developers
+to switch to dynamic feature toggle backend in the future by simply swapping
+the dependency injected.
+
+```typescript
+// FeatureDecision.service.ts
+export interface IFeatureDecisionService {
+  includeGithubSignButton(): boolean;
+  includeGoogleSignButton(): boolean;
+  includeFacebookSignButton(): boolean;
+}
+```
+
+```typescript
+// StaticConfigDecision.service.ts
+import { IFeatureDecisionService } from './FeatureDecision.service';
+
+export class StaticConfigDecisionService implements IFeatureDecisionService {
+  includeGithubSignButton(): boolean {
+    return false;
+  }
+  includeGoogleSignButton(): boolean {
+    return false;
+  }
+  includeFacebookSignButton(): boolean {
+    return true;
+  }
+}
+```
+
+```typescript
+// dep.ts
+export function initUIFactory(
+  ...
+): UIFactory {
+  ...
+  const staticConfigDecision = new StaticConfigDecisionService();
+  ...
+  return new UIFactory(
+    ...,
+    staticConfigDecision
+  );
+}
+```
+
+You can read about the detailed feature toggle design on
+[this article](https://martinfowler.com/articles/feature-toggles.html).
+
+### Search Engine Optimization
+
+In order to improve the quality and quantity of the website's traffic, Short
+increases its visibility to web search engines through HTML meta tags.
+
+```html
+<!-- ./frontend/public/index.html -->
+<title>Short: Free online link shortening service</title>
+
+<!-- Search Engine Optimization -->
+<meta name="description"
+      content="Short enables people to type less for their favorite web sites">
+<meta name="robots" content="index, follow">
+<link href="https://short-d.com" rel="canonical">
+```
+
+If you search `short-d.com` on Google, you should see Short shows up as
+the first result:
+
+![Google Search Result](doc/seo/google.jpg)
+
+### Social Media Summary Card
+
+#### Facebook & LinkedIn
+
+Short leverages `Open Graph` tags to control what content shows up in
+the summary card when the website is shared on Facebook or LinkedIn:
+
+```html
+<!-- ./frontend/public/index.html -->
+<!-- Open Graph -->
+<meta property="og:title" content="Short: Free link shortening service"/>
+<meta property="og:description"
+      content="Short enables people to type less for their favorite web sites"/>
+<meta property="og:image"
+      content="https://short-d.com/promo/small-tile.png"/>
+<meta property="og:url" content="https://short-d.com"/>
+<meta property="og:type" content="website"/>
+```
+
+Shared on Facebook:
+
+![Facebook Card](doc/social-media-card/facebook.jpg)
+
+Shared on LinkedIn:
+
+![LinkedIn Card](doc/social-media-card/linkedin.jpg)
+
+#### Twitter
+
+Twitter uses its own meta tags to determine what will show up when
+the website is mentioned in a Tweet:
+
+```html
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:site" content="@byliuyang11"/>
+<meta name="twitter:title" content="Short: Free link shortening service"/>
+<meta name="twitter:description"
+      content="Short enables people to type less for their favorite web sites"/>
+<meta name="twitter:image" content="https://short-d.com/promo/twitter-card.png"/>
+```
+
+![Twitter Card](doc/social-media-card/twitter.jpg)
+
+## Testing
+
+### The Importance Of Automation
+
+Short is maintained by a small team of talented software engineers working
+at Google, Uber, and Vmware as a side project. The team wants to deliver new
+features faster without sacrificing its quality. Testing ever-increasing
+amount of features manually soon becomes impossible — unless we want
+to spend all our time with manual, repetitive work instead of delivering
+working features.
+
+Test automation is the only way forward.
+
+### Testing Strategy
+
+![Test Strategy](doc/testing/test-strategy.png)
+
+Please read [Testing Strategies in a Microservice Architecture](https://martinfowler.com/articles/microservice-testing)
+for a detailed introduction on test strategies.
+
+### Unit Testing
+
+A unit test exercises the smallest piece of testable software in the
+application to determine whether it behaves as expected.
+
+![Unit Test](doc/testing/unit-test.png)
+
+Run unit tests for backend:
+
+```bash
+cd backend
+./scripts/test
+```
+
+#### Sociable And Solitary
+
+![Two Types of Unit Test](doc/testing/unit-test-two-types.png)
+
+#### The FIRST Principal
+
+- [F]ast: Unit tests should be fast otherwise they will slow down
+   development & deployment.
+- [I]ndependent: Never ever write tests which depend on other test cases.
+- [R]epeatable: A repeatable test is one that produces the same results
+   each time you run it.
+- [S]elf-validating: There must be no manual interpretation of the results.
+- [T]imely/[T]horoughly: Unit tests must be included for every pull request
+   of a new feature and cover edge cases, errors, and bad inputs.
+
+#### Test Structure
+
+A automated test method should be composed of 3As: Arrange, Act, and Assert.
+
+- [A]rrange: All the data needed for a test should be arranged as part
+  of the test. The data used in a test should not depend on the environment
+  in which the test is running.
+- [A]ct: Invoke the actual method under test.
+- [A]ssert: A test method should test for a single logical outcome.
+
+### Integration Testing
+
+An integration test verifies the communication paths and interactions
+between components to detect interface defects.
+
+![Integration Test](doc/testing/integration-test.png)
+
+Run integration tests for backend:
+
+```bash
+cd backend
+./scripts/integration-test
+```
+
+### Component Testing
+
+A component test limits the scope of the exercised software to a portion
+of the system under test, manipulating the system through internal code
+interfaces and using test doubles to isolate the code under test from
+other components.
+
+#### In Process
+
+![Component Test](doc/testing/component-test-in-process.png)
+
+#### Out Of Process
+
+![Component Test](doc/testing/component-test-out-of-process.png)
+
+### Contract Testing
+
+An integration contract test is a test at the boundary of an external
+service verifying that it meets the contract expected by a consuming
+service.
+
+### End To End Testing
+
+An end-to-end test verifies that a system meets external requirements
+and achieves its goals, testing the entire system, from end to end.
+
+### The Test Pyramid
+
+![Test Pyramid](doc/testing/test-pyramid.png)
+
 ## Deployment
+
+### Kubernetes
 
 Short leverages [Kubernetes](https://kubernetes.io) to automate deployment, scaling,
 and management of containerized microservices.
@@ -316,12 +624,96 @@ continuous deployment instead.
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct,
-and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code
+of conduct, and the process for submitting pull requests to us.
+
+## Code Review Guideline
+
+### What to look for in a code review
+
+- The code is well-designed.
+- The functionality is good for the users of the code.
+- Any UI changes are sensible and look good.
+- Any parallel programming is done safely.
+- The code isn’t more complex than it needs to be.
+- The developer isn’t implementing things they might need in the future but don’t
+  know they need now.
+- Code has appropriate unit tests.
+- Tests are well-designed.
+- The developer used clear names for everything.
+- Comments are clear and useful, and mostly explain why instead of what.
+- Code is appropriately documented.
+
+### The Standard
+
+- Reviewers should favor approving a PR once it is in a state where it definitely
+  improves the overall code health of the system being worked on, even if the PR
+  isn’t perfect.
+- Instead of seeking perfection, what a reviewer should seek is continuous
+  improvement.
+- If a PR adds a feature that the reviewer doesn’t want in their system, then the
+  reviewer can certainly deny approval even if the code is well-designed.
+- Reviewers should always feel free to leave comments expressing that something
+  could be better, but if it’s not very important, prefix it with something like
+  “Nit: “ to let the author know that it’s just a point of polish that they could
+  choose to ignore.
+- Checking in PRs that definitely worsen the overall code health of the system is
+  not justified unless there is an emergency.
+
+### Mentoring
+
+Code review can have an important function of teaching developers something new
+about a language, a framework, or general software design principles.
+
+If the comment is purely educational, but not critical to meeting the standards
+above, prefix it with "Nit: ".
+
+### Principles
+
+- Technical facts and data overrule opinions and personal preferences.
+- On matters of style, the linters are the absolute authorities. The style should
+  be consistent with what is there. If there is no previous style, accept the
+  author’s.
+- Aspects of software design are NOT personal preferences. Sometimes there are a
+  few valid options. If the author can demonstrate that several approaches are
+  equally valid, then the reviewer should accept the preference of the author.
+  Otherwise the choice is dictated by standard principles of software design.
+- If no other rule applies, then the reviewer may ask the author to be consistent
+  with what is in the current codebase, as long as that doesn’t worsen the overall
+  code health of the system.
+
+### Showing Apprecaition
+
+If you see something nice in the PR, tell the developer, especially when they
+addressed one of your comments in a great way. Code reviews should offer
+encouragement and appreciation for good practices, as well. It’s sometimes even
+more valuable, in terms of mentoring, to tell a developer what they did right
+than to tell them what they did wrong.
+
+### Resolving Conflicts
+
+When coming to consensus becomes especially difficult, it can help to have a
+face-to-face meeting or a video call between the reviewer and the author, instead
+of just trying to resolve the conflict through code review comments. (If you do
+this, though, make sure to record the results of the discussion in a comment on
+the CL, for future readers.)
+
+Don’t let a PR sit around because the author and the reviewer can’t come to an
+agreement.
+
+Note: This guideline is derived from [Google Engineering Practices Documentation](https://github.com/google/eng-practices)
 
 ## Author
 
 Harry Liu - *Initial work* - [byliuyang](https://short-d.com/r/ghharry)
+
+As the tech lead of Short, I am responsible for the overall planning, execution
+and success of complex software solutions to meet users' needs.
+
+I deeply believe in and am striving to achieve the right column of the
+following diagram:
+
+![Manager vs Leader](doc/leader-vs-manager.jpg)
 
 ## License
 
