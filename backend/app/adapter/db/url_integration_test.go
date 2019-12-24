@@ -28,9 +28,9 @@ VALUES ($1, $2, $3, $4, $5)`,
 type urlTableRow struct {
 	alias     string
 	longLink  string
-	createdAt time.Time
-	expireAt  time.Time
-	updatedAt time.Time
+	createdAt *time.Time
+	expireAt  *time.Time
+	updatedAt *time.Time
 }
 
 func TestURLSql_IsAliasExist(t *testing.T) {
@@ -98,16 +98,16 @@ func TestURLSql_GetByAlias(t *testing.T) {
 				{
 					alias:     "220uFicCJj",
 					longLink:  "http://www.google.com",
-					createdAt: twoYearsAgo,
-					expireAt:  now,
-					updatedAt: now,
+					createdAt: &twoYearsAgo,
+					expireAt:  &now,
+					updatedAt: &now,
 				},
 				{
 					alias:     "yDOBcj5HIPbUAsw",
 					longLink:  "http://www.facebook.com",
-					createdAt: twoYearsAgo,
-					expireAt:  now,
-					updatedAt: now,
+					createdAt: &twoYearsAgo,
+					expireAt:  &now,
+					updatedAt: &now,
 				},
 			},
 			alias:  "220uFicCJj",
@@ -118,6 +118,34 @@ func TestURLSql_GetByAlias(t *testing.T) {
 				CreatedAt:   &twoYearsAgo,
 				ExpireAt:    &now,
 				UpdatedAt:   &now,
+			},
+		},
+		{
+			name: "nil time",
+			tableRows: []urlTableRow{
+				{
+					alias:     "220uFicCJj",
+					longLink:  "http://www.google.com",
+					createdAt: nil,
+					expireAt:  nil,
+					updatedAt: nil,
+				},
+				{
+					alias:     "yDOBcj5HIPbUAsw",
+					longLink:  "http://www.facebook.com",
+					createdAt: &twoYearsAgo,
+					expireAt:  &now,
+					updatedAt: &now,
+				},
+			},
+			alias:  "220uFicCJj",
+			hasErr: false,
+			expectedURL: entity.URL{
+				Alias:       "220uFicCJj",
+				OriginalURL: "http://www.google.com",
+				CreatedAt:   nil,
+				ExpireAt:    nil,
+				UpdatedAt:   nil,
 			},
 		},
 	}
@@ -162,7 +190,7 @@ func TestURLSql_Create(t *testing.T) {
 				{
 					alias:    "220uFicCJj",
 					longLink: "http://www.facebook.com",
-					expireAt: now,
+					expireAt: &now,
 				},
 			},
 			url: entity.URL{
@@ -178,7 +206,7 @@ func TestURLSql_Create(t *testing.T) {
 				{
 					alias:    "abc",
 					longLink: "http://www.google.com",
-					expireAt: now,
+					expireAt: &now,
 				},
 			},
 			url: entity.URL{

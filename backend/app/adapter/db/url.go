@@ -88,14 +88,9 @@ WHERE "%s"=$1;`,
 		return entity.URL{}, err
 	}
 
-	createdAt := url.CreatedAt.UTC()
-	url.CreatedAt = &createdAt
-
-	updatedAt := url.UpdatedAt.UTC()
-	url.UpdatedAt = &updatedAt
-
-	expireAt := url.ExpireAt.UTC()
-	url.ExpireAt = &expireAt
+	url.CreatedAt = utc(url.CreatedAt)
+	url.UpdatedAt = utc(url.UpdatedAt)
+	url.ExpireAt = utc(url.ExpireAt)
 
 	return url, nil
 }

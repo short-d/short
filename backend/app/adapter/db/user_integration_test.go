@@ -30,9 +30,9 @@ type userTableRow struct {
 	id           string
 	email        string
 	name         string
-	lastSignedIn time.Time
-	createdAt    time.Time
-	updatedAt    time.Time
+	lastSignedIn *time.Time
+	createdAt    *time.Time
+	updatedAt    *time.Time
 }
 
 func TestUserSql_IsEmailExist(t *testing.T) {
@@ -99,9 +99,9 @@ func TestUserSql_GetUserByEmail(t *testing.T) {
 					id:           "alpha",
 					email:        "alpha@example.com",
 					name:         "Alpha",
-					lastSignedIn: twoYearsAgo,
-					createdAt:    twoYearsAgo,
-					updatedAt:    twoYearsAgo,
+					lastSignedIn: &twoYearsAgo,
+					createdAt:    &twoYearsAgo,
+					updatedAt:    &twoYearsAgo,
 				},
 			},
 			hasErr: false,
@@ -112,6 +112,29 @@ func TestUserSql_GetUserByEmail(t *testing.T) {
 				LastSignedInAt: &twoYearsAgo,
 				CreatedAt:      &twoYearsAgo,
 				UpdatedAt:      &twoYearsAgo,
+			},
+		},
+		{
+			name:  "nil times",
+			email: "alpha@example.com",
+			tableRows: []userTableRow{
+				{
+					id:           "alpha",
+					email:        "alpha@example.com",
+					name:         "Alpha",
+					lastSignedIn: nil,
+					createdAt:    nil,
+					updatedAt:    nil,
+				},
+			},
+			hasErr: false,
+			expUser: entity.User{
+				ID:             "alpha",
+				Name:           "Alpha",
+				Email:          "alpha@example.com",
+				LastSignedInAt: nil,
+				CreatedAt:      nil,
+				UpdatedAt:      nil,
 			},
 		},
 	}
