@@ -512,7 +512,7 @@ Run unit tests for backend:
 
 ```bash
 cd backend
-./scripts/test
+./scripts/unit-test
 ```
 
 #### Sociable And Solitary
