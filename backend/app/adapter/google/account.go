@@ -9,7 +9,7 @@ import (
 	"github.com/byliuyang/app/fw"
 )
 
-const userInfoAPI = "https://www.googleapis.com/oauth2/v3/userinfo"
+const userInfoAPI = "https://openidconnect.googleapis.com/v1/userinfo"
 
 var _ service.SSOAccount = (*Account)(nil)
 
