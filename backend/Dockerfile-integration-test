@@ -1,0 +1,40 @@
+FROM golang:1.13.1-alpine
+
+WORKDIR /app
+
+# Install tools
+RUN apk add --no-cache git
+RUN apk add --no-cache bash
+RUN apk add --no-cache gcc
+RUN apk add --no-cache libc-dev
+
+# Install dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Verify dependencies
+RUN go mod verify
+
+COPY . .
+
+ARG DB_HOST
+
+ENV DB_HOST=${DB_HOST}
+
+ARG DB_PORT
+
+ENV DB_PORT=${DB_PORT}
+
+ARG DB_USER
+
+ENV DB_USER=${DB_USER}
+
+ARG DB_PASSWORD
+
+ENV DB_PASSWORD=${DB_PASSWORD}
+
+ARG DB_NAME
+
+ENV DB_NAME=${DB_NAME}
+
+CMD ["./scripts/integration-test"]
