@@ -11,7 +11,7 @@ import (
 
 const (
 	authorizationAPI = "https://accounts.google.com/o/oauth2/v2/auth"
-	accessTokenAPI   = "https://oauth2.googleapis.com/token"
+	accessTokenAPI   = "https://www.googleapis.com/oauth2/v4/token"
 )
 
 var _ service.IdentityProvider = (*IdentityProvider)(nil)
@@ -54,7 +54,7 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 	return u.String()
 }
 
-// RequestAccessToken retrieves id token of user's Google account using
+// RequestAccessToken retrieves access token of user's Google account using
 // authorization code.
 func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, error) {
 	grantType := "authorization_code"
@@ -92,13 +92,12 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 		return "", err
 	}
 
-	return apiRes.IDToken, nil
+	return apiRes.AccessToken, nil
 }
 
 type accessTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	TokenType   string `json:"token_type"`
-	IDToken     string `json:"id_token"`
 }
 
 // NewIdentityProvider initializes Google OAuth service.
