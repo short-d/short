@@ -1,15 +1,13 @@
 package google
 
 import (
-	"fmt"
-	"net/http"
 	"short/app/entity"
 	"short/app/usecase/service"
 
+	jwt "github.com/dgrijalva/jwt-go"
+
 	"github.com/byliuyang/app/fw"
 )
-
-const userInfoAPI = "https://www.googleapis.com/oauth2/v3/userinfo"
 
 var _ service.SSOAccount = (*Account)(nil)
 
@@ -18,29 +16,19 @@ type Account struct {
 	http fw.HTTPRequest
 }
 
-// GetSingleSignOnUser retrieves user's email and name from Google API.
-func (a Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error) {
-	// https://developers.google.com/identity/protocols/OpenIDConnect#obtainuserinfo
-	type response struct {
-		Email string `json:"email"`
-		Name  string `json:"name"`
-		ID    string `json:"sub"`
-	}
+// GetSingleSignOnUser retrieves user's email and name from ID token.
+func (a Account) GetSingleSignOnUser(IDToken string) (entity.SSOUser, error) {
+	claims := jwt.MapClaims{}
+	_, _, err := new(jwt.Parser).ParseUnverified(IDToken, claims)
 
-	var res response
-	headers := map[string]string{
-		"Authorization": fmt.Sprintf("Bearer %s", accessToken),
-	}
-
-	err := a.http.JSON(http.MethodGet, userInfoAPI, headers, "", &res)
 	if err != nil {
 		return entity.SSOUser{}, err
 	}
 
 	return entity.SSOUser{
-		Email: res.Email,
-		Name:  res.Name,
-		ID:    res.ID,
+		Email: claims["email"].(string),
+		Name:  claims["name"].(string),
+		ID:    claims["sub"].(string),
 	}, nil
 }
 

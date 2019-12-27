@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/byliuyang/app v0.0.0-20191223051710-d5d4102e2de8
 	github.com/byliuyang/kgs v0.0.0-20191213024321-24d594534ed3
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/google/wire v0.4.0
 	github.com/graph-gophers/graphql-go v0.0.0-20191115155744-f33e81362277 // indirect
 	github.com/huandu/facebook v2.3.1+incompatible
