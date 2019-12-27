@@ -18,7 +18,7 @@ steps:
         - master
       event:
         - pull_request
-  - name: test frontend
+  - name: run frontend tests
     image: docker
     environment:
       RECAPTCHA_SITE_KEY:
@@ -35,11 +35,11 @@ steps:
       event:
         - pull_request
 
-  - name: test backend
+  - name: run backend unit tests
     image: docker
     commands:
-      - docker build -t test-backend -f backend/Dockerfile-test backend
-      - docker run test-backend
+      - docker build -t backend-unit-test -f backend/Dockerfile-unit-test backend
+      - docker run backend-unit-test
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -49,7 +49,7 @@ steps:
       event:
         - pull_request
 
-  - name: run backend integration test
+  - name: run backend integration tests
     image: docker
     environment:
       DB_HOST:
