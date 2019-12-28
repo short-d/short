@@ -6,11 +6,11 @@ of this repository before making a change.
 
 Please open a draft pull request when you are working on an issue so that the
 owner knows it is in progress. The owner may take over or reassign the issue if no
-body replies after ten days assigned to you.
+body replies after 10 days assigned to you.
 
 ## Pull Request Process
 
-1. Update the README.md with details of changes to the interface, this includes
+1. Update the [README](README.md) with details of changes to the interfaces,
    new environment variables, exposed ports, useful file locations and container
    parameters.
 1. You may merge the Pull Request in once you have the sign-off of code owner,
