@@ -2,4 +2,5 @@
 
 cd backend || exit
 ./scripts/code-coverage
-bash <(curl -s https://codecov.io/bash) -f "coverage.txt" -t "$CODECOV_TOKEN"
+bash <(curl -s https://codecov.io/bash) -f "unit-test.txt" -t "$CODECOV_TOKEN"
+bash <(curl -s https://codecov.io/bash) -f "integration-test.txt" -t "$CODECOV_TOKEN"
