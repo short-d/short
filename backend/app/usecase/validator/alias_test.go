@@ -1,4 +1,4 @@
-// +build !integration
+// +build !integration all
 
 package validator
 
