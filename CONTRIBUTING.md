@@ -10,7 +10,7 @@ body replies after 10 days assigned to you.
 
 ## Pull Request Process
 
-1. Update the [README](README.md) with details of changes to the interfaces, 
+1. Update the [README](README.md) with details of changes to the interfaces,
    new environment variables, exposed ports, useful file locations and container
    parameters.
 1. You may merge the Pull Request in once you have the sign-off of code owner,
