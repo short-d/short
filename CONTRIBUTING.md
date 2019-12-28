@@ -16,7 +16,7 @@ body replies after ten days assigned to you.
 1. You may merge the Pull Request in once you have the sign-off of code owner,
    or if you do not have permission to do that, you may request the code owner
    to merge it for you.
-   
+
 ## Code Review Guideline
 
 ### What to look for in a code review
