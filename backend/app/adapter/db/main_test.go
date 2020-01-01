@@ -1,3 +1,5 @@
+// +build integration all
+
 package db_test
 
 import (

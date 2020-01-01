@@ -17,4 +17,4 @@ RUN go mod verify
 
 COPY . .
 
-CMD ["go", "test", "-v", "./..."]
+CMD ["./scripts/unit-test"]
