@@ -1,6 +1,6 @@
 package repository
 
-import "short/app/entity"
+import "github.com/short-d/short/app/entity"
 
 // AccountMapping accesses account mapping between SSOUser and internal User
 // from storage media, such as database.

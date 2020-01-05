@@ -1,6 +1,6 @@
 package repository
 
-import "short/app/entity"
+import "github.com/short-d/short/app/entity"
 
 // URL accesses urls from storage, such as database.
 type URL interface {

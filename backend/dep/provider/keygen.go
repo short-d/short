@@ -1,8 +1,8 @@
 package provider
 
 import (
-	"short/app/usecase/keygen"
-	"short/app/usecase/service"
+	"github.com/short-d/short/app/usecase/keygen"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 // KeyGenBufferSize specifies the size of the local cache for fetched keys

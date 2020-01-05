@@ -4,15 +4,15 @@ package sso
 
 import (
 	"encoding/json"
-	"short/app/entity"
-	"short/app/usecase/account"
-	"short/app/usecase/auth"
-	"short/app/usecase/repository"
-	"short/app/usecase/service"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/account"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 func TestSingleSignOn_SignIn(t *testing.T) {

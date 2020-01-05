@@ -3,14 +3,14 @@
 package resolver
 
 import (
-	"short/app/entity"
-	"short/app/usecase/auth"
-	"short/app/usecase/repository"
-	"short/app/usecase/url"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/url"
 )
 
 func TestQuery_AuthQuery(t *testing.T) {
@@ -58,7 +58,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 			fakeRepo := repository.NewURLFake(map[string]entity.URL{})
 			authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
-			logger := mdtest.NewLoggerFake()
+			logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 			tracer := mdtest.NewTracerFake()
 			query := newQuery(&logger, &tracer, authenticator, retrieverFake)
 

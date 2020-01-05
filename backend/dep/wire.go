@@ -4,34 +4,36 @@ package dep
 
 import (
 	"database/sql"
-	"short/app/adapter/db"
-	"short/app/adapter/facebook"
-	"short/app/adapter/github"
-	"short/app/adapter/google"
-	"short/app/adapter/graphql"
-	"short/app/adapter/kgs"
-	"short/app/usecase/account"
-	"short/app/usecase/keygen"
-	"short/app/usecase/repository"
-	"short/app/usecase/requester"
-	"short/app/usecase/service"
-	"short/app/usecase/url"
-	"short/app/usecase/validator"
-	"short/dep/provider"
 	"time"
 
-	"github.com/byliuyang/app/fw"
-	"github.com/byliuyang/app/modern/mdcli"
-	"github.com/byliuyang/app/modern/mddb"
-	"github.com/byliuyang/app/modern/mdenv"
-	"github.com/byliuyang/app/modern/mdhttp"
-	"github.com/byliuyang/app/modern/mdlogger"
-	"github.com/byliuyang/app/modern/mdrequest"
-	"github.com/byliuyang/app/modern/mdrouting"
-	"github.com/byliuyang/app/modern/mdservice"
-	"github.com/byliuyang/app/modern/mdtimer"
-	"github.com/byliuyang/app/modern/mdtracer"
 	"github.com/google/wire"
+	"github.com/short-d/app/fw"
+	"github.com/short-d/app/modern/mdcli"
+	"github.com/short-d/app/modern/mddb"
+	"github.com/short-d/app/modern/mdenv"
+	"github.com/short-d/app/modern/mdhttp"
+	"github.com/short-d/app/modern/mdio"
+	"github.com/short-d/app/modern/mdlogger"
+	"github.com/short-d/app/modern/mdrequest"
+	"github.com/short-d/app/modern/mdrouting"
+	"github.com/short-d/app/modern/mdruntime"
+	"github.com/short-d/app/modern/mdservice"
+	"github.com/short-d/app/modern/mdtimer"
+	"github.com/short-d/app/modern/mdtracer"
+	"github.com/short-d/short/app/adapter/db"
+	"github.com/short-d/short/app/adapter/facebook"
+	"github.com/short-d/short/app/adapter/github"
+	"github.com/short-d/short/app/adapter/google"
+	"github.com/short-d/short/app/adapter/graphql"
+	"github.com/short-d/short/app/adapter/kgs"
+	"github.com/short-d/short/app/usecase/account"
+	"github.com/short-d/short/app/usecase/keygen"
+	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/short/app/usecase/url"
+	"github.com/short-d/short/app/usecase/validator"
+	"github.com/short-d/short/dep/provider"
 )
 
 const oneDay = 24 * time.Hour
@@ -44,7 +46,8 @@ var authSet = wire.NewSet(
 )
 
 var observabilitySet = wire.NewSet(
-	mdlogger.NewLocal,
+	wire.Bind(new(fw.Logger), new(mdlogger.Local)),
+	provider.NewLocalLogger,
 	mdtracer.NewLocal,
 )
 
@@ -102,9 +105,11 @@ func InjectEnvironment() fw.Environment {
 	return mdenv.GoDotEnv{}
 }
 
-// InjectGraphQlService creates GraphQL service with configured dependencies.
-func InjectGraphQlService(
+// InjectGraphQLService creates GraphQL service with configured dependencies.
+func InjectGraphQLService(
 	name string,
+	prefix provider.LogPrefix,
+	logLevel fw.LogLevel,
 	sqlDB *sql.DB,
 	graphqlPath provider.GraphQlPath,
 	secret provider.ReCaptchaSecret,
@@ -113,7 +118,9 @@ func InjectGraphQlService(
 	kgsRPCConfig provider.KgsRPCConfig,
 ) (mdservice.Service, error) {
 	wire.Build(
-		wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),
+		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
+		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
+		wire.Bind(new(fw.GraphQLAPI), new(graphql.Short)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
 		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
@@ -125,6 +132,8 @@ func InjectGraphQlService(
 		observabilitySet,
 		authSet,
 
+		mdio.NewBuildInStdOut,
+		mdruntime.NewBuildIn,
 		mdservice.New,
 		provider.NewGraphGophers,
 		mdhttp.NewClient,
@@ -149,6 +158,8 @@ func InjectGraphQlService(
 // InjectRoutingService creates routing service with configured dependencies.
 func InjectRoutingService(
 	name string,
+	prefix provider.LogPrefix,
+	logLevel fw.LogLevel,
 	sqlDB *sql.DB,
 	githubClientID provider.GithubClientID,
 	githubClientSecret provider.GithubClientSecret,
@@ -162,6 +173,8 @@ func InjectRoutingService(
 	webFrontendURL provider.WebFrontendURL,
 ) mdservice.Service {
 	wire.Build(
+		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
+		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(repository.User), new(*(db.UserSQL))),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
@@ -173,6 +186,8 @@ func InjectRoutingService(
 		facebookAPISet,
 		googleAPISet,
 
+		mdio.NewBuildInStdOut,
+		mdruntime.NewBuildIn,
 		mdservice.New,
 		mdrouting.NewBuiltIn,
 		mdhttp.NewClient,

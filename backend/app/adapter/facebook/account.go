@@ -1,8 +1,8 @@
 package facebook
 
 import (
-	"short/app/entity"
-	"short/app/usecase/service"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/service"
 
 	fb "github.com/huandu/facebook"
 )

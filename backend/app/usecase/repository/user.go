@@ -1,6 +1,6 @@
 package repository
 
-import "short/app/entity"
+import "github.com/short-d/short/app/entity"
 
 // User accesses users' information from storage, such as database.
 type User interface {

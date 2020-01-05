@@ -1,14 +1,15 @@
 package app
 
 import (
-	"short/dep"
-	"short/dep/provider"
-
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
+	"github.com/short-d/short/dep"
+	"github.com/short-d/short/dep/provider"
 )
 
 // ServiceConfig represents require parameters for the backend APIs
 type ServiceConfig struct {
+	LogPrefix            string
+	LogLevel             fw.LogLevel
 	MigrationRoot        string
 	RecaptchaSecret      string
 	GithubClientID       string
@@ -45,8 +46,10 @@ func Start(
 		panic(err)
 	}
 
-	graphqlAPI, err := dep.InjectGraphQlService(
+	graphqlAPI, err := dep.InjectGraphQLService(
 		"GraphQL API",
+		provider.LogPrefix(config.LogPrefix),
+		config.LogLevel,
 		db,
 		"/graphql",
 		provider.ReCaptchaSecret(config.RecaptchaSecret),
@@ -64,6 +67,8 @@ func Start(
 
 	httpAPI := dep.InjectRoutingService(
 		"Routing API",
+		provider.LogPrefix(config.LogPrefix),
+		config.LogLevel,
 		db,
 		provider.GithubClientID(config.GithubClientID),
 		provider.GithubClientSecret(config.GithubClientSecret),

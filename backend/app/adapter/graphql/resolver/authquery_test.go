@@ -3,14 +3,14 @@
 package resolver
 
 import (
-	"short/app/adapter/graphql/scalar"
-	"short/app/entity"
-	"short/app/usecase/repository"
-	"short/app/usecase/url"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/adapter/graphql/scalar"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/url"
 )
 
 type urlMap = map[string]entity.URL

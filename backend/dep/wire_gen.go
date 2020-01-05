@@ -7,30 +7,32 @@ package dep
 
 import (
 	"database/sql"
-	"short/app/adapter/db"
-	"short/app/adapter/facebook"
-	"short/app/adapter/github"
-	"short/app/adapter/google"
-	"short/app/adapter/graphql"
-	"short/app/usecase/account"
-	"short/app/usecase/requester"
-	"short/app/usecase/url"
-	"short/app/usecase/validator"
-	"short/dep/provider"
 	"time"
 
-	"github.com/byliuyang/app/fw"
-	"github.com/byliuyang/app/modern/mdcli"
-	"github.com/byliuyang/app/modern/mddb"
-	"github.com/byliuyang/app/modern/mdenv"
-	"github.com/byliuyang/app/modern/mdhttp"
-	"github.com/byliuyang/app/modern/mdlogger"
-	"github.com/byliuyang/app/modern/mdrequest"
-	"github.com/byliuyang/app/modern/mdrouting"
-	"github.com/byliuyang/app/modern/mdservice"
-	"github.com/byliuyang/app/modern/mdtimer"
-	"github.com/byliuyang/app/modern/mdtracer"
 	"github.com/google/wire"
+	"github.com/short-d/app/fw"
+	"github.com/short-d/app/modern/mdcli"
+	"github.com/short-d/app/modern/mddb"
+	"github.com/short-d/app/modern/mdenv"
+	"github.com/short-d/app/modern/mdhttp"
+	"github.com/short-d/app/modern/mdio"
+	"github.com/short-d/app/modern/mdlogger"
+	"github.com/short-d/app/modern/mdrequest"
+	"github.com/short-d/app/modern/mdrouting"
+	"github.com/short-d/app/modern/mdruntime"
+	"github.com/short-d/app/modern/mdservice"
+	"github.com/short-d/app/modern/mdtimer"
+	"github.com/short-d/app/modern/mdtracer"
+	"github.com/short-d/short/app/adapter/db"
+	"github.com/short-d/short/app/adapter/facebook"
+	"github.com/short-d/short/app/adapter/github"
+	"github.com/short-d/short/app/adapter/google"
+	"github.com/short-d/short/app/adapter/graphql"
+	"github.com/short-d/short/app/usecase/account"
+	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/url"
+	"github.com/short-d/short/app/usecase/validator"
+	"github.com/short-d/short/dep/provider"
 )
 
 // Injectors from wire.go:
@@ -55,8 +57,11 @@ func InjectEnvironment() fw.Environment {
 	return goDotEnv
 }
 
-func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (mdservice.Service, error) {
-	logger := mdlogger.NewLocal()
+func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (mdservice.Service, error) {
+	stdOut := mdio.NewBuildInStdOut()
+	timer := mdtimer.NewTimer()
+	buildIn := mdruntime.NewBuildIn()
+	local := provider.NewLocalLogger(prefix, logLevel, stdOut, timer, buildIn)
 	tracer := mdtracer.NewLocal()
 	urlSql := db.NewURLSql(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql)
@@ -77,12 +82,11 @@ func InjectGraphQlService(name string, sqlDB *sql.DB, graphqlPath provider.Graph
 	reCaptcha := provider.NewReCaptchaService(http, secret)
 	verifier := requester.NewVerifier(reCaptcha)
 	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
-	timer := mdtimer.NewTimer()
 	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
-	short := graphql.NewShort(logger, tracer, retrieverPersist, creatorPersist, verifier, authenticator)
-	server := provider.NewGraphGophers(graphqlPath, logger, tracer, short)
-	service := mdservice.New(name, server, logger)
+	short := graphql.NewShort(local, tracer, retrieverPersist, creatorPersist, verifier, authenticator)
+	server := provider.NewGraphGophers(graphqlPath, local, tracer, short)
+	service := mdservice.New(name, server, local)
 	return service, nil
 }
 
@@ -90,10 +94,12 @@ var (
 	_wireTokenValidDurationValue = provider.TokenValidDuration(oneDay)
 )
 
-func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL) mdservice.Service {
-	logger := mdlogger.NewLocal()
-	tracer := mdtracer.NewLocal()
+func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL) mdservice.Service {
+	stdOut := mdio.NewBuildInStdOut()
 	timer := mdtimer.NewTimer()
+	buildIn := mdruntime.NewBuildIn()
+	local := provider.NewLocalLogger(prefix, logLevel, stdOut, timer, buildIn)
+	tracer := mdtracer.NewLocal()
 	urlSql := db.NewURLSql(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql)
 	client := mdhttp.NewClient()
@@ -113,9 +119,9 @@ func InjectRoutingService(name string, sqlDB *sql.DB, githubClientID provider.Gi
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	accountProvider := account.NewProvider(userSQL, timer)
-	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
-	server := mdrouting.NewBuiltIn(logger, tracer, v)
-	service := mdservice.New(name, server, logger)
+	v := provider.NewShortRoutes(local, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
+	server := mdrouting.NewBuiltIn(local, tracer, v)
+	service := mdservice.New(name, server, local)
 	return service
 }
 
@@ -125,7 +131,7 @@ const oneDay = 24 * time.Hour
 
 var authSet = wire.NewSet(provider.NewJwtGo, wire.Value(provider.TokenValidDuration(oneDay)), provider.NewAuthenticator)
 
-var observabilitySet = wire.NewSet(mdlogger.NewLocal, mdtracer.NewLocal)
+var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Local)), provider.NewLocalLogger, mdtracer.NewLocal)
 
 var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAccount, github.NewAPI)
 

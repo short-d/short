@@ -3,7 +3,7 @@ package keygen
 import (
 	"errors"
 
-	"github.com/byliuyang/kgs/app/entity"
+	"github.com/short-d/kgs/app/entity"
 )
 
 var _ KeyGenerator = (*Fake)(nil)
