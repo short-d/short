@@ -2,9 +2,10 @@ package url
 
 import (
 	"fmt"
-	"short/app/entity"
-	"short/app/usecase/repository"
 	"time"
+
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/repository"
 )
 
 var _ Retriever = (*RetrieverPersist)(nil)

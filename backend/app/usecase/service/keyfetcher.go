@@ -1,6 +1,6 @@
 package service
 
-import "github.com/byliuyang/kgs/app/entity"
+import "github.com/short-d/kgs/app/entity"
 
 // KeyFetcher fetches keys in batch
 type KeyFetcher interface {

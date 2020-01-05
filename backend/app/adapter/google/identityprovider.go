@@ -3,10 +3,10 @@ package google
 import (
 	"net/http"
 	"net/url"
-	"short/app/usecase/service"
 	"strings"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 const (

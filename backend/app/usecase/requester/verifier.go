@@ -1,7 +1,7 @@
 package requester
 
 import (
-	"short/app/usecase/service"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 // Verifier verifies in coming network to prevents cyber attacks.

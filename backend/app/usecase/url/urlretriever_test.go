@@ -3,12 +3,12 @@
 package url
 
 import (
-	"short/app/entity"
-	"short/app/usecase/repository"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/repository"
 )
 
 type urlMap = map[string]entity.URL
