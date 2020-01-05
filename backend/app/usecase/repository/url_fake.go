@@ -31,6 +31,19 @@ func (u *URLFake) Create(url entity.URL) error {
 	return nil
 }
 
+// Update updates an old URL with new alias in url table.
+func (u *URLFake) Update(url entity.URL) error {
+	isExist, err := u.IsAliasExist(url.Alias)
+	if err != nil {
+		return err
+	}
+	if !isExist {
+		return errors.New("alias do not exist")
+	}
+	u.urls[url.Alias] = url
+	return nil
+}
+
 // GetByAlias finds an URL in url table given alias.
 func (u URLFake) GetByAlias(alias string) (entity.URL, error) {
 	isExist, err := u.IsAliasExist(alias)

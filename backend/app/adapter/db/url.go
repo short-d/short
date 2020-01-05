@@ -59,6 +59,29 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
+// Update updates an old URL with new alias in url table.
+func (u *URLSql) Update(url entity.URL) error {
+	statement := fmt.Sprintf(`
+UPDATE "%s" 
+SET "%s" = $1, "%s" = $2, "%s" = $3, "%s" = $4,
+WHERE "%s" = $2`,
+		table.URL.TableName,
+		table.URL.ColumnAlias,
+		table.URL.ColumnOriginalURL,
+		table.URL.ColumnExpireAt,
+		table.URL.ColumnUpdatedAt,
+		table.URL.ColumnOriginalURL,
+	)
+	_, err := u.db.Exec(
+		statement,
+		url.Alias,
+		url.OriginalURL,
+		url.ExpireAt,
+		url.UpdatedAt,
+	)
+	return err
+}
+
 // GetByAlias finds an URL in url table given alias.
 func (u URLSql) GetByAlias(alias string) (entity.URL, error) {
 	statement := fmt.Sprintf(`

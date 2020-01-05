@@ -23,6 +23,28 @@ func (u *UserURLRelationFake) CreateRelation(user entity.User, url entity.URL) e
 	return nil
 }
 
+// UpdateRelation updates many to many relationship between User and URL.
+func (u *UserURLRelationFake) UpdateRelation(user entity.User, url entity.URL) error {
+	if !u.IsRelationExist(user, url) {
+		return errors.New("no relationship exists")
+	}
+
+	// get index for user in the slice
+	index := -1
+	for idx, originalUser := range u.users {
+		if originalUser == user {
+			index = idx
+		}
+	}
+
+	if index == -1 {
+		return errors.New("no user found")
+	}
+
+	u.urls[index] = url
+	return nil
+}
+
 // FindAliasesByUser fetches the aliases of all the URLs created by the given user.
 func (u UserURLRelationFake) FindAliasesByUser(user entity.User) ([]string, error) {
 	var aliases []string
