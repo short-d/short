@@ -3,14 +3,15 @@
 package url
 
 import (
-	"short/app/entity"
-	"short/app/usecase/keygen"
-	"short/app/usecase/repository"
-	"short/app/usecase/validator"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/keygen"
+	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/validator"
+
+	"github.com/short-d/app/mdtest"
 )
 
 func TestURLCreatorPersist_CreateURL(t *testing.T) {

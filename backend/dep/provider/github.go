@@ -1,9 +1,9 @@
 package provider
 
 import (
-	"short/app/adapter/github"
+	"github.com/short-d/short/app/adapter/github"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
 )
 
 // GithubClientID represents client ID used for Github OAuth.

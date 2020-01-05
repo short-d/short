@@ -1,10 +1,11 @@
 package provider
 
 import (
-	"short/app/usecase/auth"
 	"time"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/short/app/usecase/auth"
+
+	"github.com/short-d/app/fw"
 )
 
 // TokenValidDuration represents the duration of a valid token.

@@ -3,17 +3,18 @@
 package graphql
 
 import (
-	"short/app/adapter/db"
-	"short/app/usecase/auth"
-	"short/app/usecase/keygen"
-	"short/app/usecase/requester"
-	"short/app/usecase/service"
-	"short/app/usecase/url"
-	"short/app/usecase/validator"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/short/app/adapter/db"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/keygen"
+	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/short/app/usecase/url"
+	"github.com/short-d/short/app/usecase/validator"
+
+	"github.com/short-d/app/mdtest"
 )
 
 func TestGraphQlAPI(t *testing.T) {

@@ -6,11 +6,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"short/app/usecase/service"
 	"testing"
 
-	"github.com/byliuyang/app/mdtest"
-	"github.com/byliuyang/app/modern/mdrequest"
+	"github.com/short-d/short/app/usecase/service"
+
+	"github.com/short-d/app/mdtest"
+	"github.com/short-d/app/modern/mdrequest"
 	//"time"
 )
 

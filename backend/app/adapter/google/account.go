@@ -3,10 +3,11 @@ package google
 import (
 	"fmt"
 	"net/http"
-	"short/app/entity"
-	"short/app/usecase/service"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/service"
+
+	"github.com/short-d/app/fw"
 )
 
 const userInfoAPI = "https://openidconnect.googleapis.com/v1/userinfo"

@@ -3,14 +3,15 @@
 package resolver
 
 import (
-	"short/app/entity"
-	"short/app/usecase/auth"
-	"short/app/usecase/repository"
-	"short/app/usecase/url"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/url"
+
+	"github.com/short-d/app/mdtest"
 )
 
 func TestQuery_AuthQuery(t *testing.T) {

@@ -3,12 +3,13 @@
 package resolver
 
 import (
-	"short/app/adapter/graphql/scalar"
-	"short/app/entity"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/short/app/adapter/graphql/scalar"
+	"github.com/short-d/short/app/entity"
+
+	"github.com/short-d/app/mdtest"
 )
 
 func TestURL_Alias(t *testing.T) {

@@ -4,10 +4,11 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"short/app/usecase/service"
 
-	"github.com/byliuyang/kgs/app/adapter/rpc/proto"
-	"github.com/byliuyang/kgs/app/entity"
+	"github.com/short-d/short/app/usecase/service"
+
+	"github.com/short-d/kgs/app/adapter/rpc/proto"
+	"github.com/short-d/kgs/app/entity"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )

@@ -3,12 +3,13 @@ package routing
 import (
 	"net/http"
 	netURL "net/url"
-	"short/app/usecase/auth"
-	"short/app/usecase/service"
-	"short/app/usecase/sso"
-	"short/app/usecase/url"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/short/app/usecase/sso"
+	"github.com/short-d/short/app/usecase/url"
+
+	"github.com/short-d/app/fw"
 )
 
 // NewOriginalURL translates alias to the original long link.

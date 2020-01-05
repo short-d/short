@@ -1,10 +1,11 @@
 package resolver
 
 import (
-	"short/app/adapter/graphql/scalar"
-	"short/app/entity"
-	"short/app/usecase/url"
 	"time"
+
+	"github.com/short-d/short/app/adapter/graphql/scalar"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/url"
 )
 
 // AuthQuery represents GraphQL query resolver that acts differently based

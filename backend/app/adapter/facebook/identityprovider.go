@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"short/app/usecase/service"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/short/app/usecase/service"
+
+	"github.com/short-d/app/fw"
 )
 
 // More info here: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow

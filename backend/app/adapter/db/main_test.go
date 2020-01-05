@@ -4,13 +4,14 @@ package db_test
 
 import (
 	"path"
-	"short/dep"
 	"strconv"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/fw"
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/short/dep"
+
+	"github.com/short-d/app/fw"
+	"github.com/short-d/app/mdtest"
 )
 
 var dbConnector fw.DBConnector

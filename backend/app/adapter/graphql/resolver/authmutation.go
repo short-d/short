@@ -2,9 +2,10 @@ package resolver
 
 import (
 	"errors"
-	"short/app/entity"
-	"short/app/usecase/url"
 	"time"
+
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/url"
 )
 
 // AuthMutation represents GraphQL mutation resolver that acts differently based

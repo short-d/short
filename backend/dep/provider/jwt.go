@@ -1,9 +1,9 @@
 package provider
 
 import (
-	"github.com/byliuyang/app/modern/mdcrypto"
+	"github.com/short-d/app/modern/mdcrypto"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
 )
 
 // JwtSecret represents the secret used to encode and decode JWT token.

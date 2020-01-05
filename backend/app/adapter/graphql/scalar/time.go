@@ -5,10 +5,10 @@ import (
 	"errors"
 	"time"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
 )
 
-var _ fw.Scalar = &Time{}
+var _ fw.GraphQLScalar = &Time{}
 
 // Time maps GraphQL Time scalar to time.Time.
 type Time struct {

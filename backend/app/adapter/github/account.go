@@ -2,10 +2,11 @@ package github
 
 import (
 	"fmt"
-	"short/app/entity"
-	"short/app/usecase/service"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/service"
+
+	"github.com/short-d/app/fw"
 )
 
 const githubAPI = "https://api.github.com/graphql"

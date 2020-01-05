@@ -3,7 +3,7 @@ package auth
 import (
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
 )
 
 // NewAuthenticatorFake creates fake authenticator for easy testing.

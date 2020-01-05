@@ -3,9 +3,10 @@ package recaptcha
 import (
 	"fmt"
 	"net/http"
-	"short/app/usecase/service"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/short/app/usecase/service"
+
+	"github.com/short-d/app/fw"
 )
 
 const verifyAPI = "https://www.google.com/recaptcha/api/siteverify"

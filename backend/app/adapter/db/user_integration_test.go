@@ -5,13 +5,14 @@ package db_test
 import (
 	"database/sql"
 	"fmt"
-	"short/app/adapter/db"
-	"short/app/adapter/db/table"
-	"short/app/entity"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/short/app/adapter/db"
+	"github.com/short-d/short/app/adapter/db/table"
+	"github.com/short-d/short/app/entity"
+
+	"github.com/short-d/app/mdtest"
 )
 
 var insertUserRowSQL = fmt.Sprintf(`

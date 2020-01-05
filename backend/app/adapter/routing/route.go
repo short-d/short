@@ -2,15 +2,16 @@ package routing
 
 import (
 	netURL "net/url"
-	"short/app/adapter/facebook"
-	"short/app/adapter/github"
-	"short/app/adapter/google"
-	"short/app/usecase/account"
-	"short/app/usecase/auth"
-	"short/app/usecase/sso"
-	"short/app/usecase/url"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/short/app/adapter/facebook"
+	"github.com/short-d/short/app/adapter/github"
+	"github.com/short-d/short/app/adapter/google"
+	"github.com/short-d/short/app/usecase/account"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/sso"
+	"github.com/short-d/short/app/usecase/url"
+
+	"github.com/short-d/app/fw"
 )
 
 // Observability represents a set of metrics data producers which improve the observability of the

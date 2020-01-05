@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math"
 
-	"github.com/byliuyang/kgs/app/entity"
+	"github.com/short-d/kgs/app/entity"
 )
 
 var _ KeyFetcher = (*KeyFetcherFake)(nil)

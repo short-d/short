@@ -1,8 +1,8 @@
 package resolver
 
 import (
-	"short/app/adapter/graphql/scalar"
-	"short/app/entity"
+	"github.com/short-d/short/app/adapter/graphql/scalar"
+	"github.com/short-d/short/app/entity"
 )
 
 // URL retrieves requested fields of URL entity.
