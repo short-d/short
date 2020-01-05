@@ -1,10 +1,9 @@
 package account
 
 import (
+	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/repository"
-
-	"github.com/short-d/app/fw"
 )
 
 // Provider providers user account service.

@@ -6,12 +6,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/graphql/scalar"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/url"
-
-	"github.com/short-d/app/mdtest"
 )
 
 type urlMap = map[string]entity.URL

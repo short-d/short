@@ -3,10 +3,9 @@ package main
 import (
 	"strconv"
 
+	"github.com/short-d/app/fw"
 	"github.com/short-d/short/cmd"
 	"github.com/short-d/short/dep"
-
-	"github.com/short-d/app/fw"
 )
 
 func main() {

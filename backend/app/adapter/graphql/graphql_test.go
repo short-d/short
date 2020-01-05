@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/keygen"
@@ -13,8 +14,6 @@ import (
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
-
-	"github.com/short-d/app/mdtest"
 )
 
 func TestGraphQlAPI(t *testing.T) {

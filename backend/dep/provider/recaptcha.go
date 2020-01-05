@@ -1,10 +1,9 @@
 package provider
 
 import (
+	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/recaptcha"
 	"github.com/short-d/short/app/usecase/service"
-
-	"github.com/short-d/app/fw"
 )
 
 // ReCaptchaSecret represents the secret used to verify reCAPTCHA.

@@ -6,10 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/short/app/entity"
-
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/entity"
 )
 
 func TestAuthenticator_GenerateToken(t *testing.T) {

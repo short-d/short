@@ -4,9 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/short-d/short/app/entity"
-
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app/entity"
 )
 
 // Authenticator securely authenticates an user's identity.

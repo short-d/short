@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/service"
-
-	"github.com/short-d/app/fw"
 )
 
 const userInfoAPI = "https://openidconnect.googleapis.com/v1/userinfo"

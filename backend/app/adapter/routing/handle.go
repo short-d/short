@@ -4,12 +4,11 @@ import (
 	"net/http"
 	netURL "net/url"
 
+	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/sso"
 	"github.com/short-d/short/app/usecase/url"
-
-	"github.com/short-d/app/fw"
 )
 
 // NewOriginalURL translates alias to the original long link.

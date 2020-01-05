@@ -1,9 +1,8 @@
 package provider
 
 import (
-	"github.com/short-d/short/app/adapter/facebook"
-
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app/adapter/facebook"
 )
 
 // FacebookClientID represents client ID used for Facebook OAuth.

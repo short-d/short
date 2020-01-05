@@ -7,13 +7,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/service"
-
-	"github.com/short-d/app/mdtest"
 )
 
 func TestSingleSignOn_SignIn(t *testing.T) {

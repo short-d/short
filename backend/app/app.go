@@ -1,10 +1,9 @@
 package app
 
 import (
+	"github.com/short-d/app/fw"
 	"github.com/short-d/short/dep"
 	"github.com/short-d/short/dep/provider"
-
-	"github.com/short-d/app/fw"
 )
 
 // ServiceConfig represents require parameters for the backend APIs

@@ -5,9 +5,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/short-d/short/app/usecase/service"
-
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 // More info here: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow

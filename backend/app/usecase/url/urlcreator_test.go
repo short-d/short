@@ -6,12 +6,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/validator"
-
-	"github.com/short-d/app/mdtest"
 )
 
 func TestURLCreatorPersist_CreateURL(t *testing.T) {

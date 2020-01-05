@@ -1,10 +1,9 @@
 package resolver
 
 import (
+	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/url"
-
-	"github.com/short-d/app/fw"
 )
 
 // Query represents GraphQL query resolver

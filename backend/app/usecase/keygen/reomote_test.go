@@ -5,10 +5,9 @@ package keygen
 import (
 	"testing"
 
-	"github.com/short-d/short/app/usecase/service"
-
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/kgs/app/entity"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 func TestNewRemote(t *testing.T) {

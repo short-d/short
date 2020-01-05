@@ -8,10 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/short/dep"
-
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/dep"
 )
 
 var dbConnector fw.DBConnector

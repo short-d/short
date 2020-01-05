@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/short-d/short/app"
-
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app"
 )
 
 // ServiceConfig represents necessary parameters needed to initialize the

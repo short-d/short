@@ -6,10 +6,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/graphql/scalar"
 	"github.com/short-d/short/app/entity"
-
-	"github.com/short-d/app/mdtest"
 )
 
 func TestURL_Alias(t *testing.T) {

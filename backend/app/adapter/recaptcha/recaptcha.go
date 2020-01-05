@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/short-d/short/app/usecase/service"
-
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 const verifyAPI = "https://www.google.com/recaptcha/api/siteverify"

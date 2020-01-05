@@ -1,9 +1,8 @@
 package provider
 
 import (
-	"github.com/short-d/app/modern/mdgraphql"
-
 	"github.com/short-d/app/fw"
+	"github.com/short-d/app/modern/mdgraphql"
 )
 
 // GraphQlPath represents the path for GraphQL APIs.
