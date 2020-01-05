@@ -3,9 +3,10 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"short/app/adapter/db/table"
-	"short/app/entity"
-	"short/app/usecase/repository"
+
+	"github.com/short-d/short/app/adapter/db/table"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/repository"
 )
 
 var _ repository.UserURLRelation = (*UserURLRelationSQL)(nil)

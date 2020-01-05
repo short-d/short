@@ -2,7 +2,8 @@ package repository
 
 import (
 	"errors"
-	"short/app/entity"
+
+	"github.com/short-d/short/app/entity"
 )
 
 var _ UserURLRelation = (*UserURLRelationFake)(nil)

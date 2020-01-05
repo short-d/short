@@ -2,10 +2,11 @@ package sso
 
 import (
 	"errors"
-	"short/app/entity"
-	"short/app/usecase/account"
-	"short/app/usecase/auth"
-	"short/app/usecase/service"
+
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/account"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 // SingleSignOn enables sign in through external identity providers, such as

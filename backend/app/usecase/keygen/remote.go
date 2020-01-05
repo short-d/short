@@ -2,9 +2,9 @@ package keygen
 
 import (
 	"errors"
-	"short/app/usecase/service"
 
-	"github.com/byliuyang/kgs/app/entity"
+	"github.com/short-d/kgs/app/entity"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 var _ KeyGenerator = (*Remote)(nil)

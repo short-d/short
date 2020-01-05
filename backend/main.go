@@ -1,11 +1,11 @@
 package main
 
 import (
-	"short/cmd"
-	"short/dep"
 	"strconv"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
+	"github.com/short-d/short/cmd"
+	"github.com/short-d/short/dep"
 )
 
 func main() {
@@ -51,6 +51,8 @@ func main() {
 	}
 
 	serviceConfig := cmd.ServiceConfig{
+		LogPrefix:            "Short",
+		LogLevel:             fw.LogTrace,
 		RecaptchaSecret:      recaptchaSecret,
 		GithubClientID:       githubClientID,
 		GithubClientSecret:   githubClientSecret,

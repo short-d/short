@@ -1,9 +1,9 @@
 package account
 
 import (
-	"short/app/entity"
-	"short/app/usecase/keygen"
-	"short/app/usecase/repository"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/keygen"
+	"github.com/short-d/short/app/usecase/repository"
 )
 
 // Linker provides account linking service.

@@ -3,17 +3,17 @@
 package graphql
 
 import (
-	"short/app/adapter/db"
-	"short/app/usecase/auth"
-	"short/app/usecase/keygen"
-	"short/app/usecase/requester"
-	"short/app/usecase/service"
-	"short/app/usecase/url"
-	"short/app/usecase/validator"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/adapter/db"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/keygen"
+	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/short/app/usecase/url"
+	"github.com/short-d/short/app/usecase/validator"
 )
 
 func TestGraphQlAPI(t *testing.T) {
@@ -39,7 +39,7 @@ func TestGraphQlAPI(t *testing.T) {
 	verifier := requester.NewVerifier(s)
 	authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
 
-	logger := mdtest.NewLoggerFake()
+	logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 	tracer := mdtest.NewTracerFake()
 	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, verifier, authenticator)
 	mdtest.Equal(t, true, mdtest.IsGraphQlAPIValid(graphqlAPI))

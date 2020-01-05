@@ -3,12 +3,12 @@
 package account
 
 import (
-	"short/app/entity"
-	"short/app/usecase/keygen"
-	"short/app/usecase/repository"
 	"testing"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/keygen"
+	"github.com/short-d/short/app/usecase/repository"
 )
 
 func TestLinker_IsAccountLinked(t *testing.T) {

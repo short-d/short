@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
 )
 
 func TestLongLink_IsValid(t *testing.T) {

@@ -1,15 +1,15 @@
 package graphql
 
 import (
-	"short/app/adapter/graphql/resolver"
-	"short/app/usecase/auth"
-	"short/app/usecase/requester"
-	"short/app/usecase/url"
+	"github.com/short-d/short/app/adapter/graphql/resolver"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/url"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
 )
 
-var _ fw.GraphQlAPI = (*Short)(nil)
+var _ fw.GraphQLAPI = (*Short)(nil)
 
 // Short represents GraphQL API config
 type Short struct {
@@ -22,7 +22,7 @@ func (t Short) GetSchema() string {
 }
 
 // GetResolver retrieves GraphQL resolver
-func (t Short) GetResolver() interface{} {
+func (t Short) GetResolver() fw.Resolver {
 	return t.resolver
 }
 

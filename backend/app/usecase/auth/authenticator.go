@@ -2,10 +2,10 @@ package auth
 
 import (
 	"errors"
-	"short/app/entity"
 	"time"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app/entity"
 )
 
 // Authenticator securely authenticates an user's identity.

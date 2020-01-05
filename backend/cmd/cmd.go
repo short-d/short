@@ -3,14 +3,16 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"short/app"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app"
 )
 
 // ServiceConfig represents necessary parameters needed to initialize the
 // backend APIs.
 type ServiceConfig struct {
+	LogPrefix            string
+	LogLevel             fw.LogLevel
 	RecaptchaSecret      string
 	GithubClientID       string
 	GithubClientSecret   string
@@ -46,6 +48,8 @@ func NewRootCmd(
 			OnExecute: func(cmd *fw.Command, args []string) {
 
 				serviceConfig := app.ServiceConfig{
+					LogPrefix:            config.LogPrefix,
+					LogLevel:             config.LogLevel,
 					MigrationRoot:        migrationRoot,
 					RecaptchaSecret:      config.RecaptchaSecret,
 					GithubClientID:       config.GithubClientID,
