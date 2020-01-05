@@ -58,7 +58,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 			fakeRepo := repository.NewURLFake(map[string]entity.URL{})
 			authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
-			logger := mdtest.NewLoggerFake()
+			logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 			tracer := mdtest.NewTracerFake()
 			query := newQuery(&logger, &tracer, authenticator, retrieverFake)
 

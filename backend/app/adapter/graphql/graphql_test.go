@@ -39,7 +39,7 @@ func TestGraphQlAPI(t *testing.T) {
 	verifier := requester.NewVerifier(s)
 	authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
 
-	logger := mdtest.NewLoggerFake()
+	logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 	tracer := mdtest.NewTracerFake()
 	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, verifier, authenticator)
 	mdtest.Equal(t, true, mdtest.IsGraphQlAPIValid(graphqlAPI))
