@@ -1,6 +1,6 @@
 FROM golang:1.13.1-alpine AS builder
 
-WORKDIR /app
+WORKDIR /short
 
 RUN apk add --no-cache git bash
 
@@ -17,10 +17,10 @@ RUN go build -o build/app main.go
 
 FROM alpine:3.10 as production
 
-WORKDIR /app
+WORKDIR /short
 
 RUN apk add --no-cache bash
 
-COPY --from=builder /app/build/app ./build/app
-COPY --from=builder /app/scripts/wait-for-it ./scripts/wait-for-it
-COPY --from=builder /app/app/adapter/migration ./app/adapter/migration
+COPY --from=builder /short/build/app ./build/app
+COPY --from=builder /short/scripts/wait-for-it ./scripts/wait-for-it
+COPY --from=builder /short/app/adapter/db/migration ./app/adapter/db/migration
