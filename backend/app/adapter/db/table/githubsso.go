@@ -1,6 +1,6 @@
 package table
 
-// User represents database table columns for 'user' table
+// GithubSSO represents database table columns for 'github_sso' table.
 var GithubSSO = struct {
 	TableName          string
 	ColumnGithubUserID string

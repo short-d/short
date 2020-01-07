@@ -12,11 +12,15 @@ import (
 
 var _ repository.AccountMapping = (*GithubSSOSql)(nil)
 
+// GithubSSO accesses mapping between Github and Short accounts from the SQL
+// database.
 type GithubSSOSql struct {
 	db     *sql.DB
 	logger fw.Logger
 }
 
+// IsSSOUserExist checks whether mapping for a given Github account exists in
+// the database.
 func (g GithubSSOSql) IsSSOUserExist(ssoUser entity.SSOUser) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s"
@@ -39,10 +43,13 @@ WHERE "%s"=$1;
 	return false, err
 }
 
+// CreateMapping creates mapping between user's Github and Short accounts in the
+// database.
 func (g GithubSSOSql) CreateMapping(ssoUser entity.SSOUser, user entity.User) error {
 	panic("implement me")
 }
 
+// NewGithubSSOSql creates GithubSSOSql.
 func NewGithubSSOSql(db *sql.DB, logger fw.Logger) GithubSSOSql {
 	return GithubSSOSql{db: db, logger: logger}
 }
