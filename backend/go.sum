@@ -96,6 +96,8 @@ github.com/short-d/app v0.0.0-20200105224216-bfaee9df6800 h1:lZ/pLr3tOmqHuNIl/Di
 github.com/short-d/app v0.0.0-20200105224216-bfaee9df6800/go.mod h1:L3bsuFXGyUFKU05c73y7w2BaksvIIIzQR2hB1cpvJ1g=
 github.com/short-d/app v0.0.0-20200108071827-304a2038ed5b h1:6IXtOtDyeNjhsBACDUC9YuB9IPeTOetZeTQbEIbFTfY=
 github.com/short-d/app v0.0.0-20200108071827-304a2038ed5b/go.mod h1:L3bsuFXGyUFKU05c73y7w2BaksvIIIzQR2hB1cpvJ1g=
+github.com/short-d/app v0.0.0-20200108075430-a7a081c61daf h1:Xf04Hkv6iDy4eFjSx2CaZ/OlApxyJY/tP2wf7+MIonM=
+github.com/short-d/app v0.0.0-20200108075430-a7a081c61daf/go.mod h1:L3bsuFXGyUFKU05c73y7w2BaksvIIIzQR2hB1cpvJ1g=
 github.com/short-d/eventbus v0.0.0-20200105092235-2dfc4be1f9ee h1:LNafZ4caEAcTlgGe9zJ18njsyR+uogkE5+dzZ5LeeAI=
 github.com/short-d/eventbus v0.0.0-20200105092235-2dfc4be1f9ee/go.mod h1:S3Nww0QNubrzHbWTpfzAg8YQLwXuM9GH2cGshOU6GJQ=
 github.com/short-d/kgs v0.0.0-20200105183048-3be4c3acc728 h1:3Dz2VGBFiUuZ/23kvqZnSHbIQxp490nHf/4vjR8wwOU=
