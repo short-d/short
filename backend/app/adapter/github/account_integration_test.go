@@ -1,4 +1,4 @@
-// +build integration all
+// +build !integration all
 
 package github
 
@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/short-d/app/mdtest"
-
 	"github.com/short-d/short/app/entity"
 )
 
@@ -82,6 +81,11 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 			t.Parallel()
 			graphQLRequest := mdtest.NewGraphQLRequestFake(
 				func(req *http.Request) (response *http.Response, e error) {
+					mdtest.Equal(t, "https://api.github.com/graphql", req.URL.String())
+					mdtest.Equal(t, "POST", req.Method)
+					mdtest.Equal(t, "application/json", req.Header.Get("Content-Type"))
+					mdtest.Equal(t, "application/json", req.Header.Get("Accept"))
+
 					return testCase.httpResponse, testCase.httpErr
 				})
 			githubAccount := NewAccount(graphQLRequest)
