@@ -46,7 +46,16 @@ WHERE "%s"=$1;
 // CreateMapping creates mapping between user's Github and Short accounts in the
 // database.
 func (g GithubSSOSql) CreateMapping(ssoUser entity.SSOUser, user entity.User) error {
-	panic("implement me")
+	statement := fmt.Sprintf(`
+INSERT INTO "%s" ("%s", "%s")
+VALUES ($1, $2);
+`,
+		table.GithubSSO.TableName,
+		table.GithubSSO.ColumnGithubUserID,
+		table.GithubSSO.ColumnShortUserID,
+	)
+	_, err := g.db.Exec(statement, ssoUser.ID, user.ID)
+	return err
 }
 
 // NewGithubSSOSql creates GithubSSOSql.

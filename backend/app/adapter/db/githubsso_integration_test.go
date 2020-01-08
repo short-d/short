@@ -69,6 +69,77 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 	}
 }
 
+func TestGithubSSOSql_CreateMapping(t *testing.T) {
+	testCases := []struct {
+		name      string
+		tableRows []githubSSOTableRow
+		ssoUser   entity.SSOUser
+		shortUser entity.User
+		hasErr    bool
+	}{
+		{
+			name: "mapping exists",
+			tableRows: []githubSSOTableRow{
+				{githubUserID: "long_user_id", shortUserID: "short"},
+			},
+			ssoUser:   entity.SSOUser{ID: "long_user_id"},
+			shortUser: entity.User{ID: "short"},
+			hasErr:    true,
+		},
+		{
+			name: "only SSO user ID exists",
+			tableRows: []githubSSOTableRow{
+				{githubUserID: "long_user_id", shortUserID: "short"},
+			},
+			ssoUser:   entity.SSOUser{ID: "long_user_id"},
+			shortUser: entity.User{ID: "alpha"},
+			hasErr:    true,
+		},
+		{
+			name: "only Short user ID exists",
+			tableRows: []githubSSOTableRow{
+				{githubUserID: "long_user_id", shortUserID: "short"},
+			},
+			ssoUser:   entity.SSOUser{ID: "another_user_id"},
+			shortUser: entity.User{ID: "short"},
+			hasErr:    true,
+		},
+		{
+			name: "neither SSO user ID nor Short user ID exists",
+			tableRows: []githubSSOTableRow{
+				{githubUserID: "long_user_id", shortUserID: "short"},
+			},
+			ssoUser:   entity.SSOUser{ID: "another_user_id"},
+			shortUser: entity.User{ID: "alpha"},
+			hasErr:    false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertGithubSSOTableRows(t, sqlDB, testCase.tableRows)
+
+					logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
+					githubSSORepo := db.NewGithubSSOSql(sqlDB, &logger)
+
+					err := githubSSORepo.CreateMapping(testCase.ssoUser, testCase.shortUser)
+
+					if testCase.hasErr {
+						mdtest.NotEqual(t, nil, err)
+						return
+					}
+					mdtest.Equal(t, nil, err)
+				})
+		})
+	}
+}
+
 var insertGithubSSORowSQL = fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s")
 VALUES ($1, $2)`,
