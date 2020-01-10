@@ -1,3 +1,5 @@
+// +build !integration all
+
 package google
 
 import (
@@ -74,12 +76,14 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 					mdtest.Equal(t, "https://openidconnect.googleapis.com/v1/userinfo", req.URL.String())
 					mdtest.Equal(t, "GET", req.Method)
 					mdtest.Equal(t, "application/json", req.Header.Get("Accept"))
+					mdtest.Equal(t, "Bearer access_token", req.Header.Get("Authorization"))
 
 					return testCase.httpResponse, testCase.httpErr
 				})
 			googleAccount := NewAccount(httpRequest)
 
 			gotSSOUser, err := googleAccount.GetSingleSignOnUser("access_token")
+
 			if testCase.expectHasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
