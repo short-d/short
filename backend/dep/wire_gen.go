@@ -28,7 +28,9 @@ import (
 	"github.com/short-d/short/app/adapter/github"
 	"github.com/short-d/short/app/adapter/google"
 	"github.com/short-d/short/app/adapter/graphql"
+	"github.com/short-d/short/app/usecase"
 	"github.com/short-d/short/app/usecase/account"
+	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
@@ -102,6 +104,7 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	tracer := mdtracer.NewLocal()
 	urlSql := db.NewURLSql(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql)
+	short := usecase.NewShort(local, retrieverPersist, timer)
 	client := mdhttp.NewClient()
 	http := mdrequest.NewHTTP(client)
 	identityProvider := provider.NewGithubIdentityProvider(http, githubClientID, githubClientSecret)
@@ -119,7 +122,7 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	accountProvider := account.NewProvider(userSQL, timer)
-	v := provider.NewShortRoutes(local, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
+	v := provider.NewShortRoutes(local, tracer, webFrontendURL, short, api, facebookAPI, googleAPI, authenticator, accountProvider)
 	server := mdrouting.NewBuiltIn(local, tracer, v)
 	service := mdservice.New(name, server, local)
 	return service
@@ -138,3 +141,9 @@ var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAcc
 var facebookAPISet = wire.NewSet(provider.NewFacebookIdentityProvider, facebook.NewAccount, facebook.NewAPI)
 
 var googleAPISet = wire.NewSet(provider.NewGoogleIdentityProvider, google.NewAccount, google.NewAPI)
+
+var useCaseSet = wire.NewSet(wire.Bind(new(usecase.UseCase), new(usecase.Short)), wire.Bind(new(url.Retriever), new(url.RetrieverPersist)), wire.Bind(new(repository.User), new(*(db.UserSQL))), wire.Bind(new(repository.URL), new(*db.URLSql)), authSet,
+	githubAPISet,
+	facebookAPISet,
+	googleAPISet, mdhttp.NewClient, mdrequest.NewHTTP, mdrequest.NewGraphQL, mdtimer.NewTimer, usecase.NewShort, db.NewUserSQL, db.NewURLSql, url.NewRetrieverPersist, account.NewProvider,
+)

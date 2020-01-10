@@ -5,39 +5,29 @@ import (
 	netURL "net/url"
 
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app/usecase"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/sso"
-	"github.com/short-d/short/app/usecase/url"
 )
 
 // NewOriginalURL translates alias to the original long link.
 func NewOriginalURL(
-	logger fw.Logger,
 	tracer fw.Tracer,
-	urlRetriever url.Retriever,
-	timer fw.Timer,
+	useCase usecase.UseCase,
 	webFrontendURL netURL.URL,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		trace := tracer.BeginTrace("OriginalURL")
-
 		alias := params["alias"]
 
-		trace1 := trace.Next("GetUrlAfter")
-		now := timer.Now()
-		u, err := urlRetriever.GetURL(alias, &now)
-		trace1.End()
-
-		if err != nil {
-			logger.Error(err)
+		useCase.ViewLongLink(alias, func() {
 			serve404(w, r, webFrontendURL)
-			return
-		}
-
-		originURL := u.OriginalURL
-		http.Redirect(w, r, originURL, http.StatusSeeOther)
-		trace.End()
+			trace.End()
+		}, func(longLink string) {
+			http.Redirect(w, r, longLink, http.StatusSeeOther)
+			trace.End()
+		})
 	}
 }
 

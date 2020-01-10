@@ -3,6 +3,8 @@ package routing
 import (
 	netURL "net/url"
 
+	"github.com/short-d/short/app/usecase"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
@@ -10,7 +12,6 @@ import (
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/sso"
-	"github.com/short-d/short/app/usecase/url"
 )
 
 // Observability represents a set of metrics data producers which improve the observability of the
@@ -24,8 +25,7 @@ type Observability struct {
 func NewShort(
 	observability Observability,
 	webFrontendURL string,
-	timer fw.Timer,
-	urlRetriever url.Retriever,
+	useCase usecase.UseCase,
 	githubAPI github.API,
 	facebookAPI facebook.API,
 	googleAPI google.API,
@@ -124,10 +124,8 @@ func NewShort(
 			Method: "GET",
 			Path:   "/r/:alias",
 			Handle: NewOriginalURL(
-				logger,
 				tracer,
-				urlRetriever,
-				timer,
+				useCase,
 				*frontendURL,
 			),
 		},

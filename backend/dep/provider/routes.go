@@ -6,9 +6,9 @@ import (
 	"github.com/short-d/short/app/adapter/github"
 	"github.com/short-d/short/app/adapter/google"
 	"github.com/short-d/short/app/adapter/routing"
+	"github.com/short-d/short/app/usecase"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/auth"
-	"github.com/short-d/short/app/usecase/url"
 )
 
 // WebFrontendURL represents the URL of the web frontend
@@ -19,8 +19,7 @@ func NewShortRoutes(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	webFrontendURL WebFrontendURL,
-	timer fw.Timer,
-	urlRetriever url.Retriever,
+	useCase usecase.UseCase,
 	githubAPI github.API,
 	facebookAPI facebook.API,
 	googleAPI google.API,
@@ -35,8 +34,7 @@ func NewShortRoutes(
 	return routing.NewShort(
 		observability,
 		string(webFrontendURL),
-		timer,
-		urlRetriever,
+		useCase,
 		githubAPI,
 		facebookAPI,
 		googleAPI,

@@ -26,6 +26,7 @@ import (
 	"github.com/short-d/short/app/adapter/google"
 	"github.com/short-d/short/app/adapter/graphql"
 	"github.com/short-d/short/app/adapter/kgs"
+	"github.com/short-d/short/app/usecase"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
@@ -34,39 +35,6 @@ import (
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
 	"github.com/short-d/short/dep/provider"
-)
-
-const oneDay = 24 * time.Hour
-
-var authSet = wire.NewSet(
-	provider.NewJwtGo,
-
-	wire.Value(provider.TokenValidDuration(oneDay)),
-	provider.NewAuthenticator,
-)
-
-var observabilitySet = wire.NewSet(
-	wire.Bind(new(fw.Logger), new(mdlogger.Local)),
-	provider.NewLocalLogger,
-	mdtracer.NewLocal,
-)
-
-var githubAPISet = wire.NewSet(
-	provider.NewGithubIdentityProvider,
-	github.NewAccount,
-	github.NewAPI,
-)
-
-var facebookAPISet = wire.NewSet(
-	provider.NewFacebookIdentityProvider,
-	facebook.NewAccount,
-	facebook.NewAPI,
-)
-
-var googleAPISet = wire.NewSet(
-	provider.NewGoogleIdentityProvider,
-	google.NewAccount,
-	google.NewAPI,
 )
 
 // InjectCommandFactory creates CommandFactory with configured dependencies.
@@ -104,6 +72,61 @@ func InjectEnvironment() fw.Environment {
 	)
 	return mdenv.GoDotEnv{}
 }
+
+const oneDay = 24 * time.Hour
+
+var authSet = wire.NewSet(
+	provider.NewJwtGo,
+
+	wire.Value(provider.TokenValidDuration(oneDay)),
+	provider.NewAuthenticator,
+)
+
+var observabilitySet = wire.NewSet(
+	wire.Bind(new(fw.Logger), new(mdlogger.Local)),
+	provider.NewLocalLogger,
+	mdtracer.NewLocal,
+)
+
+var githubAPISet = wire.NewSet(
+	provider.NewGithubIdentityProvider,
+	github.NewAccount,
+	github.NewAPI,
+)
+
+var facebookAPISet = wire.NewSet(
+	provider.NewFacebookIdentityProvider,
+	facebook.NewAccount,
+	facebook.NewAPI,
+)
+
+var googleAPISet = wire.NewSet(
+	provider.NewGoogleIdentityProvider,
+	google.NewAccount,
+	google.NewAPI,
+)
+
+var useCaseSet = wire.NewSet(
+	wire.Bind(new(usecase.UseCase), new(usecase.Short)),
+	wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
+	wire.Bind(new(repository.User), new(*(db.UserSQL))),
+	wire.Bind(new(repository.URL), new(*db.URLSql)),
+
+	authSet,
+	githubAPISet,
+	facebookAPISet,
+	googleAPISet,
+
+	mdhttp.NewClient,
+	mdrequest.NewHTTP,
+	mdrequest.NewGraphQL,
+	mdtimer.NewTimer,
+	usecase.NewShort,
+	db.NewUserSQL,
+	db.NewURLSql,
+	url.NewRetrieverPersist,
+	account.NewProvider,
+)
 
 // InjectGraphQLService creates GraphQL service with configured dependencies.
 func InjectGraphQLService(
@@ -175,31 +198,16 @@ func InjectRoutingService(
 	wire.Build(
 		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
-		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repository.User), new(*(db.UserSQL))),
-		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 		wire.Bind(new(fw.GraphQlRequest), new(mdrequest.GraphQL)),
 
 		observabilitySet,
-		authSet,
-		githubAPISet,
-		facebookAPISet,
-		googleAPISet,
+		useCaseSet,
 
 		mdio.NewBuildInStdOut,
 		mdruntime.NewBuildIn,
 		mdservice.New,
 		mdrouting.NewBuiltIn,
-		mdhttp.NewClient,
-		mdrequest.NewHTTP,
-		mdrequest.NewGraphQL,
-		mdtimer.NewTimer,
-
-		db.NewUserSQL,
-		db.NewURLSql,
-		url.NewRetrieverPersist,
-		account.NewProvider,
 		provider.NewShortRoutes,
 	)
 	return mdservice.Service{}
