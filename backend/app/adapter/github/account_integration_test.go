@@ -1,4 +1,4 @@
-// +build !integration all
+// +build integration all
 
 package github
 
