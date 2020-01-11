@@ -1,6 +1,6 @@
 // +build integration all
 
-package github
+package google
 
 import (
 	"bytes"
@@ -33,21 +33,17 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 				StatusCode: http.StatusOK,
 				Body: ioutil.NopCloser(bytes.NewReader([]byte(`
 {
-  "data": {
-    "viewer": {
-      "id": "pwBi3AMeOV3Zg3AlOPyn",
-      "name": "Github User",
-      "email": "github-user@gmail.com"
-    }
-  }
+      "sub": "bcBi3AMeOV3Zg3AlOPyn",
+      "name": "Google User",
+      "email": "googleUser@gmail.com"
 }
 `,
 				)))},
 			expectHasErr: false,
 			expectedSSOUser: entity.SSOUser{
-				ID:    "pwBi3AMeOV3Zg3AlOPyn",
-				Name:  "Github User",
-				Email: "github-user@gmail.com",
+				ID:    "bcBi3AMeOV3Zg3AlOPyn",
+				Name:  "Google User",
+				Email: "googleUser@gmail.com",
 			},
 		},
 		{
@@ -56,20 +52,16 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 				StatusCode: http.StatusOK,
 				Body: ioutil.NopCloser(bytes.NewReader([]byte(`
 {
-  "data": {
-    "viewer": {
-      "id": "pwBi3AMeOV3Zg3AlOPyn",
-      "name": "Github User",
+      "sub": "bcBi3AMeOV3Zg3AlOPyn",
+      "name": "Google User",
       "email": ""
-    }
-  }
 }
 `,
 				)))},
 			expectHasErr: false,
 			expectedSSOUser: entity.SSOUser{
-				ID:    "pwBi3AMeOV3Zg3AlOPyn",
-				Name:  "Github User",
+				ID:    "bcBi3AMeOV3Zg3AlOPyn",
+				Name:  "Google User",
 				Email: "",
 			},
 		},
@@ -79,18 +71,19 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			graphQLRequest := mdtest.NewGraphQLRequestFake(
+			httpRequest := mdtest.NewHTTPRequestFake(
 				func(req *http.Request) (response *http.Response, e error) {
-					mdtest.Equal(t, "https://api.github.com/graphql", req.URL.String())
-					mdtest.Equal(t, "POST", req.Method)
-					mdtest.Equal(t, "application/json", req.Header.Get("Content-Type"))
+					mdtest.Equal(t, "https://openidconnect.googleapis.com/v1/userinfo", req.URL.String())
+					mdtest.Equal(t, "GET", req.Method)
 					mdtest.Equal(t, "application/json", req.Header.Get("Accept"))
+					mdtest.Equal(t, "Bearer access_token", req.Header.Get("Authorization"))
 
 					return testCase.httpResponse, testCase.httpErr
 				})
-			githubAccount := NewAccount(graphQLRequest)
+			googleAccount := NewAccount(httpRequest)
 
-			gotSSOUser, err := githubAccount.GetSingleSignOnUser("access_token")
+			gotSSOUser, err := googleAccount.GetSingleSignOnUser("access_token")
+
 			if testCase.expectHasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
