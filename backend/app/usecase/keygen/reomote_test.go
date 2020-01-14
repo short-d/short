@@ -1,20 +1,26 @@
+// +build !integration all
+
 package keygen
 
 import (
-	"short/app/usecase/service"
 	"testing"
 
-	"github.com/byliuyang/app/mdtest"
-	"github.com/byliuyang/kgs/app/entity"
+	"github.com/short-d/app/mdtest"
+	"github.com/short-d/kgs/app/entity"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 func TestNewRemote(t *testing.T) {
+	t.Parallel()
+
 	keyFetcher := service.NewKeyFetcherFake([]entity.Key{})
 	_, err := NewRemote(0, &keyFetcher)
 	mdtest.NotEqual(t, nil, err)
 }
 
 func TestRemote_NewKey(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name              string
 		availableKeys     []entity.Key
@@ -74,7 +80,10 @@ func TestRemote_NewKey(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
 			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
 			remote, err := NewRemote(testCase.bufferSize, &keyFetcher)
 			mdtest.Equal(t, nil, err)

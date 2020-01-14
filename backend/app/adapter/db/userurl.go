@@ -3,9 +3,10 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"short/app/adapter/db/table"
-	"short/app/entity"
-	"short/app/usecase/repository"
+
+	"github.com/short-d/short/app/adapter/db/table"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/repository"
 )
 
 var _ repository.UserURLRelation = (*UserURLRelationSQL)(nil)
@@ -30,6 +31,35 @@ VALUES ($1,$2)
 
 	_, err := u.db.Exec(statement, user.Email, url.Alias)
 	return err
+}
+
+// FindAliasesByUser fetches the aliases of all the URLs created by the given user.
+// TODO(issue#260): allow API client to filter urls based on visibility.
+func (u UserURLRelationSQL) FindAliasesByUser(user entity.User) ([]string, error) {
+	statement := fmt.Sprintf(`SELECT "%s" FROM "%s" WHERE "%s"=$1;`,
+		table.UserURLRelation.ColumnURLAlias,
+		table.UserURLRelation.TableName,
+		table.UserURLRelation.ColumnUserEmail,
+	)
+
+	var aliases []string
+	rows, err := u.db.Query(statement, user.Email)
+	defer rows.Close()
+	if err != nil {
+		return aliases, nil
+	}
+
+	for rows.Next() {
+		var alias string
+		err = rows.Scan(&alias)
+		if err != nil {
+			return aliases, err
+		}
+
+		aliases = append(aliases, alias)
+	}
+
+	return aliases, nil
 }
 
 // NewUserURLRelationSQL creates UserURLRelationSQL

@@ -1,10 +1,12 @@
+// +build !integration all
+
 package validator
 
 import (
 	"strings"
 	"testing"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
 )
 
 func TestCustomAlias_IsValid(t *testing.T) {
@@ -33,7 +35,9 @@ func TestCustomAlias_IsValid(t *testing.T) {
 
 	validator := NewCustomAlias()
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			mdtest.Equal(t, testCase.expIsValid, validator.IsValid(&testCase.alias))
 		})
 	}

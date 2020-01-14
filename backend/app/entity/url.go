@@ -2,6 +2,7 @@ package entity
 
 import "time"
 
+// URL represents a short link.
 type URL struct {
 	Alias       string
 	OriginalURL string

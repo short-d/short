@@ -18,7 +18,7 @@ steps:
         - master
       event:
         - pull_request
-  - name: test frontend
+  - name: run frontend tests
     image: docker
     environment:
       RECAPTCHA_SITE_KEY:
@@ -35,11 +35,42 @@ steps:
       event:
         - pull_request
 
-  - name: test backend
+  - name: run backend unit tests
     image: docker
     commands:
-      - docker build -t test-backend -f backend/Dockerfile-test backend
-      - docker run test-backend
+      - docker build -t backend-unit-test -f backend/Dockerfile-unit-test backend
+      - docker run backend-unit-test
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - pull_request
+
+  - name: run backend integration tests
+    image: docker
+    environment:
+      DB_HOST:
+        from_secret: TEST_DB_HOST
+      DB_PORT:
+        from_secret: TEST_DB_PORT
+      DB_USER:
+        from_secret: TEST_DB_USER
+      DB_PASSWORD:
+        from_secret: TEST_DB_PASSWORD
+      DB_NAME:
+        from_secret: TEST_DB_NAME
+    commands:
+      - docker build -t backend-integration-test
+        --build-arg DB_HOST=$DB_HOST
+        --build-arg DB_PORT=$DB_PORT
+        --build-arg DB_USER=$DB_USER
+        --build-arg DB_PASSWORD=$DB_PASSWORD
+        --build-arg DB_NAME=$DB_NAME
+        -f backend/Dockerfile-integration-test backend
+      - docker run backend-integration-test
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -52,10 +83,27 @@ steps:
   - name: report code coverage
     image: docker
     environment:
+      DB_HOST:
+        from_secret: TEST_DB_HOST
+      DB_PORT:
+        from_secret: TEST_DB_PORT
+      DB_USER:
+        from_secret: TEST_DB_USER
+      DB_PASSWORD:
+        from_secret: TEST_DB_PASSWORD
+      DB_NAME:
+        from_secret: TEST_DB_NAME
       CODECOV_TOKEN:
         from_secret: CODECOV_TOKEN
     commands:
-      - docker build -t report-coverage --build-arg CODECOV_TOKEN=$CODECOV_TOKEN -f Dockerfile-coverage .
+      - docker build -t report-coverage
+        --build-arg DB_HOST=$DB_HOST
+        --build-arg DB_PORT=$DB_PORT
+        --build-arg DB_USER=$DB_USER
+        --build-arg DB_PASSWORD=$DB_PASSWORD
+        --build-arg DB_NAME=$DB_NAME
+        --build-arg CODECOV_TOKEN=$CODECOV_TOKEN
+        -f Dockerfile-coverage .
       - docker run report-coverage
     volumes:
       - name: docker
@@ -64,6 +112,7 @@ steps:
       branch:
         - master
       event:
+        - push
         - pull_request
 
   - name: create staging frontend assets

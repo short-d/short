@@ -2,14 +2,15 @@ package routing
 
 import (
 	netURL "net/url"
-	"short/app/adapter/facebook"
-	"short/app/adapter/github"
-	"short/app/usecase/account"
-	"short/app/usecase/auth"
-	"short/app/usecase/sso"
-	"short/app/usecase/url"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app/adapter/facebook"
+	"github.com/short-d/short/app/adapter/github"
+	"github.com/short-d/short/app/adapter/google"
+	"github.com/short-d/short/app/usecase/account"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/sso"
+	"github.com/short-d/short/app/usecase/url"
 )
 
 // Observability represents a set of metrics data producers which improve the observability of the
@@ -27,6 +28,7 @@ func NewShort(
 	urlRetriever url.Retriever,
 	githubAPI github.API,
 	facebookAPI facebook.API,
+	googleAPI google.API,
 	authenticator auth.Authenticator,
 	accountProvider account.Provider,
 ) []fw.Route {
@@ -39,6 +41,12 @@ func NewShort(
 	facebookSignIn := sso.NewSingleSignOn(
 		facebookAPI.IdentityProvider,
 		facebookAPI.Account,
+		accountProvider,
+		authenticator,
+	)
+	googleSignIn := sso.NewSingleSignOn(
+		googleAPI.IdentityProvider,
+		googleAPI.Account,
 		accountProvider,
 		authenticator,
 	)
@@ -88,6 +96,27 @@ func NewShort(
 				logger,
 				tracer,
 				facebookSignIn,
+				*frontendURL,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/oauth/google/sign-in",
+			Handle: NewSSOSignIn(
+				logger,
+				tracer,
+				googleAPI.IdentityProvider,
+				authenticator,
+				webFrontendURL,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/oauth/google/sign-in/callback",
+			Handle: NewSSOSignInCallback(
+				logger,
+				tracer,
+				googleSignIn,
 				*frontendURL,
 			),
 		},

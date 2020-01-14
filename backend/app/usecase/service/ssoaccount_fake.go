@@ -1,6 +1,6 @@
 package service
 
-import "short/app/entity"
+import "github.com/short-d/short/app/entity"
 
 var _ SSOAccount = (*SSOAccountFake)(nil)
 

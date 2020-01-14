@@ -1,17 +1,21 @@
+// +build !integration all
+
 package url
 
 import (
-	"short/app/entity"
-	"short/app/usecase/repository"
 	"testing"
 	"time"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/repository"
 )
 
 type urlMap = map[string]entity.URL
 
 func TestUrlRetriever_GetURL(t *testing.T) {
+	t.Parallel()
+
 	now := time.Now()
 	before := now.Add(-5 * time.Second)
 	after := now.Add(5 * time.Second)
@@ -80,7 +84,10 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
 			fakeRepo := repository.NewURLFake(testCase.urls)
 			retriever := NewRetrieverPersist(&fakeRepo)
 			url, err := retriever.GetURL(testCase.alias, testCase.expiringAt)

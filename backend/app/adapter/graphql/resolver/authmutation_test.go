@@ -1,3 +1,5 @@
+// +build !integration all
+
 package resolver
 
 import "testing"

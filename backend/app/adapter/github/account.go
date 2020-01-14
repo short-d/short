@@ -2,10 +2,10 @@ package github
 
 import (
 	"fmt"
-	"short/app/entity"
-	"short/app/usecase/service"
 
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 const githubAPI = "https://api.github.com/graphql"
@@ -21,6 +21,7 @@ type Account struct {
 func (a Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error) {
 	type response struct {
 		Viewer struct {
+			ID    string `json:"id"`
 			Email string `json:"email"`
 			Name  string `json:"name"`
 		} `json:"viewer"`
@@ -31,6 +32,7 @@ func (a Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 		Query: `
 query {
 	viewer {
+		id
 		email
 		name
 	}
@@ -45,6 +47,7 @@ query {
 	}
 
 	return entity.SSOUser{
+		ID:    profileResponse.Viewer.ID,
 		Email: profileResponse.Viewer.Email,
 		Name:  profileResponse.Viewer.Name,
 	}, nil

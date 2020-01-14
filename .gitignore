@@ -1,11 +1,12 @@
-# Jetbrains editors
+# Editors 
 .idea
+launch.json
 
 # Build
 build/
 
 # Environmental variables
-.env
+/backend/.env
 
 # Code Coverage
 /coverage*

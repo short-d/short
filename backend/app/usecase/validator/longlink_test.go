@@ -1,10 +1,12 @@
+// +build !integration all
+
 package validator
 
 import (
 	"strings"
 	"testing"
 
-	"github.com/byliuyang/app/mdtest"
+	"github.com/short-d/app/mdtest"
 )
 
 func TestLongLink_IsValid(t *testing.T) {
@@ -48,7 +50,9 @@ func TestLongLink_IsValid(t *testing.T) {
 
 	validator := NewLongLink()
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			mdtest.Equal(t, testCase.expIsValid, validator.IsValid(&testCase.longLink))
 		})
 	}

@@ -1,14 +1,15 @@
 package app
 
 import (
-	"short/dep"
-	"short/dep/provider"
-
-	"github.com/byliuyang/app/fw"
+	"github.com/short-d/app/fw"
+	"github.com/short-d/short/dep"
+	"github.com/short-d/short/dep/provider"
 )
 
 // ServiceConfig represents require parameters for the backend APIs
 type ServiceConfig struct {
+	LogPrefix            string
+	LogLevel             fw.LogLevel
 	MigrationRoot        string
 	RecaptchaSecret      string
 	GithubClientID       string
@@ -16,6 +17,9 @@ type ServiceConfig struct {
 	FacebookClientID     string
 	FacebookClientSecret string
 	FacebookRedirectURI  string
+	GoogleClientID       string
+	GoogleClientSecret   string
+	GoogleRedirectURI    string
 	JwtSecret            string
 	WebFrontendURL       string
 	GraphQLAPIPort       int
@@ -37,13 +41,15 @@ func Start(
 		panic(err)
 	}
 
-	err = dbMigrationTool.Migrate(db, config.MigrationRoot)
+	err = dbMigrationTool.MigrateUp(db, config.MigrationRoot)
 	if err != nil {
 		panic(err)
 	}
 
-	graphqlAPI, err := dep.InjectGraphQlService(
+	graphqlAPI, err := dep.InjectGraphQLService(
 		"GraphQL API",
+		provider.LogPrefix(config.LogPrefix),
+		config.LogLevel,
 		db,
 		"/graphql",
 		provider.ReCaptchaSecret(config.RecaptchaSecret),
@@ -61,12 +67,17 @@ func Start(
 
 	httpAPI := dep.InjectRoutingService(
 		"Routing API",
+		provider.LogPrefix(config.LogPrefix),
+		config.LogLevel,
 		db,
 		provider.GithubClientID(config.GithubClientID),
 		provider.GithubClientSecret(config.GithubClientSecret),
 		provider.FacebookClientID(config.FacebookClientID),
 		provider.FacebookClientSecret(config.FacebookClientSecret),
 		provider.FacebookRedirectURI(config.FacebookRedirectURI),
+		provider.GoogleClientID(config.GoogleClientID),
+		provider.GoogleClientSecret(config.GoogleClientSecret),
+		provider.GoogleRedirectURI(config.GoogleRedirectURI),
 		provider.JwtSecret(config.JwtSecret),
 		provider.WebFrontendURL(config.WebFrontendURL),
 	)
