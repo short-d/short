@@ -70,7 +70,19 @@ export class Home extends Component<Props, State> {
       this.showSignInModal();
       return;
     }
+    this.handleStateChange();
+    this.autoFillLongLink();
+  }
 
+  autoFillLongLink() {
+    const longLink = this.getLongLinkFromQueryParams();
+    if (validateLongLinkFormat(longLink) == null) {
+      this.props.store.dispatch(updateLongLink(longLink));
+      this.shortLinkTextField.current!.focus();
+    }
+  }
+
+  handleStateChange() {
     this.props.store.subscribe(async () => {
       const state = this.props.store.getState();
 
@@ -94,15 +106,6 @@ export class Home extends Component<Props, State> {
       }
       this.setState(newState);
     });
-    this.autoFillLongLink();
-  }
-
-  autoFillLongLink() {
-    const longLink = this.getLongLinkFromQueryParams();
-    if (validateLongLinkFormat(longLink) == null) {
-      this.props.store.dispatch(updateLongLink(longLink));
-      this.shortLinkTextField.current!.focus();
-    }
   }
 
   showSignInModal() {
