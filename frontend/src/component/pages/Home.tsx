@@ -57,6 +57,7 @@ interface State {
 export class Home extends Component<Props, State> {
   errModal = React.createRef<Modal>();
   signInModal = React.createRef<SignInModal>();
+  shortLinkTextField = React.createRef<TextField>();
 
   constructor(props: Props) {
     super(props);
@@ -93,6 +94,15 @@ export class Home extends Component<Props, State> {
       }
       this.setState(newState);
     });
+    this.autoFillLongLink();
+  }
+
+  autoFillLongLink() {
+    const longLink = this.getLongLinkFromQueryParams();
+    if (validateLongLinkFormat(longLink) == null) {
+      this.props.store.dispatch(updateLongLink(longLink));
+      this.shortLinkTextField.current!.focus();
+    }
   }
 
   showSignInModal() {
@@ -150,6 +160,11 @@ export class Home extends Component<Props, State> {
       });
   };
 
+  getLongLinkFromQueryParams(): string {
+    let urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('long_link')!;
+  }
+
   showError(error?: IErr) {
     if (!error) {
       return;
@@ -175,6 +190,7 @@ export class Home extends Component<Props, State> {
               </div>
               <div className={'text-field-wrapper'}>
                 <TextField
+                  ref={this.shortLinkTextField}
                   text={this.state.alias}
                   placeHolder={'Custom Short Link ( Optional )'}
                   onBlur={this.handlerCustomAliasTextFieldBlur}
