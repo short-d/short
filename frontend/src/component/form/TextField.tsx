@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Component } from 'react';
+import React, { ChangeEvent, Component, createRef } from 'react';
 import './TextField.scss';
 
 interface Props {
@@ -13,6 +13,8 @@ interface State {
 }
 
 export class TextField extends Component<Props, State> {
+  textInput = createRef<HTMLInputElement>();
+
   handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!this.props.onChange) {
       return;
@@ -27,9 +29,14 @@ export class TextField extends Component<Props, State> {
     this.props.onBlur();
   };
 
+  focus = () => {
+    this.textInput.current!.focus();
+  };
+
   render = () => {
     return (
       <input
+        ref={this.textInput}
         className={'text-field'}
         type={'text'}
         value={this.props.text}
