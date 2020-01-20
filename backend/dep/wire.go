@@ -179,6 +179,7 @@ func InjectRoutingService(
 		wire.Bind(new(repository.User), new(*(db.UserSQL))),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
+		wire.Bind(new(fw.GraphQlRequest), new(mdrequest.GraphQL)),
 
 		observabilitySet,
 		authSet,
@@ -192,7 +193,7 @@ func InjectRoutingService(
 		mdrouting.NewBuiltIn,
 		mdhttp.NewClient,
 		mdrequest.NewHTTP,
-		mdrequest.NewGraphQl,
+		mdrequest.NewGraphQL,
 		mdtimer.NewTimer,
 
 		db.NewUserSQL,

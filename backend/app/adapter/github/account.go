@@ -21,6 +21,7 @@ type Account struct {
 func (a Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error) {
 	type response struct {
 		Viewer struct {
+			ID    string `json:"id"`
 			Email string `json:"email"`
 			Name  string `json:"name"`
 		} `json:"viewer"`
@@ -31,6 +32,7 @@ func (a Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 		Query: `
 query {
 	viewer {
+		id
 		email
 		name
 	}
@@ -45,6 +47,7 @@ query {
 	}
 
 	return entity.SSOUser{
+		ID:    profileResponse.Viewer.ID,
 		Email: profileResponse.Viewer.Email,
 		Name:  profileResponse.Viewer.Name,
 	}, nil
