@@ -149,24 +149,24 @@ git clone https://github.com/byliuyang/short.git
 1. Replace the value of `FACEBOOK_CLIENT_SECRET` in `backend/.env` file with
    `App Secret`.
 
-### Create Google OAuth Application
+### Create Google OAuth Client ID
 
-Create a new credential at
-   [Credentials page](https://console.developers.google.com/apis/credentials) with the following steps:
+Create a new Client ID at
+   [Google API Credentials](https://console.developers.google.com/apis/credentials):
 
-1. Click `OAuth client ID` under `Create credentials`.
+1. Click on `Create Credentials` and select `OAuth client ID`.
 
    ![Credentials](doc/google/credentials.jpg)
 
-1. Choose `Web application` under `Application type`.
+1. Select `Web application` for `Application type`.
 
-1. Put `http://localhost/oauth/google/sign-in/callback` under `Authorized redirect URIs`, click `Create`.
+1. Fill in `http://localhost/oauth/google/sign-in/callback` for `Authorized redirect URIs` and click on `Create`
 
    ![OAuth](doc/google/oauth.jpg)
    
-1. Replace the value of `GOOGLE_CLIENT_ID` in `backend/.env` file with `Client ID`.
+1. 1. Replace the value of `GOOGLE_CLIENT_ID` in `backend/.env` file with `Your Client ID`.
 1. Replace the value of `GOOGLE_CLIENT_SECRET` in `backend/.env` file with
-   `Client Secret`.
+   `Your Client Secret`.
    
 ### Backend
 
