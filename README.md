@@ -164,7 +164,7 @@ Create a new Client ID at
 
    ![OAuth](doc/google/oauth.jpg)
    
-1. 1. Replace the value of `GOOGLE_CLIENT_ID` in `backend/.env` file with `Your Client ID`.
+1. Replace the value of `GOOGLE_CLIENT_ID` in `backend/.env` file with `Your Client ID`.
 1. Replace the value of `GOOGLE_CLIENT_SECRET` in `backend/.env` file with
    `Your Client Secret`.
    
