@@ -163,7 +163,7 @@ Create a new Client ID at
 
 1. Fill in `http://localhost/oauth/google/sign-in/callback` for `Authorized redirect URIs` and click on `Create`
 
-   ![OAuth](doc/google/oauth.jpg)
+   ![OAuth](doc/google/OAuth.jpg)
    
 1. Replace the value of `GOOGLE_CLIENT_ID` in `backend/.env` file with `Your Client ID`.
 1. Replace the value of `GOOGLE_CLIENT_SECRET` in `backend/.env` file with
