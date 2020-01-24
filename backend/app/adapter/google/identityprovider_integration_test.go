@@ -7,6 +7,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/short-d/app/mdtest"
@@ -23,10 +24,18 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	redirectURI := "http://localhost/oauth/google/sign-in/callback"
 	identityProvider := NewIdentityProvider(httpRequest, clientID, clientSecret, redirectURI)
 
-	url := identityProvider.GetAuthorizationURL()
+	urlResponse := identityProvider.GetAuthorizationURL()
 
-	mdtest.Equal(t, "https://accounts.google.com/o/oauth2/v2/auth?client_id=id_12345&include_granted_scopes=true&"+
-		"redirect_uri=http%3A%2F%2Flocalhost%2Foauth%2Fgoogle%2Fsign-in%2Fcallback&response_type=code&scope=email+profile", url)
+	parsedUrl, err := url.Parse(urlResponse)
+	mdtest.Equal(t, nil, err)
+	mdtest.Equal(t, "https", parsedUrl.Scheme)
+	mdtest.Equal(t, "accounts.google.com", parsedUrl.Host)
+	mdtest.Equal(t, "/o/oauth2/v2/auth", parsedUrl.Path)
+	mdtest.Equal(t, "true", parsedUrl.Query().Get("include_granted_scopes"))
+	mdtest.Equal(t, "email profile", parsedUrl.Query().Get("scope"))
+	mdtest.Equal(t, "code", parsedUrl.Query().Get("response_type"))
+	mdtest.Equal(t, clientID, parsedUrl.Query().Get("client_id"))
+	mdtest.Equal(t, redirectURI, parsedUrl.Query().Get("redirect_uri"))
 }
 
 func TestIdentityProvider_RequestAccessToken(t *testing.T) {
