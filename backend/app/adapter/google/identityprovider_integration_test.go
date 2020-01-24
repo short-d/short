@@ -109,7 +109,7 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			//t.Parallel()
+			t.Parallel()
 			httpRequest := mdtest.NewHTTPRequestFake(
 				func(req *http.Request) (response *http.Response, e error) {
 					mdtest.Equal(t, "https://www.googleapis.com/oauth2/v4/token?"+
