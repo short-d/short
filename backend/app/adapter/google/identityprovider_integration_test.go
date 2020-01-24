@@ -7,7 +7,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"testing"
 
 	"github.com/short-d/app/mdtest"
@@ -113,9 +112,14 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 			t.Parallel()
 			httpRequest := mdtest.NewHTTPRequestFake(
 				func(req *http.Request) (response *http.Response, e error) {
-					mdtest.Equal(t, "https://www.googleapis.com/oauth2/v4/token?"+
-						"client_id="+testCase.clientID+"&client_secret="+testCase.clientSecret+"&code="+testCase.authorizationCode+
-						"&grant_type=authorization_code&redirect_uri="+url.QueryEscape(testCase.redirectURI), req.URL.String())
+					mdtest.Equal(t, "https", req.URL.Scheme)
+					mdtest.Equal(t, "www.googleapis.com", req.URL.Host)
+					mdtest.Equal(t, "/oauth2/v4/token", req.URL.Path)
+					mdtest.Equal(t, testCase.clientID, req.URL.Query().Get("client_id"))
+					mdtest.Equal(t, testCase.clientSecret, req.URL.Query().Get("client_secret"))
+					mdtest.Equal(t, testCase.authorizationCode, req.URL.Query().Get("code"))
+					mdtest.Equal(t, testCase.redirectURI, req.URL.Query().Get("redirect_uri"))
+					mdtest.Equal(t, "authorization_code", req.URL.Query().Get("grant_type"))
 					mdtest.Equal(t, "POST", req.Method)
 					mdtest.Equal(t, "application/json", req.Header.Get("Accept"))
 					mdtest.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
