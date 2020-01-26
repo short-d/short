@@ -100,9 +100,9 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 				StatusCode: http.StatusOK,
 				Body: ioutil.NopCloser(bytes.NewReader([]byte(`
 {
-      "access_token": "bcBi3AMeOV3Zg3AlOPyn",
-      "token_type": "bearer",
-	  "expires_in": 5183944
+	"access_token": "bcBi3AMeOV3Zg3AlOPyn",
+	"token_type": "bearer",
+	"expires_in": 5183944
 }
 `,
 				)))},
