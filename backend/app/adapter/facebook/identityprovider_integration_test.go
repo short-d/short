@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/short-d/app/mdtest"
@@ -31,7 +32,7 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	mdtest.Equal(t, "https", parsedUrl.Scheme)
 	mdtest.Equal(t, "www.facebook.com", parsedUrl.Host)
 	mdtest.Equal(t, "/v4.0/dialog/oauth", parsedUrl.Path)
-	mdtest.Equal(t, "public_profile,email", parsedUrl.Query().Get("scope"))
+	mdtest.SameElements(t, [2]string{"public_profile", "email"}, strings.Split(parsedUrl.Query().Get("scope"), ","))
 	mdtest.Equal(t, "code", parsedUrl.Query().Get("response_type"))
 	mdtest.Equal(t, clientID, parsedUrl.Query().Get("client_id"))
 	mdtest.Equal(t, redirectURI, parsedUrl.Query().Get("redirect_uri"))
@@ -108,7 +109,7 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 			httpErr:             nil,
 			clientID:            "id_12345",
 			clientSecret:        "client_secret",
-			redirectURI:         "http://localhost/oauth/google/sign-in/callback",
+			redirectURI:         "http://localhost/oauth/facebook/sign-in/callback",
 			authorizationCode:   "authorizationCode_1",
 			expectHasErr:        false,
 			expectedAccessToken: "bcBi3AMeOV3Zg3AlOPyn",
@@ -135,7 +136,6 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 					return testCase.httpResponse, testCase.httpErr
 				})
 			identityProvider := NewIdentityProvider(httpRequest, testCase.clientID, testCase.clientSecret, testCase.redirectURI)
-
 			actualAccessToken, err := identityProvider.RequestAccessToken(testCase.authorizationCode)
 
 			if testCase.expectHasErr {

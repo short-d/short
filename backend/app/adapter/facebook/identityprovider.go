@@ -52,6 +52,12 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 // RequestAccessToken retrieves access token of user's Facebook account using
 // authorization code.
 func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessToken string, err error) {
+	type fbAccessTokenResponse struct {
+		AccessToken string `json:"access_token"`
+		TokenType   string `json:"token_type"`
+		ExpiresIn   int    `json:"expires_in"`
+	}
+
 	clientID := g.clientID
 	clientSecret := g.clientSecret
 	redirectURI := g.redirectURI
@@ -86,12 +92,6 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessTo
 	}
 
 	return apiRes.AccessToken, nil
-}
-
-type fbAccessTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-	ExpiresIn   int    `json:"expires_in"`
 }
 
 // NewIdentityProvider initializes Facebook OAuth service.
