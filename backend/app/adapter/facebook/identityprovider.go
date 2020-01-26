@@ -17,12 +17,6 @@ const (
 	fbResponseType     = "code"
 )
 
-type fbAccessTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-	ExpiresIn   int    `json:"expires_in"`
-}
-
 var _ service.IdentityProvider = (*IdentityProvider)(nil)
 
 // IdentityProvider represents Facebook OAuth service.
@@ -74,16 +68,30 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessTo
 	query.Set("code", authorizationCode)
 	u.RawQuery = query.Encode()
 
-	headers := map[string]string{}
+	body := url.Values{}
+	body.Set("client_id", clientID)
+	body.Set("redirect_uri", redirectURI)
+	body.Set("client_secret", clientSecret)
+	body.Set("code", authorizationCode)
+
+	headers := map[string]string{
+		"Content-Type": "application/x-www-form-urlencoded",
+	}
 
 	apiRes := fbAccessTokenResponse{}
-	err = g.http.JSON(http.MethodGet, u.String(), headers, "", &apiRes)
+	err = g.http.JSON(http.MethodPost, u.String(), headers, body.Encode(), &apiRes)
 
 	if err != nil {
 		return "", err
 	}
 
 	return apiRes.AccessToken, nil
+}
+
+type fbAccessTokenResponse struct {
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	ExpiresIn   int    `json:"expires_in"`
 }
 
 // NewIdentityProvider initializes Facebook OAuth service.
