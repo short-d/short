@@ -28,14 +28,18 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	urlResponse := identityProvider.GetAuthorizationURL()
 
 	parsedUrl, err := url.Parse(urlResponse)
+
 	mdtest.Equal(t, nil, err)
 	mdtest.Equal(t, "https", parsedUrl.Scheme)
 	mdtest.Equal(t, "www.facebook.com", parsedUrl.Host)
 	mdtest.Equal(t, "/v4.0/dialog/oauth", parsedUrl.Path)
-	mdtest.SameElements(t, [2]string{"public_profile", "email"}, strings.Split(parsedUrl.Query().Get("scope"), ","))
 	mdtest.Equal(t, "code", parsedUrl.Query().Get("response_type"))
 	mdtest.Equal(t, clientID, parsedUrl.Query().Get("client_id"))
 	mdtest.Equal(t, redirectURI, parsedUrl.Query().Get("redirect_uri"))
+
+	expectedScope := []string{"public_profile", "email"}
+	actualScope := strings.Split(parsedUrl.Query().Get("scope"), ",")
+	mdtest.SameElements(t, expectedScope, actualScope)
 }
 
 func TestIdentityProvider_RequestAccessToken(t *testing.T) {
