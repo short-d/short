@@ -47,8 +47,6 @@ github.com/graph-gophers/graphql-go v0.0.0-20190902214650-641ae197eec7 h1:91UwqV
 github.com/graph-gophers/graphql-go v0.0.0-20190902214650-641ae197eec7/go.mod h1:Au3iQ8DvDis8hZ4q2OzRcaKYlAsPt+fYvib5q4nIqu4=
 github.com/hashicorp/hcl v1.0.0 h1:0Anlzjpi4vEasTeNFn2mLJgTSwt0+6sfsiTG8qcWGx4=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
-github.com/huandu/facebook v2.3.1+incompatible h1:+F6kUqKx5TifzMg2fXYZFdA/3VVNphdNK8G4PF2ui74=
-github.com/huandu/facebook v2.3.1+incompatible/go.mod h1:wJogp9rhXUUjDuhx6ZaR5Eylx3dsJmy0zyFRaPYUq5g=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/joho/godotenv v1.3.0 h1:Zjp+RcGpHhGlrMbJzXTrZZPrWj+1vfm90La1wgB6Bhc=
@@ -92,10 +90,6 @@ github.com/sendgrid/sendgrid-go v3.5.0+incompatible h1:kosbgHyNVYVaqECDYvFVLVD9n
 github.com/sendgrid/sendgrid-go v3.5.0+incompatible/go.mod h1:QRQt+LX/NmgVEvmdRw0VT/QgUn499+iza2FnDca9fg8=
 github.com/short-d/app v0.0.0-20200105164223-e5615740ec60 h1:sLUDNbokAgSrfIZc0B6VvYcq0UhecHsy/zaJQKxwTeM=
 github.com/short-d/app v0.0.0-20200105164223-e5615740ec60/go.mod h1:L3bsuFXGyUFKU05c73y7w2BaksvIIIzQR2hB1cpvJ1g=
-github.com/short-d/app v0.0.0-20200105224216-bfaee9df6800 h1:lZ/pLr3tOmqHuNIl/DiUtmGE9KFJzfP0zk13Pdd+myI=
-github.com/short-d/app v0.0.0-20200105224216-bfaee9df6800/go.mod h1:L3bsuFXGyUFKU05c73y7w2BaksvIIIzQR2hB1cpvJ1g=
-github.com/short-d/app v0.0.0-20200108071827-304a2038ed5b h1:6IXtOtDyeNjhsBACDUC9YuB9IPeTOetZeTQbEIbFTfY=
-github.com/short-d/app v0.0.0-20200108071827-304a2038ed5b/go.mod h1:L3bsuFXGyUFKU05c73y7w2BaksvIIIzQR2hB1cpvJ1g=
 github.com/short-d/app v0.0.0-20200108075430-a7a081c61daf h1:Xf04Hkv6iDy4eFjSx2CaZ/OlApxyJY/tP2wf7+MIonM=
 github.com/short-d/app v0.0.0-20200108075430-a7a081c61daf/go.mod h1:L3bsuFXGyUFKU05c73y7w2BaksvIIIzQR2hB1cpvJ1g=
 github.com/short-d/eventbus v0.0.0-20200105092235-2dfc4be1f9ee h1:LNafZ4caEAcTlgGe9zJ18njsyR+uogkE5+dzZ5LeeAI=
@@ -112,8 +106,6 @@ github.com/spf13/cobra v0.0.5/go.mod h1:3K3wKZymM7VvHMDS9+Akkh4K60UwM26emMESw8tL
 github.com/spf13/jwalterweatherman v1.0.0/go.mod h1:cQK4TGJAtQXfYWX+Ddv3mKDzgVb68N+wFjFa4jdeBTo=
 github.com/spf13/pflag v1.0.3 h1:zPAT6CGy6wXeQ7NtTnaTerfKOsV6V6F8agHXFiazDkg=
 github.com/spf13/pflag v1.0.3/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
-github.com/spf13/pflag v1.0.5 h1:iy+VFUOCP1a+8yFto/drg2CJ5u0yRoB7fZw3DKv/JXA=
-github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 github.com/spf13/viper v1.3.2/go.mod h1:ZiWeW+zYFKm7srdB9IoDzzZXaJaI5eL9QjNiN/DMA2s=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

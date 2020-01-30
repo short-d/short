@@ -1,7 +1,6 @@
 package facebook
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -11,19 +10,12 @@ import (
 
 // More info here: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
 
-// TODO(byliuyang): rewrite this file
 const (
 	fbAuthorizationAPI = "https://www.facebook.com/v4.0/dialog/oauth"
 	fbAccessTokenAPI   = "https://graph.facebook.com/v4.0/oauth/access_token"
 	fbScopes           = "public_profile,email"
 	fbResponseType     = "code"
 )
-
-type fbAccessTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-	ExpiresIn   int    `json:"expires_in"`
-}
 
 var _ service.IdentityProvider = (*IdentityProvider)(nil)
 
@@ -37,29 +29,63 @@ type IdentityProvider struct {
 
 // GetAuthorizationURL retrieves the URL of Facebook sign in page.
 func (g IdentityProvider) GetAuthorizationURL() string {
-	escapedScope := url.QueryEscape(fbScopes)
 	clientID := g.clientID
 	redirectURI := g.redirectURI
 	responseType := fbResponseType
+	scope := fbScopes
 
-	return fmt.Sprintf("%s?client_id=%s&redirect_uri=%s&scope=%s&response_type=%s",
-		fbAuthorizationAPI, clientID, redirectURI, escapedScope, responseType)
+	u, err := url.Parse(fbAuthorizationAPI)
+	if err != nil {
+		return ""
+	}
+
+	query := u.Query()
+	query.Set("client_id", clientID)
+	query.Set("redirect_uri", redirectURI)
+	query.Set("scope", scope)
+	query.Set("response_type", responseType)
+	u.RawQuery = query.Encode()
+
+	return u.String()
 }
 
 // RequestAccessToken retrieves access token of user's Facebook account using
 // authorization code.
 func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessToken string, err error) {
+	type fbAccessTokenResponse struct {
+		AccessToken string `json:"access_token"`
+		TokenType   string `json:"token_type"`
+		ExpiresIn   int    `json:"expires_in"`
+	}
+
 	clientID := g.clientID
 	clientSecret := g.clientSecret
 	redirectURI := g.redirectURI
 
-	u := fmt.Sprintf("%s?client_id=%s&client_secret=%s&code=%s&redirect_uri=%s",
-		fbAccessTokenAPI, clientID, clientSecret, authorizationCode, redirectURI)
+	u, err := url.Parse(fbAccessTokenAPI)
+	if err != nil {
+		return "", err
+	}
 
-	headers := map[string]string{}
+	query := u.Query()
+	query.Set("client_id", clientID)
+	query.Set("redirect_uri", redirectURI)
+	query.Set("client_secret", clientSecret)
+	query.Set("code", authorizationCode)
+	u.RawQuery = query.Encode()
+
+	body := url.Values{}
+	body.Set("client_id", clientID)
+	body.Set("redirect_uri", redirectURI)
+	body.Set("client_secret", clientSecret)
+	body.Set("code", authorizationCode)
+
+	headers := map[string]string{
+		"Content-Type": "application/x-www-form-urlencoded",
+	}
 
 	apiRes := fbAccessTokenResponse{}
-	err = g.http.JSON(http.MethodGet, u, headers, "", &apiRes)
+	err = g.http.JSON(http.MethodPost, u.String(), headers, body.Encode(), &apiRes)
 
 	if err != nil {
 		return "", err
@@ -79,6 +105,6 @@ func NewIdentityProvider(
 		clientID:     clientID,
 		clientSecret: clientSecret,
 		http:         http,
-		redirectURI:  url.QueryEscape(redirectURI),
+		redirectURI:  redirectURI,
 	}
 }
