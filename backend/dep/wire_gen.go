@@ -109,7 +109,7 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	githubAccount := github.NewAccount(graphQL)
 	api := github.NewAPI(identityProvider, githubAccount)
 	facebookIdentityProvider := provider.NewFacebookIdentityProvider(http, facebookClientID, facebookClientSecret, facebookRedirectURI)
-	facebookAccount := facebook.NewAccount()
+	facebookAccount := facebook.NewAccount(http)
 	facebookAPI := facebook.NewAPI(facebookIdentityProvider, facebookAccount)
 	googleIdentityProvider := provider.NewGoogleIdentityProvider(http, googleClientID, googleClientSecret, googleRedirectURI)
 	googleAccount := google.NewAccount(http)
