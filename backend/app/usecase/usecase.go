@@ -39,7 +39,6 @@ func (s Short) requestSSOSignIn(
 }
 
 type GithubIDProvider service.IdentityProvider
-type GithubSSOAccount service.SSOAccount
 
 func NewShort(
 	logger fw.Logger,
