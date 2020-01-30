@@ -91,7 +91,27 @@ func TestShort_RequestGithubSignIn(t *testing.T) {
 			},
 		},
 		{
-			name: "auth token doesn't have email",
+			name: "auth token has no email",
+			now:  now,
+			githubIDProvider: stubIDProvider{
+				authorizationURL: "github_sign_in_link",
+				accessToken:      "access_token",
+			},
+			authToken: `
+{
+  "issued_at": "2020-01-26T08:32:40.759788656Z"
+}
+`,
+			tokenValidDuration:           time.Hour,
+			expectedShowUserHomeCallArgs: []showUserHomeCallArgs{},
+			expectedShowExternalPageCallArgs: []showExternalPageCallArgs{
+				{
+					link: "github_sign_in_link",
+				},
+			},
+		},
+		{
+			name: "auth token has empty email",
 			now:  now,
 			githubIDProvider: stubIDProvider{
 				authorizationURL: "github_sign_in_link",
