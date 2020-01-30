@@ -164,6 +164,7 @@ func TestShort_RequestGithubSignIn(t *testing.T) {
 			presenter := newMockPresenter()
 			useCase.RequestGithubSignIn(testCase.authToken, &presenter)
 
+			mdtest.Equal(t, testCase.expectedShowHomeCallArgs, presenter.showHomeCallArgs)
 			mdtest.Equal(t, testCase.expectedShowUserHomeCallArgs, presenter.showUserHomeCallArgs)
 			mdtest.Equal(t, testCase.expectedShowExternalPageCallArgs, presenter.showExternalPageCallArgs)
 		})
