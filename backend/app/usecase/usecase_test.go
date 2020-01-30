@@ -44,15 +44,14 @@ func TestShort_RequestGithubSignIn(t *testing.T) {
 	mdtest.Equal(t, nil, err)
 
 	testCases := []struct {
-		name               string
-		now                time.Time
-		existingURLs       map[string]entity.URL
-		existingUsers      []entity.User
-		oauthURL           string
-		githubIDProvider   stubIDProvider
-		authToken          string
-		tokenValidDuration time.Duration
-
+		name                             string
+		now                              time.Time
+		existingURLs                     map[string]entity.URL
+		existingUsers                    []entity.User
+		oauthURL                         string
+		githubIDProvider                 stubIDProvider
+		authToken                        string
+		tokenValidDuration               time.Duration
 		expectedShowHomeCallArgs         []showHomeCallArgs
 		expectedShowUserHomeCallArgs     []showUserHomeCallArgs
 		expectedShowExternalPageCallArgs []showExternalPageCallArgs

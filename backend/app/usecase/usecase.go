@@ -14,11 +14,11 @@ type UseCase interface {
 var _ UseCase = (*Short)(nil)
 
 type Short struct {
-	logger             fw.Logger
-	timer              fw.Timer
-	urlRetriever       url.Retriever
-	authenticator      auth.Authenticator
-	githubIDProvider   service.IdentityProvider
+	logger           fw.Logger
+	timer            fw.Timer
+	urlRetriever     url.Retriever
+	authenticator    auth.Authenticator
+	githubIDProvider service.IdentityProvider
 }
 
 func (s Short) RequestGithubSignIn(authToken string, presenter Presenter) {
@@ -46,14 +46,13 @@ func NewShort(
 	timer fw.Timer,
 	urlRetriever url.Retriever,
 	authenticator auth.Authenticator,
-
 	githubIDProvider GithubIDProvider,
 ) Short {
 	return Short{
-		logger:             logger,
-		timer:              timer,
-		urlRetriever:       urlRetriever,
-		authenticator:      authenticator,
-		githubIDProvider:   githubIDProvider,
+		logger:           logger,
+		timer:            timer,
+		urlRetriever:     urlRetriever,
+		authenticator:    authenticator,
+		githubIDProvider: githubIDProvider,
 	}
 }
