@@ -17,6 +17,9 @@ type Authenticator struct {
 
 func (a Authenticator) isTokenValid(payload Payload, validDuring time.Duration) bool {
 	now := a.timer.Now()
+	if payload.email == "" {
+		return false
+	}
 	tokenExpireAt := payload.issuedAt.Add(validDuring)
 	return !tokenExpireAt.Before(now)
 }
