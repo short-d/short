@@ -52,6 +52,7 @@ func (m mockPresenter) ShowInvalidAuthTokenError() {
 
 func newMockPresenter() mockPresenter {
 	return mockPresenter{
+		showHomeCallArgs:         make([]showHomeCallArgs, 0),
 		showUserHomeCallArgs:     make([]showUserHomeCallArgs, 0),
 		showExternalPageCallArgs: make([]showExternalPageCallArgs, 0),
 	}
