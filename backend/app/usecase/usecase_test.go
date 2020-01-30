@@ -82,6 +82,7 @@ func TestShort_RequestGithubSignIn(t *testing.T) {
 			},
 			authToken:                    "",
 			tokenValidDuration:           time.Hour,
+			expectedShowHomeCallArgs:     []showHomeCallArgs{},
 			expectedShowUserHomeCallArgs: []showUserHomeCallArgs{},
 			expectedShowExternalPageCallArgs: []showExternalPageCallArgs{
 				{
@@ -102,6 +103,7 @@ func TestShort_RequestGithubSignIn(t *testing.T) {
 }
 `,
 			tokenValidDuration:           time.Hour,
+			expectedShowHomeCallArgs:     []showHomeCallArgs{},
 			expectedShowUserHomeCallArgs: []showUserHomeCallArgs{},
 			expectedShowExternalPageCallArgs: []showExternalPageCallArgs{
 				{
@@ -123,6 +125,7 @@ func TestShort_RequestGithubSignIn(t *testing.T) {
 }
 `,
 			tokenValidDuration:           time.Hour,
+			expectedShowHomeCallArgs:     []showHomeCallArgs{},
 			expectedShowUserHomeCallArgs: []showUserHomeCallArgs{},
 			expectedShowExternalPageCallArgs: []showExternalPageCallArgs{
 				{
@@ -144,6 +147,7 @@ func TestShort_RequestGithubSignIn(t *testing.T) {
 }
 `,
 			tokenValidDuration:           time.Hour,
+			expectedShowHomeCallArgs:     []showHomeCallArgs{},
 			expectedShowUserHomeCallArgs: []showUserHomeCallArgs{},
 			expectedShowExternalPageCallArgs: []showExternalPageCallArgs{
 				{
