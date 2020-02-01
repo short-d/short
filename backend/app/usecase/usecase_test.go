@@ -321,7 +321,7 @@ func TestShort_RequestGoogleSignIn(t *testing.T) {
 		existingURLs                     map[string]entity.URL
 		existingUsers                    []entity.User
 		oauthURL                         string
-		facebookIDProvider               stubIDProvider
+		googleIDProvider                 stubIDProvider
 		authToken                        string
 		tokenValidDuration               time.Duration
 		expectedShowHomeCallArgs         []showHomeCallArgs
@@ -331,7 +331,7 @@ func TestShort_RequestGoogleSignIn(t *testing.T) {
 		{
 			name: "user already signed in",
 			now:  now,
-			facebookIDProvider: stubIDProvider{
+			googleIDProvider: stubIDProvider{
 				authorizationURL: "google_sign_in_link",
 				accessToken:      "access_token",
 			},
@@ -348,7 +348,7 @@ func TestShort_RequestGoogleSignIn(t *testing.T) {
 		{
 			name: "user has not signed in",
 			now:  now,
-			facebookIDProvider: stubIDProvider{
+			googleIDProvider: stubIDProvider{
 				authorizationURL: "google_sign_in_link",
 				accessToken:      "access_token",
 			},
@@ -365,7 +365,7 @@ func TestShort_RequestGoogleSignIn(t *testing.T) {
 		{
 			name: "auth token has no email",
 			now:  now,
-			facebookIDProvider: stubIDProvider{
+			googleIDProvider: stubIDProvider{
 				authorizationURL: "google_sign_in_link",
 				accessToken:      "access_token",
 			},
@@ -386,7 +386,7 @@ func TestShort_RequestGoogleSignIn(t *testing.T) {
 		{
 			name: "auth token has empty email",
 			now:  now,
-			facebookIDProvider: stubIDProvider{
+			googleIDProvider: stubIDProvider{
 				authorizationURL: "google_sign_in_link",
 				accessToken:      "access_token",
 			},
@@ -408,7 +408,7 @@ func TestShort_RequestGoogleSignIn(t *testing.T) {
 		{
 			name: "auth token expired",
 			now:  now,
-			facebookIDProvider: stubIDProvider{
+			googleIDProvider: stubIDProvider{
 				authorizationURL: "google_sign_in_link",
 				accessToken:      "access_token",
 			},
@@ -435,8 +435,8 @@ func TestShort_RequestGoogleSignIn(t *testing.T) {
 				testCase.now,
 				testCase.tokenValidDuration,
 				stubIDProvider{},
-				testCase.facebookIDProvider,
 				stubIDProvider{},
+				testCase.googleIDProvider,
 			)
 			presenter := newMockPresenter()
 			useCase.RequestGoogleSignIn(testCase.authToken, &presenter)

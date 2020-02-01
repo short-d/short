@@ -28,7 +28,7 @@ func (u UseCase) RequestFacebookSignIn(authToken string, presenter Presenter) {
 
 // RequestGoogleSignIn directs user to Google sign in screen.
 func (u UseCase) RequestGoogleSignIn(authToken string, presenter Presenter) {
-	u.requestSSOSignIn(authToken, u.facebookIDProvider, presenter)
+	u.requestSSOSignIn(authToken, u.googleIDProvider, presenter)
 }
 
 func (u UseCase) requestSSOSignIn(
