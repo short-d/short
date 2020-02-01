@@ -7,13 +7,8 @@ import (
 	"github.com/short-d/short/app/usecase/url"
 )
 
-type UseCase interface {
-	RequestGithubSignIn(authToken string, presenter Presenter)
-}
-
-var _ UseCase = (*Short)(nil)
-
-type Short struct {
+// UseCase represents all the business logic for Short.
+type UseCase struct {
 	logger           fw.Logger
 	timer            fw.Timer
 	urlRetriever     url.Retriever
@@ -21,16 +16,17 @@ type Short struct {
 	githubIDProvider service.IdentityProvider
 }
 
-func (s Short) RequestGithubSignIn(authToken string, presenter Presenter) {
-	s.requestSSOSignIn(authToken, s.githubIDProvider, presenter)
+// RequestGithubSignIn directs user to Github sign in screen.
+func (u UseCase) RequestGithubSignIn(authToken string, presenter Presenter) {
+	u.requestSSOSignIn(authToken, u.githubIDProvider, presenter)
 }
 
-func (s Short) requestSSOSignIn(
+func (u UseCase) requestSSOSignIn(
 	authToken string,
 	identityProvider service.IdentityProvider,
 	presenter Presenter,
 ) {
-	if s.authenticator.IsSignedIn(authToken) {
+	if u.authenticator.IsSignedIn(authToken) {
 		presenter.ShowHome()
 		return
 	}
@@ -38,16 +34,18 @@ func (s Short) requestSSOSignIn(
 	presenter.ShowExternalPage(signInLink)
 }
 
+// GithubIDProvider provides Github authentication service.
 type GithubIDProvider service.IdentityProvider
 
-func NewShort(
+// NewUseCase creates UseCase.
+func NewUseCase(
 	logger fw.Logger,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
 	authenticator auth.Authenticator,
 	githubIDProvider GithubIDProvider,
-) Short {
-	return Short{
+) UseCase {
+	return UseCase{
 		logger:           logger,
 		timer:            timer,
 		urlRetriever:     urlRetriever,

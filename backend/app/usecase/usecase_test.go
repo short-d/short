@@ -189,7 +189,7 @@ func newUseCase(
 	tokenizer := mdtest.NewCryptoTokenizerFake()
 	authenticator := auth.NewAuthenticator(tokenizer, timer, tokenValidDuration)
 
-	useCase := NewShort(
+	useCase := NewUseCase(
 		&logger,
 		timer,
 		urlRetriever,
