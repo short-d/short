@@ -4,14 +4,12 @@ import (
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/service"
-	"github.com/short-d/short/app/usecase/url"
 )
 
 // UseCase represents all the business logic for Short.
 type UseCase struct {
 	logger           fw.Logger
 	timer            fw.Timer
-	urlRetriever     url.Retriever
 	authenticator    auth.Authenticator
 	githubIDProvider service.IdentityProvider
 }
@@ -41,14 +39,12 @@ type GithubIDProvider service.IdentityProvider
 func NewUseCase(
 	logger fw.Logger,
 	timer fw.Timer,
-	urlRetriever url.Retriever,
 	authenticator auth.Authenticator,
 	githubIDProvider GithubIDProvider,
 ) UseCase {
 	return UseCase{
 		logger:           logger,
 		timer:            timer,
-		urlRetriever:     urlRetriever,
 		authenticator:    authenticator,
 		githubIDProvider: githubIDProvider,
 	}

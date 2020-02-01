@@ -7,9 +7,7 @@ import (
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/auth"
-	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/service"
-	"github.com/short-d/short/app/usecase/url"
 )
 
 var _ service.IdentityProvider = (*stubIDProvider)(nil)
@@ -161,7 +159,6 @@ func TestShort_RequestGithubSignIn(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			useCase := newUseCase(
 				testCase.now,
-				testCase.existingURLs,
 				testCase.tokenValidDuration,
 				testCase.githubIDProvider,
 			)
@@ -177,22 +174,17 @@ func TestShort_RequestGithubSignIn(t *testing.T) {
 
 func newUseCase(
 	now time.Time,
-	existingURLs map[string]entity.URL,
 	tokenValidDuration time.Duration,
 	githubIDProvider GithubIDProvider,
 ) UseCase {
-	urlRepo := repository.NewURLFake(existingURLs)
-
 	logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 	timer := mdtest.NewTimerFake(now)
-	urlRetriever := url.NewRetrieverPersist(&urlRepo)
 	tokenizer := mdtest.NewCryptoTokenizerFake()
 	authenticator := auth.NewAuthenticator(tokenizer, timer, tokenValidDuration)
 
 	useCase := NewUseCase(
 		&logger,
 		timer,
-		urlRetriever,
 		authenticator,
 		githubIDProvider,
 	)
