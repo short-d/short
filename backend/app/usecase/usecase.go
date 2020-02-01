@@ -13,7 +13,7 @@ type UseCase struct {
 	authenticator      auth.Authenticator
 	githubIDProvider   service.IdentityProvider
 	facebookIDProvider service.IdentityProvider
-	googleIDProvider GoogleIDProvider
+	googleIDProvider   GoogleIDProvider
 }
 
 // RequestGithubSignIn directs user to Github sign in screen.
@@ -68,6 +68,6 @@ func NewUseCase(
 		authenticator:      authenticator,
 		githubIDProvider:   githubIDProvider,
 		facebookIDProvider: facebookIDProvider,
-		googleIDProvider: googleIDProvider,
+		googleIDProvider:   googleIDProvider,
 	}
 }
