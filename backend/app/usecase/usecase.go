@@ -8,15 +8,21 @@ import (
 
 // UseCase represents all the business logic for Short.
 type UseCase struct {
-	logger           fw.Logger
-	timer            fw.Timer
-	authenticator    auth.Authenticator
-	githubIDProvider service.IdentityProvider
+	logger             fw.Logger
+	timer              fw.Timer
+	authenticator      auth.Authenticator
+	githubIDProvider   service.IdentityProvider
+	facebookIDProvider service.IdentityProvider
 }
 
 // RequestGithubSignIn directs user to Github sign in screen.
 func (u UseCase) RequestGithubSignIn(authToken string, presenter Presenter) {
 	u.requestSSOSignIn(authToken, u.githubIDProvider, presenter)
+}
+
+// RequestFacebookSignIn directs user to Facebook sign in screen.
+func (u UseCase) RequestFacebookSignIn(authToken string, presenter Presenter) {
+	u.requestSSOSignIn(authToken, u.facebookIDProvider, presenter)
 }
 
 func (u UseCase) requestSSOSignIn(
@@ -35,17 +41,22 @@ func (u UseCase) requestSSOSignIn(
 // GithubIDProvider provides Github authentication service.
 type GithubIDProvider service.IdentityProvider
 
+// FacebookIDProvider provides Facebook authentication service.
+type FacebookIDProvider service.IdentityProvider
+
 // NewUseCase creates UseCase.
 func NewUseCase(
 	logger fw.Logger,
 	timer fw.Timer,
 	authenticator auth.Authenticator,
 	githubIDProvider GithubIDProvider,
+	facebookIDProvider FacebookIDProvider,
 ) UseCase {
 	return UseCase{
-		logger:           logger,
-		timer:            timer,
-		authenticator:    authenticator,
-		githubIDProvider: githubIDProvider,
+		logger:             logger,
+		timer:              timer,
+		authenticator:      authenticator,
+		githubIDProvider:   githubIDProvider,
+		facebookIDProvider: facebookIDProvider,
 	}
 }
