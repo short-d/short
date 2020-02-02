@@ -13,6 +13,7 @@ type UseCase struct {
 	authenticator      auth.Authenticator
 	githubIDProvider   service.IdentityProvider
 	facebookIDProvider service.IdentityProvider
+	googleIDProvider   GoogleIDProvider
 }
 
 // RequestGithubSignIn directs user to Github sign in screen.
@@ -23,6 +24,11 @@ func (u UseCase) RequestGithubSignIn(authToken string, presenter Presenter) {
 // RequestFacebookSignIn directs user to Facebook sign in screen.
 func (u UseCase) RequestFacebookSignIn(authToken string, presenter Presenter) {
 	u.requestSSOSignIn(authToken, u.facebookIDProvider, presenter)
+}
+
+// RequestGoogleSignIn directs user to Google sign in screen.
+func (u UseCase) RequestGoogleSignIn(authToken string, presenter Presenter) {
+	u.requestSSOSignIn(authToken, u.googleIDProvider, presenter)
 }
 
 func (u UseCase) requestSSOSignIn(
@@ -44,6 +50,9 @@ type GithubIDProvider service.IdentityProvider
 // FacebookIDProvider provides Facebook authentication service.
 type FacebookIDProvider service.IdentityProvider
 
+// GoogleIDProvider provides Google authentication service.
+type GoogleIDProvider service.IdentityProvider
+
 // NewUseCase creates UseCase.
 func NewUseCase(
 	logger fw.Logger,
@@ -51,6 +60,7 @@ func NewUseCase(
 	authenticator auth.Authenticator,
 	githubIDProvider GithubIDProvider,
 	facebookIDProvider FacebookIDProvider,
+	googleIDProvider GoogleIDProvider,
 ) UseCase {
 	return UseCase{
 		logger:             logger,
@@ -58,5 +68,6 @@ func NewUseCase(
 		authenticator:      authenticator,
 		githubIDProvider:   githubIDProvider,
 		facebookIDProvider: facebookIDProvider,
+		googleIDProvider:   googleIDProvider,
 	}
 }
