@@ -18,7 +18,7 @@ export class Toggle extends Component<Props, State> {
         super(props);
         this.state = {
             enabled: false,
-            toggleClassName: classNames("toggle")
+            toggleClassName: classNames('toggle')
         };
     }
 
@@ -33,18 +33,23 @@ export class Toggle extends Component<Props, State> {
             this.props.onClick(enabled);
             if (enabled) {
                 this.setState({
-                    toggleClassName: classNames("toggle", "active")
+                    toggleClassName: classNames('toggle', 'active')
                 });
             } else {
                 this.setState({
-                    toggleClassName: classNames("toggle")
+                    toggleClassName: classNames('toggle')
                 });
             }
         });
     }
 
     render() {
-        return <div className={this.state.toggleClassName} onClick={this.handleClick}>
+        return <div className={'toggle-component'}>
+            <p className={'toggle-label'}>{this.props.children}</p>
+            <div className={'toggle-back'} onClick={this.handleClick}>
+                <div className={this.state.toggleClassName}>
+                </div>
+            </div>
         </div>
     }
 }

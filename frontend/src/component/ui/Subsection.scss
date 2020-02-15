@@ -1,0 +1,26 @@
+@import '../styles/font';
+@import '../styles/dimension';
+
+.subsection {
+  @include default-font();
+
+  display: flex;
+  justify-content: center;
+
+  .center {
+    box-sizing: border-box;
+    width: $content-width;
+    margin-top: 10px;
+    padding-left: 10px;
+    border-radius: 4px;
+    background-color: #fafafa;
+  }
+
+  .title {
+    font-size: 22px;
+    font-weight: $font-weight-semi-bold;
+    margin-bottom: 10px;
+    padding-left: 0;
+    color: #333;
+  }
+}

@@ -3,6 +3,7 @@ import './Home.scss';
 
 import { Header } from './shared/Header';
 import { Section } from '../ui/Section';
+import { Subsection } from '../ui/Subsection';
 import { TextField } from '../form/TextField';
 import { Button } from '../ui/Button';
 import { Toggle } from '../ui/Toggle';
@@ -192,8 +193,12 @@ export class Home extends Component<Props, State> {
               <Button onClick={this.handleCreateShortLinkClick}>
                 Create Short Link
               </Button>
-              <Toggle onClick={this.handlePublicToggle}/>
             </div>
+              <Subsection title={'Options'}>
+                <Toggle onClick={this.handlePublicToggle}>
+                  Make this short link public?<br/>( will be publicly listed )
+                </Toggle>
+              </Subsection>
             <div className={'input-error'}>{this.state.inputErr}</div>
             {this.state.createdUrl ? (
               <div className={'short-link-usage-wrapper'}>
