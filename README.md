@@ -33,6 +33,7 @@ from [source](https://short-d.com/r/ext-code)
    1. [Create reCAPTCHA account](#create-recaptcha-account)
    1. [Create Github OAuth application](#create-github-oauth-application)
    1. [Create Facebook Application](#create-facebook-application)
+   1. [Create Google OAuth Client ID](#create-google-oauth-client-id)
    1. [Backend](#backend)
    1. [Frontend](#frontend)
 1. [System Design](#system-design)
@@ -149,6 +150,25 @@ git clone https://github.com/byliuyang/short.git
 1. Replace the value of `FACEBOOK_CLIENT_SECRET` in `backend/.env` file with
    `App Secret`.
 
+### Create Google OAuth Client ID
+
+Create a new Client ID at
+   [Google API Credentials](https://console.developers.google.com/apis/credentials):
+
+1. Click on `Create Credentials` and select `OAuth client ID`.
+
+   ![Credentials](doc/google/credentials.jpg)
+
+1. Select `Web application` for `Application type`.
+
+1. Fill in `http://localhost/oauth/google/sign-in/callback` for `Authorized redirect URIs` and click on `Create`
+
+   ![OAuth](doc/google/OAuth.jpg)
+   
+1. Replace the value of `GOOGLE_CLIENT_ID` in `backend/.env` file with `Your Client ID`.
+1. Replace the value of `GOOGLE_CLIENT_SECRET` in `backend/.env` file with
+   `Your Client Secret`.
+   
 ### Backend
 
 1. Copy `backend/.env.dist` file to `backend/.env`:
