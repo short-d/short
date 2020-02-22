@@ -1,5 +1,4 @@
-import React from 'react';
-import { Section } from './Section';
+import React, { Component } from 'react';
 
 import './Subsection.scss';
 
@@ -7,7 +6,7 @@ interface Props {
   title: string;
 }
 
-export class Subsection extends Section {
+export class Subsection extends Component<Props> {
   render() {
     return (
       <div className={'subsection'}>
