@@ -62,6 +62,17 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 			expIsSignIn: false,
 		},
 		{
+			name:               "Token payload has empty email",
+			expIssuedAt:        now,
+			tokenValidDuration: time.Hour,
+			currentTime:        now.Add(30 * time.Minute),
+			tokenPayload: map[string]interface{}{
+				"email":     "",
+				"issued_at": now.Format(time.RFC3339Nano),
+			},
+			expIsSignIn: false,
+		},
+		{
 			name:               "Token payload without issue_at",
 			expIssuedAt:        now,
 			tokenValidDuration: time.Hour,
