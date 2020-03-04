@@ -22,8 +22,11 @@ header {
     line-height: 30px;
   }
 
+  #spacer {
+    flex: 1;
+  }
+
   .sign-out {
-    margin-left: auto;
     display: flex;
   }
 }

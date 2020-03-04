@@ -12,6 +12,7 @@ export class Header extends Component<Props> {
       <header>
         <div className={'center'}>
           <div id="logo">Short</div>
+          <div id="spacer"></div>
           <div className={'sign-out'}>
             <Button onClick={this.props.onSignOutButtonClick}>Sign out</Button>
           </div>
