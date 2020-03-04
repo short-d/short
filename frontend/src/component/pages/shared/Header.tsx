@@ -3,7 +3,7 @@ import { Button } from '../../ui/Button';
 import './Header.scss';
 
 interface Props {
-  requestSignOut: () => void;
+  onSignOutButtonClick: () => void;
 }
 
 export class Header extends Component<Props> {
@@ -12,7 +12,9 @@ export class Header extends Component<Props> {
       <header>
         <div className={'center'}>
           <div id="logo">Short</div>
-          <Button onClick={this.props.requestSignOut}>Sign out</Button>
+          <div className={'sign-out'}>
+            <Button onClick={this.props.onSignOutButtonClick}>Sign out</Button>
+          </div>
         </div>
       </header>
     );

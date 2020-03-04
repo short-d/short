@@ -22,7 +22,10 @@ header {
     line-height: 30px;
   }
 
-  .btn {
+  .sign-out {
     margin-left: auto;
+    button {
+      height: 100%;
+    }
   }
 }

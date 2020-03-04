@@ -120,6 +120,10 @@ export class Home extends Component<Props, State> {
     this.showSignInModal();
   }
 
+  handleSignOutButtonClick = () => {
+    this.requestSignIn();
+  }
+
   handlerLongLinkChange = (newLongLink: string) => {
     this.props.store.dispatch(updateLongLink(newLongLink));
   };
@@ -179,7 +183,7 @@ export class Home extends Component<Props, State> {
     return (
       <div className="home">
         <ExtPromo />
-        <Header requestSignOut={this.requestSignIn} />
+        <Header onSignOutButtonClick={this.handleSignOutButtonClick} />
         <div className={'main'}>
           <Section title={'New Short Link'}>
             <div className={'control create-short-link'}>
