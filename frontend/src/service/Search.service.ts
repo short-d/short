@@ -13,22 +13,7 @@ export class SearchService {
   ) {}
   searchShortLink(alias: String): Promise<Array<Url>> {
     return new Promise(async (resolve, reject) => {
-      try {
         resolve(await this.invokeSearchShortLinkApi(alias));
-      } catch (errCodes) {
-        const errCode = errCodes[0];
-        if (errCode === Err.Unauthorized) {
-          reject({
-            authorizationErr: 'Unauthorized to create short link'
-          });
-          return;
-        }
-
-        const error = this.errorService.getErr(errCode);
-        reject({
-          createShortLinkErr: error
-        });
-      }
     });
   }
 
