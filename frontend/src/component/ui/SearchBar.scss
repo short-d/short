@@ -1,0 +1,39 @@
+.search-box {
+    display: flex;
+    position: relative;
+    margin: 0 30px;
+    height: 100%;
+    .suggestions {
+        position: absolute;
+        margin-top: 30px;
+        list-style: none;
+        padding: 0;
+        width: 100%;
+        opacity: 75%;
+        z-index: 1000;
+        margin-top: 44px;
+        border-radius: 4px;
+        line-height: 2;
+        li {
+            background: #c2185b;
+            padding: 0 10px;
+            margin: 2px 0;
+            height: 30px;
+            transition: all 0.3s;
+            display: flex;
+            a {
+                text-decoration: inherit;
+                color: inherit;
+                cursor: pointer;
+                flex: 1;
+            }
+            &:hover {
+                transform: translateX(20px);
+                cursor: pointer;
+            }
+        }
+    }
+    * {
+        flex: 1;
+    }
+}

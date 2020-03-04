@@ -32,6 +32,7 @@ import {
 import { ErrorService } from '../../service/Error.service';
 import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
+import { SearchService } from '../../service/Search.service';
 
 interface Props {
   uiFactory: UIFactory;
@@ -40,6 +41,7 @@ interface Props {
   versionService: VersionService;
   qrCodeService: QrCodeService;
   captchaService: CaptchaService;
+  searchService: SearchService;
   errorService: ErrorService;
   store: Store<IAppState>;
   location: Location;
@@ -53,6 +55,7 @@ interface State {
   qrCodeUrl?: string;
   err?: IErr;
   inputErr?: string;
+  autoCompleteSuggestions?: Array<Url>;
 }
 
 export class Home extends Component<Props, State> {
@@ -130,6 +133,13 @@ export class Home extends Component<Props, State> {
     this.showSignInModal();
   };
 
+  handleSearchInputTextChange = async (alias: String) => {
+    const autoCompleteSuggestions = await this.props.searchService.searchShortLink(alias);
+    this.setState({
+      autoCompleteSuggestions
+    });
+  }
+
   handleSignOutButtonClick = () => {
     this.requestSignIn();
   };
@@ -194,6 +204,9 @@ export class Home extends Component<Props, State> {
       <div className="home">
         <ExtPromo />
         <Header
+          uiFactory={this.props.uiFactory}
+          onSearchInputChange={this.handleSearchInputTextChange}
+          autoCompleteSuggestions={this.state.autoCompleteSuggestions}
           shouldShowSignOutButton={this.state.isUserSignedIn}
           onSignOutButtonClick={this.handleSignOutButtonClick}
         />

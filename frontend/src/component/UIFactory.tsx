@@ -14,6 +14,8 @@ import { Store } from 'redux';
 import { IAppState } from '../state/reducers';
 import { ErrorService } from '../service/Error.service';
 import { UrlService } from '../service/Url.service';
+import { SearchService } from '../service/Search.service';
+import { SearchBar } from './ui/SearchBar';
 
 export class UIFactory {
   constructor(
@@ -23,6 +25,7 @@ export class UIFactory {
     private versionService: VersionService,
     private captchaService: CaptchaService,
     private errorService: ErrorService,
+    private searchService: SearchService,
     private store: Store<IAppState>,
     private featureDecisionService: IFeatureDecisionService
   ) {}
@@ -37,10 +40,18 @@ export class UIFactory {
         urlService={this.urlService}
         captchaService={this.captchaService}
         errorService={this.errorService}
+        searchService={this.searchService}
         store={this.store}
         location={location}
       />
     );
+  }
+
+  public createSearchBar(props: any): ReactElement {
+    if(!this.featureDecisionService.includeSearchBar()) {
+      return <div />;
+    }
+    return <SearchBar {...props} />
   }
 
   public createGoogleSignInButton(): ReactElement {
