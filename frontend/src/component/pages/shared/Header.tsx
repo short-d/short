@@ -3,7 +3,7 @@ import { Button } from '../../ui/Button';
 import './Header.scss';
 
 interface Props {
-  showSignOutButton: boolean | undefined;
+  showSignOutButton?: boolean;
   onSignOutButtonClick: () => void;
 }
 
