@@ -24,8 +24,6 @@ header {
 
   .sign-out {
     margin-left: auto;
-    button {
-      height: 100%;
-    }
+    display: flex;
   }
 }
