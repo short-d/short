@@ -7,7 +7,7 @@ import './Header.scss';
 interface Props {
   uiFactory: UIFactory;
   onSearchInputChange: (arg0: String) => void;
-  autoCompleteSuggestions?: Array<Url> 
+  autoCompleteSuggestions?: Array<Url>;
   shouldShowSignOutButton?: boolean;
   onSignOutButtonClick: () => void;
 }

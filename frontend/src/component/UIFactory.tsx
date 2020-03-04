@@ -48,10 +48,10 @@ export class UIFactory {
   }
 
   public createSearchBar(props: any): ReactElement {
-    if(!this.featureDecisionService.includeSearchBar()) {
+    if (!this.featureDecisionService.includeSearchBar()) {
       return <div />;
     }
-    return <SearchBar {...props} />
+    return <SearchBar {...props} />;
   }
 
   public createGoogleSignInButton(): ReactElement {

@@ -134,11 +134,13 @@ export class Home extends Component<Props, State> {
   };
 
   handleSearchInputTextChange = async (alias: String) => {
-    const autoCompleteSuggestions = await this.props.searchService.searchShortLink(alias);
+    const autoCompleteSuggestions = await this.props.searchService.searchShortLink(
+      alias
+    );
     this.setState({
       autoCompleteSuggestions
     });
-  }
+  };
 
   handleSignOutButtonClick = () => {
     this.requestSignIn();
