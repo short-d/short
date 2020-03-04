@@ -73,11 +73,10 @@ export class Home extends Component<Props, State> {
       });
       this.showSignInModal();
       return;
-    } else {
-      this.setState({
-        isUserSignedIn: true
-      });
     }
+    this.setState({
+      isUserSignedIn: true
+    });
     this.handleStateChange();
     this.autoFillLongLink();
   }
@@ -124,14 +123,14 @@ export class Home extends Component<Props, State> {
   }
 
   requestSignIn = () => {
+    this.setState({
+      isUserSignedIn: false
+    });
     this.props.authService.signOut();
     this.showSignInModal();
   }
 
   handleSignOutButtonClick = () => {
-    this.setState({
-      isUserSignedIn: false
-    });
     this.requestSignIn();
   }
 
@@ -194,7 +193,7 @@ export class Home extends Component<Props, State> {
     return (
       <div className="home">
         <ExtPromo />
-        <Header showSignOutButton={this.state.isUserSignedIn} onSignOutButtonClick={this.handleSignOutButtonClick} />
+        <Header shouldShowSignOutButton={this.state.isUserSignedIn} onSignOutButtonClick={this.handleSignOutButtonClick} />
         <div className={'main'}>
           <Section title={'New Short Link'}>
             <div className={'control create-short-link'}>

@@ -3,7 +3,7 @@ import { Button } from '../../ui/Button';
 import './Header.scss';
 
 interface Props {
-  showSignOutButton?: boolean;
+  shouldShowSignOutButton?: boolean;
   onSignOutButtonClick: () => void;
 }
 
@@ -14,7 +14,7 @@ export class Header extends Component<Props> {
         <div className={'center'}>
           <div id="logo">Short</div>
           <div id="spacer"></div>
-          {this.props.showSignOutButton && <div className={'sign-out'}>
+          {this.props.shouldShowSignOutButton && <div className={'sign-out'}>
             <Button onClick={this.props.onSignOutButtonClick}>Sign out</Button>
           </div>}
         </div>
