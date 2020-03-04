@@ -46,6 +46,7 @@ interface Props {
 }
 
 interface State {
+  isUserSignedIn?: boolean;
   longLink?: string;
   alias?: string;
   createdUrl?: Url;
@@ -67,8 +68,15 @@ export class Home extends Component<Props, State> {
   componentDidMount(): void {
     this.props.authService.cacheAuthToken(this.props.location.search);
     if (!this.props.authService.isSignedIn()) {
+      this.setState({
+        isUserSignedIn: false
+      });
       this.showSignInModal();
       return;
+    } else {
+      this.setState({
+        isUserSignedIn: true
+      });
     }
     this.handleStateChange();
     this.autoFillLongLink();
@@ -121,6 +129,9 @@ export class Home extends Component<Props, State> {
   }
 
   handleSignOutButtonClick = () => {
+    this.setState({
+      isUserSignedIn: false
+    });
     this.requestSignIn();
   }
 
@@ -183,7 +194,7 @@ export class Home extends Component<Props, State> {
     return (
       <div className="home">
         <ExtPromo />
-        <Header onSignOutButtonClick={this.handleSignOutButtonClick} />
+        <Header showSignOutButton={this.state.isUserSignedIn} onSignOutButtonClick={this.handleSignOutButtonClick} />
         <div className={'main'}>
           <Section title={'New Short Link'}>
             <div className={'control create-short-link'}>
