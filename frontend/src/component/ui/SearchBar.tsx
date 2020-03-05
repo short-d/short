@@ -6,7 +6,7 @@ import { Url } from '../../entity/Url';
 import { DebounceInput } from 'react-debounce-input';
 
 interface State {
-  showSuggestionBox: boolean;
+  showAutoCompleteBox: boolean;
 }
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 
 export class SearchBar extends Component<Props, State> {
   state = {
-    showSuggestionBox: true
+    showAutoCompleteBox: true
   };
 
   handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +31,7 @@ export class SearchBar extends Component<Props, State> {
     return (
       <ul
         className={classNames('suggestions', {
-          show: this.state.showSuggestionBox
+          show: this.state.showAutoCompleteBox
         })}
       >
         {this.props.autoCompleteSuggestions.map(e => (
@@ -43,15 +43,15 @@ export class SearchBar extends Component<Props, State> {
     );
   }
 
-  hideSuggestionsBox = () => {
+  hideAutoCompleteBox = () => {
     this.setState({
-      showSuggestionBox: false
+      showAutoCompleteBox: false
     });
   };
 
-  showSuggestionsBox = () => {
+  showAutoCompleteBox = () => {
     this.setState({
-      showSuggestionBox: true
+      showAutoCompleteBox: true
     });
   };
 
@@ -67,8 +67,8 @@ export class SearchBar extends Component<Props, State> {
             placeholder={'Search short links'}
             debounceTimeout={300}
             onChange={this.handleChange}
-            onFocus={this.showSuggestionsBox}
-            onBlur={this.hideSuggestionsBox}
+            onFocus={this.showAutoCompleteBox}
+            onBlur={this.hideAutoCompleteBox}
           />
           <i className="material-icons search">search</i>
         </div>
