@@ -30,6 +30,8 @@ export class SearchBar extends Component<Props> {
     return (
       <div className="search-box">
         <div className="search-input">
+          {/* Remove dependency on react-debounce-input
+            TODO(issue#520): [Refactor] Implement debouncing for input in search bar */}
           <DebounceInput
             minLength={2}
             maxLength={50}
