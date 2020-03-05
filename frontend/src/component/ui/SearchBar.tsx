@@ -21,8 +21,15 @@ export class SearchBar extends Component<Props> {
           minLength={2}
           placeholder={'Search short links'}
           debounceTimeout={300}
-          onChange={this.handleChange} />
-        <img className="image" src={"https://images-na.ssl-images-amazon.com/images/I/41gYkruZM2L.png"} alt="Magnifying Glass" />
+          onChange={this.handleChange}
+        />
+        <img
+          className="image"
+          src={
+            'https://images-na.ssl-images-amazon.com/images/I/41gYkruZM2L.png'
+          }
+          alt="Magnifying Glass"
+        />
         <ul className="suggestions">
           {this.props.autoCompleteSuggestions &&
             this.props.autoCompleteSuggestions.map(e => (

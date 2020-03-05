@@ -13,7 +13,7 @@ export class SearchService {
   ) {}
   searchShortLink(alias: String): Promise<Array<Url>> {
     return new Promise(async (resolve, reject) => {
-        resolve(await this.invokeSearchShortLinkApi(alias));
+      resolve(await this.invokeSearchShortLinkApi(alias));
     });
   }
 
@@ -23,7 +23,7 @@ export class SearchService {
     );
     return new Promise<Array<Url>>(
       (resolve, reject: (errCodes: Err[]) => any) => {
-        if (alias === "") {
+        if (alias === '') {
           resolve([]);
         }
         resolve([
