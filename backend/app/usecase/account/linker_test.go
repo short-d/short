@@ -5,7 +5,10 @@ package account
 import (
 	"testing"
 
+	"github.com/short-d/short/app/usecase/service"
+
 	"github.com/short-d/app/mdtest"
+	kgsentity "github.com/short-d/kgs/app/entity"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
@@ -66,7 +69,9 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			keyGen := keygen.NewFake(testCase.keys)
+			keyFetcher := service.NewKeyFetcherFake([]kgsentity.Key{})
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			mdtest.Equal(t, nil, err)
 			userRepo := repository.NewUserFake(testCase.users)
 			accountMappingRepo, err :=
 				repository.NewAccountMappingFake(
@@ -75,7 +80,7 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 				)
 			mdtest.Equal(t, nil, err)
 
-			linker := NewLinker(&keyGen, &userRepo, &accountMappingRepo)
+			linker := NewLinker(keyGen, &userRepo, &accountMappingRepo)
 			isLinked, err := linker.IsAccountLinked(testCase.ssoUser)
 			mdtest.Equal(t, nil, err)
 			mdtest.Equal(t, testCase.expectedIsLinked, isLinked)
@@ -92,6 +97,7 @@ func TestLinker_LinkAccount(t *testing.T) {
 		users           []entity.User
 		ssoUser         entity.SSOUser
 		user            entity.User
+		expectedRes     bool
 	}{
 		{
 			name: "account already linked",
@@ -116,6 +122,7 @@ func TestLinker_LinkAccount(t *testing.T) {
 			user: entity.User{
 				ID: "alpha",
 			},
+			expectedRes: true,
 		},
 		{
 			name:            "account exists not linked",
@@ -135,6 +142,7 @@ func TestLinker_LinkAccount(t *testing.T) {
 				ID:    "alpha",
 				Email: "alpha@example.com",
 			},
+			expectedRes: false,
 		},
 		{
 			name:            "create new account",
@@ -150,12 +158,15 @@ func TestLinker_LinkAccount(t *testing.T) {
 				ID:    "alpha",
 				Email: "alpha@example.com",
 			},
+			expectedRes: false,
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			keyGen := keygen.NewFake([]string{testCase.key})
+			keyFetcher := service.NewKeyFetcherFake([]kgsentity.Key{"key", "key2"})
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			mdtest.Equal(t, nil, err)
 			fakeUserRepo := repository.NewUserFake(testCase.users)
 			accountMappingRepo, err :=
 				repository.NewAccountMappingFake(
@@ -164,15 +175,15 @@ func TestLinker_LinkAccount(t *testing.T) {
 				)
 			mdtest.Equal(t, nil, err)
 
-			linker := NewLinker(&keyGen, &fakeUserRepo, &accountMappingRepo)
+			linker := NewLinker(keyGen, &fakeUserRepo, &accountMappingRepo)
 			err = linker.CreateAndLinkAccount(testCase.ssoUser)
 			mdtest.Equal(t, nil, err)
 
 			gotIsRelationExist := accountMappingRepo.IsRelationExist(testCase.ssoUser, testCase.user)
-			mdtest.Equal(t, true, gotIsRelationExist)
+			mdtest.Equal(t, testCase.expectedRes, gotIsRelationExist)
 
 			gotIsIDExist := fakeUserRepo.IsUserIDExist(testCase.user.ID)
-			mdtest.Equal(t, true, gotIsIDExist)
+			mdtest.Equal(t, testCase.expectedRes, gotIsIDExist)
 		})
 	}
 }
