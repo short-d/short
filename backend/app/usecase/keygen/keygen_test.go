@@ -14,7 +14,7 @@ func TestNewRemote(t *testing.T) {
 	t.Parallel()
 
 	keyFetcher := service.NewKeyFetcherFake([]entity.Key{})
-	_, err := NewRemote(0, &keyFetcher)
+	_, err := NewKeyGenerator(0, &keyFetcher)
 	mdtest.NotEqual(t, nil, err)
 }
 
@@ -85,7 +85,7 @@ func TestRemote_NewKey(t *testing.T) {
 			t.Parallel()
 
 			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
-			remote, err := NewRemote(testCase.bufferSize, &keyFetcher)
+			remote, err := NewKeyGenerator(testCase.bufferSize, &keyFetcher)
 			mdtest.Equal(t, nil, err)
 
 			for idx := 0; idx < testCase.expectedGetKeyOps; idx++ {
