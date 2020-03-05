@@ -70,7 +70,7 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	if err != nil {
 		return mdservice.Service{}, err
 	}
-	remote, err := provider.NewRemote(bufferSize, rpc)
+	remote, err := provider.NewKeyGenerator(bufferSize, rpc)
 	if err != nil {
 		return mdservice.Service{}, err
 	}
