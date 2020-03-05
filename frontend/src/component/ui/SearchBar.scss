@@ -3,47 +3,59 @@
   position: relative;
   margin: 0 30px;
   height: 100%;
+
   input {
-    padding-right: 28px;
+    flex: 1;
   }
-  .image {
+
+  i.search {
     flex: 0;
-    width: 20px;
-    height: 20px;
     position: relative;
     top: 4px;
     right: 30px;
+    color: black;
   }
+
   .suggestions {
     position: absolute;
     list-style: none;
     padding: 0;
     width: calc(100% - 20px);
-    opacity: 75%;
     z-index: 1000;
     margin-top: 44px;
     border-radius: 4px;
     line-height: 2;
+    box-shadow: 0 4px 6px 0 rgba(32, 33, 36, 0.28);
+    background: white;
+    color: black;
+
     li {
-      background: #c2185b;
       padding: 0 10px;
       margin: 2px 0;
       height: 30px;
       transition: all 0.3s;
       display: flex;
+
       a {
         text-decoration: inherit;
         color: inherit;
         cursor: pointer;
         flex: 1;
+        outline: none;
+
+        &:focus {
+          outline: none;
+        }
+
+        &:active {
+          outline: none;
+        }
       }
+
       &:hover {
         transform: translateX(20px);
         cursor: pointer;
       }
     }
-  }
-  * {
-    flex: 1;
   }
 }

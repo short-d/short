@@ -2,7 +2,7 @@ import { IFeatureDecisionService } from './FeatureDecision.service';
 
 export class StaticConfigDecisionService implements IFeatureDecisionService {
   includeSearchBar(): boolean {
-    return true;
+    return false;
   }
   includeGithubSignButton(): boolean {
     return false;

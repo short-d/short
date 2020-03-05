@@ -11,7 +11,7 @@ export class SearchService {
     private errorService: ErrorService,
     private captchaService: CaptchaService
   ) {}
-  searchShortLink(alias: String): Promise<Array<Url>> {
+  getAutoCompleteSuggestions(alias: String): Promise<Array<Url>> {
     return new Promise(async (resolve, reject) => {
       resolve(await this.invokeSearchShortLinkApi(alias));
     });

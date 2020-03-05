@@ -6,7 +6,7 @@ import './Header.scss';
 
 interface Props {
   uiFactory: UIFactory;
-  onSearchInputChange: (arg0: String) => void;
+  onSearchBarInputChange: (searchBarInput: String) => void;
   autoCompleteSuggestions?: Array<Url>;
   shouldShowSignOutButton?: boolean;
   onSignOutButtonClick: () => void;
@@ -18,9 +18,9 @@ export class Header extends Component<Props> {
       <header>
         <div className={'center'}>
           <div id="logo">Short</div>
-          <div id="search">
+          <div id="searchbar">
             {this.props.uiFactory.createSearchBar({
-              onChange: this.props.onSearchInputChange,
+              onChange: this.props.onSearchBarInputChange,
               autoCompleteSuggestions: this.props.autoCompleteSuggestions
             })}
           </div>

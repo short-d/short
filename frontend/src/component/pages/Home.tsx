@@ -133,8 +133,8 @@ export class Home extends Component<Props, State> {
     this.showSignInModal();
   };
 
-  handleSearchInputTextChange = async (alias: String) => {
-    const autoCompleteSuggestions = await this.props.searchService.searchShortLink(
+  handleSearchBarInputChange = async (alias: String) => {
+    const autoCompleteSuggestions = await this.props.searchService.getAutoCompleteSuggestions(
       alias
     );
     this.setState({
@@ -207,7 +207,7 @@ export class Home extends Component<Props, State> {
         <ExtPromo />
         <Header
           uiFactory={this.props.uiFactory}
-          onSearchInputChange={this.handleSearchInputTextChange}
+          onSearchBarInputChange={this.handleSearchBarInputChange}
           autoCompleteSuggestions={this.state.autoCompleteSuggestions}
           shouldShowSignOutButton={this.state.isUserSignedIn}
           onSignOutButtonClick={this.handleSignOutButtonClick}
