@@ -3,12 +3,22 @@
   position: relative;
   margin: 0 30px;
   height: 100%;
+  input {
+    padding-right: 28px;
+  }
+  .image {
+    flex: 0;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    top: 4px;
+    right: 30px;
+  }
   .suggestions {
     position: absolute;
-    margin-top: 30px;
     list-style: none;
     padding: 0;
-    width: 100%;
+    width: calc(100% - 20px);
     opacity: 75%;
     z-index: 1000;
     margin-top: 44px;

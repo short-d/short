@@ -23,7 +23,7 @@ export class SearchService {
     );
     return new Promise<Array<Url>>(
       (resolve, reject: (errCodes: Err[]) => any) => {
-        if (!alias) {
+        if (alias === "") {
           resolve([]);
         }
         resolve([
