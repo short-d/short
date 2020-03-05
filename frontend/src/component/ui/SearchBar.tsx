@@ -1,15 +1,24 @@
 import React, { Component, ChangeEvent } from 'react';
+import classNames from 'classnames';
 
 import './SearchBar.scss';
 import { Url } from '../../entity/Url';
 import { DebounceInput } from 'react-debounce-input';
+
+interface State {
+  showSuggestionBox: boolean;
+}
 
 interface Props {
   onChange: (text: String) => void;
   autoCompleteSuggestions?: Array<Url>;
 }
 
-export class SearchBar extends Component<Props> {
+export class SearchBar extends Component<Props, State> {
+  state = {
+    showSuggestionBox: true
+  };
+
   handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     this.props.onChange(event.target.value);
   };
@@ -38,10 +47,26 @@ export class SearchBar extends Component<Props> {
             placeholder={'Search short links'}
             debounceTimeout={300}
             onChange={this.handleChange}
+            onFocus={() => {
+              this.setState({
+                showSuggestionBox: true
+              });
+            }}
+            onBlur={() => {
+              this.setState({
+                showSuggestionBox: false
+              });
+            }}
           />
           <i className="material-icons search">search</i>
         </div>
-        <ul className="suggestions">{this.createAutoCompleteBox()}</ul>
+        <ul
+          className={classNames('suggestions', {
+            show: this.state.showSuggestionBox
+          })}
+        >
+          {this.createAutoCompleteBox()}
+        </ul>
       </div>
     );
   }

@@ -23,6 +23,7 @@
   }
 
   .suggestions {
+    display: none;
     position: absolute;
     list-style: none;
     padding: 0;
@@ -63,5 +64,9 @@
         cursor: pointer;
       }
     }
+  }
+
+  .suggestions.show {
+    display: block;
   }
 }
