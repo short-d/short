@@ -44,9 +44,11 @@ export class SearchBar extends Component<Props, State> {
   }
 
   hideAutoCompleteBox = () => {
-    this.setState({
-      showAutoCompleteBox: false
-    });
+    setTimeout(() => {
+      this.setState({
+        showAutoCompleteBox: false
+      });
+    }, 300);
   };
 
   showAutoCompleteBox = () => {
