@@ -29,14 +29,16 @@ export class SearchBar extends Component<Props> {
   render() {
     return (
       <div className="search-box">
-        <DebounceInput
-          minLength={2}
-          maxLength={50}
-          placeholder={'Search short links'}
-          debounceTimeout={300}
-          onChange={this.handleChange}
-        />
-        <i className="material-icons search">search</i>
+        <div className="search-input">
+          <DebounceInput
+            minLength={2}
+            maxLength={50}
+            placeholder={'Search short links'}
+            debounceTimeout={300}
+            onChange={this.handleChange}
+          />
+          <i className="material-icons search">search</i>
+        </div>
         <ul className="suggestions">{this.createAutoCompleteBox()}</ul>
       </div>
     );

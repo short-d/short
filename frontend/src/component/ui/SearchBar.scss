@@ -4,16 +4,22 @@
   margin: 0 30px;
   height: 100%;
 
-  input {
+  .search-input {
+    display: flex;
+    flex-direction: row;
     flex: 1;
-  }
 
-  i.search {
-    flex: 0;
-    position: relative;
-    top: 4px;
-    right: 30px;
-    color: black;
+    input {
+      flex: 1;
+    }
+
+    i.search {
+      flex: 0;
+      position: relative;
+      top: 4px;
+      right: 30px;
+      color: black;
+    }  
   }
 
   .suggestions {
