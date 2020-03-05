@@ -38,9 +38,7 @@
 
     li {
       padding: 0 10px;
-      margin: 2px 0;
       height: 30px;
-      transition: all 0.3s;
       display: flex;
 
       a {
@@ -60,8 +58,8 @@
       }
 
       &:hover {
-        transform: translateX(20px);
         cursor: pointer;
+        background: lightblue;
       }
     }
   }
