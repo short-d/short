@@ -28,12 +28,32 @@ export class SearchBar extends Component<Props, State> {
       return <div />;
     }
 
-    return this.props.autoCompleteSuggestions.map(e => (
-      <li key={e.alias}>
-        <a href={e.originalUrl}>{e.alias}</a>
-      </li>
-    ));
+    return (
+      <ul
+        className={classNames('suggestions', {
+          show: this.state.showSuggestionBox
+        })}
+      >
+        {this.props.autoCompleteSuggestions.map(e => (
+          <li key={e.alias}>
+            <a href={e.originalUrl}>{e.alias}</a>
+          </li>
+        ))}
+      </ul>
+    );
   }
+
+  hideSuggestionsBox = () => {
+    this.setState({
+      showSuggestionBox: false
+    });
+  };
+
+  showSuggestionsBox = () => {
+    this.setState({
+      showSuggestionBox: true
+    });
+  };
 
   render() {
     return (
@@ -47,26 +67,12 @@ export class SearchBar extends Component<Props, State> {
             placeholder={'Search short links'}
             debounceTimeout={300}
             onChange={this.handleChange}
-            onFocus={() => {
-              this.setState({
-                showSuggestionBox: true
-              });
-            }}
-            onBlur={() => {
-              this.setState({
-                showSuggestionBox: false
-              });
-            }}
+            onFocus={this.showSuggestionsBox}
+            onBlur={this.hideSuggestionsBox}
           />
           <i className="material-icons search">search</i>
         </div>
-        <ul
-          className={classNames('suggestions', {
-            show: this.state.showSuggestionBox
-          })}
-        >
-          {this.createAutoCompleteBox()}
-        </ul>
+        {this.createAutoCompleteBox()}
       </div>
     );
   }
