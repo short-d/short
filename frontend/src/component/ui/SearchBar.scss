@@ -35,7 +35,7 @@
     margin-top: 44px;
     border-radius: 4px;
     line-height: 2;
-    box-shadow: $shadow-autocomplete-box;
+    box-shadow: $shadow-floating-box;
     background: white;
     color: black;
 
@@ -62,7 +62,7 @@
 
       &:hover {
         cursor: pointer;
-        background: $color-light-blue;
+        background: $color-highlight;
       }
     }
   }
