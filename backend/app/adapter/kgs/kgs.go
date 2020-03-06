@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/short-d/kgs/app/adapter/rpc/proto"
-	"github.com/short-d/kgs/app/entity"
 	"github.com/short-d/short/app/usecase/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -21,7 +20,7 @@ type RPC struct {
 }
 
 // FetchKeys retrieves keys in batch from key generation service.
-func (k RPC) FetchKeys(maxCount int) ([]entity.Key, error) {
+func (k RPC) FetchKeys(maxCount int) ([]service.Key, error) {
 	req := proto.AllocateKeysRequest{
 		MaxKeyCount: uint32(maxCount),
 	}
@@ -32,9 +31,9 @@ func (k RPC) FetchKeys(maxCount int) ([]entity.Key, error) {
 		return nil, err
 	}
 
-	keys := make([]entity.Key, 0)
+	keys := make([]service.Key, 0)
 	for _, key := range res.Keys {
-		keys = append(keys, entity.Key(key))
+		keys = append(keys, service.Key(key))
 	}
 	return keys, nil
 }

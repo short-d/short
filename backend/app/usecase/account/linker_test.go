@@ -8,7 +8,6 @@ import (
 	"github.com/short-d/short/app/usecase/service"
 
 	"github.com/short-d/app/mdtest"
-	kgsentity "github.com/short-d/kgs/app/entity"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
@@ -69,7 +68,7 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			keyFetcher := service.NewKeyFetcherFake([]kgsentity.Key{})
+			keyFetcher := service.NewKeyFetcherFake([]service.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			mdtest.Equal(t, nil, err)
 			userRepo := repository.NewUserFake(testCase.users)
@@ -97,7 +96,7 @@ func TestLinker_LinkAccount(t *testing.T) {
 		users           []entity.User
 		ssoUser         entity.SSOUser
 		user            entity.User
-		expectedRes     bool
+		expectedIDExist bool
 	}{
 		{
 			name: "account already linked",
@@ -122,7 +121,7 @@ func TestLinker_LinkAccount(t *testing.T) {
 			user: entity.User{
 				ID: "alpha",
 			},
-			expectedRes: true,
+			expectedIDExist: true,
 		},
 		{
 			name:            "account exists not linked",
@@ -142,7 +141,7 @@ func TestLinker_LinkAccount(t *testing.T) {
 				ID:    "alpha",
 				Email: "alpha@example.com",
 			},
-			expectedRes: false,
+			expectedIDExist: false,
 		},
 		{
 			name:            "create new account",
@@ -158,13 +157,13 @@ func TestLinker_LinkAccount(t *testing.T) {
 				ID:    "alpha",
 				Email: "alpha@example.com",
 			},
-			expectedRes: false,
+			expectedIDExist: false,
 		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			keyFetcher := service.NewKeyFetcherFake([]kgsentity.Key{"key", "key2"})
+			keyFetcher := service.NewKeyFetcherFake([]service.Key{"key", "key2"})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			mdtest.Equal(t, nil, err)
 			fakeUserRepo := repository.NewUserFake(testCase.users)
@@ -180,10 +179,10 @@ func TestLinker_LinkAccount(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 
 			gotIsRelationExist := accountMappingRepo.IsRelationExist(testCase.ssoUser, testCase.user)
-			mdtest.Equal(t, testCase.expectedRes, gotIsRelationExist)
+			mdtest.Equal(t, testCase.expectedIDExist, gotIsRelationExist)
 
 			gotIsIDExist := fakeUserRepo.IsUserIDExist(testCase.user.ID)
-			mdtest.Equal(t, testCase.expectedRes, gotIsIDExist)
+			mdtest.Equal(t, testCase.expectedIDExist, gotIsIDExist)
 		})
 	}
 }

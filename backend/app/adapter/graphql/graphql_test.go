@@ -6,8 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/kgs/app/entity"
-
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/usecase/auth"
@@ -26,7 +24,7 @@ func TestGraphQlAPI(t *testing.T) {
 	urlRepo := db.NewURLSql(sqlDB)
 	retriever := url.NewRetrieverPersist(urlRepo)
 	urlRelationRepo := db.NewUserURLRelationSQL(sqlDB)
-	keyFetcher := service.NewKeyFetcherFake([]entity.Key{})
+	keyFetcher := service.NewKeyFetcherFake([]service.Key{})
 	keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 	mdtest.Equal(t, nil, err)
 	longLinkValidator := validator.NewLongLink()

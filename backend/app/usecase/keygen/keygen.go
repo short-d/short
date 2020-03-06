@@ -3,16 +3,15 @@ package keygen
 import (
 	"errors"
 
-	"github.com/short-d/kgs/app/entity"
 	"github.com/short-d/short/app/usecase/service"
 )
 
 type bufferEntry struct {
-	key entity.Key
+	key service.Key
 	err error
 }
 
-// KeyGenerator represents a remote KeyGenerator which fetch unique keys from remote service
+// KeyGenerator fetches unique keys in batch from key generation service
 // and buffer them in memory for fast response.
 type KeyGenerator struct {
 	bufferSize int
@@ -20,8 +19,8 @@ type KeyGenerator struct {
 	keyFetcher service.KeyFetcher
 }
 
-// NewKey produces a key
-func (r KeyGenerator) NewKey() (entity.Key, error) {
+// NewKey produces a unique key
+func (r KeyGenerator) NewKey() (service.Key, error) {
 	if len(r.buffer) == 0 {
 		go func() {
 			r.fetchKeys()
@@ -50,7 +49,7 @@ func (r KeyGenerator) fetchKeys() {
 	}
 }
 
-// NewKeyGenerator creates Remote keygen generator
+// NewKeyGenerator creates KeyGenerator
 func NewKeyGenerator(bufferSize int, keyFetcher service.KeyFetcher) (KeyGenerator, error) {
 	if bufferSize < 1 {
 		return KeyGenerator{}, errors.New("buffer size can't be less than 1")

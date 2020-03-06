@@ -9,7 +9,6 @@ import (
 	"github.com/short-d/short/app/usecase/service"
 
 	"github.com/short-d/app/mdtest"
-	kgsentity "github.com/short-d/kgs/app/entity"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
@@ -28,7 +27,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		name          string
 		urls          urlMap
 		alias         *string
-		availableKeys []kgsentity.Key
+		availableKeys []service.Key
 		user          entity.User
 		url           entity.URL
 		relationUsers []entity.User
@@ -98,7 +97,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			availableKeys: []kgsentity.Key{
+			availableKeys: []service.Key{
 				"test",
 			},
 			alias: nil,
@@ -122,7 +121,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			availableKeys: []kgsentity.Key{},
+			availableKeys: []service.Key{},
 			alias:         nil,
 			user: entity.User{
 				Email: "alpha@example.com",
