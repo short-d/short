@@ -1,6 +1,7 @@
 $color-primary: #e91e63;
 $color-white: #fff;
 $color-dark-gray: #343434;
+$color-light-blue: lightblue;
 
 @function color-transparent-white($opacity) {
   @return rgba(255, 255, 255, $opacity);

@@ -1,3 +1,6 @@
+@import '../styles/color.scss';
+@import '../styles/shadow.scss';
+
 .search-box {
   display: flex;
   position: relative;
@@ -32,7 +35,7 @@
     margin-top: 44px;
     border-radius: 4px;
     line-height: 2;
-    box-shadow: 0 4px 6px 0 rgba(32, 33, 36, 0.28);
+    box-shadow: $shadow-autocomplete-box;
     background: white;
     color: black;
 
@@ -59,7 +62,7 @@
 
       &:hover {
         cursor: pointer;
-        background: lightblue;
+        background: $color-light-blue;
       }
     }
   }
