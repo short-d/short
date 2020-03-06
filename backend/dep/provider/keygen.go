@@ -8,7 +8,7 @@ import (
 // KeyGenBufferSize specifies the size of the local cache for fetched keys
 type KeyGenBufferSize int
 
-// NewKeyGenerator creates remote NewKeyGenerator with KeyGenBufferSize to uniquely identify
+// NewKeyGenerator creates KeyGenerator with KeyGenBufferSize to uniquely identify
 // bufferSize
 func NewKeyGenerator(
 	bufferSize KeyGenBufferSize,
