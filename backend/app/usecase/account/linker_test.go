@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/short-d/short/app/usecase/service"
-
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
