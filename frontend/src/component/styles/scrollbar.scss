@@ -2,7 +2,7 @@
 
 @mixin scroll-bar {
   scroll-padding-right: 10px;
-  
+
   &::-webkit-scrollbar {
     width: 4px;
   }
