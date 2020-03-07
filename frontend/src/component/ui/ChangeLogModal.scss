@@ -1,5 +1,6 @@
 @import '../styles/color';
 @import '../styles/corner';
+@import '../styles/scrollbar';
 
 .modal-wrapper {
   left: 0%;
@@ -43,6 +44,8 @@
       margin: 0;
       overflow-y: scroll;
       background-color: $color-white-smoke;
+      border: 4px solid $color-white-smoke;
+      @include scroll-bar;
 
       li {
         padding: 10px;
@@ -80,12 +83,13 @@
         background-color: $color-light-gray-1;
         color: $color-dark-gray;
         height: 30px;
-        width: calc(100% - 30px);
+        width: calc(100% - 24px);
         margin: 10px;
         margin-right: 20px;
       }
     }
   }
+
   @media only screen and (max-device-width: 480px) {
     .modal-body {
       width: 100vw;
