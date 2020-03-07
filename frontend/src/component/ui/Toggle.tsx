@@ -9,7 +9,8 @@ interface Props {
 
 interface State {
     enabled: boolean,
-    toggleClassName: string
+    toggleClassName: string,
+    toggleBackClassName: string
 }
 
 export class Toggle extends Component<Props, State> {
@@ -18,7 +19,8 @@ export class Toggle extends Component<Props, State> {
         super(props);
         this.state = {
             enabled: false,
-            toggleClassName: classNames('toggle')
+            toggleClassName: classNames('toggle'),
+            toggleBackClassName: classNames('toggle-back')
         };
     }
 
@@ -33,11 +35,13 @@ export class Toggle extends Component<Props, State> {
             this.props.onClick(enabled);
             if (enabled) {
                 this.setState({
-                    toggleClassName: classNames('toggle', 'active')
+                    toggleClassName: classNames('toggle', 'active'),
+                    toggleBackClassName: classNames('toggle-back', 'active')
                 });
             } else {
                 this.setState({
-                    toggleClassName: classNames('toggle')
+                    toggleClassName: classNames('toggle'),
+                    toggleBackClassName: classNames('toggle-back')
                 });
             }
         });
@@ -46,7 +50,7 @@ export class Toggle extends Component<Props, State> {
     render() {
         return <div className={'toggle-component'}>
             <p className={'toggle-label'}>{this.props.children}</p>
-            <div className={'toggle-back'} onClick={this.handleClick}>
+            <div className={this.state.toggleBackClassName} onClick={this.handleClick}>
                 <div className={this.state.toggleClassName}>
                 </div>
             </div>

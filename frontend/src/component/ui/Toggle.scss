@@ -2,6 +2,12 @@
 @import '../styles/color';
 @import '../styles/font';
 
+$toggle-width: 100px / 1.5;
+$toggle-height: 50px / 1.5;
+
+$toggle-radius: 80px;
+$toggle-shrink-size: 4px;
+
 .toggle-component {
   display: flex;
   justify-content: space-between;
@@ -9,26 +15,30 @@
   width: 50%;
 
   .toggle-back {
-    @include round-corner;
-
     display: inline-block;
     background-color: lightgray;
-    width: 70px;
-    height: 30px;
+    width: $toggle-width;
+    height: $toggle-height;
+    border-radius: $toggle-radius;
     cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .toggle-back.active {
+    background-color: $color-primary;
   }
 
   .toggle {
-    @include round-corner;
-
-    background-color: gray;
-    width: 30px;
-    height: 30px;
-    transition: background-color 0.2s, margin-left 0.5s;
+    background-color: white;
+    width: $toggle-height - $toggle-shrink-size;
+    height: $toggle-height - $toggle-shrink-size;
+    margin-left: $toggle-shrink-size / 2;
+    margin-top: $toggle-shrink-size / 2;
+    border-radius: $toggle-radius;
+    transition: margin-left 0.5s;
   }
 
   .toggle.active {
-    background-color: $color-primary;
-    margin-left: 40px;
+    margin-left: $toggle-width - $toggle-height + $toggle-shrink-size / 2;
   }
 }
