@@ -100,12 +100,14 @@ export class Home extends Component<Props, State> {
   setAppExtensionExistenceStatus() {
     var homeComponent = this;
     chrome.runtime.sendMessage(
-      this.props.envService.getVal('BROWSER_EXTENSION_ID'), { message: "ping" },
-      function (response) {
+      this.props.envService.getVal('BROWSER_EXTENSION_ID'),
+      { message: 'ping' },
+      function(response) {
         homeComponent.setState({
-          browserHasAppExtension: (response !== undefined && response !== null)
+          browserHasAppExtension: response !== undefined && response !== null
         });
-    });
+      }
+    );
   }
 
   handleStateChange() {
@@ -220,7 +222,7 @@ export class Home extends Component<Props, State> {
   render = () => {
     return (
       <div className="home">
-        {!this.state.browserHasAppExtension && (<ExtPromo />)}
+        {!this.state.browserHasAppExtension && <ExtPromo />}
         <Header
           uiFactory={this.props.uiFactory}
           onSearchBarInputChange={this.handleSearchBarInputChange}
