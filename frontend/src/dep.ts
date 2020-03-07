@@ -49,7 +49,6 @@ export function initUIFactory(
 
   const store = initStore();
 
-
   return new UIFactory(
     authService,
     urlService,
