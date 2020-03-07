@@ -6,6 +6,7 @@ export interface ReCaptcha {
 }
 
 export const CREATE_SHORT_LINK = 'createShortLink';
+export const SEARCH_SHORT_LINK = 'searchShortLink';
 
 export class CaptchaService {
   private reCaptcha?: ReCaptcha;

@@ -142,7 +142,7 @@ func InjectGraphQLService(
 
 		db.NewURLSql,
 		db.NewUserURLRelationSQL,
-		provider.NewRemote,
+		provider.NewKeyGenerator,
 		validator.NewLongLink,
 		validator.NewCustomAlias,
 		url.NewRetrieverPersist,
