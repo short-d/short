@@ -45,12 +45,7 @@ export function initUIFactory(
   const versionService = new VersionService(envService);
   const store = initStore();
 
-  const searchService = new SearchService(
-    authService,
-    envService,
-    errorService,
-    captchaService
-  );
+  const searchService = new SearchService();
   return new UIFactory(
     authService,
     urlService,
