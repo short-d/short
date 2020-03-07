@@ -48,6 +48,7 @@ export function initUIFactory(
   const searchService = new SearchService();
   return new UIFactory(
     authService,
+    envService,
     urlService,
     qrCodeService,
     versionService,
