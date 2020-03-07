@@ -27,6 +27,11 @@ export class UpdatesService {
     return new Promise<Array<Update>>((resolve, reject) => {
       resolve([
         {
+          title: 'Added public url toggle',
+          publishedAt: 1583587586801,
+          excerpt: 'It is now possible to make links public or private'
+        },
+        {
           title: 'Added search bar',
           publishedAt: 1583587586800,
           excerpt: 'Added search bar to the header'
@@ -34,36 +39,6 @@ export class UpdatesService {
         {
           title: 'Added sign out button',
           publishedAt: 1583562845043,
-          excerpt: 'Added sign out button to the header'
-        },
-        {
-          title: 'Added search bar',
-          publishedAt: 1583562845042,
-          excerpt: 'Added search bar to the header'
-        },
-        {
-          title: 'Added sign out button',
-          publishedAt: 1583562845041,
-          excerpt: 'Added sign out button to the header'
-        },
-        {
-          title: 'Added search bar',
-          publishedAt: 1583562845040,
-          excerpt: 'Added search bar to the header'
-        },
-        {
-          title: 'Added sign out button',
-          publishedAt: 1583562845039,
-          excerpt: 'Added sign out button to the header'
-        },
-        {
-          title: 'Added search bar',
-          publishedAt: 1583562845038,
-          excerpt: 'Added search bar to the header'
-        },
-        {
-          title: 'Added sign out button',
-          publishedAt: 1583562845037,
           excerpt: 'Added sign out button to the header'
         }
       ]);

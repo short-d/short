@@ -57,11 +57,19 @@ export class ChangeLogModal extends Component<Props, State> {
     return <div />;
   };
 
+  createShowCompleteChangeLogButton = () => {
+    if (this.state.shouldShowCompleteChangeLog) {
+      return <div />;
+    }
+    return (
+      <Button onClick={this.showCompleteChangeLog}>View All Updates</Button>
+    );
+  };
+
   render() {
     if (!this.props.shouldShowModal) {
       return <div />;
     }
-
     return (
       <div className={'modal-wrapper'}>
         <div className={'modal-body'}>
@@ -76,11 +84,7 @@ export class ChangeLogModal extends Component<Props, State> {
           </div>
           {this.createChangeLog()}
           <div className={'view-all-updates'}>
-            {!this.state.shouldShowCompleteChangeLog && (
-              <Button onClick={this.showCompleteChangeLog}>
-                View All Updates
-              </Button>
-            )}
+            {this.createShowCompleteChangeLogButton()}
           </div>
         </div>
         <div className={'modal-backdrop'} onClick={this.props.closeModal} />
