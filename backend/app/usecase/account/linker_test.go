@@ -5,11 +5,11 @@ package account
 import (
 	"testing"
 
-	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/service"
 )
 
 func TestLinker_IsAccountLinked(t *testing.T) {
