@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/short/app/usecase/service"
+
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
@@ -25,7 +27,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		name          string
 		urls          urlMap
 		alias         *string
-		availableKeys []string
+		availableKeys []service.Key
 		user          entity.User
 		url           entity.URL
 		relationUsers []entity.User
@@ -95,7 +97,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			availableKeys: []string{
+			availableKeys: []service.Key{
 				"test",
 			},
 			alias: nil,
@@ -119,7 +121,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			availableKeys: []string{},
+			availableKeys: []service.Key{},
 			alias:         nil,
 			user: entity.User{
 				Email: "alpha@example.com",
@@ -141,19 +143,21 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				testCase.relationUsers,
 				testCase.relationURLs,
 			)
-			keyGen := keygen.NewFake(testCase.availableKeys)
+			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			mdtest.Equal(t, nil, err)
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
 
 			creator := NewCreatorPersist(
 				&urlRepo,
 				&userURLRepo,
-				&keyGen,
+				keyGen,
 				longLinkValidator,
 				aliasValidator,
 			)
 
-			_, err := urlRepo.GetByAlias(testCase.url.Alias)
+			_, err = urlRepo.GetByAlias(testCase.url.Alias)
 			mdtest.NotEqual(t, nil, err)
 
 			isExist := userURLRepo.IsRelationExist(testCase.user, testCase.url)
