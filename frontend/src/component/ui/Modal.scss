@@ -1,6 +1,7 @@
 @import '../styles/easing';
 @import '../styles/color';
 @import '../styles/shadow';
+@import '../styles/center';
 
 .modal {
   bottom: 0;
@@ -24,10 +25,8 @@
   .card {
     background-color: $color-white;
     box-shadow: $shadow-card;
-    left: 50%;
     position: fixed;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    @include align-center;
   }
 
   .mask {
