@@ -8,13 +8,13 @@ $toggle-height: 50px / 1.5;
 $toggle-radius: 80px;
 $toggle-shrink-size: 4px;
 
-.toggle-component {
+.toggle {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 50%;
 
-  .toggle-back {
+  .background {
     display: inline-block;
     background-color: lightgray;
     width: $toggle-width;
@@ -24,11 +24,11 @@ $toggle-shrink-size: 4px;
     transition: background-color 0.3s;
   }
 
-  .toggle-back.active {
+  .background.active {
     background-color: $color-primary;
   }
 
-  .toggle {
+  .button {
     background-color: white;
     width: $toggle-height - $toggle-shrink-size;
     height: $toggle-height - $toggle-shrink-size;
@@ -38,7 +38,7 @@ $toggle-shrink-size: 4px;
     transition: margin-left 0.5s;
   }
 
-  .toggle.active {
+  .button.active {
     margin-left: $toggle-width - $toggle-height + $toggle-shrink-size / 2;
   }
 }

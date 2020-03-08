@@ -9,8 +9,8 @@ interface Props {
 
 interface State {
     enabled: boolean,
-    toggleClassName: string,
-    toggleBackClassName: string
+    buttonClassName: string,
+    backgroundClassName: string
 }
 
 export class Toggle extends Component<Props, State> {
@@ -19,8 +19,8 @@ export class Toggle extends Component<Props, State> {
         super(props);
         this.state = {
             enabled: false,
-            toggleClassName: classNames('toggle'),
-            toggleBackClassName: classNames('toggle-back')
+            buttonClassName: classNames('button'),
+            backgroundClassName: classNames('background')
         };
     }
 
@@ -35,23 +35,23 @@ export class Toggle extends Component<Props, State> {
             this.props.onClick(enabled);
             if (enabled) {
                 this.setState({
-                    toggleClassName: classNames('toggle', 'active'),
-                    toggleBackClassName: classNames('toggle-back', 'active')
+                    buttonClassName: classNames('button', 'active'),
+                    backgroundClassName: classNames('background', 'active')
                 });
-            } else {
+                return
+            } 
                 this.setState({
-                    toggleClassName: classNames('toggle'),
-                    toggleBackClassName: classNames('toggle-back')
+                    buttonClassName: classNames('button'),
+                    backgroundClassName: classNames('background')
                 });
-            }
         });
     }
 
     render() {
-        return <div className={'toggle-component'}>
+        return <div className={'toggle'}>
             <p className={'toggle-label'}>{this.props.children}</p>
-            <div className={this.state.toggleBackClassName} onClick={this.handleClick}>
-                <div className={this.state.toggleClassName}>
+            <div className={this.state.backgroundClassName} onClick={this.handleClick}>
+                <div className={this.state.buttonClassName}>
                 </div>
             </div>
         </div>

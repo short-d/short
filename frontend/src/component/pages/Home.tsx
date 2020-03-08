@@ -33,6 +33,7 @@ import { ErrorService } from '../../service/Error.service';
 import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
+import { Toggle } from '../ui/Toggle';
 
 interface Props {
   uiFactory: UIFactory;
@@ -201,6 +202,10 @@ export class Home extends Component<Props, State> {
     this.errModal.current!.open();
   }
 
+  test() {
+
+  }
+
   render = () => {
     return (
       <div className="home">
@@ -235,6 +240,9 @@ export class Home extends Component<Props, State> {
               <Button onClick={this.handleCreateShortLinkClick}>
                 Create Short Link
               </Button>
+              <Toggle onClick={this.test}>
+                Test
+              </Toggle>
             </div>
             <div className={'input-error'}>{this.state.inputErr}</div>
             {this.state.createdUrl ? (
