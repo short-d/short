@@ -3,6 +3,8 @@ package routing
 import (
 	netURL "net/url"
 
+	"github.com/short-d/short/app/usecase/search"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
@@ -31,6 +33,7 @@ func NewShort(
 	googleAPI google.API,
 	authenticator auth.Authenticator,
 	accountProvider account.Provider,
+	search search.Search,
 ) []fw.Route {
 	githubSignIn := sso.NewSingleSignOn(
 		githubAPI.IdentityProvider,
@@ -129,6 +132,16 @@ func NewShort(
 				urlRetriever,
 				timer,
 				*frontendURL,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/api/search",
+			Handle: NewSearchAPI(
+				logger,
+				tracer,
+				search,
+				authenticator,
 			),
 		},
 	}
