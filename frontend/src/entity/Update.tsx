@@ -1,5 +1,5 @@
 export interface Update {
   title: string;
-  publishedAt: number;
-  excerpt: string;
+  releasedAt: number;
+  summary: string;
 }

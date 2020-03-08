@@ -1,56 +1,56 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import classnames from 'classnames';
 
 import './ChangeLogModal.scss';
 import { Update } from '../../entity/Update';
 import { Button } from './Button';
 
 interface State {
-  shouldShowCompleteChangeLog: boolean;
+  shouldShowFullChangeLog: boolean;
 }
 
 interface Props {
   changeLog?: Array<Update>;
   closeModal: () => void;
   shouldShowModal: boolean;
+  defaultVisibleLogs: number;
 }
 
 export class ChangeLogModal extends Component<Props, State> {
-  state = {
-    shouldShowCompleteChangeLog: false
+  static defaultProps = {
+    defaultVisibleLogs: 3
   };
 
-  showCompleteChangeLog = () => {
+  state = {
+    shouldShowFullChangeLog: false
+  };
+
+  showFullChangeLog = () => {
     this.setState({
-      shouldShowCompleteChangeLog: true
+      shouldShowFullChangeLog: true
     });
   };
 
   createChangeLog = () => {
     let changeLog = this.props.changeLog;
-    if (!this.state.shouldShowCompleteChangeLog) {
-      changeLog = changeLog!.slice(0, 3);
+    if (!this.state.shouldShowFullChangeLog) {
+      changeLog = changeLog!.slice(0, this.props.defaultVisibleLogs);
     }
     if (changeLog) {
       return (
-        <ul
-          className={classnames({
-            'complete-list': this.state.shouldShowCompleteChangeLog
-          })}
-        >
+        <div className={'changelog'}>
+        <ul>
           {changeLog.map((update: Update) => (
-            <li key={update.publishedAt}>
+            <li key={update.releasedAt}>
               <div className={'title'}>{update.title}</div>
-              <div>{update.excerpt}</div>
-              <br />
-              <div className={'published-date'}>
-                {moment(update.publishedAt).fromNow()} -{' '}
-                {moment(update.publishedAt).format('MMMM Do YYYY, h:mm:ss a')}
+              <div className={'summary'}>{update.summary}</div>
+              <div className={'released-date'}>
+                {moment(update.releasedAt).fromNow()}
               </div>
             </li>
           ))}
         </ul>
+        </div>
       );
     }
 
@@ -58,11 +58,13 @@ export class ChangeLogModal extends Component<Props, State> {
   };
 
   createShowCompleteChangeLogButton = () => {
-    if (this.state.shouldShowCompleteChangeLog) {
+    if (this.state.shouldShowFullChangeLog) {
       return <div />;
     }
     return (
-      <Button onClick={this.showCompleteChangeLog}>View All Updates</Button>
+      <div className={'view-all-updates'}>
+        <Button onClick={this.showFullChangeLog}>View All Updates</Button>
+      </div>
     );
   };
 
@@ -83,9 +85,7 @@ export class ChangeLogModal extends Component<Props, State> {
             </i>
           </div>
           {this.createChangeLog()}
-          <div className={'view-all-updates'}>
-            {this.createShowCompleteChangeLogButton()}
-          </div>
+          {this.createShowCompleteChangeLogButton()}
         </div>
         <div className={'modal-backdrop'} onClick={this.props.closeModal} />
       </div>
