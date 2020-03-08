@@ -1,6 +1,7 @@
 @import '../styles/color';
 @import '../styles/corner';
 @import '../styles/scrollbar';
+@import '../styles/center.scss';
 
 .modal-wrapper {
   left: 0%;
@@ -10,25 +11,26 @@
   height: 100%;
 
   .modal-body {
+    display: flex;
+    flex-direction: column;
     background-color: $color-white;
-    border: 1px solid $color-light-gray-1;
-    left: 50%;
     position: fixed;
-    top: 50%;
     width: 500px;
-    height: 500px;
-    transform: translateX(-50%) translateY(-50%);
+    height: 570px;
+    @include align-center;
     @include round-corner;
 
     .modal-header {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      align-items: center;
       font-size: 20px;
       line-height: 1;
       text-align: left;
       padding: 20px;
-      border-bottom: 1px solid $color-light-gray-1;
+      height: 32px;
+      border-bottom: 1px solid $color-divider;
       font-weight: 600;
 
       i.clear {
@@ -36,51 +38,58 @@
       }
     }
 
-    ul {
-      height: calc(500px - 114px);
-      list-style: none;
-      display: block;
-      padding: 0;
-      margin: 0;
-      overflow-y: scroll;
-      background-color: $color-white-smoke;
-      border: 4px solid $color-white-smoke;
-      @include scroll-bar;
+    .changelog {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: $color-modal-background;
+        overflow: auto;
 
-      li {
-        padding: 10px;
-        list-style: none;
-        text-align: left;
-        border: 1px solid $color-light-gray-1;
-        margin: 10px;
-        min-height: 120px;
-        background: white;
-        position: relative;
-        word-break: break-all;
-
-        .title {
-          font-weight: 900;
-          padding-bottom: 6px;
-        }
-
-        .published-date {
-          position: absolute;
-          bottom: 10px;
-          color: $color-light-gray-2;
-        }
-      }
-    }
-
-    ul.complete-list {
-      height: calc(500px - 60px);
+        ul {
+            flex: 1;
+            list-style: none;
+            display: block;
+            padding: 0;
+            margin: 0;
+            overflow-y: scroll;
+            margin: 4px;
+            @include scroll-bar;
+      
+            li {
+              display: flex;
+              flex-direction: column;
+              padding: 10px;
+              list-style: none;
+              text-align: left;
+              border: 1px solid $color-divider;
+              margin: 10px;
+              min-height: 120px;
+              background: white;
+              word-break: break-word;
+      
+              .title {
+                font-weight: 900;
+                margin-bottom: 6px;
+              }
+              
+              .summary {
+                  flex: 1;
+              }
+      
+              .released-date {
+                color: $color-time;
+              }
+            }
+          }      
     }
 
     .view-all-updates {
       width: 100%;
-      background-color: $color-white-smoke;
+      height: 50px;
+      background-color: $color-modal-background;
 
       button {
-        background-color: $color-light-gray-1;
+        background-color: $color-divider;
         color: $color-dark-gray;
         height: 30px;
         width: calc(100% - 24px);
@@ -94,13 +103,6 @@
     .modal-body {
       width: 100vw;
       height: 100vh;
-      ul {
-        height: calc(100vh - 114px);
-      }
-
-      ul.complete-list {
-        height: calc(100vh - 60px);
-      }
     }
   }
 
