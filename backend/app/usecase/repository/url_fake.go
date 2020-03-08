@@ -45,6 +45,11 @@ func (u URLFake) GetByAlias(alias string) (entity.URL, error) {
 	return url, nil
 }
 
+// GetByAliases finds all URL for a list of aliases
+func (u URLFake) GetByAliases(aliases []string) ([]entity.URL, error) {
+	return nil, nil
+}
+
 // NewURLFake creates in memory URL repository
 func NewURLFake(urls map[string]entity.URL) URLFake {
 	return URLFake{

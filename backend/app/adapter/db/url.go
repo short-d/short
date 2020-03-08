@@ -96,6 +96,21 @@ WHERE "%s"=$1;`,
 	return url, nil
 }
 
+// GetByAliases finds URLs for a list of aliases
+func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
+	urls := make([]entity.URL, 0)
+
+	for _, alias := range aliases {
+		url, err := u.GetByAlias(alias)
+
+		if err != nil {
+			return urls, err
+		}
+		urls = append(urls, url)
+	}
+	return urls, nil
+}
+
 // NewURLSql creates URLSql
 func NewURLSql(db *sql.DB) *URLSql {
 	return &URLSql{
