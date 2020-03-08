@@ -59,8 +59,8 @@ export class SearchBar extends Component<Props, State> {
 
   render() {
     return (
-      <div className={'search-box'}>
-        <div className={'search-input'}>
+      <div className="search-box">
+        <div className="search-input">
           {/* Remove dependency on react-debounce-input
             TODO(issue#520): [Refactor] Implement debouncing for input in search bar */}
           <DebounceInput
@@ -72,7 +72,7 @@ export class SearchBar extends Component<Props, State> {
             onFocus={this.showAutoCompleteBox}
             onBlur={this.hideAutoCompleteBox}
           />
-          <i className={'material-icons search'}>search</i>
+          <i className="material-icons search">search</i>
         </div>
         {this.createAutoCompleteBox()}
       </div>
