@@ -1,5 +1,5 @@
 export interface IFeatureDecisionService {
-  includeViewChangeLog(): boolean;
+  includeViewChangeLogButton(): boolean;
   includeSearchBar(): boolean;
   includeGithubSignButton(): boolean;
   includeGoogleSignButton(): boolean;

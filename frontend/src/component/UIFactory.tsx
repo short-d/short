@@ -52,7 +52,7 @@ export class UIFactory {
   }
 
   public createChangeLogModal(props: any): ReactElement {
-    if (!this.featureDecisionService.includeViewChangeLog()) {
+    if (!this.featureDecisionService.includeViewChangeLogButton()) {
       return <div />;
     }
     return (
