@@ -39,48 +39,48 @@
     }
 
     .changelog {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        background-color: $color-modal-background;
-        overflow: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: $color-modal-background;
+      overflow: auto;
 
-        ul {
+      ul {
+        flex: 1;
+        list-style: none;
+        display: block;
+        padding: 0;
+        margin: 0;
+        overflow-y: scroll;
+        margin: 4px;
+        @include scroll-bar;
+
+        li {
+          display: flex;
+          flex-direction: column;
+          padding: 10px;
+          list-style: none;
+          text-align: left;
+          border: 1px solid $color-divider;
+          margin: 10px;
+          min-height: 120px;
+          background: white;
+          word-break: break-word;
+
+          .title {
+            font-weight: 900;
+            margin-bottom: 6px;
+          }
+
+          .summary {
             flex: 1;
-            list-style: none;
-            display: block;
-            padding: 0;
-            margin: 0;
-            overflow-y: scroll;
-            margin: 4px;
-            @include scroll-bar;
-      
-            li {
-              display: flex;
-              flex-direction: column;
-              padding: 10px;
-              list-style: none;
-              text-align: left;
-              border: 1px solid $color-divider;
-              margin: 10px;
-              min-height: 120px;
-              background: white;
-              word-break: break-word;
-      
-              .title {
-                font-weight: 900;
-                margin-bottom: 6px;
-              }
-              
-              .summary {
-                  flex: 1;
-              }
-      
-              .released-date {
-                color: $color-time;
-              }
-            }
-          }      
+          }
+
+          .released-date {
+            color: $color-time;
+          }
+        }
+      }
     }
 
     .view-all-updates {
