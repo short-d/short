@@ -49,7 +49,7 @@ export class Toggle extends Component<Props, State> {
 
     render() {
         return <div className={'toggle'}>
-            <p className={'toggle-label'}>{this.props.children}</p>
+            {this.props.children}
             <div className={this.state.backgroundClassName} onClick={this.handleClick}>
                 <div className={this.state.buttonClassName}>
                 </div>
