@@ -8,6 +8,7 @@ import (
 	"github.com/short-d/short/app/adapter/routing"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/search"
 	"github.com/short-d/short/app/usecase/url"
 )
 
@@ -26,6 +27,7 @@ func NewShortRoutes(
 	googleAPI google.API,
 	authenticator auth.Authenticator,
 	accountProvider account.Provider,
+	search search.Search,
 ) []fw.Route {
 	observability := routing.Observability{
 		Logger: logger,
@@ -42,5 +44,6 @@ func NewShortRoutes(
 		googleAPI,
 		authenticator,
 		accountProvider,
+		search,
 	)
 }

@@ -30,6 +30,7 @@ import (
 	"github.com/short-d/short/app/adapter/graphql"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/search"
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
 	"github.com/short-d/short/dep/provider"
@@ -70,13 +71,13 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	if err != nil {
 		return mdservice.Service{}, err
 	}
-	remote, err := provider.NewKeyGenerator(bufferSize, rpc)
+	keyGenerator, err := provider.NewKeyGenerator(bufferSize, rpc)
 	if err != nil {
 		return mdservice.Service{}, err
 	}
 	longLink := validator.NewLongLink()
 	customAlias := validator.NewCustomAlias()
-	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, remote, longLink, customAlias)
+	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias)
 	client := mdhttp.NewClient()
 	http := mdrequest.NewHTTP(client)
 	reCaptcha := provider.NewReCaptchaService(http, secret)
@@ -119,7 +120,9 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	accountProvider := account.NewProvider(userSQL, timer)
-	v := provider.NewShortRoutes(local, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
+	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
+	searchSearch := search.NewSearch(urlSql, userURLRelationSQL)
+	v := provider.NewShortRoutes(local, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider, searchSearch)
 	server := mdrouting.NewBuiltIn(local, tracer, v)
 	service := mdservice.New(name, server, local)
 	return service

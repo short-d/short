@@ -1,8 +1,11 @@
 package routing
 
 import (
+	"encoding/json"
 	"net/http"
 	netURL "net/url"
+
+	"github.com/short-d/short/app/usecase/search"
 
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/auth"
@@ -83,5 +86,35 @@ func NewSSOSignInCallback(
 
 		webFrontendURL = setToken(webFrontendURL, authToken)
 		http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
+	}
+}
+
+// NewSearchAPI fetches user's public short links and private short links
+func NewSearchAPI(
+	logger fw.Logger,
+	tracer fw.Tracer,
+	search search.Search,
+	authenticator auth.Authenticator,
+) fw.Handle {
+	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
+		token := getToken(params)
+
+		user, err := authenticator.GetUser(token)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		urls, err := search.SearchForURLs(user)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		err = json.NewEncoder(w).Encode(urls)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 }
