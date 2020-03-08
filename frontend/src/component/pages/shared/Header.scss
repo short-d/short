@@ -21,4 +21,12 @@ header {
     letter-spacing: 2px;
     line-height: 30px;
   }
+
+  #searchbar {
+    flex: 1;
+  }
+
+  .sign-out {
+    display: flex;
+  }
 }

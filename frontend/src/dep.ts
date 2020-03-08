@@ -11,6 +11,7 @@ import { IAppState, initialAppState, reducers } from './state/reducers';
 import { ErrorService } from './service/Error.service';
 import { RoutingService } from './service/Routing.service';
 import { UrlService } from './service/Url.service';
+import { SearchService } from './service/Search.service';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -44,6 +45,7 @@ export function initUIFactory(
   const versionService = new VersionService(envService);
   const store = initStore();
 
+  const searchService = new SearchService();
   return new UIFactory(
     authService,
     urlService,
@@ -51,6 +53,7 @@ export function initUIFactory(
     versionService,
     captchaService,
     errorService,
+    searchService,
     store,
     staticConfigDecision
   );

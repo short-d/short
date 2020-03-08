@@ -1,8 +1,9 @@
 package service
 
-import "github.com/short-d/kgs/app/entity"
+// Key represents unique identifier
+type Key string
 
 // KeyFetcher fetches keys in batch
 type KeyFetcher interface {
-	FetchKeys(maxCount int) ([]entity.Key, error)
+	FetchKeys(maxCount int) ([]Key, error)
 }

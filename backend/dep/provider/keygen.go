@@ -8,11 +8,11 @@ import (
 // KeyGenBufferSize specifies the size of the local cache for fetched keys
 type KeyGenBufferSize int
 
-// NewRemote creates Remote with KeyGenBufferSize to uniquely identify
+// NewKeyGenerator creates KeyGenerator with KeyGenBufferSize to uniquely identify
 // bufferSize
-func NewRemote(
+func NewKeyGenerator(
 	bufferSize KeyGenBufferSize,
 	keyFetcher service.KeyFetcher,
-) (keygen.Remote, error) {
-	return keygen.NewRemote(int(bufferSize), keyFetcher)
+) (keygen.KeyGenerator, error) {
+	return keygen.NewKeyGenerator(int(bufferSize), keyFetcher)
 }

@@ -32,6 +32,7 @@ import {
 import { ErrorService } from '../../service/Error.service';
 import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
+import { SearchService } from '../../service/Search.service';
 
 interface Props {
   uiFactory: UIFactory;
@@ -40,18 +41,21 @@ interface Props {
   versionService: VersionService;
   qrCodeService: QrCodeService;
   captchaService: CaptchaService;
+  searchService: SearchService;
   errorService: ErrorService;
   store: Store<IAppState>;
   location: Location;
 }
 
 interface State {
+  isUserSignedIn?: boolean;
   longLink?: string;
   alias?: string;
   createdUrl?: Url;
   qrCodeUrl?: string;
   err?: IErr;
   inputErr?: string;
+  autoCompleteSuggestions?: Array<Url>;
 }
 
 export class Home extends Component<Props, State> {
@@ -67,9 +71,15 @@ export class Home extends Component<Props, State> {
   componentDidMount(): void {
     this.props.authService.cacheAuthToken(this.props.location.search);
     if (!this.props.authService.isSignedIn()) {
+      this.setState({
+        isUserSignedIn: false
+      });
       this.showSignInModal();
       return;
     }
+    this.setState({
+      isUserSignedIn: true
+    });
     this.handleStateChange();
     this.autoFillLongLink();
   }
@@ -115,10 +125,26 @@ export class Home extends Component<Props, State> {
     this.signInModal.current.open();
   }
 
-  requestSignIn() {
+  requestSignIn = () => {
+    this.setState({
+      isUserSignedIn: false
+    });
     this.props.authService.signOut();
     this.showSignInModal();
-  }
+  };
+
+  handleSearchBarInputChange = async (alias: String) => {
+    const autoCompleteSuggestions = await this.props.searchService.getAutoCompleteSuggestions(
+      alias
+    );
+    this.setState({
+      autoCompleteSuggestions
+    });
+  };
+
+  handleSignOutButtonClick = () => {
+    this.requestSignIn();
+  };
 
   handlerLongLinkChange = (newLongLink: string) => {
     this.props.store.dispatch(updateLongLink(newLongLink));
@@ -179,7 +205,13 @@ export class Home extends Component<Props, State> {
     return (
       <div className="home">
         <ExtPromo />
-        <Header />
+        <Header
+          uiFactory={this.props.uiFactory}
+          onSearchBarInputChange={this.handleSearchBarInputChange}
+          autoCompleteSuggestions={this.state.autoCompleteSuggestions}
+          shouldShowSignOutButton={this.state.isUserSignedIn}
+          onSignOutButtonClick={this.handleSignOutButtonClick}
+        />
         <div className={'main'}>
           <Section title={'New Short Link'}>
             <div className={'control create-short-link'}>

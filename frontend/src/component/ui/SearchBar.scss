@@ -1,0 +1,73 @@
+@import '../styles/color.scss';
+@import '../styles/shadow.scss';
+
+.search-box {
+  display: flex;
+  position: relative;
+  margin: 0 30px;
+  height: 100%;
+
+  .search-input {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+
+    input {
+      flex: 1;
+    }
+
+    i.search {
+      flex: 0;
+      position: relative;
+      top: 4px;
+      right: 30px;
+      color: black;
+    }
+  }
+
+  .suggestions {
+    display: none;
+    position: absolute;
+    list-style: none;
+    padding: 0;
+    width: calc(100% - 20px);
+    z-index: 1000;
+    margin-top: 44px;
+    border-radius: 4px;
+    line-height: 2;
+    box-shadow: $shadow-floating-box;
+    background: white;
+    color: black;
+
+    li {
+      padding: 0 10px;
+      height: 30px;
+      display: flex;
+
+      a {
+        text-decoration: inherit;
+        color: inherit;
+        cursor: pointer;
+        flex: 1;
+        outline: none;
+
+        &:focus {
+          outline: none;
+        }
+
+        &:active {
+          outline: none;
+        }
+      }
+
+      &:hover {
+        cursor: pointer;
+        background: $color-highlight;
+      }
+    }
+  }
+
+  .suggestions.show {
+    display: block;
+  }
+}
