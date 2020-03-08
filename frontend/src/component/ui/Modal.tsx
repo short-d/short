@@ -51,7 +51,7 @@ export class Modal extends Component<Props, State> {
         }),
       transitionDuration
     );
-    
+
     if (this.props.onClose) {
       this.props.onClose();
     }

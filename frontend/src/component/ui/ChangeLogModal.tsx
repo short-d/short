@@ -40,7 +40,10 @@ export class ChangeLogModal extends Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (this.props.shouldShowModal !== prevProps.shouldShowModal && this.props.shouldShowModal) {
+    if (
+      this.props.shouldShowModal !== prevProps.shouldShowModal &&
+      this.props.shouldShowModal
+    ) {
       this.open();
     }
   }
@@ -109,10 +112,7 @@ export class ChangeLogModal extends Component<Props, State> {
         <div className={'modal-body'}>
           <div className={'modal-header'}>
             Since You've Been Gone
-            <i
-              className={'material-icons clear'}
-              onClick={this.close}
-            >
+            <i className={'material-icons clear'} onClick={this.close}>
               clear
             </i>
           </div>
