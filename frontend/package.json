@@ -13,6 +13,7 @@
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "material-design-icons": "^3.0.1",
+    "moment": "^2.24.0",
     "qrcode": "^1.4.2",
     "react": "^16.10.2",
     "react-debounce-input": "^3.2.2",
