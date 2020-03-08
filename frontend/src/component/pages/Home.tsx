@@ -201,10 +201,6 @@ export class Home extends Component<Props, State> {
     this.errModal.current!.open();
   }
 
-  test() {
-
-  }
-
   render = () => {
     return (
       <div className="home">
