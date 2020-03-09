@@ -3,7 +3,8 @@ import classNames from 'classnames';
 
 import './SearchBar.scss';
 import { Url } from '../../entity/Url';
-import { DebounceInput } from 'react-debounce-input';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 interface State {
   showAutoCompleteBox: boolean;
@@ -19,8 +20,24 @@ export class SearchBar extends Component<Props, State> {
     showAutoCompleteBox: true
   };
 
+  private onSearch$: any = new Subject();
+  private subscription: any = null;
+  componentDidMount() {
+    this.subscription = this.onSearch$
+      .pipe(debounceTime(300))
+      .subscribe((debouncedValue: string) => {
+        this.props.onChange(debouncedValue);
+      });
+  }
+
+  componentWillUnmount() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
   handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    this.props.onChange(event.target.value);
+    this.onSearch$.next(event.target.value);
   };
 
   createAutoCompleteBox() {
@@ -61,13 +78,10 @@ export class SearchBar extends Component<Props, State> {
     return (
       <div className="search-box">
         <div className="search-input">
-          {/* Remove dependency on react-debounce-input
-            TODO(issue#520): [Refactor] Implement debouncing for input in search bar */}
-          <DebounceInput
+          <input
             minLength={2}
             maxLength={50}
             placeholder={'Search short links'}
-            debounceTimeout={300}
             onChange={this.handleChange}
             onFocus={this.showAutoCompleteBox}
             onBlur={this.hideAutoCompleteBox}

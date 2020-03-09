@@ -20,7 +20,8 @@
     "react-dom": "^16.10.2",
     "react-router-dom": "^5.1.2",
     "recaptcha-v3": "^1.7.0",
-    "redux": "^4.0.4"
+    "redux": "^4.0.4",
+    "rxjs": "^6.5.4"
   },
   "scripts": {
     "start": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts start",
