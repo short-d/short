@@ -16,7 +16,7 @@ import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
 import { Location } from 'history';
 import { AuthService } from '../../service/Auth.service';
-import { EnvService } from '../../service/Env.service';
+import { ChromeExtensionService } from '../../service/ChromeExtension.service';
 import { VersionService } from '../../service/Version.service';
 import { QrCodeService } from '../../service/QrCode.service';
 import { UIFactory } from '../UIFactory';
@@ -39,7 +39,7 @@ interface Props {
   uiFactory: UIFactory;
   urlService: UrlService;
   authService: AuthService;
-  envService: EnvService;
+  chromeExtensionService: ChromeExtensionService;
   versionService: VersionService;
   qrCodeService: QrCodeService;
   captchaService: CaptchaService;
@@ -51,7 +51,7 @@ interface Props {
 
 interface State {
   isUserSignedIn?: boolean;
-  browserHasAppExtension?: boolean;
+  isExtensionInstalled?: boolean;
   longLink?: string;
   alias?: string;
   createdUrl?: Url;
@@ -72,7 +72,12 @@ export class Home extends Component<Props, State> {
   }
 
   componentDidMount(): void {
-    this.setAppExtensionExistenceStatus();
+    this.props.chromeExtensionService
+      .isExtensionInstalled()
+      .then(
+        () => this.setState({ isExtensionInstalled: true }),
+        () => this.setState({ isExtensionInstalled: false })
+      );
 
     this.props.authService.cacheAuthToken(this.props.location.search);
     if (!this.props.authService.isSignedIn()) {
@@ -95,19 +100,6 @@ export class Home extends Component<Props, State> {
       this.props.store.dispatch(updateLongLink(longLink));
       this.shortLinkTextField.current!.focus();
     }
-  }
-
-  setAppExtensionExistenceStatus() {
-    var homeComponent = this;
-    chrome.runtime.sendMessage(
-      this.props.envService.getVal('BROWSER_EXTENSION_ID'),
-      { message: 'ping' },
-      function(response) {
-        homeComponent.setState({
-          browserHasAppExtension: response !== undefined && response !== null
-        });
-      }
-    );
   }
 
   handleStateChange() {
@@ -222,7 +214,7 @@ export class Home extends Component<Props, State> {
   render = () => {
     return (
       <div className="home">
-        {!this.state.browserHasAppExtension && <ExtPromo />}
+        {!this.state.isExtensionInstalled && <ExtPromo />}
         <Header
           uiFactory={this.props.uiFactory}
           onSearchBarInputChange={this.handleSearchBarInputChange}
