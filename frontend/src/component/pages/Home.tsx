@@ -74,10 +74,7 @@ export class Home extends Component<Props, State> {
   componentDidMount(): void {
     this.props.chromeExtensionService
       .isExtensionInstalled()
-      .then(
-        () => this.setState({ isExtensionInstalled: true }),
-        () => this.setState({ isExtensionInstalled: false })
-      );
+      .then(result => this.setState({ isExtensionInstalled: result }));
 
     this.props.authService.cacheAuthToken(this.props.location.search);
     if (!this.props.authService.isSignedIn()) {

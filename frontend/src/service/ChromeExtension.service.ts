@@ -6,13 +6,13 @@ export class ChromeExtensionService {
 
   constructor(private envService: EnvService) {}
 
-  isExtensionInstalled() {
+  isExtensionInstalled(): Promise<boolean> {
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage(
         this.envService.getVal(this.EXTENSION_ID_ENV_KEY),
         { message: this.PING_MESSAGE_TYPE },
         response => {
-          if (response !== undefined && response !== null) resolve();
+          return resolve(response !== undefined && response !== null);
         }
       );
     });
