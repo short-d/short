@@ -16,6 +16,18 @@
     }
   }
 
+  @media only screen and (max-width: 480px) { 
+    .control {
+      flex-direction: column;
+      height: 200px;
+      .create-short-link {
+        display: flex;
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  }
+
   .main {
     padding: 40px 0;
   }
