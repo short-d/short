@@ -232,7 +232,7 @@ export class Home extends Component<Props, State> {
                   onChange={this.handleAliasChange}
                 />
               </div>
-              <div className="create-short-link">
+              <div className="create-short-link-btn">
                 <Button onClick={this.handleCreateShortLinkClick}>
                   Create Short Link
                 </Button>
