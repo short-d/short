@@ -20,6 +20,7 @@ header {
     font-weight: $font-weight-semi-bold;
     letter-spacing: 2px;
     line-height: 30px;
+    margin-left: 8px;
   }
 
   #searchbar {
@@ -28,5 +29,6 @@ header {
 
   .sign-out {
     display: flex;
+    margin-right: 8px;
   }
 }
