@@ -1,0 +1,44 @@
+@import '../styles/corner';
+@import '../styles/color';
+@import '../styles/font';
+
+$toggle-width: 100px / 1.5;
+$toggle-height: 50px / 1.5;
+
+$toggle-radius: 80px;
+$toggle-shrink-size: 4px;
+
+.toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+
+  .background {
+    display: inline-block;
+    background-color: lightgray;
+    width: $toggle-width;
+    height: $toggle-height;
+    border-radius: $toggle-radius;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .background.active {
+    background-color: $color-primary;
+  }
+
+  .button {
+    background-color: white;
+    width: $toggle-height - $toggle-shrink-size;
+    height: $toggle-height - $toggle-shrink-size;
+    margin-left: $toggle-shrink-size / 2;
+    margin-top: $toggle-shrink-size / 2;
+    border-radius: $toggle-radius;
+    transition: margin-left 0.5s;
+  }
+
+  .button.active {
+    margin-left: $toggle-width - $toggle-height + $toggle-shrink-size / 2;
+  }
+}
