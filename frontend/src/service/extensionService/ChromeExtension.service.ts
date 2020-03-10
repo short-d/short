@@ -13,13 +13,19 @@ export class ChromeExtensionService implements IBrowserExtensionService {
 
   isInstalled(): Promise<boolean> {
     return new Promise(resolve => {
-      chrome.runtime.sendMessage(
-        this.envService.getVal(this.EXTENSION_ID_ENV_KEY),
-        { message: this.PING_MESSAGE_TYPE },
-        response => {
-          return resolve(response !== undefined && response !== null);
-        }
-      );
+      try {
+        chrome.runtime.sendMessage(
+          this.envService.getVal(this.EXTENSION_ID_ENV_KEY),
+          { message: this.PING_MESSAGE_TYPE },
+          response => {
+            return resolve(response !== undefined && response !== null);
+          }
+        );
+      }
+      catch {
+        // resolve to false if any exception is thrown while trying to connect to extension
+        return resolve(false);
+      }
     });
   }
 }
