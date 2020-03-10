@@ -1,5 +1,6 @@
 @import '../../styles/font';
 @import '../../styles/dimension';
+@import '../../styles/layouts';
 
 header {
   @include default-font();
@@ -20,7 +21,10 @@ header {
     font-weight: $font-weight-semi-bold;
     letter-spacing: 2px;
     line-height: 30px;
-    margin-left: 8px;
+
+    @include respond-to($desktop) {
+      margin-left: 8px;
+    }
   }
 
   #searchbar {
@@ -29,6 +33,9 @@ header {
 
   .sign-out {
     display: flex;
-    margin-right: 8px;
+
+    @include respond-to($desktop) {
+      margin-right: 8px;
+    }
   }
 }

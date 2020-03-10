@@ -3,6 +3,7 @@
 @import '../styles/color';
 @import '../styles/corner';
 @import '../styles/icon';
+@import '../styles/layouts';
 
 .home {
   .control {
@@ -21,23 +22,31 @@
     }
   }
 
-  @media only screen and (max-width: 480px) {
+  @include respond-to($phone) {
     .title {
       text-align: center;
     }
 
-    .control {
+    .control.create-short-link {
       flex-direction: column;
       height: 160px;
 
       .text-field-wrapper {
         display: flex;
         margin: 4px;
+
+        input {
+          width: 100%;
+        }
       }
 
       .create-short-link-btn {
         flex: 1;
         margin: 4px;
+
+        button {
+          width: 100%;
+        }
       }
     }
   }
