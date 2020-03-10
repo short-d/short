@@ -12,7 +12,7 @@ import { ErrorService } from './service/Error.service';
 import { RoutingService } from './service/Routing.service';
 import { UrlService } from './service/Url.service';
 import { SearchService } from './service/Search.service';
-import { ChromeExtensionService } from './service/ChromeExtension.service';
+import { BrowserExtensionFactory } from './service/extensionService/BrowserExtension.factory';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -46,11 +46,13 @@ export function initUIFactory(
   const versionService = new VersionService(envService);
   const store = initStore();
   const searchService = new SearchService();
-  const chromeExtensionService = new ChromeExtensionService(envService);
+  const extensionService = BrowserExtensionFactory.createBrowserExtensionService(
+    envService
+  );
 
   return new UIFactory(
     authService,
-    chromeExtensionService,
+    extensionService,
     urlService,
     qrCodeService,
     versionService,

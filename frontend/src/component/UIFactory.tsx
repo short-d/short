@@ -5,7 +5,7 @@ import { IFeatureDecisionService } from '../service/FeatureDecision.service';
 import { Home } from './pages/Home';
 import H from 'history';
 import { AuthService } from '../service/Auth.service';
-import { ChromeExtensionService } from '../service/ChromeExtension.service';
+import { IBrowserExtensionService } from '../service/extensionService/BrowserExtension.service';
 import { QrCodeService } from '../service/QrCode.service';
 import { VersionService } from '../service/Version.service';
 import { GoogleSignInButton } from './pages/shared/sign-in/GoogleSignInButton';
@@ -21,7 +21,7 @@ import { SearchBar } from './ui/SearchBar';
 export class UIFactory {
   constructor(
     private authService: AuthService,
-    private chromeExtensionService: ChromeExtensionService,
+    private extensionService: IBrowserExtensionService,
     private urlService: UrlService,
     private qrCodeService: QrCodeService,
     private versionService: VersionService,
@@ -37,7 +37,7 @@ export class UIFactory {
       <Home
         uiFactory={this}
         authService={this.authService}
-        chromeExtensionService={this.chromeExtensionService}
+        extensionService={this.extensionService}
         qrCodeService={this.qrCodeService}
         versionService={this.versionService}
         urlService={this.urlService}
