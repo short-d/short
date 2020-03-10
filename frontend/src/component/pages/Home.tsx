@@ -16,7 +16,7 @@ import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
 import { Location } from 'history';
 import { AuthService } from '../../service/Auth.service';
-import { ChromeExtensionService } from '../../service/ChromeExtension.service';
+import { IBrowserExtensionService } from '../../service/extensionService/BrowserExtension.service';
 import { VersionService } from '../../service/Version.service';
 import { QrCodeService } from '../../service/QrCode.service';
 import { UIFactory } from '../UIFactory';
@@ -39,7 +39,7 @@ interface Props {
   uiFactory: UIFactory;
   urlService: UrlService;
   authService: AuthService;
-  chromeExtensionService: ChromeExtensionService;
+  extensionService: IBrowserExtensionService;
   versionService: VersionService;
   qrCodeService: QrCodeService;
   captchaService: CaptchaService;
@@ -51,7 +51,7 @@ interface Props {
 
 interface State {
   isUserSignedIn?: boolean;
-  isExtensionInstalled?: boolean;
+  shouldShowPromo?: boolean;
   longLink?: string;
   alias?: string;
   createdUrl?: Url;
@@ -72,11 +72,7 @@ export class Home extends Component<Props, State> {
   }
 
   componentDidMount(): void {
-    this.props.chromeExtensionService
-      .isExtensionInstalled()
-      .then(isInstalled =>
-        this.setState({ isExtensionInstalled: isInstalled })
-      );
+    this.setPromoDisplayStatus();
 
     this.props.authService.cacheAuthToken(this.props.location.search);
     if (!this.props.authService.isSignedIn()) {
@@ -91,6 +87,13 @@ export class Home extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
+  }
+
+  async setPromoDisplayStatus() {
+    var shouldShowPromo =
+      this.props.extensionService.isSupported() &&
+      !(await this.props.extensionService.isInstalled());
+    this.setState({ shouldShowPromo: shouldShowPromo });
   }
 
   autoFillLongLink() {
@@ -213,7 +216,7 @@ export class Home extends Component<Props, State> {
   render = () => {
     return (
       <div className="home">
-        {!this.state.isExtensionInstalled && <ExtPromo />}
+        {this.state.shouldShowPromo && <ExtPromo />}
         <Header
           uiFactory={this.props.uiFactory}
           onSearchBarInputChange={this.handleSearchBarInputChange}

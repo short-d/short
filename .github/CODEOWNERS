@@ -13,8 +13,8 @@
 *.go    @alldroll @byliuyang
 
 # Frontend
-*.ts    @byliuyang
-*.tsx   @byliuyang
+*.ts    @rohithbalaji123 @byliuyang
+*.tsx   @rohithbalaji123 @byliuyang
 *.js    @byliuyang
 *.html  @byliuyang
 *.scss  @byliuyang
