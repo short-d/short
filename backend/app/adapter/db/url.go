@@ -98,16 +98,48 @@ WHERE "%s"=$1;`,
 
 // GetByAliases finds URLs for a list of aliases
 func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
-	urls := make([]entity.URL, 0)
+	var urls []entity.URL
 
-	for _, alias := range aliases {
-		url, err := u.GetByAlias(alias)
+	statement := fmt.Sprintf(`
+SELECT "%s","%s","%s","%s","%s" 
+FROM "%s" 
+WHERE "%s" IN ("%v");`,
+		table.URL.ColumnAlias,
+		table.URL.ColumnOriginalURL,
+		table.URL.ColumnExpireAt,
+		table.URL.ColumnCreatedAt,
+		table.URL.ColumnUpdatedAt,
+		table.URL.TableName,
+		table.URL.ColumnAlias,
+		aliases,
+	)
 
+	rows, err := u.db.Query(statement)
+	defer rows.Close()
+	if err != nil {
+		return urls, nil
+	}
+
+	for rows.Next() {
+		url := entity.URL{}
+		err := rows.Scan(
+			&url.Alias,
+			&url.OriginalURL,
+			&url.ExpireAt,
+			&url.CreatedAt,
+			&url.UpdatedAt,
+		)
 		if err != nil {
 			return urls, err
 		}
+
+		url.CreatedAt = utc(url.CreatedAt)
+		url.UpdatedAt = utc(url.UpdatedAt)
+		url.ExpireAt = utc(url.ExpireAt)
+
 		urls = append(urls, url)
 	}
+
 	return urls, nil
 }
 
