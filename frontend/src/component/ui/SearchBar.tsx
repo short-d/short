@@ -22,6 +22,7 @@ export class SearchBar extends Component<Props, State> {
 
   private onSearch$: any = new Subject();
   private subscription: any = null;
+
   componentDidMount() {
     this.subscription = this.onSearch$
       .pipe(debounceTime(300))
