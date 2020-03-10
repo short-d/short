@@ -16,6 +16,7 @@ import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
 import { Location } from 'history';
 import { AuthService } from '../../service/Auth.service';
+import { ChromeExtensionService } from '../../service/ChromeExtension.service';
 import { VersionService } from '../../service/Version.service';
 import { QrCodeService } from '../../service/QrCode.service';
 import { UIFactory } from '../UIFactory';
@@ -38,6 +39,7 @@ interface Props {
   uiFactory: UIFactory;
   urlService: UrlService;
   authService: AuthService;
+  chromeExtensionService: ChromeExtensionService;
   versionService: VersionService;
   qrCodeService: QrCodeService;
   captchaService: CaptchaService;
@@ -49,6 +51,7 @@ interface Props {
 
 interface State {
   isUserSignedIn?: boolean;
+  isExtensionInstalled?: boolean;
   longLink?: string;
   alias?: string;
   createdUrl?: Url;
@@ -69,6 +72,10 @@ export class Home extends Component<Props, State> {
   }
 
   componentDidMount(): void {
+    this.props.chromeExtensionService
+      .isExtensionInstalled()
+      .then(isInstalled => this.setState({ isExtensionInstalled: isInstalled }));
+
     this.props.authService.cacheAuthToken(this.props.location.search);
     if (!this.props.authService.isSignedIn()) {
       this.setState({
@@ -204,7 +211,7 @@ export class Home extends Component<Props, State> {
   render = () => {
     return (
       <div className="home">
-        <ExtPromo />
+        {!this.state.isExtensionInstalled && <ExtPromo />}
         <Header
           uiFactory={this.props.uiFactory}
           onSearchBarInputChange={this.handleSearchBarInputChange}
