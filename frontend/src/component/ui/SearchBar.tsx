@@ -15,6 +15,8 @@ interface Props {
   autoCompleteSuggestions?: Array<Url>;
 }
 
+const DEBOUNCE_DURATION: number = 300;
+
 export class SearchBar extends Component<Props, State> {
   state = {
     showAutoCompleteBox: true
@@ -25,7 +27,7 @@ export class SearchBar extends Component<Props, State> {
 
   componentDidMount() {
     this.subscription = this.onSearch$
-      .pipe(debounceTime(300))
+      .pipe(debounceTime(DEBOUNCE_DURATION))
       .subscribe((debouncedValue: string) => {
         this.props.onChange(debouncedValue);
       });
