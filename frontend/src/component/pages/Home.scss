@@ -29,7 +29,7 @@
 
     .control.create-short-link {
       flex-direction: column;
-      height: 160px;
+      height: 180px;
 
       .text-field-wrapper {
         display: flex;
@@ -43,6 +43,7 @@
       .create-short-link-btn {
         flex: 1;
         margin: 4px;
+        margin-top: 20px;
 
         button {
           width: 100%;
