@@ -5,16 +5,18 @@ import { DefaultExtensionService } from './DefaultExtension.service';
 
 import { detect } from 'detect-browser';
 
-export class BrowserExtensionFactory {
-  private static CHROME_BROWSER_NAME: string = 'chrome';
+export enum SupportedBrowsers {
+  CHROME = 'chrome'
+}
 
+export class BrowserExtensionFactory {
   static createBrowserExtensionService(
     envService: EnvService
   ): IBrowserExtensionService {
     const browser = detect();
 
     switch (browser && browser.name) {
-      case BrowserExtensionFactory.CHROME_BROWSER_NAME:
+      case SupportedBrowsers.CHROME:
         return new ChromeExtensionService(envService);
       default:
         return new DefaultExtensionService();
