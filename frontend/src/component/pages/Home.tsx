@@ -250,9 +250,11 @@ export class Home extends Component<Props, State> {
                   onChange={this.handleAliasChange}
                 />
               </div>
-              <Button onClick={this.handleCreateShortLinkClick}>
-                Create Short Link
-              </Button>
+              <div className="create-short-link-btn">
+                <Button onClick={this.handleCreateShortLinkClick}>
+                  Create Short Link
+                </Button>
+              </div>
             </div>
             <div className={'input-error'}>{this.state.inputErr}</div>
             {this.state.createdUrl ? (
