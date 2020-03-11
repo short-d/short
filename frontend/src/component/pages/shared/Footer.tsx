@@ -67,7 +67,7 @@ export class Footer extends Component<Props, State> {
           <div className={'row app-version'}>
             App version: {this.props.version}
           </div>
-          {this.props.uiFactory.createChangeLogModal({
+          {this.props.uiFactory.createViewChangeLogButton({
             changeLog: this.props.changeLog,
             openModal: this.handleShowChangeLog,
             closeModal: this.handleHideChangeLog,

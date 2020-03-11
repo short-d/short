@@ -51,7 +51,7 @@ export class UIFactory {
     );
   }
 
-  public createChangeLogModal(props: any): ReactElement {
+  public createViewChangeLogButton(props: any): ReactElement {
     if (!this.featureDecisionService.includeViewChangeLogButton()) {
       return <div />;
     }
