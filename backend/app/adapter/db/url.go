@@ -129,7 +129,13 @@ WHERE "%s" IN (%s);`,
 		parameterStr,
 	)
 
-	rows, err := u.db.Query(statement, aliasesInterface...)
+	stmt, err := u.db.Prepare(statement)
+	if err != nil {
+		return urls, err
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(aliasesInterface...)
 	if err != nil {
 		return urls, nil
 	}
