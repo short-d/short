@@ -7,8 +7,13 @@ steps:
     environment:
       RECAPTCHA_SITE_KEY:
         from_secret: RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
     commands:
-      - docker build -t lint-frontend --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY -f frontend/Dockerfile-lint frontend
+      - docker build -t lint-frontend
+        --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY
+        --build-arg CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID
+        -f frontend/Dockerfile-lint frontend
       - docker run lint-frontend
     volumes:
       - name: docker
@@ -23,8 +28,13 @@ steps:
     environment:
       RECAPTCHA_SITE_KEY:
         from_secret: RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
     commands:
-      - docker build -t test-frontend --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY -f frontend/Dockerfile-test frontend
+      - docker build -t test-frontend
+        --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY
+        --build-arg CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID
+        -f frontend/Dockerfile-test frontend
       - docker run test-frontend
     volumes:
       - name: docker
@@ -120,6 +130,8 @@ steps:
     environment:
       RECAPTCHA_SITE_KEY:
         from_secret: STAGING_RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
     volumes:
       - name: frontend-dep
         path: /drone/src/frontend/node_modules
@@ -127,7 +139,7 @@ steps:
       - apk add --no-cache bash git
       - cd frontend
       - yarn
-      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build:staging
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY REACT_APP_CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID CI=true yarn build:staging
     when:
       branch:
         - master
@@ -187,6 +199,8 @@ steps:
     environment:
       RECAPTCHA_SITE_KEY:
         from_secret: RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
     volumes:
       - name: frontend-dep
         path: /drone/src/frontend/node_modules
@@ -194,7 +208,7 @@ steps:
       - apk add --no-cache bash git
       - cd frontend
       - yarn
-      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build:production
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY REACT_APP_CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID CI=true yarn build:production
     when:
       branch:
         - production
