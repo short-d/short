@@ -296,36 +296,6 @@ func TestURLSql_GetByAliases(t *testing.T) {
 				},
 			},
 		},
-		{
-			name: "nil time",
-			tableRows: []urlTableRow{
-				{
-					alias:     "220uFicCJj",
-					longLink:  "http://www.google.com",
-					createdAt: nil,
-					expireAt:  nil,
-					updatedAt: nil,
-				},
-				{
-					alias:     "yDOBcj5HIPbUAsw",
-					longLink:  "http://www.facebook.com",
-					createdAt: &twoYearsAgo,
-					expireAt:  &now,
-					updatedAt: &now,
-				},
-			},
-			aliases: []string{"220uFicCJj"},
-			hasErr:  false,
-			expectedURLs: []entity.URL{
-				entity.URL{
-					Alias:       "220uFicCJj",
-					OriginalURL: "http://www.google.com",
-					CreatedAt:   nil,
-					ExpireAt:    nil,
-					UpdatedAt:   nil,
-				},
-			},
-		},
 	}
 
 	for _, testCase := range testCases {
