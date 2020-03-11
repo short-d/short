@@ -99,13 +99,7 @@ WHERE "%s"=$1;`,
 
 // GetByAliases finds URLs for a list of aliases
 func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
-	// create a string for aliases parameters
-	// it looks like: $1, $2, $3, ......
-	params := make([]string, 0, len(aliases))
-	for i := range aliases {
-		params = append(params, fmt.Sprintf("$%d", i+1))
-	}
-	parameterStr := strings.Join(params, ", ")
+	parameterStr := u.composeParamListString(len(aliases))
 
 	// create a list of interface{} to hold aliases for db.Query()
 	aliasesInterface := []interface{}{}
@@ -115,6 +109,7 @@ func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
 
 	var urls []entity.URL
 
+	// TODO: compare performance between Query and QueryRow, consider switching to QueryRow function in the future
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s"
@@ -162,6 +157,17 @@ WHERE "%s" IN (%s);`,
 	}
 
 	return urls, nil
+}
+
+// composeParamListString creates a string for aliases parameters, it looks like: $1, $2, $3, ...
+func (u URLSql) composeParamListString(numParams int) string {
+	params := make([]string, 0, numParams)
+	for i := 0; i < numParams; i++ {
+		params = append(params, fmt.Sprintf("$%d", i+1))
+	}
+
+	parameterStr := strings.Join(params, ", ")
+	return parameterStr
 }
 
 // NewURLSql creates URLSql
