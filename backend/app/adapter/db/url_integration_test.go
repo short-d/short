@@ -257,7 +257,7 @@ func TestURLSql_GetByAliases(t *testing.T) {
 			name:      "alias not found",
 			tableRows: []urlTableRow{},
 			aliases:   []string{"220uFicCJj"},
-			hasErr:    true,
+			hasErr:    false,
 		},
 		{
 			name: "found url",

@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/short-d/short/app/adapter/db/table"
 	"github.com/short-d/short/app/entity"
@@ -98,12 +99,26 @@ WHERE "%s"=$1;`,
 
 // GetByAliases finds URLs for a list of aliases
 func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
+	// create a string for aliases parameters
+	// it looks like: $1, $2, $3, ......
+	params := make([]string, 0, len(aliases))
+	for i := range aliases {
+		params = append(params, fmt.Sprintf("$%d", i+1))
+	}
+	parameterStr := strings.Join(params, ", ")
+
+	// create a list of interface{} to hold aliases for db.Query()
+	aliasesInterface := []interface{}{}
+	for _, alias := range aliases {
+		aliasesInterface = append(aliasesInterface, alias)
+	}
+
 	var urls []entity.URL
 
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
-FROM "%s" 
-WHERE "%s" IN ("%v");`,
+FROM "%s"
+WHERE "%s" IN (%s);`,
 		table.URL.ColumnAlias,
 		table.URL.ColumnOriginalURL,
 		table.URL.ColumnExpireAt,
@@ -111,15 +126,15 @@ WHERE "%s" IN ("%v");`,
 		table.URL.ColumnUpdatedAt,
 		table.URL.TableName,
 		table.URL.ColumnAlias,
-		aliases,
+		parameterStr,
 	)
 
-	rows, err := u.db.Query(statement)
-	defer rows.Close()
+	rows, err := u.db.Query(statement, aliasesInterface...)
 	if err != nil {
 		return urls, nil
 	}
 
+	defer rows.Close()
 	for rows.Next() {
 		url := entity.URL{}
 		err := rows.Scan(
