@@ -1,7 +1,8 @@
 @import '../styles/color';
 @import '../styles/corner';
 @import '../styles/scrollbar';
-@import '../styles/center.scss';
+@import '../styles/center';
+@import '../styles/layouts';
 
 .modal-body {
   display: flex;
@@ -80,19 +81,20 @@
     width: 100%;
     height: 50px;
     background-color: $color-modal-background;
+    display: flex;
 
     button {
+      flex: 1;
       background-color: $color-divider;
       color: $color-dark-gray;
       height: 30px;
-      width: calc(100% - 24px);
       margin: 10px;
       margin-right: 20px;
     }
   }
 }
 
-@media only screen and (max-device-width: 480px) {
+@include respond-to($phone) {
   .modal-body {
     width: 100vw;
     height: 100vh;

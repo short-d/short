@@ -18,8 +18,8 @@ interface Props {
 }
 
 enum ModalState {
-  Open = 'open',
-  Close = 'close'
+  Open,
+  Close
 }
 
 export class ChangeLogModal extends Component<Props, State> {
@@ -99,7 +99,12 @@ export class ChangeLogModal extends Component<Props, State> {
     if (!this.modalRef.current) {
       return;
     }
-    this.modalRef.current[state]();
+
+    if (state === ModalState.Open) {
+      this.modalRef.current.open();
+    } else {
+      this.modalRef.current.close();
+    }
   };
 
   render() {
