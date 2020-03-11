@@ -34,7 +34,6 @@ import { ErrorService } from '../../service/Error.service';
 import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
-import { UpdatesService } from '../../service/Updates.service';
 import { Update } from '../../entity/Update';
 
 interface Props {
@@ -46,7 +45,6 @@ interface Props {
   qrCodeService: QrCodeService;
   captchaService: CaptchaService;
   searchService: SearchService;
-  updatesService: UpdatesService;
   errorService: ErrorService;
   store: Store<IAppState>;
   location: Location;
@@ -74,12 +72,12 @@ export class Home extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      newUpdateReleased: false,
+      newUpdateReleased: true,
       changeLog: []
     };
   }
 
-  async componentDidMount(): void {
+  async componentDidMount() {
     this.setPromoDisplayStatus();
 
     this.props.authService.cacheAuthToken(this.props.location.search);
@@ -95,16 +93,6 @@ export class Home extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
-    const changeLog = await this.props.updatesService.getChangeLog();
-    this.setState({
-      changeLog
-    });
-    const lastSeenChangeLog = await this.props.updatesService.getLastSeenChangeLog();
-    if (changeLog && lastSeenChangeLog < changeLog[0].releasedAt) {
-      this.setState({
-        newUpdateReleased: true
-      });
-    }
   }
 
   async setPromoDisplayStatus() {
@@ -286,9 +274,6 @@ export class Home extends Component<Props, State> {
           uiFactory={this.props.uiFactory}
           changeLog={this.state.changeLog}
           newUpdateReleased={this.state.newUpdateReleased}
-          updateLastSeenChangeLog={
-            this.props.updatesService.updateLastSeenChangeLog
-          }
           authorName={'Harry'}
           authorPortfolio={'https://github.com/byliuyang'}
           version={this.props.versionService.getAppVersion()}

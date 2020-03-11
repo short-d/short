@@ -12,7 +12,6 @@ import { ErrorService } from './service/Error.service';
 import { RoutingService } from './service/Routing.service';
 import { UrlService } from './service/Url.service';
 import { SearchService } from './service/Search.service';
-import { UpdatesService } from './service/Updates.service';
 import { BrowserExtensionFactory } from './service/extensionService/BrowserExtension.factory';
 
 export function initEnvService(): EnvService {
@@ -45,9 +44,6 @@ export function initUIFactory(
     captchaService
   );
   const versionService = new VersionService(envService);
-  const searchService = new SearchService();
-  const updatesService = new UpdatesService(cookieService);
-
   const store = initStore();
   const searchService = new SearchService();
   const extensionService = BrowserExtensionFactory.createBrowserExtensionService(
@@ -63,7 +59,6 @@ export function initUIFactory(
     captchaService,
     errorService,
     searchService,
-    updatesService,
     store,
     staticConfigDecision
   );

@@ -15,13 +15,19 @@ interface Props {
   version: string;
   changeLog?: Array<Update>;
   newUpdateReleased?: boolean;
-  updateLastSeenChangeLog: () => void;
+  updateLastSeenChangeLog?: () => void;
 }
 
 export class Footer extends Component<Props, State> {
   state = {
     showChangeLogModal: false
   };
+
+  componentDidMount() {
+    this.setState({
+      showChangeLogModal: this.props.newUpdateReleased || false
+    });
+  }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.newUpdateReleased !== this.props.newUpdateReleased) {
@@ -38,7 +44,9 @@ export class Footer extends Component<Props, State> {
   };
 
   handleHideChangeLog = () => {
-    this.props.updateLastSeenChangeLog();
+    if (this.props.updateLastSeenChangeLog) {
+      this.props.updateLastSeenChangeLog();
+    }
     this.setState({
       showChangeLogModal: false
     });
