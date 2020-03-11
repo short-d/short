@@ -1,14 +1,49 @@
 import React, { Component } from 'react';
 
 import './Footer.scss';
+import { Update } from '../../../entity/Update';
+import { UIFactory } from '../../UIFactory';
+
+interface State {
+  showChangeLogModal: boolean;
+}
 
 interface Props {
+  uiFactory: UIFactory;
   authorName: string;
   authorPortfolio: string;
   version: string;
+  changeLog?: Array<Update>;
+  newUpdateReleased?: boolean;
+  updateLastSeenChangeLog: () => void;
 }
 
-export class Footer extends Component<Props> {
+export class Footer extends Component<Props, State> {
+  state = {
+    showChangeLogModal: false
+  };
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.newUpdateReleased !== this.props.newUpdateReleased) {
+      this.setState({
+        showChangeLogModal: this.props.newUpdateReleased || false
+      });
+    }
+  }
+
+  handleShowChangeLog = () => {
+    this.setState({
+      showChangeLogModal: true
+    });
+  };
+
+  handleHideChangeLog = () => {
+    this.props.updateLastSeenChangeLog();
+    this.setState({
+      showChangeLogModal: false
+    });
+  };
+
   render() {
     return (
       <footer>
@@ -24,6 +59,12 @@ export class Footer extends Component<Props> {
           <div className={'row app-version'}>
             App version: {this.props.version}
           </div>
+          {this.props.uiFactory.createChangeLogModal({
+            changeLog: this.props.changeLog,
+            openModal: this.handleShowChangeLog,
+            closeModal: this.handleHideChangeLog,
+            shouldShowModal: this.state.showChangeLogModal
+          })}
         </div>
       </footer>
     );

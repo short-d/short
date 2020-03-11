@@ -1,6 +1,9 @@
 import { IFeatureDecisionService } from './FeatureDecision.service';
 
 export class StaticConfigDecisionService implements IFeatureDecisionService {
+  includeViewChangeLogButton(): boolean {
+    return true;
+  }
   includeSearchBar(): boolean {
     return false;
   }

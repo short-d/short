@@ -34,6 +34,8 @@ import { ErrorService } from '../../service/Error.service';
 import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
+import { UpdatesService } from '../../service/Updates.service';
+import { Update } from '../../entity/Update';
 
 interface Props {
   uiFactory: UIFactory;
@@ -44,6 +46,7 @@ interface Props {
   qrCodeService: QrCodeService;
   captchaService: CaptchaService;
   searchService: SearchService;
+  updatesService: UpdatesService;
   errorService: ErrorService;
   store: Store<IAppState>;
   location: Location;
@@ -59,6 +62,8 @@ interface State {
   err?: IErr;
   inputErr?: string;
   autoCompleteSuggestions?: Array<Url>;
+  changeLog?: Array<Update>;
+  newUpdateReleased?: boolean;
 }
 
 export class Home extends Component<Props, State> {
@@ -68,10 +73,13 @@ export class Home extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      newUpdateReleased: false,
+      changeLog: []
+    };
   }
 
-  componentDidMount(): void {
+  async componentDidMount(): void {
     this.setPromoDisplayStatus();
 
     this.props.authService.cacheAuthToken(this.props.location.search);
@@ -87,6 +95,16 @@ export class Home extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
+    const changeLog = await this.props.updatesService.getChangeLog();
+    this.setState({
+      changeLog
+    });
+    const lastSeenChangeLog = await this.props.updatesService.getLastSeenChangeLog();
+    if (changeLog && lastSeenChangeLog < changeLog[0].releasedAt) {
+      this.setState({
+        newUpdateReleased: true
+      });
+    }
   }
 
   async setPromoDisplayStatus() {
@@ -265,6 +283,12 @@ export class Home extends Component<Props, State> {
           </Section>
         </div>
         <Footer
+          uiFactory={this.props.uiFactory}
+          changeLog={this.state.changeLog}
+          newUpdateReleased={this.state.newUpdateReleased}
+          updateLastSeenChangeLog={
+            this.props.updatesService.updateLastSeenChangeLog
+          }
           authorName={'Harry'}
           authorPortfolio={'https://github.com/byliuyang'}
           version={this.props.versionService.getAppVersion()}
