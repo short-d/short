@@ -72,7 +72,7 @@ export class Home extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      newUpdateReleased: true,
+      newUpdateReleased: false,
       changeLog: []
     };
   }
