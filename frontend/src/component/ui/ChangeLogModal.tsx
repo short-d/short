@@ -17,11 +17,6 @@ interface Props {
   defaultVisibleLogs: number;
 }
 
-enum ModalState {
-  Open,
-  Close
-}
-
 export class ChangeLogModal extends Component<Props, State> {
   static defaultProps = {
     defaultVisibleLogs: 3
@@ -33,19 +28,16 @@ export class ChangeLogModal extends Component<Props, State> {
 
   private modalRef = React.createRef<Modal>();
 
-  componentDidMount() {
-    if (this.props.shouldShowModal) {
-      this.open();
-    }
-  }
-
   componentDidUpdate(prevProps: Props) {
-    if (
-      this.props.shouldShowModal !== prevProps.shouldShowModal &&
-      this.props.shouldShowModal
-    ) {
-      this.open();
+    if (this.props.shouldShowModal === prevProps.shouldShowModal) {
+      return;
     }
+
+    if (!this.props.shouldShowModal) {
+      return;
+    }
+
+    this.open();
   }
 
   showFullChangeLog = () => {
@@ -91,21 +83,9 @@ export class ChangeLogModal extends Component<Props, State> {
     );
   };
 
-  open = () => this.updateModalState(ModalState.Open);
+  open = () => this.modalRef.current && this.modalRef.current.open();
 
-  close = () => this.updateModalState(ModalState.Close);
-
-  private updateModalState = (state: ModalState) => {
-    if (!this.modalRef.current) {
-      return;
-    }
-
-    if (state === ModalState.Open) {
-      this.modalRef.current.open();
-    } else {
-      this.modalRef.current.close();
-    }
-  };
+  close = () => this.modalRef.current && this.modalRef.current.close();
 
   render() {
     return (

@@ -62,6 +62,7 @@ interface State {
   autoCompleteSuggestions?: Array<Url>;
   changeLog?: Array<Update>;
   newUpdateReleased?: boolean;
+  shouldChangeLogModalBeOpen?: boolean;
 }
 
 export class Home extends Component<Props, State> {
@@ -73,6 +74,7 @@ export class Home extends Component<Props, State> {
     super(props);
     this.state = {
       newUpdateReleased: false,
+      shouldChangeLogModalBeOpen: false,
       changeLog: []
     };
   }
@@ -93,6 +95,12 @@ export class Home extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
+
+    if (this.state.newUpdateReleased) {
+      this.setState({
+        shouldChangeLogModalBeOpen: true
+      });
+    }
   }
 
   async setPromoDisplayStatus() {
@@ -219,6 +227,19 @@ export class Home extends Component<Props, State> {
     this.errModal.current!.open();
   }
 
+  handleShowChangeLogModal = () => {
+    this.setState({
+      shouldChangeLogModalBeOpen: true
+    });
+  };
+
+  handleHideChangeLogModal = () => {
+    this.setState({
+      shouldChangeLogModalBeOpen: false,
+      newUpdateReleased: false
+    });
+  };
+
   render = () => {
     return (
       <div className="home">
@@ -275,7 +296,9 @@ export class Home extends Component<Props, State> {
         <Footer
           uiFactory={this.props.uiFactory}
           changeLog={this.state.changeLog}
-          newUpdateReleased={this.state.newUpdateReleased}
+          shouldShowChangeLogModal={this.state.shouldChangeLogModalBeOpen}
+          handleHideChangeLogModal={this.handleHideChangeLogModal}
+          handleShowChangeLogModal={this.handleShowChangeLogModal}
           authorName={'Harry'}
           authorPortfolio={'https://github.com/byliuyang'}
           version={this.props.versionService.getAppVersion()}

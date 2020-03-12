@@ -1,4 +1,4 @@
-import React, { ReactElement, Fragment } from 'react';
+import React, { ReactElement } from 'react';
 import { App } from './App';
 import { CaptchaService } from '../service/Captcha.service';
 import { IFeatureDecisionService } from '../service/FeatureDecision.service';
@@ -17,7 +17,7 @@ import { ErrorService } from '../service/Error.service';
 import { UrlService } from '../service/Url.service';
 import { SearchService } from '../service/Search.service';
 import { SearchBar } from './ui/SearchBar';
-import { ChangeLogModal } from './ui/ChangeLogModal';
+import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 
 export class UIFactory {
   constructor(
@@ -55,14 +55,7 @@ export class UIFactory {
     if (!this.featureDecisionService.includeViewChangeLogButton()) {
       return <div />;
     }
-    return (
-      <Fragment>
-        <div className={'row view-changelog'} onClick={props.openModal}>
-          <a href={'/#'}>View Changelog</a>
-        </div>
-        <ChangeLogModal {...props} />
-      </Fragment>
-    );
+    return <ViewChangeLogButton onClick={props.openModal} {...props} />;
   }
 
   public createSearchBar(props: any): ReactElement {
