@@ -242,6 +242,87 @@ func TestURLSql_Create(t *testing.T) {
 	}
 }
 
+func TestURLSql_GetByAliases(t *testing.T) {
+	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
+	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
+
+	testCases := []struct {
+		name         string
+		tableRows    []urlTableRow
+		aliases      []string
+		hasErr       bool
+		expectedURLs []entity.URL
+	}{
+		{
+			name:      "alias not found",
+			tableRows: []urlTableRow{},
+			aliases:   []string{"220uFicCJj"},
+			hasErr:    false,
+		},
+		{
+			name: "found url",
+			tableRows: []urlTableRow{
+				{
+					alias:     "220uFicCJj",
+					longLink:  "http://www.google.com",
+					createdAt: &twoYearsAgo,
+					expireAt:  &now,
+					updatedAt: &now,
+				},
+				{
+					alias:     "yDOBcj5HIPbUAsw",
+					longLink:  "http://www.facebook.com",
+					createdAt: &twoYearsAgo,
+					expireAt:  &now,
+					updatedAt: &now,
+				},
+			},
+			aliases: []string{"220uFicCJj", "yDOBcj5HIPbUAsw"},
+			hasErr:  false,
+			expectedURLs: []entity.URL{
+				entity.URL{
+					Alias:       "220uFicCJj",
+					OriginalURL: "http://www.google.com",
+					CreatedAt:   &twoYearsAgo,
+					ExpireAt:    &now,
+					UpdatedAt:   &now,
+				},
+				entity.URL{
+					Alias:       "yDOBcj5HIPbUAsw",
+					OriginalURL: "http://www.facebook.com",
+					CreatedAt:   &twoYearsAgo,
+					ExpireAt:    &now,
+					UpdatedAt:   &now,
+				},
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertURLTableRows(t, sqlDB, testCase.tableRows)
+
+					urlRepo := db.NewURLSql(sqlDB)
+					urls, err := urlRepo.GetByAliases(testCase.aliases)
+
+					if testCase.hasErr {
+						mdtest.NotEqual(t, nil, err)
+						return
+					}
+					mdtest.Equal(t, nil, err)
+					mdtest.Equal(t, testCase.expectedURLs, urls)
+				},
+			)
+		})
+	}
+}
+
 func insertURLTableRows(t *testing.T, sqlDB *sql.DB, tableRows []urlTableRow) {
 	for _, tableRow := range tableRows {
 		_, err := sqlDB.Exec(
