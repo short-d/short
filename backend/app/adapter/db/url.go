@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/short-d/short/app/adapter/db/table"
 	"github.com/short-d/short/app/entity"
@@ -94,6 +95,79 @@ WHERE "%s"=$1;`,
 	url.ExpireAt = utc(url.ExpireAt)
 
 	return url, nil
+}
+
+// GetByAliases finds URLs for a list of aliases
+func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
+	parameterStr := u.composeParamList(len(aliases))
+
+	// create a list of interface{} to hold aliases for db.Query()
+	aliasesInterface := []interface{}{}
+	for _, alias := range aliases {
+		aliasesInterface = append(aliasesInterface, alias)
+	}
+
+	var urls []entity.URL
+
+	// TODO: compare performance between Query and QueryRow. Prefer QueryRow for readability
+	statement := fmt.Sprintf(`
+SELECT "%s","%s","%s","%s","%s" 
+FROM "%s"
+WHERE "%s" IN (%s);`,
+		table.URL.ColumnAlias,
+		table.URL.ColumnOriginalURL,
+		table.URL.ColumnExpireAt,
+		table.URL.ColumnCreatedAt,
+		table.URL.ColumnUpdatedAt,
+		table.URL.TableName,
+		table.URL.ColumnAlias,
+		parameterStr,
+	)
+
+	stmt, err := u.db.Prepare(statement)
+	if err != nil {
+		return urls, err
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(aliasesInterface...)
+	if err != nil {
+		return urls, nil
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		url := entity.URL{}
+		err := rows.Scan(
+			&url.Alias,
+			&url.OriginalURL,
+			&url.ExpireAt,
+			&url.CreatedAt,
+			&url.UpdatedAt,
+		)
+		if err != nil {
+			return urls, err
+		}
+
+		url.CreatedAt = utc(url.CreatedAt)
+		url.UpdatedAt = utc(url.UpdatedAt)
+		url.ExpireAt = utc(url.ExpireAt)
+
+		urls = append(urls, url)
+	}
+
+	return urls, nil
+}
+
+// composeParamList converts an slice to a parameters string with format: $1, $2, $3, ...
+func (u URLSql) composeParamList(numParams int) string {
+	params := make([]string, 0, numParams)
+	for i := 0; i < numParams; i++ {
+		params = append(params, fmt.Sprintf("$%d", i+1))
+	}
+
+	parameterStr := strings.Join(params, ", ")
+	return parameterStr
 }
 
 // NewURLSql creates URLSql
