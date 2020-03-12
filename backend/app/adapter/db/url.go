@@ -109,7 +109,7 @@ func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
 
 	var urls []entity.URL
 
-	// TODO: compare performance between Query and QueryRow, consider switching to QueryRow function in the future
+	// TODO: compare performance between Query and QueryRow. Prefer QueryRow for readability
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s"
