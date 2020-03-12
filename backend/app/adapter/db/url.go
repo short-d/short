@@ -99,7 +99,7 @@ WHERE "%s"=$1;`,
 
 // GetByAliases finds URLs for a list of aliases
 func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
-	parameterStr := u.composeParamListString(len(aliases))
+	parameterStr := u.composeParamList(len(aliases))
 
 	// create a list of interface{} to hold aliases for db.Query()
 	aliasesInterface := []interface{}{}
@@ -160,7 +160,7 @@ WHERE "%s" IN (%s);`,
 }
 
 // composeParamListString converts an slice to a parameters string with format: $1, $2, $3, ...
-func (u URLSql) composeParamListString(numParams int) string {
+func (u URLSql) composeParamList(numParams int) string {
 	params := make([]string, 0, numParams)
 	for i := 0; i < numParams; i++ {
 		params = append(params, fmt.Sprintf("$%d", i+1))
