@@ -8,13 +8,13 @@ import (
 // Search fetches URLs and users from persistent
 // storage, such as database
 type Search struct {
-	userUrlRepo repository.UserURLRelation
+	userURLRepo repository.UserURLRelation
 	urlRepo     repository.URL
 }
 
 // SearchForURLs fetches all URLs for a given user
 func (s Search) SearchForURLs(user entity.User) ([]entity.URL, error) {
-	aliases, err := s.userUrlRepo.FindAliasesByUser(user)
+	aliases, err := s.userURLRepo.FindAliasesByUser(user)
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func (s Search) SearchForURLs(user entity.User) ([]entity.URL, error) {
 // NewSearch creates Search API
 func NewSearch(urlRepo repository.URL, userUrlRepo repository.UserURLRelation) Search {
 	return Search{
-		userUrlRepo: userUrlRepo,
+		userURLRepo: userUrlRepo,
 		urlRepo:     urlRepo,
 	}
 }
