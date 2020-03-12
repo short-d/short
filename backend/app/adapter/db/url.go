@@ -159,7 +159,7 @@ WHERE "%s" IN (%s);`,
 	return urls, nil
 }
 
-// composeParamListString converts an slice to a parameters string with format: $1, $2, $3, ...
+// composeParamList converts an slice to a parameters string with format: $1, $2, $3, ...
 func (u URLSql) composeParamList(numParams int) string {
 	params := make([]string, 0, numParams)
 	for i := 0; i < numParams; i++ {
