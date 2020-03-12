@@ -28,9 +28,9 @@ func (s Search) SearchForURLs(user entity.User) ([]entity.URL, error) {
 }
 
 // NewSearch creates Search API
-func NewSearch(urlRepo repository.URL, userUrlRepo repository.UserURLRelation) Search {
+func NewSearch(urlRepo repository.URL, userURLRepo repository.UserURLRelation) Search {
 	return Search{
-		userURLRepo: userUrlRepo,
+		userURLRepo: userURLRepo,
 		urlRepo:     urlRepo,
 	}
 }
