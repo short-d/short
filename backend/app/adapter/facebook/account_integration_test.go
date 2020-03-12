@@ -28,11 +28,12 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 			expectHasErr: true,
 		},
 		{
-			name: "user has email and name",
+			name: "user has id, email and name",
 			httpResponse: &http.Response{
 				StatusCode: http.StatusOK,
 				Body: ioutil.NopCloser(bytes.NewReader([]byte(`
 {
+      "id": "12321321312312",
       "name": "Facebook User",
       "email": "facebookUser@gmail.com"
 }
@@ -40,6 +41,7 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 				)))},
 			expectHasErr: false,
 			expectedSSOUser: entity.SSOUser{
+				ID:    "12321321312312",
 				Name:  "Facebook User",
 				Email: "facebookUser@gmail.com",
 			},
@@ -73,7 +75,7 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 					mdtest.Equal(t, "graph.facebook.com", req.URL.Host)
 					mdtest.Equal(t, "/me", req.URL.Path)
 					mdtest.Equal(t, "access_token", req.URL.Query().Get("access_token"))
-					mdtest.Equal(t, "name,email", req.URL.Query().Get("fields"))
+					mdtest.Equal(t, "id,name,email", req.URL.Query().Get("fields"))
 					mdtest.Equal(t, "GET", req.Method)
 
 					return testCase.httpResponse, testCase.httpErr
