@@ -62,7 +62,6 @@ interface State {
   inputErr?: string;
   autoCompleteSuggestions?: Array<Url>;
   changeLog?: Array<Update>;
-  shouldChangeLogModalBeOpen?: boolean;
 }
 
 export class Home extends Component<Props, State> {
@@ -74,7 +73,6 @@ export class Home extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      shouldChangeLogModalBeOpen: false,
       changeLog: []
     };
   }
