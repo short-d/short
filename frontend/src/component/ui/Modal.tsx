@@ -5,7 +5,6 @@ import classNames from 'classnames';
 
 interface Props {
   canClose?: boolean;
-  onClose?: () => void;
 }
 
 interface State {
@@ -51,10 +50,6 @@ export class Modal extends Component<Props, State> {
         }),
       transitionDuration
     );
-
-    if (this.props.onClose) {
-      this.props.onClose();
-    }
   }
 
   handleOnMaskClick = () => {

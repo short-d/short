@@ -12,8 +12,6 @@ interface State {
 
 interface Props {
   changeLog?: Array<Update>;
-  closeModal: () => void;
-  shouldShowModal: boolean;
   defaultVisibleLogs: number;
 }
 
@@ -27,18 +25,6 @@ export class ChangeLogModal extends Component<Props, State> {
   };
 
   private modalRef = React.createRef<Modal>();
-
-  componentDidUpdate(prevProps: Props) {
-    if (this.props.shouldShowModal === prevProps.shouldShowModal) {
-      return;
-    }
-
-    if (!this.props.shouldShowModal) {
-      return;
-    }
-
-    this.open();
-  }
 
   showFullChangeLog = () => {
     this.setState({
@@ -89,11 +75,7 @@ export class ChangeLogModal extends Component<Props, State> {
 
   render() {
     return (
-      <Modal
-        ref={this.modalRef}
-        onClose={this.props.closeModal}
-        canClose={true}
-      >
+      <Modal ref={this.modalRef} canClose={true}>
         <div className={'modal-body'}>
           <div className={'modal-header'}>
             Since You've Been Gone

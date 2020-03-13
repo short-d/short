@@ -35,6 +35,7 @@ import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
 import { Update } from '../../entity/Update';
+import { ChangeLogModal } from '../ui/ChangeLogModal';
 
 interface Props {
   uiFactory: UIFactory;
@@ -61,7 +62,6 @@ interface State {
   inputErr?: string;
   autoCompleteSuggestions?: Array<Url>;
   changeLog?: Array<Update>;
-  newUpdateReleased?: boolean;
   shouldChangeLogModalBeOpen?: boolean;
 }
 
@@ -69,11 +69,11 @@ export class Home extends Component<Props, State> {
   errModal = React.createRef<Modal>();
   signInModal = React.createRef<SignInModal>();
   shortLinkTextField = React.createRef<TextField>();
+  changeLogModalRef = React.createRef<ChangeLogModal>();
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      newUpdateReleased: false,
       shouldChangeLogModalBeOpen: false,
       changeLog: []
     };
@@ -95,12 +95,6 @@ export class Home extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
-
-    if (this.state.newUpdateReleased) {
-      this.setState({
-        shouldChangeLogModalBeOpen: true
-      });
-    }
   }
 
   async setPromoDisplayStatus() {
@@ -228,16 +222,15 @@ export class Home extends Component<Props, State> {
   }
 
   handleShowChangeLogModal = () => {
-    this.setState({
-      shouldChangeLogModalBeOpen: true
-    });
+    if (this.changeLogModalRef.current) {
+      this.changeLogModalRef.current.open();
+    }
   };
 
   handleHideChangeLogModal = () => {
-    this.setState({
-      shouldChangeLogModalBeOpen: false,
-      newUpdateReleased: false
-    });
+    if (this.changeLogModalRef.current) {
+      this.changeLogModalRef.current.close();
+    }
   };
 
   render = () => {
@@ -295,13 +288,15 @@ export class Home extends Component<Props, State> {
         </div>
         <Footer
           uiFactory={this.props.uiFactory}
-          changeLog={this.state.changeLog}
-          shouldShowChangeLogModal={this.state.shouldChangeLogModalBeOpen}
-          handleHideChangeLogModal={this.handleHideChangeLogModal}
           handleShowChangeLogModal={this.handleShowChangeLogModal}
           authorName={'Harry'}
           authorPortfolio={'https://github.com/byliuyang'}
           version={this.props.versionService.getAppVersion()}
+        />
+        <ChangeLogModal
+          ref={this.changeLogModalRef}
+          changeLog={this.state.changeLog}
+          defaultVisibleLogs={3}
         />
 
         <SignInModal ref={this.signInModal} uiFactory={this.props.uiFactory} />

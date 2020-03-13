@@ -55,7 +55,7 @@ export class UIFactory {
     if (!this.featureDecisionService.includeViewChangeLogButton()) {
       return <div />;
     }
-    return <ViewChangeLogButton onClick={props.openModal} {...props} />;
+    return <ViewChangeLogButton onClick={props.onClick} />;
   }
 
   public createSearchBar(props: any): ReactElement {
