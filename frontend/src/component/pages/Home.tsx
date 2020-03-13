@@ -77,7 +77,7 @@ export class Home extends Component<Props, State> {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount(): void {
     this.setPromoDisplayStatus();
 
     this.props.authService.cacheAuthToken(this.props.location.search);
