@@ -5,7 +5,6 @@ package github
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -27,7 +26,6 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	urlResponse := identityProvider.GetAuthorizationURL()
 
 	parsedUrl, err := url.Parse(urlResponse)
-	fmt.Println(parsedUrl)
 	mdtest.Equal(t, nil, err)
 	mdtest.Equal(t, "https", parsedUrl.Scheme)
 	mdtest.Equal(t, "github.com", parsedUrl.Host)
