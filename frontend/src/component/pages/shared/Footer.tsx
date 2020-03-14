@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 
 import './Footer.scss';
+import { UIFactory } from '../../UIFactory';
 
 interface Props {
+  uiFactory: UIFactory;
   authorName: string;
   authorPortfolio: string;
   version: string;
+  onShowChangeLogBtnClick: () => void;
 }
 
 export class Footer extends Component<Props> {
@@ -18,12 +21,14 @@ export class Footer extends Component<Props> {
             <i className={'heart'}>
               <div />
             </i>
-            by&nbsp;
-            <a href={this.props.authorPortfolio}>{this.props.authorName}</a>
+            by <a href={this.props.authorPortfolio}>{this.props.authorName}</a>
           </div>
           <div className={'row app-version'}>
             App version: {this.props.version}
           </div>
+          {this.props.uiFactory.createViewChangeLogButton({
+            onClick: this.props.onShowChangeLogBtnClick
+          })}
         </div>
       </footer>
     );

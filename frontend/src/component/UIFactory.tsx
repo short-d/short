@@ -17,6 +17,7 @@ import { ErrorService } from '../service/Error.service';
 import { UrlService } from '../service/Url.service';
 import { SearchService } from '../service/Search.service';
 import { SearchBar } from './ui/SearchBar';
+import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 
 export class UIFactory {
   constructor(
@@ -48,6 +49,13 @@ export class UIFactory {
         location={location}
       />
     );
+  }
+
+  public createViewChangeLogButton(props: any): ReactElement {
+    if (!this.featureDecisionService.includeViewChangeLogButton()) {
+      return <div />;
+    }
+    return <ViewChangeLogButton onClick={props.onClick} />;
   }
 
   public createSearchBar(props: any): ReactElement {
