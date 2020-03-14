@@ -241,6 +241,7 @@ export class Home extends Component<Props, State> {
         />
         <div className={'main'}>
           <CreateShortLinkSection
+            ref={this.createShortLinkSection}
             longLinkText={this.state.longLink}
             alias={this.state.alias}
             shortLink={this.state.shortLink}
