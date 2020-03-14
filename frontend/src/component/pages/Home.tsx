@@ -219,17 +219,12 @@ export class Home extends Component<Props, State> {
     this.errModal.current!.open();
   }
 
-  handleShowChangeLogModal = () => {
+  handleShowChangeLogBtnClick = () => {
     if (this.changeLogModalRef.current) {
       this.changeLogModalRef.current.open();
     }
   };
 
-  handleHideChangeLogModal = () => {
-    if (this.changeLogModalRef.current) {
-      this.changeLogModalRef.current.close();
-    }
-  };
 
   render = () => {
     return (
@@ -286,7 +281,7 @@ export class Home extends Component<Props, State> {
         </div>
         <Footer
           uiFactory={this.props.uiFactory}
-          handleShowChangeLogModal={this.handleShowChangeLogModal}
+          onShowChangeLogBtnClick={this.handleShowChangeLogBtnClick}
           authorName={'Harry'}
           authorPortfolio={'https://github.com/byliuyang'}
           version={this.props.versionService.getAppVersion()}

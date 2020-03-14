@@ -8,7 +8,7 @@ interface Props {
   authorName: string;
   authorPortfolio: string;
   version: string;
-  handleShowChangeLogModal: () => void;
+  onShowChangeLogBtnClick: () => void;
 }
 
 export class Footer extends Component<Props> {
@@ -27,7 +27,7 @@ export class Footer extends Component<Props> {
             App version: {this.props.version}
           </div>
           {this.props.uiFactory.createViewChangeLogButton({
-            onClick: this.props.handleShowChangeLogModal
+            onClick: this.props. onShowChangeLogBtnClick
           })}
         </div>
       </footer>
