@@ -16,7 +16,7 @@ type UserSQL struct {
 	db *sql.DB
 }
 
-// IsIDExist checks whether a given id exists in user table.
+// IsIDExist checks whether a given user ID exists in user table.
 func (u UserSQL) IsIDExist(id string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
