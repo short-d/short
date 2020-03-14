@@ -1,4 +1,5 @@
 import { Update } from '../entity/Update';
+
 export class UpdatesService {
   getLastSeenChangeLog(): Promise<number> {
     return new Promise(async (resolve, reject) => {
