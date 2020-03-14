@@ -32,7 +32,7 @@ import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
 import { Update } from '../../entity/Update';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
-import { UpdatesService } from '../../service/Updates.service';
+import { ChangeLogService } from '../../service/Updates.service';
 import { CreateShortLinkSection } from './shared/CreateShortLinkSection';
 
 interface Props {
@@ -45,7 +45,7 @@ interface Props {
   captchaService: CaptchaService;
   searchService: SearchService;
   errorService: ErrorService;
-  updatesService: UpdatesService;
+  changeLogService: ChangeLogService;
   store: Store<IAppState>;
   location: Location;
 }
@@ -94,9 +94,9 @@ export class Home extends Component<Props, State> {
     this.handleStateChange();
     this.autoFillLongLink();
 
-    const changeLog = await this.props.updatesService.getChangeLog();
+    const changeLog = await this.props.changeLogService.getChangeLog();
     this.setState({ changeLog });
-    const lastSeenTimestamp = await this.props.updatesService.getLastSeenChangeLog();
+    const lastSeenTimestamp = await this.props.changeLogService.getLastSeenChangeLog();
     if (
       changeLog &&
       changeLog[0] &&

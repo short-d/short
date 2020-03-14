@@ -1,6 +1,6 @@
 import { Update } from '../entity/Update';
 
-export class UpdatesService {
+export class ChangeLogService {
   getLastSeenChangeLog(): Promise<number> {
     return new Promise(async (resolve, reject) => {
       resolve(await this.invokeLastSeenChangeLogApi());
