@@ -27,7 +27,7 @@ export class Footer extends Component<Props> {
             App version: {this.props.version}
           </div>
           {this.props.uiFactory.createViewChangeLogButton({
-            onClick: this.props. onShowChangeLogBtnClick
+            onClick: this.props.onShowChangeLogBtnClick
           })}
         </div>
       </footer>

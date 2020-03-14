@@ -18,6 +18,7 @@ import { UrlService } from '../service/Url.service';
 import { SearchService } from '../service/Search.service';
 import { SearchBar } from './ui/SearchBar';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
+import { UpdatesService } from '../service/Updates.service';
 
 export class UIFactory {
   constructor(
@@ -29,6 +30,7 @@ export class UIFactory {
     private captchaService: CaptchaService,
     private errorService: ErrorService,
     private searchService: SearchService,
+    private updatesService: UpdatesService,
     private store: Store<IAppState>,
     private featureDecisionService: IFeatureDecisionService
   ) {}
@@ -45,6 +47,7 @@ export class UIFactory {
         captchaService={this.captchaService}
         errorService={this.errorService}
         searchService={this.searchService}
+        updatesService={this.updatesService}
         store={this.store}
         location={location}
       />

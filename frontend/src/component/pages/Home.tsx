@@ -36,6 +36,7 @@ import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
 import { Update } from '../../entity/Update';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
+import { UpdatesService } from '../../service/Updates.service';
 
 interface Props {
   uiFactory: UIFactory;
@@ -47,6 +48,7 @@ interface Props {
   captchaService: CaptchaService;
   searchService: SearchService;
   errorService: ErrorService;
+  updatesService: UpdatesService;
   store: Store<IAppState>;
   location: Location;
 }
@@ -77,7 +79,7 @@ export class Home extends Component<Props, State> {
     };
   }
 
-  componentDidMount(): void {
+  async componentDidMount() {
     this.setPromoDisplayStatus();
 
     this.props.authService.cacheAuthToken(this.props.location.search);
@@ -93,6 +95,17 @@ export class Home extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
+
+    const changeLog = await this.props.updatesService.getChangeLog();
+    this.setState({ changeLog });
+    const lastSeenTimestamp = await this.props.updatesService.getLastSeenChangeLog();
+    if (
+      changeLog &&
+      changeLog[0] &&
+      lastSeenTimestamp < changeLog[0].releasedAt
+    ) {
+      this.handleShowChangeLogBtnClick();
+    }
   }
 
   async setPromoDisplayStatus() {
@@ -224,7 +237,6 @@ export class Home extends Component<Props, State> {
       this.changeLogModalRef.current.open();
     }
   };
-
 
   render = () => {
     return (
