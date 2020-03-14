@@ -4,7 +4,7 @@ export class ChangeLogService {
   hasUpdates(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       const changeLog = await this.getChangeLog();
-      const lastSeenTimestamp = await this.invokeLastSeenChangeLogApi();
+      const lastSeenTimestamp = await this.getLastSeenChangeLog();
       if (
         changeLog &&
         changeLog[0] &&
@@ -14,6 +14,12 @@ export class ChangeLogService {
       }
 
       resolve(false);
+    });
+  }
+
+  getLastSeenChangeLog(): Promise<number> {
+    return new Promise(async (resolve, reject) => {
+      resolve(await this.invokeLastSeenChangeLogApi());
     });
   }
 
