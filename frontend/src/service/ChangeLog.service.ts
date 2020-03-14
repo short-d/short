@@ -39,7 +39,7 @@ export class ChangeLogService {
   }
 
   private async invokeLastSeenChangeLogApi(): Promise<Time> {
-    return new Promise<number>((resolve, reject) => {
+    return new Promise<Time>((resolve, reject) => {
       resolve(1584156301379);
     });
   }
