@@ -96,7 +96,8 @@ export class Home extends Component<Props, State> {
 
     const changeLog = await this.props.changeLogService.getChangeLog();
     this.setState({ changeLog }, async () => {
-      if (!(await this.props.changeLogService.hasUpdates())) {
+      const hasUpdates = await this.props.changeLogService.hasUpdates();
+      if (!hasUpdates) {
         return;
       }
 

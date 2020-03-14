@@ -1,23 +1,32 @@
 import { Update } from '../entity/Update';
 
+type Time = number;
+
 export class ChangeLogService {
   hasUpdates(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       const changeLog = await this.getChangeLog();
-      const lastSeenTimestamp = await this.getLastSeenChangeLog();
-      if (
-        changeLog &&
-        changeLog[0] &&
-        lastSeenTimestamp < changeLog[0].releasedAt
-      ) {
-        resolve(true);
+      const lastSeenAt = await this.getLastSeenChangeLog();
+      if (!changeLog) {
+        resolve(false);
+        return;
       }
 
-      resolve(false);
+      if (!changeLog[0]) {
+        resolve(false);
+        return;
+      }
+
+      if (lastSeenAt >= changeLog[0].releasedAt) {
+        resolve(false);
+        return;
+      }
+
+      resolve(true);
     });
   }
 
-  getLastSeenChangeLog(): Promise<number> {
+  getLastSeenChangeLog(): Promise<Time> {
     return new Promise(async (resolve, reject) => {
       resolve(await this.invokeLastSeenChangeLogApi());
     });
@@ -29,7 +38,7 @@ export class ChangeLogService {
     });
   }
 
-  private async invokeLastSeenChangeLogApi(): Promise<number> {
+  private async invokeLastSeenChangeLogApi(): Promise<Time> {
     return new Promise<number>((resolve, reject) => {
       resolve(1584156301379);
     });
