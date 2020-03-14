@@ -92,7 +92,6 @@ export class Home extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
-
     (async () => {
       const changeLog = await this.props.updatesService.getChangeLog();
       this.setState({ changeLog });
