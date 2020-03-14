@@ -34,6 +34,8 @@ import { ErrorService } from '../../service/Error.service';
 import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
+import { Update } from '../../entity/Update';
+import { ChangeLogModal } from '../ui/ChangeLogModal';
 
 interface Props {
   uiFactory: UIFactory;
@@ -59,16 +61,20 @@ interface State {
   err?: IErr;
   inputErr?: string;
   autoCompleteSuggestions?: Array<Url>;
+  changeLog?: Array<Update>;
 }
 
 export class Home extends Component<Props, State> {
   errModal = React.createRef<Modal>();
   signInModal = React.createRef<SignInModal>();
   shortLinkTextField = React.createRef<TextField>();
+  changeLogModalRef = React.createRef<ChangeLogModal>();
 
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      changeLog: []
+    };
   }
 
   componentDidMount(): void {
@@ -213,6 +219,13 @@ export class Home extends Component<Props, State> {
     this.errModal.current!.open();
   }
 
+  handleShowChangeLogBtnClick = () => {
+    if (this.changeLogModalRef.current) {
+      this.changeLogModalRef.current.open();
+    }
+  };
+
+
   render = () => {
     return (
       <div className="home">
@@ -267,9 +280,16 @@ export class Home extends Component<Props, State> {
           </Section>
         </div>
         <Footer
+          uiFactory={this.props.uiFactory}
+          onShowChangeLogBtnClick={this.handleShowChangeLogBtnClick}
           authorName={'Harry'}
           authorPortfolio={'https://github.com/byliuyang'}
           version={this.props.versionService.getAppVersion()}
+        />
+        <ChangeLogModal
+          ref={this.changeLogModalRef}
+          changeLog={this.state.changeLog}
+          defaultVisibleLogs={3}
         />
 
         <SignInModal ref={this.signInModal} uiFactory={this.props.uiFactory} />
