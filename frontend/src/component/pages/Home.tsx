@@ -2,12 +2,8 @@ import React, { Component } from 'react';
 import './Home.scss';
 
 import { Header } from './shared/Header';
-import { Section } from '../ui/Section';
-import { TextField } from '../form/TextField';
-import { Button } from '../ui/Button';
 import { Url } from '../../entity/Url';
 import { Footer } from './shared/Footer';
-import { ShortLinkUsage } from './shared/ShortLinkUsage';
 import { SignInModal } from './shared/sign-in/SignInModal';
 import { Modal } from '../ui/Modal';
 import { ExtPromo } from './shared/promos/ExtPromo';
@@ -36,6 +32,7 @@ import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
 import { Update } from '../../entity/Update';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
+import { CreateShortLinkSection } from './shared/CreateShortLinkSection';
 
 interface Props {
   uiFactory: UIFactory;
@@ -56,6 +53,7 @@ interface State {
   shouldShowPromo?: boolean;
   longLink?: string;
   alias?: string;
+  shortLink?: string;
   createdUrl?: Url;
   qrCodeUrl?: string;
   err?: IErr;
@@ -67,7 +65,7 @@ interface State {
 export class Home extends Component<Props, State> {
   errModal = React.createRef<Modal>();
   signInModal = React.createRef<SignInModal>();
-  shortLinkTextField = React.createRef<TextField>();
+  createShortLinkSection = React.createRef<CreateShortLinkSection>();
   changeLogModalRef = React.createRef<ChangeLogModal>();
 
   constructor(props: Props) {
@@ -104,10 +102,11 @@ export class Home extends Component<Props, State> {
 
   autoFillLongLink() {
     const longLink = this.getLongLinkFromQueryParams();
-    if (validateLongLinkFormat(longLink) == null) {
-      this.props.store.dispatch(updateLongLink(longLink));
-      this.shortLinkTextField.current!.focus();
+    if (validateLongLinkFormat(longLink) != null) {
+      return;
     }
+    this.props.store.dispatch(updateLongLink(longLink));
+    this.createShortLinkSection.current!.focusShortLinkTextField();
   }
 
   handleStateChange() {
@@ -123,8 +122,12 @@ export class Home extends Component<Props, State> {
       };
 
       if (state.createdUrl && state.createdUrl.alias) {
+        const shortLink = this.props.urlService.aliasToFrontendLink(
+          state.createdUrl.alias!
+        );
+        newState.shortLink = shortLink;
         newState.qrCodeUrl = await this.props.qrCodeService.newQrCode(
-          this.props.urlService.aliasToFrontendLink(state.createdUrl.alias)
+          shortLink
         );
       }
 
@@ -225,7 +228,6 @@ export class Home extends Component<Props, State> {
     }
   };
 
-
   render = () => {
     return (
       <div className="home">
@@ -238,46 +240,19 @@ export class Home extends Component<Props, State> {
           onSignOutButtonClick={this.handleSignOutButtonClick}
         />
         <div className={'main'}>
-          <Section title={'New Short Link'}>
-            <div className={'control create-short-link'}>
-              <div className={'text-field-wrapper'}>
-                <TextField
-                  text={this.state.longLink}
-                  placeHolder={'Long Link'}
-                  onBlur={this.handlerLongLinkTextFieldBlur}
-                  onChange={this.handlerLongLinkChange}
-                />
-              </div>
-              <div className={'text-field-wrapper'}>
-                <TextField
-                  ref={this.shortLinkTextField}
-                  text={this.state.alias}
-                  placeHolder={'Custom Short Link ( Optional )'}
-                  onBlur={this.handlerCustomAliasTextFieldBlur}
-                  onChange={this.handleAliasChange}
-                />
-              </div>
-              <div className="create-short-link-btn">
-                <Button onClick={this.handleCreateShortLinkClick}>
-                  Create Short Link
-                </Button>
-              </div>
-            </div>
-            <div className={'input-error'}>{this.state.inputErr}</div>
-            {this.state.createdUrl ? (
-              <div className={'short-link-usage-wrapper'}>
-                <ShortLinkUsage
-                  shortLink={this.props.urlService.aliasToFrontendLink(
-                    this.state.createdUrl.alias!
-                  )}
-                  originalUrl={this.state.createdUrl.originalUrl!}
-                  qrCodeUrl={this.state.qrCodeUrl!}
-                />
-              </div>
-            ) : (
-              false
-            )}
-          </Section>
+          <CreateShortLinkSection
+            longLinkText={this.state.longLink}
+            alias={this.state.alias}
+            shortLink={this.state.shortLink}
+            inputErr={this.state.inputErr}
+            createdUrl={this.state.createdUrl}
+            qrCodeUrl={this.state.qrCodeUrl}
+            onLongLinkTextFieldBlur={this.handlerLongLinkTextFieldBlur}
+            onLongLinkTextFieldChange={this.handlerLongLinkChange}
+            onShortLinkTextFieldBlur={this.handlerCustomAliasTextFieldBlur}
+            onShortLinkTextFieldChange={this.handleAliasChange}
+            onCreateShortLinkButtonClick={this.handleCreateShortLinkClick}
+          />
         </div>
         <Footer
           uiFactory={this.props.uiFactory}
