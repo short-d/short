@@ -32,7 +32,7 @@ import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
 import { Update } from '../../entity/Update';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
-import { ChangeLogService } from '../../service/Updates.service';
+import { ChangeLogService } from '../../service/ChangeLog.service';
 import { CreateShortLinkSection } from './shared/CreateShortLinkSection';
 
 interface Props {
@@ -95,15 +95,13 @@ export class Home extends Component<Props, State> {
     this.autoFillLongLink();
 
     const changeLog = await this.props.changeLogService.getChangeLog();
-    this.setState({ changeLog });
-    const lastSeenTimestamp = await this.props.changeLogService.getLastSeenChangeLog();
-    if (
-      changeLog &&
-      changeLog[0] &&
-      lastSeenTimestamp < changeLog[0].releasedAt
-    ) {
-      this.handleShowChangeLogBtnClick();
-    }
+    this.setState({ changeLog }, async () => {
+      if (!(await this.props.changeLogService.hasUpdates())) {
+        return;
+      }
+
+      this.showChangeLogs();
+    });
   }
 
   async setPromoDisplayStatus() {
@@ -236,6 +234,10 @@ export class Home extends Component<Props, State> {
   }
 
   handleShowChangeLogBtnClick = () => {
+    this.showChangeLogs();
+  };
+
+  showChangeLogs = () => {
     if (this.changeLogModalRef.current) {
       this.changeLogModalRef.current.open();
     }

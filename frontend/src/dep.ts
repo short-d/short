@@ -13,7 +13,7 @@ import { RoutingService } from './service/Routing.service';
 import { UrlService } from './service/Url.service';
 import { SearchService } from './service/Search.service';
 import { BrowserExtensionFactory } from './service/extensionService/BrowserExtension.factory';
-import { ChangeLogService } from './service/Updates.service';
+import { ChangeLogService } from './service/ChangeLog.service';
 
 export function initEnvService(): EnvService {
   return new EnvService();

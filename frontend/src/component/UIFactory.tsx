@@ -18,7 +18,7 @@ import { UrlService } from '../service/Url.service';
 import { SearchService } from '../service/Search.service';
 import { SearchBar } from './ui/SearchBar';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
-import { ChangeLogService } from '../service/Updates.service';
+import { ChangeLogService } from '../service/ChangeLog.service';
 
 export class UIFactory {
   constructor(

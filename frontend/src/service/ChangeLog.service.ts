@@ -1,9 +1,19 @@
 import { Update } from '../entity/Update';
 
 export class ChangeLogService {
-  getLastSeenChangeLog(): Promise<number> {
+  hasUpdates(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
-      resolve(await this.invokeLastSeenChangeLogApi());
+      const changeLog = await this.getChangeLog();
+      const lastSeenTimestamp = await this.invokeLastSeenChangeLogApi();
+      if (
+        changeLog &&
+        changeLog[0] &&
+        lastSeenTimestamp < changeLog[0].releasedAt
+      ) {
+        resolve(true);
+      }
+
+      resolve(false);
     });
   }
 
