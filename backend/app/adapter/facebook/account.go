@@ -21,6 +21,7 @@ type Account struct {
 // GetSingleSignOnUser retrieves user's email and name from Facebook API.
 func (g Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error) {
 	type response struct {
+		ID    string `json:"id"`
 		Email string `json:"email"`
 		Name  string `json:"name"`
 	}
@@ -33,7 +34,7 @@ func (g Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 	}
 
 	query := u.Query()
-	query.Set("fields", "name,email")
+	query.Set("fields", "id,name,email")
 	query.Set("access_token", accessToken)
 	u.RawQuery = query.Encode()
 
@@ -46,6 +47,7 @@ func (g Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 	}
 
 	return entity.SSOUser{
+		ID:    fbResponse.ID,
 		Email: fbResponse.Email,
 		Name:  fbResponse.Name,
 	}, nil

@@ -35,6 +35,46 @@ type userTableRow struct {
 	updatedAt    *time.Time
 }
 
+func TestUserSql_IsIDExist(t *testing.T) {
+	testCases := []struct {
+		name       string
+		tableRows  []userTableRow
+		id         string
+		expIsExist bool
+	}{
+		{
+			name:       "ID doesn't exist",
+			id:         "abcde",
+			tableRows:  []userTableRow{},
+			expIsExist: false,
+		},
+		{
+			name:       "ID found",
+			id:         "abcde",
+			tableRows:  []userTableRow{{id: "abcde"}},
+			expIsExist: true,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.tableRows)
+
+					userRepo := db.NewUserSQL(sqlDB)
+					gotIsExist, err := userRepo.IsIDExist(testCase.id)
+					mdtest.Equal(t, nil, err)
+					mdtest.Equal(t, testCase.expIsExist, gotIsExist)
+				})
+		})
+	}
+}
+
 func TestUserSql_IsEmailExist(t *testing.T) {
 	testCases := []struct {
 		name       string

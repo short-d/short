@@ -16,7 +16,29 @@ type UserSQL struct {
 	db *sql.DB
 }
 
-// IsEmailExist checks whether a given email exist in user table.
+// IsIDExist checks whether a given user ID exists in user table.
+func (u UserSQL) IsIDExist(id string) (bool, error) {
+	query := fmt.Sprintf(`
+SELECT "%s" 
+FROM "%s" 
+WHERE "%s"=$1;
+`,
+		table.User.ColumnID,
+		table.User.TableName,
+		table.User.ColumnID,
+	)
+
+	err := u.db.QueryRow(query, id).Scan(&id)
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// IsEmailExist checks whether a given email exists in user table.
 func (u UserSQL) IsEmailExist(email string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 

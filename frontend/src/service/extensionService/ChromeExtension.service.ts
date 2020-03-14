@@ -21,8 +21,7 @@ export class ChromeExtensionService implements IBrowserExtensionService {
             return resolve(response !== undefined && response !== null);
           }
         );
-      }
-      catch {
+      } catch {
         // resolve to false if any exception is thrown while trying to connect to extension
         return resolve(false);
       }
