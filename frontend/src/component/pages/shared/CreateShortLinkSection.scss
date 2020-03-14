@@ -1,0 +1,14 @@
+@import '../../styles/font';
+
+.short-link-usage-wrapper {
+  margin-top: 40px;
+}
+
+.input-error {
+  color: #b71c1c;
+  font-size: 12px;
+  font-weight: $font-weight-semi-bold;
+  height: 20px;
+  line-height: 20px;
+  margin: 10px;
+}

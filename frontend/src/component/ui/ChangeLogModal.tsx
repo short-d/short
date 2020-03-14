@@ -4,6 +4,7 @@ import moment from 'moment';
 import './ChangeLogModal.scss';
 import { Update } from '../../entity/Update';
 import { Button } from './Button';
+import { Modal } from './Modal';
 
 interface State {
   shouldShowFullChangeLog: boolean;
@@ -11,8 +12,6 @@ interface State {
 
 interface Props {
   changeLog?: Array<Update>;
-  closeModal: () => void;
-  shouldShowModal: boolean;
   defaultVisibleLogs: number;
 }
 
@@ -24,6 +23,8 @@ export class ChangeLogModal extends Component<Props, State> {
   state = {
     shouldShowFullChangeLog: false
   };
+
+  private modalRef = React.createRef<Modal>();
 
   showFullChangeLog = () => {
     this.setState({
@@ -68,27 +69,24 @@ export class ChangeLogModal extends Component<Props, State> {
     );
   };
 
+  open = () => this.modalRef.current && this.modalRef.current.open();
+
+  close = () => this.modalRef.current && this.modalRef.current.close();
+
   render() {
-    if (!this.props.shouldShowModal) {
-      return <div />;
-    }
     return (
-      <div className={'modal-wrapper'}>
+      <Modal ref={this.modalRef} canClose={true}>
         <div className={'modal-body'}>
           <div className={'modal-header'}>
             Since You've Been Gone
-            <i
-              className={'material-icons clear'}
-              onClick={this.props.closeModal}
-            >
+            <i className={'material-icons clear'} onClick={this.close}>
               clear
             </i>
           </div>
           {this.createChangeLog()}
           {this.createShowCompleteChangeLogButton()}
         </div>
-        <div className={'modal-backdrop'} onClick={this.props.closeModal} />
-      </div>
+      </Modal>
     );
   }
 }

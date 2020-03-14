@@ -56,10 +56,6 @@
     padding: 40px 0;
   }
 
-  .short-link-usage-wrapper {
-    margin-top: 40px;
-  }
-
   .err {
     background-color: #424242;
     box-sizing: border-box;
@@ -98,14 +94,5 @@
         opacity: 0.9;
       }
     }
-  }
-
-  .input-error {
-    color: #b71c1c;
-    font-size: 12px;
-    font-weight: $font-weight-semi-bold;
-    height: 20px;
-    line-height: 20px;
-    margin: 10px;
   }
 }
