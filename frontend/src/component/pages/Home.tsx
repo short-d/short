@@ -79,7 +79,7 @@ export class Home extends Component<Props, State> {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.setPromoDisplayStatus();
 
     this.props.authService.cacheAuthToken(this.props.location.search);
@@ -96,16 +96,18 @@ export class Home extends Component<Props, State> {
     this.handleStateChange();
     this.autoFillLongLink();
 
-    const changeLog = await this.props.updatesService.getChangeLog();
-    this.setState({ changeLog });
-    const lastSeenTimestamp = await this.props.updatesService.getLastSeenChangeLog();
-    if (
-      changeLog &&
-      changeLog[0] &&
-      lastSeenTimestamp < changeLog[0].releasedAt
-    ) {
-      this.handleShowChangeLogBtnClick();
-    }
+    (async () => {
+      const changeLog = await this.props.updatesService.getChangeLog();
+      this.setState({ changeLog });
+      const lastSeenTimestamp = await this.props.updatesService.getLastSeenChangeLog();
+      if (
+        changeLog &&
+        changeLog[0] &&
+        lastSeenTimestamp < changeLog[0].releasedAt
+      ) {
+        this.handleShowChangeLogBtnClick();
+      }
+    })();
   }
 
   async setPromoDisplayStatus() {
