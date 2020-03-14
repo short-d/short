@@ -79,7 +79,6 @@ export class Home extends Component<Props, State> {
 
   componentDidMount() {
     this.setPromoDisplayStatus();
-
     this.props.authService.cacheAuthToken(this.props.location.search);
     if (!this.props.authService.isSignedIn()) {
       this.setState({
