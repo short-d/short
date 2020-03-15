@@ -10,7 +10,7 @@ RUN apk add --no-cache bash
 COPY frontend/package.json frontend/yarn.lock ./
 RUN yarn
 
-COPY frontend/ .
+ADD frontend .
 
 ARG CODECOV_TOKEN
 
