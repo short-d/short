@@ -280,14 +280,14 @@ func TestURLSql_GetByAliases(t *testing.T) {
 			aliases: []string{"220uFicCJj", "yDOBcj5HIPbUAsw"},
 			hasErr:  false,
 			expectedURLs: []entity.URL{
-				entity.URL{
+				{
 					Alias:       "220uFicCJj",
 					OriginalURL: "http://www.google.com",
 					CreatedAt:   &twoYearsAgo,
 					ExpireAt:    &now,
 					UpdatedAt:   &now,
 				},
-				entity.URL{
+				{
 					Alias:       "yDOBcj5HIPbUAsw",
 					OriginalURL: "http://www.facebook.com",
 					CreatedAt:   &twoYearsAgo,
