@@ -2,4 +2,4 @@
 
 cd backend || exit
 ./scripts/code-coverage
-bash <(curl -s https://codecov.io/bash) -f "coverage.txt" -t "$CODECOV_TOKEN"
+bash <(curl -s https://codecov.io/bash) -cF golang -f "coverage.txt" -t "$CODECOV_TOKEN"
