@@ -8,8 +8,14 @@ RUN apk add --no-cache bash
 RUN apk add --no-cache curl
 
 # Install dependencies
-COPY frontend/package.json frontend/yarn.lock ./
+
+COPY frontend/package.json frontend/yarn.lock frontend/
+
+WORKDIR /web/frontend
+
 RUN yarn
+
+WORKDIR /web
 
 COPY . .
 
