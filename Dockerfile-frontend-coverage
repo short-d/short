@@ -7,10 +7,10 @@ RUN apk add --no-cache git
 RUN apk add --no-cache bash
 
 # Install dependencies
-COPY package.json yarn.lock ./
+COPY frontend/package.json frontend/yarn.lock ./
 RUN yarn
 
-COPY . .
+COPY frontend/ .
 
 ARG CODECOV_TOKEN
 
