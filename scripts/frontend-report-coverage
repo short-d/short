@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+cd frontend || exit
+./scripts/code-coverage
+bash <(curl -s https://codecov.io/bash) -cF typescript -f "coverage/coverage-final.json" -t "$CODECOV_TOKEN"
