@@ -90,7 +90,7 @@ steps:
       event:
         - pull_request
 
-  - name: report code coverage
+  - name: report backend code coverage
     image: docker
     environment:
       DB_HOST:
@@ -106,15 +106,15 @@ steps:
       CODECOV_TOKEN:
         from_secret: CODECOV_TOKEN
     commands:
-      - docker build -t report-coverage
+      - docker build -t report-backend-coverage
         --build-arg DB_HOST=$DB_HOST
         --build-arg DB_PORT=$DB_PORT
         --build-arg DB_USER=$DB_USER
         --build-arg DB_PASSWORD=$DB_PASSWORD
         --build-arg DB_NAME=$DB_NAME
         --build-arg CODECOV_TOKEN=$CODECOV_TOKEN
-        -f Dockerfile-coverage .
-      - docker run report-coverage
+        -f Dockerfile-backend-coverage .
+      - docker run report-backend-coverage
     volumes:
       - name: docker
         path: /var/run/docker.sock
