@@ -32,6 +32,7 @@ import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
 import { Update } from '../../entity/Update';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
+import { ChangeLogService } from '../../service/ChangeLog.service';
 import { CreateShortLinkSection } from './shared/CreateShortLinkSection';
 
 interface Props {
@@ -44,6 +45,7 @@ interface Props {
   captchaService: CaptchaService;
   searchService: SearchService;
   errorService: ErrorService;
+  changeLogService: ChangeLogService;
   store: Store<IAppState>;
   location: Location;
 }
@@ -75,7 +77,7 @@ export class Home extends Component<Props, State> {
     };
   }
 
-  componentDidMount(): void {
+  async componentDidMount() {
     this.setPromoDisplayStatus();
 
     this.props.authService.cacheAuthToken(this.props.location.search);
@@ -91,6 +93,16 @@ export class Home extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
+
+    const changeLog = await this.props.changeLogService.getChangeLog();
+    this.setState({ changeLog }, async () => {
+      const hasUpdates = await this.props.changeLogService.hasUpdates();
+      if (!hasUpdates) {
+        return;
+      }
+
+      this.showChangeLogs();
+    });
   }
 
   async setPromoDisplayStatus() {
@@ -223,6 +235,10 @@ export class Home extends Component<Props, State> {
   }
 
   handleShowChangeLogBtnClick = () => {
+    this.showChangeLogs();
+  };
+
+  showChangeLogs = () => {
     if (this.changeLogModalRef.current) {
       this.changeLogModalRef.current.open();
     }
@@ -241,6 +257,7 @@ export class Home extends Component<Props, State> {
         />
         <div className={'main'}>
           <CreateShortLinkSection
+            ref={this.createShortLinkSection}
             longLinkText={this.state.longLink}
             alias={this.state.alias}
             shortLink={this.state.shortLink}
