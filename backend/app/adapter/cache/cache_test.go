@@ -75,7 +75,7 @@ func TestCache_Set(t *testing.T) {
 			expectedSeq: "11->0->1->2->3->4->5->6->7->8->9",
 		},
 		{
-			name:        "cache does reach capacity and key does exists",
+			name:        "cache does reach capacity and key exists",
 			cache:       buildCache(10, 8),
 			key:         "2",
 			value:       []interface{}{"x"},
