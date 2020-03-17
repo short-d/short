@@ -35,7 +35,6 @@ func (c *Cache) Set(key interface{}, value []interface{}) {
 		node.Val = value
 		c.Remove(node)
 		c.Add(node)
-		return
 	} else {
 		node = &Node{Key: key, Val: value}
 		c.Mapping[key] = node
