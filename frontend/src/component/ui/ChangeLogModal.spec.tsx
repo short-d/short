@@ -7,7 +7,6 @@ it('renders without crashing', () => {
 });
 
 it('expands changelog when clicked on "View All Updates"', () => {
-  let changeLogModalRef = React.createRef<ChangeLogModal>();
   const changeLog = [
     {
       title: 'Lorem ipsum',
@@ -29,16 +28,9 @@ it('expands changelog when clicked on "View All Updates"', () => {
   const { getByText, queryAllByText, container } = render(
     <ChangeLogModal
       changeLog={changeLog}
-      ref={changeLogModalRef}
       defaultVisibleLogs={defaultVisibleLogs}
     />
   );
-  expect(changeLogModalRef).toBeTruthy();
-  expect(changeLogModalRef.current).toBeTruthy();
-  if (changeLogModalRef && changeLogModalRef.current) {
-    changeLogModalRef.current.open();
-    changeLogModalRef.current.close();
-  }
 
   expect(queryAllByText('View All Updates').length).toBe(1);
   expect(container.getElementsByTagName('li').length).toBe(defaultVisibleLogs);
@@ -47,4 +39,13 @@ it('expands changelog when clicked on "View All Updates"', () => {
 
   expect(queryAllByText('View All Updates').length).toBe(0);
   expect(container.getElementsByTagName('li').length).toBe(changeLog.length);
+});
+
+it('opens and closes correctly', () => {
+  const changeLogModalRef = React.createRef<ChangeLogModal>();
+  render(<ChangeLogModal ref={changeLogModalRef} />);
+  expect(changeLogModalRef).toBeTruthy();
+  expect(changeLogModalRef.current).toBeTruthy();
+  changeLogModalRef!.current!.open();
+  changeLogModalRef!.current!.close();
 });
