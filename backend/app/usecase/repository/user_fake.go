@@ -43,7 +43,7 @@ func (u UserFake) IsUserIDExist(userID string) bool {
 	return false
 }
 
-// GetUserByEmail finds an user with a given user ID.
+// GetUserByID finds an user with a given user ID.
 func (u UserFake) GetUserByID(id string) (entity.User, error) {
 	for _, user := range u.users {
 		if user.ID == id {
