@@ -40,15 +40,11 @@ it('expands changelog when clicked on "View All Updates"', () => {
     changeLogModalRef.current.close();
   }
 
-  expect(queryAllByText('View All Updates').length).toStrictEqual(1);
-  expect(container.getElementsByTagName('li').length).toStrictEqual(
-    defaultVisibleLogs
-  );
+  expect(queryAllByText('View All Updates').length).toBe(1);
+  expect(container.getElementsByTagName('li').length).toBe(defaultVisibleLogs);
 
   fireEvent.click(getByText('View All Updates'));
 
-  expect(queryAllByText('View All Updates').length).toStrictEqual(0);
-  expect(container.getElementsByTagName('li').length).toStrictEqual(
-    changeLog.length
-  );
+  expect(queryAllByText('View All Updates').length).toBe(0);
+  expect(container.getElementsByTagName('li').length).toBe(changeLog.length);
 });
