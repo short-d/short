@@ -46,6 +46,6 @@ it('opens and closes correctly', () => {
   render(<ChangeLogModal ref={changeLogModalRef} />);
   expect(changeLogModalRef).toBeTruthy();
   expect(changeLogModalRef.current).toBeTruthy();
-  changeLogModalRef!.current!.open();
-  changeLogModalRef!.current!.close();
+  changeLogModalRef.current!.open();
+  changeLogModalRef.current!.close();
 });
