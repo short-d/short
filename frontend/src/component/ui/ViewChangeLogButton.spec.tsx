@@ -6,7 +6,7 @@ it('renders without crashing', () => {
   render(<ViewChangeLogButton />);
 });
 
-it('handles click events correctly', () => {
+it('triggers click events successfully', () => {
   const clickHandler = jest.fn();
   const { getByText } = render(<ViewChangeLogButton onClick={clickHandler} />);
   fireEvent.click(getByText('View Changelog'));
