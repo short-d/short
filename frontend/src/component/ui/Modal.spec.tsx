@@ -17,15 +17,15 @@ it('opens and closes correctly', () => {
 
   modalRef.current!.open();
 
-  expect(modalRef.current!.state.isOpen).toBeTruthy();
+  expect(modalRef.current!.state.isOpen).toBe(true);
   jest.runAllTimers();
-  expect(modalRef.current!.state.isShowing).toBeTruthy();
+  expect(modalRef.current!.state.isShowing).toBe(true);
 
   modalRef.current!.close();
 
-  expect(modalRef.current!.state.isShowing).toBeFalsy();
+  expect(modalRef.current!.state.isShowing).toBe(false);
   jest.runAllTimers();
-  expect(modalRef.current!.state.isOpen).toBeFalsy();
+  expect(modalRef.current!.state.isOpen).toBe(false);
 });
 
 it('closes when click on backdrop', () => {
@@ -37,9 +37,9 @@ it('closes when click on backdrop', () => {
 
   fireEvent.click(container.getElementsByClassName('mask')[0]);
 
-  expect(modalRef.current!.state.isShowing).toBeFalsy();
+  expect(modalRef.current!.state.isShowing).toBe(false);
   jest.runAllTimers();
-  expect(modalRef.current!.state.isOpen).toBeFalsy();
+  expect(modalRef.current!.state.isOpen).toBe(false);
 });
 
 it('will not close when canClose prop is falsy', () => {
@@ -51,6 +51,6 @@ it('will not close when canClose prop is falsy', () => {
 
   fireEvent.click(container.getElementsByClassName('mask')[0]);
 
-  expect(modalRef.current!.state.isOpen).toBeTruthy();
-  expect(modalRef.current!.state.isShowing).toBeTruthy();
+  expect(modalRef.current!.state.isOpen).toBe(true);
+  expect(modalRef.current!.state.isShowing).toBe(true);
 });
