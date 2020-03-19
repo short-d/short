@@ -34,11 +34,14 @@ import { Update } from '../../entity/Update';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
 import { ChangeLogService } from '../../service/ChangeLog.service';
 import { CreateShortLinkSection } from './shared/CreateShortLinkSection';
+import { ClipboardService } from '../../service/utilities/Clipboard.service';
+import { Toast } from '../ui/Toast';
 
 interface Props {
   uiFactory: UIFactory;
   urlService: UrlService;
   authService: AuthService;
+  clipboardService: ClipboardService;
   extensionService: IBrowserExtensionService;
   versionService: VersionService;
   qrCodeService: QrCodeService;
@@ -69,6 +72,7 @@ export class Home extends Component<Props, State> {
   signInModal = React.createRef<SignInModal>();
   createShortLinkSection = React.createRef<CreateShortLinkSection>();
   changeLogModalRef = React.createRef<ChangeLogModal>();
+  copySuccessToast = React.createRef<Toast>();
 
   constructor(props: Props) {
     super(props);
@@ -106,7 +110,7 @@ export class Home extends Component<Props, State> {
   }
 
   async setPromoDisplayStatus() {
-    var shouldShowPromo =
+    const shouldShowPromo =
       this.props.extensionService.isSupported() &&
       !(await this.props.extensionService.isInstalled());
     this.setState({ shouldShowPromo: shouldShowPromo });
@@ -204,13 +208,25 @@ export class Home extends Component<Props, State> {
     this.props.store.dispatch(raiseInputError(err));
   };
 
+  private copyShortenedLink = (shortenedLink: string) => {
+    this.props.clipboardService
+      .copyTextToClipboard(shortenedLink)
+      .then(() => this.copySuccessToast.current!.showAndHide(2500))
+      .catch(/* Do nothing if copying failed */);
+  };
+
   handleCreateShortLinkClick = () => {
     const editingUrl = this.props.store.getState().editingUrl;
     this.props.urlService
       .createShortLink(editingUrl)
-      .then((createdUrl: Url) =>
-        this.props.store.dispatch(updateCreatedUrl(createdUrl))
-      )
+      .then((createdUrl: Url) => {
+        this.props.store.dispatch(updateCreatedUrl(createdUrl));
+
+        // copy generated short link to clipboard
+        this.copyShortenedLink(
+          this.props.urlService.aliasToFrontendLink(createdUrl.alias!)
+        );
+      })
       .catch(({ authorizationErr, createShortLinkErr }) => {
         if (authorizationErr) {
           this.requestSignIn();
@@ -302,6 +318,11 @@ export class Home extends Component<Props, State> {
             false
           )}
         </Modal>
+
+        <Toast
+          ref={this.copySuccessToast}
+          toastMessage={'Short Link copied to clipboard.'}
+        />
       </div>
     );
   };
