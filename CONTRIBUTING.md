@@ -5,8 +5,22 @@ to make via [Slack channel](https://short-d.com/r/slack) with the owner
 of this repository before making a change.
 
 Please open a draft pull request when you are working on an issue so that the
-owner knows it is in progress. The owner may take over or reassign the issue if no
-body replies after 10 days assigned to you.
+owner knows it is in progress. The owner may take over or reassign the issue if no body replies after 10 days assigned to you.
+
+Please post your weekly contributions on our Slack every Friday during your convenient hours. All of the followings counts as contributions: 
+
+- Exploring the codebase
+- Learnings new tools, infrastructures, libraries, algorithms, designs, or concepts
+- Experimenting with diffierent technologies and sharing the findings with the group
+- Prototyping new features
+- Fixing bugs
+- Improving maintainability, scalability, reliability and performance of existing system
+- Doing code reviews
+- Writing design docs
+- Creating UI mockups
+- Organizing or participating sync meetings
+
+The owner reserves the rights to deactivate your Slack account after missing 3 consecutive standups without any heads up.
 
 ## Pull Request Process
 
