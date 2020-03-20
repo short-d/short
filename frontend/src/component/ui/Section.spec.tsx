@@ -11,5 +11,5 @@ it('renders without crashing', () => {
     </Section>
   );
   expect(container.textContent).toMatch('Section Title');
-  expect(container.textContent).toMatch('Lorem ipsum');
+  expect(container.textContent).toMatch('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua');
 });
