@@ -27,7 +27,10 @@ it('closes modal when click on close button', () => {
   render(<Modal ref={modalRef} canClose={true} />);
 
   modalRef.current!.open();
+
+  expect(modalRef.current!.state.isOpen).toBe(true);
   jest.runAllTimers();
+  expect(modalRef.current!.state.isShowing).toBe(true);
 
   modalRef.current!.close();
 
