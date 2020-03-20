@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { Section } from './Section';
 
-it('renders without crashing', () => {
+it('renders content correctly', () => {
   const { container } = render(
     <Section title="Section Title">
         <div>
