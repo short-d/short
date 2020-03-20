@@ -41,7 +41,15 @@ it('expands changelog when clicked on "View All Updates"', () => {
   expect(container.getElementsByTagName('li').length).toBe(changeLog.length);
 });
 
-it('opens and closes correctly', () => {
+it('opens correctly', () => {
+  const changeLogModalRef = React.createRef<ChangeLogModal>();
+  render(<ChangeLogModal ref={changeLogModalRef} />);
+  expect(changeLogModalRef).toBeTruthy();
+  expect(changeLogModalRef.current).toBeTruthy();
+  changeLogModalRef.current!.open();
+});
+
+it('closes correctly', () => {
   const changeLogModalRef = React.createRef<ChangeLogModal>();
   render(<ChangeLogModal ref={changeLogModalRef} />);
   expect(changeLogModalRef).toBeTruthy();
