@@ -2,6 +2,33 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { SearchBar } from './SearchBar';
 
+function getSearchBarUtil() {
+    const changeHandler = jest.fn();
+    const searchBarRef = React.createRef<SearchBar>();
+    const { getByPlaceholderText } = render(
+      <SearchBar ref={searchBarRef} onChange={changeHandler} autoCompleteSuggestions={[
+        {
+          originalUrl: 'https://www.google.com/',
+          alias: 'google'
+        },
+        {
+          originalUrl: 'https://github.com/short-d/short/',
+          alias: 'short'
+        },
+        {
+          originalUrl: 'https://developer.mozilla.org/en-US/',
+          alias: 'mozilla'
+        }
+      ]}/>
+    );
+
+    const input = getByPlaceholderText('Search short links') as HTMLInputElement;
+      return {
+          searchBarRef,
+          input
+      }
+}
+
 it('renders without crashing', () => {
   const changeHandler = jest.fn();
   render(<SearchBar onChange={changeHandler} />);
@@ -27,27 +54,8 @@ it('triggers change events successfully', async () => {
 });
 
 it('shows autocomplete box on focus', () => {
-    const changeHandler = jest.fn();
-    const searchBarRef = React.createRef<SearchBar>();
-    const { getByPlaceholderText } = render(
-      <SearchBar ref={searchBarRef} onChange={changeHandler} autoCompleteSuggestions={[
-        {
-          originalUrl: 'https://www.google.com/',
-          alias: 'google'
-        },
-        {
-          originalUrl: 'https://github.com/short-d/short/',
-          alias: 'short'
-        },
-        {
-          originalUrl: 'https://developer.mozilla.org/en-US/',
-          alias: 'mozilla'
-        }
-      ]}/>
-    );
-
-    const input = getByPlaceholderText('Search short links') as HTMLInputElement;
-
+    const { searchBarRef, input } = getSearchBarUtil();
+    
     expect(searchBarRef).toBeTruthy();
     expect(searchBarRef.current).toBeTruthy();
 
@@ -57,26 +65,7 @@ it('shows autocomplete box on focus', () => {
 });
 
 it('hides autocomplete box on blur', async () => {
-    const changeHandler = jest.fn();
-    const searchBarRef = React.createRef<SearchBar>();
-    const { getByPlaceholderText } = render(
-      <SearchBar ref={searchBarRef} onChange={changeHandler} autoCompleteSuggestions={[
-        {
-          originalUrl: 'https://www.google.com/',
-          alias: 'google'
-        },
-        {
-          originalUrl: 'https://github.com/short-d/short/',
-          alias: 'short'
-        },
-        {
-          originalUrl: 'https://developer.mozilla.org/en-US/',
-          alias: 'mozilla'
-        }
-      ]}/>
-    );
-
-    const input = getByPlaceholderText('Search short links') as HTMLInputElement;
+    const { searchBarRef, input } = getSearchBarUtil();
 
     expect(searchBarRef).toBeTruthy();
     expect(searchBarRef.current).toBeTruthy();
