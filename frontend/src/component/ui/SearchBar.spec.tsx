@@ -16,8 +16,6 @@ it('triggers change events successfully', async () => {
   );
   const input = getByPlaceholderText('Search short links') as HTMLInputElement;
 
-  expect(input.value).toBe('');
-
   fireEvent.change(input, {
     target: { value: 'Lorem ipsum' }
   });
