@@ -11,6 +11,5 @@ it('renders content correctly', () => {
       </div>
     </Notice>
   );
-  expect(container.textContent).toMatch('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua');
+  expect(container.textContent).toMatch('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua');
 });
