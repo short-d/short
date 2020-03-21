@@ -56,7 +56,7 @@ describe('ChangeLogModal', () => {
     expect(container.getElementsByTagName('li').length).toBe(changeLog.length);
   });
 
-  test('should show content correctly when open', () => {
+  test('should show content correctly when explicitly open', () => {
     const changeLogModalRef = React.createRef<ChangeLogModal>();
     const { container } = render(<ChangeLogModal ref={changeLogModalRef} />);
 
