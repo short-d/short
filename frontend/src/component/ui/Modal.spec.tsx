@@ -15,6 +15,9 @@ it('opens correctly', () => {
   expect(modalRef).toBeTruthy();
   expect(modalRef.current).toBeTruthy();
 
+  expect(modalRef.current!.state.isOpen).toBe(false);
+  expect(modalRef.current!.state.isShowing).toBe(false);
+
   modalRef.current!.open();
 
   expect(modalRef.current!.state.isOpen).toBe(true);
@@ -25,6 +28,9 @@ it('opens correctly', () => {
 it('closes modal when click on close button', () => {
   const modalRef = React.createRef<Modal>();
   render(<Modal ref={modalRef} canClose={true} />);
+
+  expect(modalRef.current!.state.isOpen).toBe(false);
+  expect(modalRef.current!.state.isShowing).toBe(false);
 
   modalRef.current!.open();
 
@@ -43,8 +49,14 @@ it('closes when click on backdrop', () => {
   const modalRef = React.createRef<Modal>();
   const { container } = render(<Modal ref={modalRef} canClose={true} />);
 
+  expect(modalRef.current!.state.isOpen).toBe(false);
+  expect(modalRef.current!.state.isShowing).toBe(false);
+
   modalRef.current!.open();
+  
+  expect(modalRef.current!.state.isOpen).toBe(true);
   jest.runAllTimers();
+  expect(modalRef.current!.state.isShowing).toBe(true);
 
   fireEvent.click(container.getElementsByClassName('mask')[0]);
 
@@ -57,8 +69,14 @@ it('will not close when canClose prop is false', () => {
   const modalRef = React.createRef<Modal>();
   const { container } = render(<Modal ref={modalRef} canClose={false} />);
 
+  expect(modalRef.current!.state.isOpen).toBe(false);
+  expect(modalRef.current!.state.isShowing).toBe(false);
+
   modalRef.current!.open();
+  
+  expect(modalRef.current!.state.isOpen).toBe(true);
   jest.runAllTimers();
+  expect(modalRef.current!.state.isShowing).toBe(true);
 
   fireEvent.click(container.getElementsByClassName('mask')[0]);
 
