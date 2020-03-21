@@ -38,7 +38,7 @@ from [source](https://short-d.com/r/ext-code)
    1. [Frontend](#frontend)
 1. [System Design](#system-design)
    1. [App Level Architecture](#app-level-architecture)
-   1. [Service Level Archtecture](#service-level-archtecture)
+   1. [Service Level Architecture](#service-level-architecture)
    1. [Object Oriented Design](#object-oriented-design)
    1. [Dependency Injection](#dependency-injection)
    1. [Database Modeling](#database-modeling)
@@ -220,16 +220,16 @@ objective of which is separation of concerns.
 ![Boundary](doc/eng/clean-architecture/boundary.jpg)
 
 It enables the developers to modify a single component of the system at a time
-while leaving the rest unchanged. This minizes the amount of changes have to
+while leaving the rest unchanged. This minimizes the amount of changes have to
 be made in order to support new requirements as the system grows. Clean
 Architecture also improves the testability of system, which in turn saves
 precious time when creating automated tests.
 
-Here is an exmample of finance app using clean architecture:
+Here is an example of finance app using clean architecture:
 
 ![Finance App](doc/eng/clean-architecture/finance-app.jpg)
 
-### Service Level Archtecture
+### Service Level Architecture
 
 Short adopts [Microservices Architecture](https://api.short-d.com/r/ms) to
 organize dependent services around business capabilities and to enable
@@ -239,7 +239,7 @@ independent deployment of each service.
 
 ### Object Oriented Design
 
-Short leverages class design, package cohesion, and package coupling princiapls
+Short leverages class design, package cohesion, and package coupling principles
 to manage logical dependency between internal components.
 
 #### Class Design
@@ -295,7 +295,7 @@ func NewAuthenticator(
 
 Short also simplifies the management of the big block of order-dependent
 initialization code with [Wire](https://api.short-d.com/r/wire), a compile time
-depedency injection framework by Google.
+dependency injection framework by Google.
 
 ```go
 func InjectGraphQlService(
@@ -545,7 +545,7 @@ cd backend
 
 #### Test Structure
 
-A automated test method should be composed of 3As: Arrange, Act, and Assert.
+An automated test method should be composed of 3As: Arrange, Act, and Assert.
 
 - [A]rrange: All the data needed for a test should be arranged as part
   of the test. The data used in a test should not depend on the environment
