@@ -17,10 +17,6 @@ function getSearchBarUtil() {
         {
           originalUrl: 'https://github.com/short-d/short/',
           alias: 'short'
-        },
-        {
-          originalUrl: 'https://developer.mozilla.org/en-US/',
-          alias: 'mozilla'
         }
       ]}
     />
