@@ -115,6 +115,93 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 	}
 }
 
+func TestUserSql_GetUserByID(t *testing.T) {
+	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
+
+	testCases := []struct {
+		name      string
+		tableRows []userTableRow
+		id        string
+		hasErr    bool
+		expUser   entity.User
+	}{
+		{
+			name:      "ID doesn't exist",
+			id:        "alpha",
+			tableRows: []userTableRow{},
+			hasErr:    true,
+		},
+		{
+			name: "ID found",
+			id:   "alpha",
+			tableRows: []userTableRow{
+				{
+					id:           "alpha",
+					email:        "alpha@example.com",
+					name:         "Alpha",
+					lastSignedIn: &twoYearsAgo,
+					createdAt:    &twoYearsAgo,
+					updatedAt:    &twoYearsAgo,
+				},
+			},
+			hasErr: false,
+			expUser: entity.User{
+				ID:             "alpha",
+				Name:           "Alpha",
+				Email:          "alpha@example.com",
+				LastSignedInAt: &twoYearsAgo,
+				CreatedAt:      &twoYearsAgo,
+				UpdatedAt:      &twoYearsAgo,
+			},
+		},
+		{
+			name: "nil time",
+			id:   "alpha",
+			tableRows: []userTableRow{
+				{
+					id:           "alpha",
+					email:        "alpha@example.com",
+					name:         "Alpha",
+					lastSignedIn: nil,
+					createdAt:    nil,
+					updatedAt:    nil,
+				},
+			},
+			hasErr: false,
+			expUser: entity.User{
+				ID:             "alpha",
+				Name:           "Alpha",
+				Email:          "alpha@example.com",
+				LastSignedInAt: nil,
+				CreatedAt:      nil,
+				UpdatedAt:      nil,
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.tableRows)
+
+					userRepo := db.NewUserSQL(sqlDB)
+					gotUser, err := userRepo.GetUserByID(testCase.id)
+					if testCase.hasErr {
+						mdtest.NotEqual(t, nil, err)
+						return
+					}
+					mdtest.Equal(t, nil, err)
+					mdtest.Equal(t, testCase.expUser, gotUser)
+				})
+		})
+	}
+}
+
 func TestUserSql_GetUserByEmail(t *testing.T) {
 	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 

@@ -60,6 +60,45 @@ WHERE "%s"=$1;
 	return true, nil
 }
 
+// GetUserByID finds an User in user table given user ID.
+func (u UserSQL) GetUserByID(id string) (entity.User, error) {
+	query := fmt.Sprintf(`
+SELECT "%s","%s","%s","%s","%s", "%s"
+FROM "%s" 
+WHERE "%s"=$1;
+`,
+		table.User.ColumnID,
+		table.User.ColumnEmail,
+		table.User.ColumnName,
+		table.User.ColumnLastSignedInAt,
+		table.User.ColumnCreatedAt,
+		table.User.ColumnUpdatedAt,
+		table.User.TableName,
+		table.User.ColumnID,
+	)
+
+	row := u.db.QueryRow(query, id)
+
+	user := entity.User{}
+	err := row.Scan(
+		&user.ID,
+		&user.Email,
+		&user.Name,
+		&user.LastSignedInAt,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		return user, err
+	}
+
+	user.CreatedAt = utc(user.CreatedAt)
+	user.UpdatedAt = utc(user.UpdatedAt)
+	user.LastSignedInAt = utc(user.LastSignedInAt)
+
+	return user, nil
+}
+
 // GetUserByEmail finds an User in user table given email.
 func (u UserSQL) GetUserByEmail(email string) (entity.User, error) {
 	query := fmt.Sprintf(`
