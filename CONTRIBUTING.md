@@ -11,7 +11,7 @@ Please post your weekly contributions on our Slack every Friday during your conv
 
 - Exploring the codebase
 - Learnings new tools, infrastructures, libraries, algorithms, designs, or concepts
-- Experimenting with diffierent technologies and sharing the findings with the group
+- Experimenting with different technologies and sharing the findings with the group
 - Prototyping new features
 - Fixing bugs
 - Improving maintainability, scalability, reliability and performance of existing system
@@ -119,4 +119,3 @@ Note: This guideline is derived from [Google Engineering Practices Documentation
 
 Please join this [Slack channel](https://short-d.com/r/slack) to
 discuss bugs, dev environment setup, tooling, and coding best practices.
-
