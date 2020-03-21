@@ -59,27 +59,21 @@ describe('Searchbar', () => {
   test('should show autocomplete box on focus', () => {
     const { searchBarRef, input } = getSearchBarUtil();
 
-    expect(searchBarRef).toBeTruthy();
-    expect(searchBarRef.current).toBeTruthy();
-
-    expect(searchBarRef.current!.state.showAutoCompleteBox).toBe(false);
+    expect(searchBarRef.current.state.showAutoCompleteBox).toBe(false);
     input.focus();
-    expect(searchBarRef.current!.state.showAutoCompleteBox).toBe(true);
+    expect(searchBarRef.current.state.showAutoCompleteBox).toBe(true);
   });
 
   test('should hide autocomplete box on blur', async () => {
     const { searchBarRef, input } = getSearchBarUtil();
 
-    expect(searchBarRef).toBeTruthy();
-    expect(searchBarRef.current).toBeTruthy();
-
-    expect(searchBarRef.current!.state.showAutoCompleteBox).toBe(false);
+    expect(searchBarRef.current.state.showAutoCompleteBox).toBe(false);
     input.focus();
-    expect(searchBarRef.current!.state.showAutoCompleteBox).toBe(true);
+    expect(searchBarRef.current.state.showAutoCompleteBox).toBe(true);
     input.blur();
 
     await new Promise(r => setTimeout(r, 300));
 
-    expect(searchBarRef.current!.state.showAutoCompleteBox).toBe(false);
+    expect(searchBarRef.current.state.showAutoCompleteBox).toBe(false);
   });
 });
