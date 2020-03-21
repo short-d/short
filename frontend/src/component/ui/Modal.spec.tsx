@@ -1,9 +1,12 @@
 import * as React from 'react';
 import { Modal } from './Modal';
 import { render, fireEvent } from '@testing-library/react';
-jest.useFakeTimers();
 
 describe('Modal', () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
   test('should render without crash', () => {
     render(<Modal>Content</Modal>);
   });
