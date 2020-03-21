@@ -34,28 +34,27 @@ export class ChangeLogModal extends Component<Props, State> {
 
   createChangeLog = () => {
     let changeLog = this.props.changeLog;
+    if (!changeLog) {
+      return <div />;
+    }
     if (!this.state.shouldShowFullChangeLog) {
       changeLog = changeLog!.slice(0, this.props.defaultVisibleLogs);
     }
-    if (changeLog) {
-      return (
-        <div className={'changelog'}>
-          <ul>
-            {changeLog.map((update: Update) => (
-              <li key={update.releasedAt}>
-                <div className={'title'}>{update.title}</div>
-                <div className={'summary'}>{update.summary}</div>
-                <div className={'released-date'}>
-                  {moment(update.releasedAt).fromNow()}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      );
-    }
-
-    return <div />;
+    return (
+      <div className={'changelog'}>
+        <ul>
+          {changeLog.map((update: Update) => (
+            <li key={update.releasedAt}>
+              <div className={'title'}>{update.title}</div>
+              <div className={'summary'}>{update.summary}</div>
+              <div className={'released-date'}>
+                {moment(update.releasedAt).fromNow()}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
   };
 
   createShowCompleteChangeLogButton = () => {
