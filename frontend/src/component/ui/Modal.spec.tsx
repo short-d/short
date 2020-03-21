@@ -4,8 +4,9 @@ import { Modal } from './Modal';
 
 jest.useFakeTimers();
 
-it('renders without crashing', () => {
-  render(<Modal />);
+it('renders content correctly', () => {
+  const { container } = render(<Modal>Modal Content</Modal>);
+  expect(container.textContent).toMatch('Modal Content');
 });
 
 it('opens correctly', () => {
