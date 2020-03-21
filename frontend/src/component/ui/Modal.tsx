@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 interface Props {
   canClose?: boolean;
+  onModalClose?: () => void;
 }
 
 interface State {
@@ -28,14 +29,11 @@ export class Modal extends Component<Props, State> {
     this.setState({
       isOpen: true
     });
-
-    setTimeout(
-      () =>
-        this.setState({
-          isShowing: true
-        }),
-      2
-    );
+    setTimeout(() => {
+      this.setState({
+        isShowing: true
+      });
+    }, 0);
   }
 
   close() {
@@ -43,13 +41,15 @@ export class Modal extends Component<Props, State> {
       isShowing: false
     });
 
-    setTimeout(
-      () =>
-        this.setState({
-          isOpen: false
-        }),
-      transitionDuration
-    );
+    setTimeout(() => {
+      this.setState({
+        isOpen: false
+      });
+      if (!this.props.onModalClose) {
+        return;
+      }
+      this.props.onModalClose();
+    }, transitionDuration);
   }
 
   handleOnMaskClick = () => {
@@ -60,18 +60,19 @@ export class Modal extends Component<Props, State> {
 
   render() {
     return (
-      <div
-        className={classNames('modal', {
-          shown: this.state.isOpen,
-          showing: this.state.isShowing
-        })}
-        style={{
-          transitionDuration: `${transitionDuration}ms`
-        }}
-      >
-        <div className={'card'}>{this.props.children}</div>
-        <div className={'mask'} onClick={this.handleOnMaskClick} />
-      </div>
+      this.state.isOpen && (
+        <div
+          className={classNames('modal', {
+            showing: this.state.isShowing
+          })}
+          style={{
+            transitionDuration: `${transitionDuration}ms`
+          }}
+        >
+          <div className={'card'}>{this.props.children}</div>
+          <div className={'mask'} onClick={this.handleOnMaskClick} />
+        </div>
+      )
     );
   }
 }
