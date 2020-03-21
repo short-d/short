@@ -144,7 +144,6 @@ export class Home extends Component<Props, State> {
       }
 
       if (newState.err) {
-        console.log(newState.err);
         this.showError(newState.err);
       }
       this.setState(newState);
@@ -189,6 +188,9 @@ export class Home extends Component<Props, State> {
 
   handleOnErrModalCloseClick = () => {
     this.errModal.current!.close();
+  };
+
+  handleOnErrModalClose = () => {
     this.props.store.dispatch(clearError());
   };
 
@@ -285,8 +287,12 @@ export class Home extends Component<Props, State> {
         />
 
         <SignInModal ref={this.signInModal} uiFactory={this.props.uiFactory} />
-        <Modal canClose={true} ref={this.errModal}>
-          {this.state.err ? (
+        <Modal
+          canClose={true}
+          onModalClose={this.handleOnErrModalClose}
+          ref={this.errModal}
+        >
+          {this.state.err && (
             <div className={'err'}>
               <i
                 className={'material-icons close'}
@@ -298,8 +304,6 @@ export class Home extends Component<Props, State> {
               <div className={'title'}>{this.state.err.name}</div>
               <div className={'description'}>{this.state.err.description}</div>
             </div>
-          ) : (
-            false
           )}
         </Modal>
       </div>
