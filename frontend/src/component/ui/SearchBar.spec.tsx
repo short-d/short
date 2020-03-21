@@ -3,10 +3,13 @@ import { render, fireEvent } from '@testing-library/react';
 import { SearchBar } from './SearchBar';
 
 function getSearchBarUtil() {
-    const changeHandler = jest.fn();
-    const searchBarRef = React.createRef<SearchBar>();
-    const { getByPlaceholderText } = render(
-      <SearchBar ref={searchBarRef} onChange={changeHandler} autoCompleteSuggestions={[
+  const changeHandler = jest.fn();
+  const searchBarRef = React.createRef<SearchBar>();
+  const { getByPlaceholderText } = render(
+    <SearchBar
+      ref={searchBarRef}
+      onChange={changeHandler}
+      autoCompleteSuggestions={[
         {
           originalUrl: 'https://www.google.com/',
           alias: 'google'
@@ -19,52 +22,56 @@ function getSearchBarUtil() {
           originalUrl: 'https://developer.mozilla.org/en-US/',
           alias: 'mozilla'
         }
-      ]}/>
-    );
+      ]}
+    />
+  );
 
-    const input = getByPlaceholderText('Search short links') as HTMLInputElement;
-      return {
-          searchBarRef,
-          input
-      }
+  const input = getByPlaceholderText('Search short links') as HTMLInputElement;
+  return {
+    searchBarRef,
+    input
+  };
 }
 
-it('renders without crashing', () => {
-  const changeHandler = jest.fn();
-  render(<SearchBar onChange={changeHandler} />);
-});
-
-it('triggers change events successfully', async () => {
-  const changeHandler = jest.fn();
-  const { getByPlaceholderText } = render(
-    <SearchBar onChange={changeHandler} />
-  );
-  const input = getByPlaceholderText('Search short links') as HTMLInputElement;
-
-  fireEvent.change(input, {
-    target: { value: 'Lorem ipsum' }
+describe('Searchbar', () => {
+  test('should render without crash', () => {
+    const changeHandler = jest.fn();
+    render(<SearchBar onChange={changeHandler} />);
   });
 
-  expect(changeHandler).toBeCalledTimes(0);
+  test('should trigger change events successfully', async () => {
+    const changeHandler = jest.fn();
+    const { getByPlaceholderText } = render(
+      <SearchBar onChange={changeHandler} />
+    );
+    const input = getByPlaceholderText(
+      'Search short links'
+    ) as HTMLInputElement;
 
-  await new Promise(r => setTimeout(r, 300));
+    fireEvent.change(input, {
+      target: { value: 'Lorem ipsum' }
+    });
 
-  expect(changeHandler).toBeCalledTimes(1);
-  expect(changeHandler).toBeCalledWith('Lorem ipsum');
-});
+    expect(changeHandler).toBeCalledTimes(0);
 
-it('shows autocomplete box on focus', () => {
+    await new Promise(r => setTimeout(r, 300));
+
+    expect(changeHandler).toBeCalledTimes(1);
+    expect(changeHandler).toBeCalledWith('Lorem ipsum');
+  });
+
+  test('should show autocomplete box on focus', () => {
     const { searchBarRef, input } = getSearchBarUtil();
-    
+
     expect(searchBarRef).toBeTruthy();
     expect(searchBarRef.current).toBeTruthy();
 
     expect(searchBarRef.current!.state.showAutoCompleteBox).toBe(false);
     input.focus();
     expect(searchBarRef.current!.state.showAutoCompleteBox).toBe(true);
-});
+  });
 
-it('hides autocomplete box on blur', async () => {
+  test('should hide autocomplete box on blur', async () => {
     const { searchBarRef, input } = getSearchBarUtil();
 
     expect(searchBarRef).toBeTruthy();
@@ -78,4 +85,5 @@ it('hides autocomplete box on blur', async () => {
     await new Promise(r => setTimeout(r, 300));
 
     expect(searchBarRef.current!.state.showAutoCompleteBox).toBe(false);
+  });
 });
