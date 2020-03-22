@@ -24,15 +24,13 @@ func (c ChangeLogSql) getOne(id string) (entity.Changelog, error) {
 		table.ChangeLog.ColumnSummaryMarkdown,
 		table.ChangeLog.ColumnReleasedAt,
 		table.ChangeLog.TableName,
+		table.ChangeLog.ColumnID,
 	)
 
-	row, err := c.db.Query(statement, id)
+	row := c.db.QueryRow(statement, id)
 	var change = entity.Changelog{}
-	if err != nil {
-		return change, err
-	}
 
-	err = row.Scan(&change.ID, &change.Title, &change.SummaryMarkdown, &change.ReleasedAt)
+	err := row.Scan(&change.ID, &change.Title, &change.SummaryMarkdown, &change.ReleasedAt)
 	return change, err
 }
 
@@ -68,7 +66,7 @@ func (c ChangeLogSql) GetComplete() ([]entity.Changelog, error) {
 func (c ChangeLogSql) CreateOne(id string, title string, summaryMarkdown string, releasedAt time.Time) (entity.Changelog, error) {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s","%s","%s")
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ($1, $2, $3, $4);
 `,
 		table.ChangeLog.TableName,
 		table.ChangeLog.ColumnID,
@@ -77,6 +75,7 @@ VALUES ($1, $2, $3, $4, $5, $6)
 		table.ChangeLog.ColumnReleasedAt,
 	)
 
+	//fmt.Print(statement, id, title, summaryMarkdown, releasedAt)
 	_, err := c.db.Exec(
 		statement,
 		id,
@@ -86,7 +85,7 @@ VALUES ($1, $2, $3, $4, $5, $6)
 	)
 
 	if err != nil {
-		return entity.Changelog{}, nil
+		return entity.Changelog{}, err
 	}
 
 	return c.getOne(id)

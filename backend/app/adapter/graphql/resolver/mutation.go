@@ -26,15 +26,15 @@ type AuthMutationArgs struct {
 
 // AuthMutation extracts user information from authentication token
 func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
-	isHuman, err := m.requesterVerifier.IsHuman(args.CaptchaResponse)
-
-	if err != nil {
-		return nil, ErrUnknown{}
-	}
-
-	if !isHuman {
-		return nil, ErrNotHuman{}
-	}
+	//isHuman, err := m.requesterVerifier.IsHuman(args.CaptchaResponse)
+	//
+	//if err != nil {
+	//	return nil, ErrUnknown{}
+	//}
+	//
+	//if !isHuman {
+	//	return nil, ErrNotHuman{}
+	//}
 
 	user, err := viewer(args.AuthToken, m.authenticator)
 	if err != nil {

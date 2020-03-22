@@ -31,12 +31,12 @@ type CreateURLArgs struct {
 }
 
 type CreateChangeArgs struct {
-	change ChangeInput
+	Change *ChangeInput
 }
 
 type ChangeInput struct {
-	title           *string
-	summaryMarkdown *string
+	Title           *string
+	SummaryMarkdown *string
 }
 
 // CreateURL creates mapping between an alias and a long link for a given user
@@ -71,7 +71,7 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 }
 
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
-	change, err := a.changeLogCreator.CreateChange("1234", *args.change.title, *args.change.summaryMarkdown)
+	change, err := a.changeLogCreator.CreateChange("1234", *args.Change.Title, *args.Change.SummaryMarkdown)
 	return *newChange(change), err
 }
 
