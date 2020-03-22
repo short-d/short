@@ -20,8 +20,8 @@ type AuthQuery {
 }
 
 type ChangeLog {
-  changes: [Change]!
-  lastViewedAt: Time
+  	changes: [Change]!
+  	lastViewedAt: Time
 }
 
 type Change {
@@ -43,8 +43,8 @@ input URLInput {
 }
 
 input ChangeInput {
-  title: String
-  summaryMarkdown: String
+  	title: String
+  	summaryMarkdown: String
 }
 
 type URL {
