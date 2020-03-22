@@ -62,7 +62,7 @@ func (c ChangeLogSQL) GetChangeLog() ([]entity.Change, error) {
 	return changelog, nil
 }
 
-func (c ChangeLogSQL) CreateOne(newChange entity.Change) (entity.Change, error) {
+func (c ChangeLogSQL) CreateChange(newChange entity.Change) (entity.Change, error) {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s","%s","%s")
 VALUES ($1, $2, $3, $4);

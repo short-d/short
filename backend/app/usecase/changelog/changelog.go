@@ -26,7 +26,7 @@ func (p Persist) CreateChange(title string, summaryMarkdown string) (entity.Chan
 		return entity.Change{}, nil
 	}
 	newChange := entity.Change{ID: string(key), Title: title, SummaryMarkdown: summaryMarkdown, ReleasedAt: &now}
-	change, err := p.changelogRepo.CreateOne(newChange)
+	change, err := p.changelogRepo.CreateChange(newChange)
 	if err != nil {
 		return entity.Change{}, err
 	}

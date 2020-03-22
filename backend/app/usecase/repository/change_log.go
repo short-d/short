@@ -7,5 +7,5 @@ import (
 // Change accesses changelog information from storage, such as database.
 type Changelog interface {
 	GetChangeLog() ([]entity.Change, error)
-	CreateOne(newChange entity.Change) (entity.Change, error)
+	CreateChange(newChange entity.Change) (entity.Change, error)
 }
