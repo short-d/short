@@ -13,8 +13,13 @@ import { validateCustomAliasFormat } from '../validators/CustomAlias.validator';
 import { ErrorService, Err } from './Error.service';
 import { IErr } from '../entity/Err';
 
+interface ICreatedUrl {
+  alias: string;
+  originalURL: string;
+}
+
 interface IAuthMutation {
-  createURL: Url;
+  createURL: ICreatedUrl;
 }
 
 interface ICreateURLData {
@@ -135,34 +140,50 @@ export class UrlService {
     );
     let alias = link.alias === '' ? null : link.alias!;
     let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
-    return new Promise<Url>((resolve, reject: (errCodes: Err[]) => any) => {
-      this.gqlClient
-        .mutate({
-          variables: variables,
-          mutation: gqlCreateURL
-        })
-        .then((res: FetchResult<ICreateURLData>) => {
-          console.log(res);
-          if (!res || !res.data) {
-            return resolve({});
-          }
-          resolve(res.data.authMutation.createURL);
-        })
-        .catch(({ graphQLErrors, networkError, message }) => {
-          if (networkError) {
-            reject([Err.NetworkError]);
-            return;
-          }
-          if (!graphQLErrors || graphQLErrors.length === 0) {
-            reject([Err.Unknown]);
-            return;
-          }
-          const errCodes = graphQLErrors.map((graphQLError: GraphQlError) =>
-            graphQLError.extensions ? graphQLError.extensions.code : Err.Unknown
-          );
-          reject(errCodes);
-        });
-    });
+    return new Promise<Url>(
+      (
+        resolve: (createdURL: Url) => void,
+        reject: (errCodes: Err[]) => any
+      ) => {
+        this.gqlClient
+          .mutate({
+            variables: variables,
+            mutation: gqlCreateURL
+          })
+          .then((res: FetchResult<ICreateURLData>) => {
+            if (!res || !res.data) {
+              return reject([]);
+            }
+            const url = this.getUrlFromCreatedUrl(
+              res.data.authMutation.createURL
+            );
+            resolve(url);
+          })
+          .catch(({ graphQLErrors, networkError, message }) => {
+            if (networkError) {
+              reject([Err.NetworkError]);
+              return;
+            }
+            if (!graphQLErrors || graphQLErrors.length === 0) {
+              reject([Err.Unknown]);
+              return;
+            }
+            const errCodes = graphQLErrors.map((graphQLError: GraphQlError) =>
+              graphQLError.extensions
+                ? graphQLError.extensions.code
+                : Err.Unknown
+            );
+            reject(errCodes);
+          });
+      }
+    );
+  }
+
+  private getUrlFromCreatedUrl(createdUrl: ICreatedUrl): Url {
+    return {
+      originalUrl: createdUrl.originalURL,
+      alias: createdUrl.alias
+    };
   }
 
   private gqlCreateURLVariable(
