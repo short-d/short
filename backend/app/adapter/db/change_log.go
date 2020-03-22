@@ -11,13 +11,13 @@ import (
 	"github.com/short-d/short/app/usecase/repository"
 )
 
-var _ repository.Changelog = (*ChangeLogSql)(nil)
+var _ repository.Changelog = (*ChangeLogSQL)(nil)
 
-type ChangeLogSql struct {
+type ChangeLogSQL struct {
 	db *sql.DB
 }
 
-func (c ChangeLogSql) getOne(id string) (entity.Changelog, error) {
+func (c ChangeLogSQL) GetChangeByID(id string) (entity.Change, error) {
 	statement := fmt.Sprintf(`SELECT "%s","%s","%s","%s" FROM "%s" WHERE "%s"=$1;`,
 		table.ChangeLog.ColumnID,
 		table.ChangeLog.ColumnTitle,
@@ -28,13 +28,13 @@ func (c ChangeLogSql) getOne(id string) (entity.Changelog, error) {
 	)
 
 	row := c.db.QueryRow(statement, id)
-	var change = entity.Changelog{}
+	var change = entity.Change{}
 
 	err := row.Scan(&change.ID, &change.Title, &change.SummaryMarkdown, &change.ReleasedAt)
 	return change, err
 }
 
-func (c ChangeLogSql) GetComplete() ([]entity.Changelog, error) {
+func (c ChangeLogSQL) GetChangeLog() ([]entity.Change, error) {
 	statement := fmt.Sprintf(`SELECT "%s","%s","%s","%s" FROM "%s";`,
 		table.ChangeLog.ColumnID,
 		table.ChangeLog.ColumnTitle,
@@ -43,7 +43,7 @@ func (c ChangeLogSql) GetComplete() ([]entity.Changelog, error) {
 		table.ChangeLog.TableName,
 	)
 
-	var changelog []entity.Changelog
+	var changelog []entity.Change
 	rows, err := c.db.Query(statement)
 
 	if err != nil {
@@ -51,7 +51,7 @@ func (c ChangeLogSql) GetComplete() ([]entity.Changelog, error) {
 	}
 
 	for rows.Next() {
-		change := entity.Changelog{}
+		change := entity.Change{}
 		err = rows.Scan(&change.ID, &change.Title, &change.SummaryMarkdown, &change.ReleasedAt)
 		if err != nil {
 			return changelog, err
@@ -63,7 +63,7 @@ func (c ChangeLogSql) GetComplete() ([]entity.Changelog, error) {
 	return changelog, nil
 }
 
-func (c ChangeLogSql) CreateOne(id string, title string, summaryMarkdown string, releasedAt time.Time) (entity.Changelog, error) {
+func (c ChangeLogSQL) CreateOne(id string, title string, summaryMarkdown string, releasedAt time.Time) (entity.Change, error) {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s","%s","%s")
 VALUES ($1, $2, $3, $4);
@@ -84,14 +84,14 @@ VALUES ($1, $2, $3, $4);
 	)
 
 	if err != nil {
-		return entity.Changelog{}, err
+		return entity.Change{}, err
 	}
 
-	return c.getOne(id)
+	return c.GetChangeByID(id)
 }
 
-func NewChangeLogSql(db *sql.DB) *ChangeLogSql {
-	return &ChangeLogSql{
+func NewChangeLogSQL(db *sql.DB) *ChangeLogSQL {
+	return &ChangeLogSQL{
 		db: db,
 	}
 }

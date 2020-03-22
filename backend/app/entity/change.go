@@ -2,7 +2,7 @@ package entity
 
 import "time"
 
-type Changelog struct {
+type Change struct {
 	ID              string
 	Title           string
 	SummaryMarkdown string

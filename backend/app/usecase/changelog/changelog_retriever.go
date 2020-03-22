@@ -8,15 +8,15 @@ import (
 var _ Retriever = (*RetrieverPersist)(nil)
 
 type Retriever interface {
-	GetChangelog() ([]entity.Changelog, error)
+	GetChangelog() ([]entity.Change, error)
 }
 
 type RetrieverPersist struct {
 	changelogRepo repository.Changelog
 }
 
-func (c RetrieverPersist) GetChangelog() ([]entity.Changelog, error) {
-	changelog, err := c.changelogRepo.GetComplete()
+func (c RetrieverPersist) GetChangelog() ([]entity.Change, error) {
+	changelog, err := c.changelogRepo.GetChangeLog()
 	if err != nil {
 		return nil, err
 	}

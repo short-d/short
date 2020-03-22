@@ -7,8 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"time"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdcli"
@@ -34,6 +32,7 @@ import (
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
 	"github.com/short-d/short/dep/provider"
+	"time"
 )
 
 // Injectors from wire.go:
@@ -78,9 +77,9 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	longLink := validator.NewLongLink()
 	customAlias := validator.NewCustomAlias()
 	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias)
-	changeLogSql := db.NewChangeLogSql(sqlDB)
-	changelogRetrieverPersist := changelog.NewRetrieverPersist(changeLogSql)
-	changelogCreatorPersist := changelog.NewCreatorPersist(changeLogSql)
+	changeLogSQL := db.NewChangeLogSQL(sqlDB)
+	changelogRetrieverPersist := changelog.NewRetrieverPersist(changeLogSQL)
+	changelogCreatorPersist := changelog.NewCreatorPersist(changeLogSQL)
 	client := mdhttp.NewClient()
 	http := mdrequest.NewHTTP(client)
 	reCaptcha := provider.NewReCaptchaService(http, secret)

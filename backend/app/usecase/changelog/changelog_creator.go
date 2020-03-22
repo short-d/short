@@ -10,18 +10,18 @@ import (
 var _ Creator = (*CreatorPersist)(nil)
 
 type Creator interface {
-	CreateChange(id string, title string, summaryMarkdown string) (entity.Changelog, error)
+	CreateChange(id string, title string, summaryMarkdown string) (entity.Change, error)
 }
 
 type CreatorPersist struct {
 	changelogRepo repository.Changelog
 }
 
-func (c CreatorPersist) CreateChange(id string, title string, summaryMarkdown string) (entity.Changelog, error) {
+func (c CreatorPersist) CreateChange(id string, title string, summaryMarkdown string) (entity.Change, error) {
 	currentTime := time.Now()
 	change, err := c.changelogRepo.CreateOne(id, title, summaryMarkdown, currentTime)
 	if err != nil {
-		return entity.Changelog{}, err
+		return entity.Change{}, err
 	}
 	return change, nil
 }
