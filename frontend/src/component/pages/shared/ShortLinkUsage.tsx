@@ -10,7 +10,6 @@ interface Props {
 
 export class ShortLinkUsage extends Component<Props> {
   render() {
-    console.log('ShortLinkUsage: originalUrl', this.props.originalUrl);
     return (
       <div className={'short-link-usage'}>
         <div>

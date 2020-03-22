@@ -211,7 +211,6 @@ export class Home extends Component<Props, State> {
     this.props.urlService
       .createShortLink(editingUrl)
       .then((createdUrl: Url) => {
-        console.log('Create Short Link response: ', createdUrl);
         this.props.store.dispatch(updateCreatedUrl(createdUrl));
       })
       .catch(({ authorizationErr, createShortLinkErr }) => {
