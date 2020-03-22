@@ -3,15 +3,17 @@ package resolver
 import (
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/url"
 )
 
 // Query represents GraphQL query resolver
 type Query struct {
-	logger        fw.Logger
-	tracer        fw.Tracer
-	authenticator auth.Authenticator
-	urlRetriever  url.Retriever
+	logger             fw.Logger
+	tracer             fw.Tracer
+	authenticator      auth.Authenticator
+	changeLogRetriever changelog.Retriever
+	urlRetriever       url.Retriever
 }
 
 // AuthQueryArgs represents possible parameters for AuthQuery endpoint
@@ -26,7 +28,7 @@ func (q Query) AuthQuery(args *AuthQueryArgs) (*AuthQuery, error) {
 		return nil, err
 	}
 
-	authQuery := newAuthQuery(user, q.urlRetriever)
+	authQuery := newAuthQuery(user, q.changeLogRetriever, q.urlRetriever)
 	return &authQuery, nil
 }
 
@@ -34,12 +36,14 @@ func newQuery(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	authenticator auth.Authenticator,
+	changeLogRetriever changelog.Retriever,
 	urlRetriever url.Retriever,
 ) Query {
 	return Query{
-		logger:        logger,
-		tracer:        tracer,
-		authenticator: authenticator,
-		urlRetriever:  urlRetriever,
+		logger:             logger,
+		tracer:             tracer,
+		authenticator:      authenticator,
+		changeLogRetriever: changeLogRetriever,
+		urlRetriever:       urlRetriever,
 	}
 }

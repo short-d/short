@@ -6,6 +6,8 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/short-d/short/app/usecase/changelog"
+
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdcli"
@@ -27,7 +29,6 @@ import (
 	"github.com/short-d/short/app/adapter/graphql"
 	"github.com/short-d/short/app/adapter/kgs"
 	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/service"
@@ -121,11 +122,13 @@ func InjectGraphQLService(
 		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
 		wire.Bind(new(fw.GraphQLAPI), new(graphql.Short)),
+		wire.Bind(new(changelog.Retriever), new(changelog.RetrieverPersist)),
+		wire.Bind(new(changelog.Creator), new(changelog.CreatorPersist)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
 		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
+		wire.Bind(new(repository.Changelog), new(*db.ChangeLogSql)),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
-		wire.Bind(new(keygen.KeyGenerator), new(keygen.Remote)),
 		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
@@ -140,6 +143,7 @@ func InjectGraphQLService(
 		mdrequest.NewHTTP,
 		mdtimer.NewTimer,
 
+		db.NewChangeLogSql,
 		db.NewURLSql,
 		db.NewUserURLRelationSQL,
 		provider.NewKeyGenerator,
@@ -147,6 +151,8 @@ func InjectGraphQLService(
 		validator.NewCustomAlias,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
+		changelog.NewRetrieverPersist,
+		changelog.NewCreatorPersist,
 		provider.NewKgsRPC,
 		provider.NewReCaptchaService,
 		requester.NewVerifier,

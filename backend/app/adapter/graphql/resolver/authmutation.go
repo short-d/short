@@ -5,14 +5,16 @@ import (
 	"time"
 
 	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/url"
 )
 
 // AuthMutation represents GraphQL mutation resolver that acts differently based
 // on the identify of the user
 type AuthMutation struct {
-	user       *entity.User
-	urlCreator url.Creator
+	user       			*entity.User
+	changeLogCreator	changelog.Creator
+	urlCreator 			url.Creator
 }
 
 // URLInput represents possible URL attributes
@@ -26,6 +28,15 @@ type URLInput struct {
 type CreateURLArgs struct {
 	URL      URLInput
 	IsPublic bool
+}
+
+type CreateChangeArgs struct {
+	change 	ChangeInput
+}
+
+type ChangeInput struct {
+	title 			*string
+	summaryMarkdown *string
 }
 
 // CreateURL creates mapping between an alias and a long link for a given user
@@ -59,9 +70,15 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 }
 
-func newAuthMutation(user *entity.User, urlCreator url.Creator) AuthMutation {
+func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
+	change, err := a.changeLogCreator.CreateChange("1234", *args.change.title, *args.change.summaryMarkdown)
+	return *newChange(change), err
+}
+
+func newAuthMutation(user *entity.User, changeLogCreator changelog.Creator, urlCreator url.Creator) AuthMutation {
 	return AuthMutation{
-		user:       user,
-		urlCreator: urlCreator,
+		user:       		user,
+		changeLogCreator: 	changeLogCreator,
+		urlCreator: 		urlCreator,
 	}
 }
