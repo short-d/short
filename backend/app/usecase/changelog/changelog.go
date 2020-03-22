@@ -15,7 +15,7 @@ type ChangeLog interface {
 
 type Persist struct {
 	keyGen        keygen.KeyGenerator
-	timer 		  fw.Timer
+	timer         fw.Timer
 	changelogRepo repository.Changelog
 }
 
@@ -42,5 +42,5 @@ func (p Persist) GetChangelog() ([]entity.Change, error) {
 }
 
 func NewPersist(keyGen keygen.KeyGenerator, timer fw.Timer, changelog repository.Changelog) Persist {
-	return Persist{keyGen, timer,changelog}
+	return Persist{keyGen, timer, changelog}
 }
