@@ -13,7 +13,7 @@ import (
 // on the identify of the user
 type AuthMutation struct {
 	user             *entity.User
-	changeLogCreator changelog.Creator
+	changeLogControl changelog.ChangeLog
 	urlCreator       url.Creator
 }
 
@@ -71,14 +71,14 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 }
 
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
-	change, err := a.changeLogCreator.CreateChange("1234", *args.Change.Title, *args.Change.SummaryMarkdown)
+	change, err := a.changeLogControl.CreateChange(*args.Change.Title, *args.Change.SummaryMarkdown)
 	return *newChange(change), err
 }
 
-func newAuthMutation(user *entity.User, changeLogCreator changelog.Creator, urlCreator url.Creator) AuthMutation {
+func newAuthMutation(user *entity.User, changeLogControl changelog.ChangeLog, urlCreator url.Creator) AuthMutation {
 	return AuthMutation{
 		user:             user,
-		changeLogCreator: changeLogCreator,
+		changeLogControl: changeLogControl,
 		urlCreator:       urlCreator,
 	}
 }

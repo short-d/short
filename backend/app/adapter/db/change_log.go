@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"time"
 
 	"github.com/short-d/short/app/adapter/db/table"
 
@@ -63,7 +62,7 @@ func (c ChangeLogSQL) GetChangeLog() ([]entity.Change, error) {
 	return changelog, nil
 }
 
-func (c ChangeLogSQL) CreateOne(id string, title string, summaryMarkdown string, releasedAt time.Time) (entity.Change, error) {
+func (c ChangeLogSQL) CreateOne(newChange entity.Change) (entity.Change, error) {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s","%s","%s")
 VALUES ($1, $2, $3, $4);
@@ -77,17 +76,17 @@ VALUES ($1, $2, $3, $4);
 
 	_, err := c.db.Exec(
 		statement,
-		id,
-		title,
-		summaryMarkdown,
-		releasedAt,
+		newChange.ID,
+		newChange.Title,
+		newChange.SummaryMarkdown,
+		newChange.ReleasedAt,
 	)
 
 	if err != nil {
 		return entity.Change{}, err
 	}
 
-	return c.GetChangeByID(id)
+	return c.GetChangeByID(newChange.ID)
 }
 
 func NewChangeLogSQL(db *sql.DB) *ChangeLogSQL {

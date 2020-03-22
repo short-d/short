@@ -78,8 +78,7 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	customAlias := validator.NewCustomAlias()
 	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias)
 	changeLogSQL := db.NewChangeLogSQL(sqlDB)
-	changelogRetrieverPersist := changelog.NewRetrieverPersist(changeLogSQL)
-	changelogCreatorPersist := changelog.NewCreatorPersist(changeLogSQL)
+	persist := changelog.NewPersist(keyGenerator, timer, changeLogSQL)
 	client := mdhttp.NewClient()
 	http := mdrequest.NewHTTP(client)
 	reCaptcha := provider.NewReCaptchaService(http, secret)
@@ -87,7 +86,7 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
-	short := graphql.NewShort(local, tracer, retrieverPersist, creatorPersist, changelogRetrieverPersist, changelogCreatorPersist, verifier, authenticator)
+	short := graphql.NewShort(local, tracer, retrieverPersist, creatorPersist, persist, verifier, authenticator)
 	server := provider.NewGraphGophers(graphqlPath, local, tracer, short)
 	service := mdservice.New(name, server, local)
 	return service, nil

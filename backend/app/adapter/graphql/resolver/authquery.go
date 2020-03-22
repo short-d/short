@@ -13,9 +13,9 @@ import (
 // AuthQuery represents GraphQL query resolver that acts differently based
 // on the identify of the user
 type AuthQuery struct {
-	user               *entity.User
-	changeLogRetriever changelog.Retriever
-	urlRetriever       url.Retriever
+	user             *entity.User
+	changeLogControl changelog.ChangeLog
+	urlRetriever     url.Retriever
 }
 
 // URLArgs represents possible parameters for URL endpoint
@@ -39,7 +39,7 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 }
 
 func (v AuthQuery) ChangeLog() (*ChangeLog, error) {
-	changeLog, err := v.changeLogRetriever.GetChangelog()
+	changeLog, err := v.changeLogControl.GetChangelog()
 	if err != nil {
 		return nil, err
 	}
@@ -47,10 +47,10 @@ func (v AuthQuery) ChangeLog() (*ChangeLog, error) {
 	return newChangeLog(changeLog), nil
 }
 
-func newAuthQuery(user *entity.User, changeLogRetriever changelog.Retriever, urlRetriever url.Retriever) AuthQuery {
+func newAuthQuery(user *entity.User, changeLogControl changelog.ChangeLog, urlRetriever url.Retriever) AuthQuery {
 	return AuthQuery{
-		user:               user,
-		changeLogRetriever: changeLogRetriever,
-		urlRetriever:       urlRetriever,
+		user:             user,
+		changeLogControl: changeLogControl,
+		urlRetriever:     urlRetriever,
 	}
 }
