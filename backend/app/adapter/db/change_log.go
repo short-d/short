@@ -75,7 +75,6 @@ VALUES ($1, $2, $3, $4);
 		table.ChangeLog.ColumnReleasedAt,
 	)
 
-	//fmt.Print(statement, id, title, summaryMarkdown, releasedAt)
 	_, err := c.db.Exec(
 		statement,
 		id,
