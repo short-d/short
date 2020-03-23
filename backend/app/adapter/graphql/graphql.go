@@ -33,14 +33,14 @@ func NewShort(
 	tracer fw.Tracer,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
-	changeLogControl changelog.ChangeLog,
+	changeLog changelog.ChangeLog,
 	requesterVerifier requester.Verifier,
 	authenticator auth.Authenticator,
 ) Short {
 	r := resolver.NewResolver(
 		logger,
 		tracer,
-		changeLogControl,
+		changeLog,
 		urlRetriever,
 		urlCreator,
 		requesterVerifier,

@@ -15,7 +15,7 @@ type Mutation struct {
 	urlCreator        url.Creator
 	requesterVerifier requester.Verifier
 	authenticator     auth.Authenticator
-	changeLogControl  changelog.ChangeLog
+	changeLog         changelog.ChangeLog
 }
 
 // AuthMutationArgs represents possible parameters for AuthMutation endpoint
@@ -41,14 +41,14 @@ func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
 		return nil, err
 	}
 
-	authMutation := newAuthMutation(user, m.changeLogControl, m.urlCreator)
+	authMutation := newAuthMutation(user, m.changeLog, m.urlCreator)
 	return &authMutation, nil
 }
 
 func newMutation(
 	logger fw.Logger,
 	tracer fw.Tracer,
-	changeLogControl changelog.ChangeLog,
+	changeLog changelog.ChangeLog,
 	urlCreator url.Creator,
 	requesterVerifier requester.Verifier,
 	authenticator auth.Authenticator,
@@ -56,7 +56,7 @@ func newMutation(
 	return Mutation{
 		logger:            logger,
 		tracer:            tracer,
-		changeLogControl:  changeLogControl,
+		changeLog:         changeLog,
 		urlCreator:        urlCreator,
 		requesterVerifier: requesterVerifier,
 		authenticator:     authenticator,

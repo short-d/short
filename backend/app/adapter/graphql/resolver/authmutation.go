@@ -12,9 +12,9 @@ import (
 // AuthMutation represents GraphQL mutation resolver that acts differently based
 // on the identify of the user
 type AuthMutation struct {
-	user             *entity.User
-	changeLogControl changelog.ChangeLog
-	urlCreator       url.Creator
+	user       *entity.User
+	changeLog  changelog.ChangeLog
+	urlCreator url.Creator
 }
 
 // URLInput represents possible URL attributes
@@ -71,14 +71,14 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 }
 
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
-	change, err := a.changeLogControl.CreateChange(*args.Change.Title, *args.Change.SummaryMarkdown)
+	change, err := a.changeLog.CreateChange(*args.Change.Title, *args.Change.SummaryMarkdown)
 	return newChange(change), err
 }
 
-func newAuthMutation(user *entity.User, changeLogControl changelog.ChangeLog, urlCreator url.Creator) AuthMutation {
+func newAuthMutation(user *entity.User, changeLog changelog.ChangeLog, urlCreator url.Creator) AuthMutation {
 	return AuthMutation{
-		user:             user,
-		changeLogControl: changeLogControl,
-		urlCreator:       urlCreator,
+		user:       user,
+		changeLog:  changeLog,
+		urlCreator: urlCreator,
 	}
 }
