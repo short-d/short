@@ -12,10 +12,12 @@ import (
 
 var _ repository.ChangeLog = (*ChangeLogSQL)(nil)
 
+// ChangeLogSQL accesses ChangeLog information in change_log table through SQL.
 type ChangeLogSQL struct {
 	db *sql.DB
 }
 
+// GetChangeByID finds Change from change_log table with given id
 func (c ChangeLogSQL) GetChangeByID(id string) (entity.Change, error) {
 	statement := fmt.Sprintf(`SELECT "%s","%s","%s","%s" FROM "%s" WHERE "%s"=$1;`,
 		table.ChangeLog.ColumnID,
@@ -33,6 +35,7 @@ func (c ChangeLogSQL) GetChangeByID(id string) (entity.Change, error) {
 	return change, err
 }
 
+// GetChangeLog retrieves complete changelog from change_log table
 func (c ChangeLogSQL) GetChangeLog() ([]entity.Change, error) {
 	statement := fmt.Sprintf(`SELECT "%s","%s","%s","%s" FROM "%s";`,
 		table.ChangeLog.ColumnID,
@@ -62,6 +65,7 @@ func (c ChangeLogSQL) GetChangeLog() ([]entity.Change, error) {
 	return changeLog, nil
 }
 
+// CreateChange inserts a new Change into change_log table
 func (c ChangeLogSQL) CreateChange(newChange entity.Change) (entity.Change, error) {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s","%s","%s")
@@ -89,6 +93,7 @@ VALUES ($1, $2, $3, $4);
 	return c.GetChangeByID(newChange.ID)
 }
 
+// NewChangeLogSQL creates ChangeLogSQL
 func NewChangeLogSQL(db *sql.DB) *ChangeLogSQL {
 	return &ChangeLogSQL{
 		db: db,
