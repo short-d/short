@@ -40,11 +40,12 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 
 func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	changeLog, err := v.changeLogControl.GetChangelog()
+	currentTime := time.Now()
 	if err != nil {
-		return newChangeLog([]entity.Change{}), err
+		return newChangeLog([]entity.Change{}, currentTime), err
 	}
 
-	return newChangeLog(changeLog), nil
+	return newChangeLog(changeLog, currentTime), nil
 }
 
 func newAuthQuery(user *entity.User, changeLogControl changelog.ChangeLog, urlRetriever url.Retriever) AuthQuery {

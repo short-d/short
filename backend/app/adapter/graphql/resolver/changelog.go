@@ -8,7 +8,8 @@ import (
 )
 
 type ChangeLog struct {
-	changeLog []Change
+	changeLog    []Change
+	lastViewedAt time.Time
 }
 
 func (c ChangeLog) Changes() []Change {
@@ -16,15 +17,14 @@ func (c ChangeLog) Changes() []Change {
 }
 
 func (c ChangeLog) LastViewedAt() *scalar.Time {
-	currentTime := time.Now()
-	return &scalar.Time{Time: currentTime}
+	return &scalar.Time{Time: c.lastViewedAt}
 }
 
-func newChangeLog(changelog []entity.Change) ChangeLog {
+func newChangeLog(changelog []entity.Change, lastViewedAt time.Time) ChangeLog {
 	var changes []Change
 	for _, v := range changelog {
 		changes = append(changes, newChange(v))
 	}
 
-	return ChangeLog{changeLog: changes}
+	return ChangeLog{changeLog: changes, lastViewedAt: lastViewedAt}
 }
