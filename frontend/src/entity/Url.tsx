@@ -1,4 +1,4 @@
 export interface Url {
-  originalUrl?: string;
-  alias?: string;
+  originalUrl: string;
+  alias: string;
 }
