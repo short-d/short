@@ -20,7 +20,7 @@ type AuthQuery {
 }
 
 type ChangeLog {
-  	changes: [Change]!
+  	changes: [Change!]!
   	lastViewedAt: Time
 }
 

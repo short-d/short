@@ -38,10 +38,10 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 	return &URL{url: u}, nil
 }
 
-func (v AuthQuery) ChangeLog() (*ChangeLog, error) {
+func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	changeLog, err := v.changeLogControl.GetChangelog()
 	if err != nil {
-		return nil, err
+		return newChangeLog([]entity.Change{}), err
 	}
 
 	return newChangeLog(changeLog), nil

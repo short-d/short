@@ -9,7 +9,7 @@ type Change struct {
 	change entity.Change
 }
 
-func (c Change) Id() string {
+func (c Change) ID() string {
 	return c.change.ID
 }
 
@@ -25,6 +25,6 @@ func (c Change) ReleasedAt() scalar.Time {
 	return scalar.Time{Time: *c.change.ReleasedAt}
 }
 
-func newChange(change entity.Change) *Change {
-	return &Change{change: change}
+func newChange(change entity.Change) Change {
+	return Change{change: change}
 }

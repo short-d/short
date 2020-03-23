@@ -72,7 +72,7 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
 	change, err := a.changeLogControl.CreateChange(*args.Change.Title, *args.Change.SummaryMarkdown)
-	return *newChange(change), err
+	return newChange(change), err
 }
 
 func newAuthMutation(user *entity.User, changeLogControl changelog.ChangeLog, urlCreator url.Creator) AuthMutation {
