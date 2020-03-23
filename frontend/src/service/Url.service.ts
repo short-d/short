@@ -140,7 +140,7 @@ export class UrlService {
     );
     let alias = link.alias === '' ? null : link.alias!;
     let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
-    return new Promise<Url>( // TODO: simplify business logic below
+    return new Promise<Url>( // TODO(issue#599): simplify business logic below to improve readability
       (
         resolve: (createdURL: Url) => void,
         reject: (errCodes: Err[]) => any
