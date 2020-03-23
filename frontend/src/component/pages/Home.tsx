@@ -210,9 +210,9 @@ export class Home extends Component<Props, State> {
     const editingUrl = this.props.store.getState().editingUrl;
     this.props.urlService
       .createShortLink(editingUrl)
-      .then((createdUrl: Url) =>
-        this.props.store.dispatch(updateCreatedUrl(createdUrl))
-      )
+      .then((createdUrl: Url) => {
+        this.props.store.dispatch(updateCreatedUrl(createdUrl));
+      })
       .catch(({ authorizationErr, createShortLinkErr }) => {
         if (authorizationErr) {
           this.requestSignIn();
