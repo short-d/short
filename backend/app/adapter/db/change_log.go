@@ -17,7 +17,7 @@ type ChangeLogSQL struct {
 	db *sql.DB
 }
 
-// GetChangeByID finds Change from change_log table with given id
+// GetChangeByID finds Change from change_log table with given ID.
 func (c ChangeLogSQL) GetChangeByID(id string) (entity.Change, error) {
 	statement := fmt.Sprintf(`SELECT "%s","%s","%s","%s" FROM "%s" WHERE "%s"=$1;`,
 		table.ChangeLog.ColumnID,
@@ -35,7 +35,7 @@ func (c ChangeLogSQL) GetChangeByID(id string) (entity.Change, error) {
 	return change, err
 }
 
-// GetChangeLog retrieves complete changelog from change_log table
+// GetChangeLog retrieves full changelog from change_log table.
 func (c ChangeLogSQL) GetChangeLog() ([]entity.Change, error) {
 	statement := fmt.Sprintf(`SELECT "%s","%s","%s","%s" FROM "%s";`,
 		table.ChangeLog.ColumnID,
@@ -65,7 +65,7 @@ func (c ChangeLogSQL) GetChangeLog() ([]entity.Change, error) {
 	return changeLog, nil
 }
 
-// CreateChange inserts a new Change into change_log table
+// CreateChange adds a new Change into change_log table.
 func (c ChangeLogSQL) CreateChange(newChange entity.Change) (entity.Change, error) {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s","%s","%s")
