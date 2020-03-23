@@ -25,20 +25,22 @@ export class ClipboardService {
     let successful = false;
     try {
       successful = document.execCommand('copy');
-    } catch (err) {}
+    } catch (err) {
+      console.log(`Failed to copy ${text} into Clipboard`);
+    }
 
     document.body.removeChild(textArea);
     return successful;
   }
 
   public copyTextToClipboard(text: string): Promise<void> {
-    if (!navigator.clipboard) {
-      console.log('other');
-      return this.fallbackCopyTextToClipboard(text)
-        ? Promise.resolve()
-        : Promise.reject();
+    if (navigator.clipboard) {
+      return navigator.clipboard.writeText(text);
     }
-
-    return navigator.clipboard.writeText(text);
+    const isSuccessful = this.fallbackCopyTextToClipboard(text);
+    if (isSuccessful) {
+      return Promise.resolve();
+    }
+    return Promise.reject();
   }
 }
