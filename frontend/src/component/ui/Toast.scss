@@ -1,7 +1,7 @@
 @import '../styles/color';
 @import '../styles/corner';
 @import '../styles/font';
-@import '../styles/layouts';
+@import '../styles/center';
 
 .toast:hover {
   opacity: 1;
@@ -21,13 +21,12 @@
   z-index: 10000;
   width: 80vw;
   max-width: 300px;
-  color: #dedede;
-  background-color: $color-dark-gray;
+  color: $color-toast-text;
+  background-color: $color-toast-background;
   position: fixed;
   opacity: 0.9;
   bottom: 5vh;
-  left: 50%;
-  transform: translateX(-50%);
 
   @include round-corner;
+  @include align-center-horizontal;
 }

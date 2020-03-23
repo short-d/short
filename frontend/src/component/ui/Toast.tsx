@@ -11,19 +11,30 @@ interface States {
 }
 
 export class Toast extends Component<Props, States> {
+  private delayTimeoutHandle: any;
+
   constructor(props: Props) {
     super(props);
     this.state = {
       isShown: false
     };
+    this.delayTimeoutHandle = null;
+  }
+
+  private preemptiveHide() {
+    if (this.delayTimeoutHandle)
+      clearTimeout(this.delayTimeoutHandle);
+    this.hide();
   }
 
   showAndHide(delay: number) {
-    // return if the toast is already being shown
-    if (this.state.isShown) return;
+    // reset timer if the toast is already being shown
+    if (this.state.isShown) {
+      this.preemptiveHide();
+    }
 
     this.show();
-    setTimeout(() => {
+    this.delayTimeoutHandle = setTimeout(() => {
       this.hide();
     }, delay);
   }

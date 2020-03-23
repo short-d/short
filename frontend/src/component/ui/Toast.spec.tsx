@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { Toast } from './Toast';
 
-describe('toast', () => {
+describe('Toast component', () => {
   beforeAll(() => {
     jest.useFakeTimers();
   });
@@ -56,7 +56,7 @@ describe('toast', () => {
     jest.clearAllTimers();
   });
 
-  test('second showAndHide call should not affect first toast', () => {
+  test('second showAndHide call should replace first toast', () => {
     const toastRef = React.createRef<Toast>();
     const { container } = render(
       <Toast ref={toastRef} toastMessage={'Toast message.'} />
@@ -66,11 +66,16 @@ describe('toast', () => {
     toastRef.current!.showAndHide(2000);
 
     jest.advanceTimersByTime(1000);
-    // second showAndHide trigger before the first one closes
-    toastRef.current!.showAndHide(3000);
+    // second showAndHide trigger before the first one closes(at 1000ms)
+    toastRef.current!.showAndHide(2000);
+    expect(container.textContent).toContain('Toast message.');
+
+    jest.advanceTimersByTime(1500);
+    // time is currently 2500ms
     expect(container.textContent).toContain('Toast message.');
 
     jest.advanceTimersByTime(1000);
+    // time is currently 3500ms
     expect(container.textContent).not.toContain('Toast message.');
 
     jest.clearAllTimers();
