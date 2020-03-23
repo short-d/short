@@ -126,7 +126,7 @@ func InjectGraphQLService(
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
 		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
-		wire.Bind(new(repository.Changelog), new(*db.ChangeLogSQL)),
+		wire.Bind(new(repository.ChangeLog), new(*db.ChangeLogSQL)),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),

@@ -39,7 +39,7 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 }
 
 func (v AuthQuery) ChangeLog() (ChangeLog, error) {
-	changeLog, err := v.changeLogControl.GetChangelog()
+	changeLog, err := v.changeLogControl.GetChangeLog()
 	currentTime := time.Now()
 	if err != nil {
 		return newChangeLog([]entity.Change{}, currentTime), err

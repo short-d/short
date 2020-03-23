@@ -10,13 +10,13 @@ import (
 
 type ChangeLog interface {
 	CreateChange(title string, summaryMarkdown string) (entity.Change, error)
-	GetChangelog() ([]entity.Change, error)
+	GetChangeLog() ([]entity.Change, error)
 }
 
 type Persist struct {
 	keyGen        keygen.KeyGenerator
 	timer         fw.Timer
-	changelogRepo repository.Changelog
+	changeLogRepo repository.ChangeLog
 }
 
 func (p Persist) CreateChange(title string, summaryMarkdown string) (entity.Change, error) {
@@ -26,21 +26,21 @@ func (p Persist) CreateChange(title string, summaryMarkdown string) (entity.Chan
 		return entity.Change{}, nil
 	}
 	newChange := entity.Change{ID: string(key), Title: title, SummaryMarkdown: summaryMarkdown, ReleasedAt: &now}
-	change, err := p.changelogRepo.CreateChange(newChange)
+	change, err := p.changeLogRepo.CreateChange(newChange)
 	if err != nil {
 		return entity.Change{}, err
 	}
 	return change, nil
 }
 
-func (p Persist) GetChangelog() ([]entity.Change, error) {
-	changelog, err := p.changelogRepo.GetChangeLog()
+func (p Persist) GetChangeLog() ([]entity.Change, error) {
+	changeLog, err := p.changeLogRepo.GetChangeLog()
 	if err != nil {
 		return nil, err
 	}
-	return changelog, nil
+	return changeLog, nil
 }
 
-func NewPersist(keyGen keygen.KeyGenerator, timer fw.Timer, changelog repository.Changelog) Persist {
-	return Persist{keyGen, timer, changelog}
+func NewPersist(keyGen keygen.KeyGenerator, timer fw.Timer, changeLog repository.ChangeLog) Persist {
+	return Persist{keyGen, timer, changeLog}
 }

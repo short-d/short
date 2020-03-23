@@ -10,7 +10,7 @@ import (
 	"github.com/short-d/short/app/usecase/repository"
 )
 
-var _ repository.Changelog = (*ChangeLogSQL)(nil)
+var _ repository.ChangeLog = (*ChangeLogSQL)(nil)
 
 type ChangeLogSQL struct {
 	db *sql.DB

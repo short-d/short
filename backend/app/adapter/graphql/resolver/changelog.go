@@ -20,9 +20,9 @@ func (c ChangeLog) LastViewedAt() *scalar.Time {
 	return &scalar.Time{Time: c.lastViewedAt}
 }
 
-func newChangeLog(changelog []entity.Change, lastViewedAt time.Time) ChangeLog {
+func newChangeLog(changeLog []entity.Change, lastViewedAt time.Time) ChangeLog {
 	var changes []Change
-	for _, v := range changelog {
+	for _, v := range changeLog {
 		changes = append(changes, newChange(v))
 	}
 
