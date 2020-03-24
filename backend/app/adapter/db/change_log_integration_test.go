@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/short/app/entity"
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/adapter/db/table"
+	"github.com/short-d/short/app/entity"
 )
 
 var insertChangeLogRowSQL = fmt.Sprintf(`INSERT INTO %s (%s, %s, %s, %s) VALUES ($1, $2, $3, $4)`,
@@ -37,16 +37,37 @@ func TestChangeLogSql_GetChangeByID(t *testing.T) {
 		expectedChange entity.Change
 	}{
 		{
-			name:           "ID does not exist",
-			id:             "12345",
-			tableRows:      []changeLogTableRow{{id: "12346", title: "title 2", summaryMarkdown: "summary 2"}},
+			name: "ID does not exist",
+			id:   "12345",
+			tableRows: []changeLogTableRow{
+				{
+					id:              "12346",
+					title:           "title 2",
+					summaryMarkdown: "summary 2",
+				},
+			},
 			expectedChange: entity.Change{},
 		},
 		{
-			name:           "ID exists",
-			id:             "12345",
-			tableRows:      []changeLogTableRow{{id: "12346", title: "title 2", summaryMarkdown: "summary 2"}, {id: "12345", title: "title 1", summaryMarkdown: "summary 1"}},
-			expectedChange: entity.Change{ID: "12345", Title: "title 1", SummaryMarkdown: "summary 1"},
+			name: "ID exists",
+			id:   "12345",
+			tableRows: []changeLogTableRow{
+				{
+					id:              "12346",
+					title:           "title 2",
+					summaryMarkdown: "summary 2",
+				},
+				{
+					id:              "12345",
+					title:           "title 1",
+					summaryMarkdown: "summary 1",
+				},
+			},
+			expectedChange: entity.Change{
+				ID: "12345",
+				Title: "title 1",
+				SummaryMarkdown: "summary 1",
+			},
 		},
 	}
 
@@ -76,9 +97,35 @@ func TestChangeLogSql_GetChangeLog(t *testing.T) {
 		expectedChangeLog []entity.Change
 	}{
 		{
-			name:              "get full changelog",
-			tableRows:         []changeLogTableRow{{id: "12346", title: "title 2", summaryMarkdown: "summary 2"}, {id: "12345", title: "title 1", summaryMarkdown: "summary 1"}},
-			expectedChangeLog: []entity.Change{{ID: "12346", Title: "title 2", SummaryMarkdown: "summary 2"}, {ID: "12345", Title: "title 1", SummaryMarkdown: "summary 1"}},
+			name: "get full changelog",
+			tableRows: []changeLogTableRow{
+				{
+					id:              "12346",
+					title:           "title 2",
+					summaryMarkdown: "summary 2",
+				}, {
+					id:              "12345",
+					title:           "title 1",
+					summaryMarkdown: "summary 1",
+				},
+			},
+			expectedChangeLog: []entity.Change{
+				{
+					ID:              "12346",
+					Title:           "title 2",
+					SummaryMarkdown: "summary 2",
+				},
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: "summary 1",
+				},
+			},
+		},
+		{
+			name:              "get empty changelog",
+			tableRows:         []changeLogTableRow{},
+			expectedChangeLog: []entity.Chang{},
 		},
 	}
 
@@ -111,10 +158,29 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 	}{
 		{
 			name:                  "create a change",
-			tableRows:             []changeLogTableRow{{id: "12345", title: "title 1", summaryMarkdown: "summary 1"}, {id: "12346", title: "title 2", summaryMarkdown: "summary 2"}},
-			change:                entity.Change{ID: "23456", Title: "title 3", SummaryMarkdown: "summary 3"},
+			tableRows:             []changeLogTableRow{
+				{
+					id: "12345",
+					title: "title 1",
+					summaryMarkdown: "summary 1",
+				},
+				{
+					id: "12346",
+					title: "title 2",
+					summaryMarkdown: "summary 2",
+				},
+			},
+			change:                entity.Change{
+				ID: "23456",
+				Title: "title 3",
+				SummaryMarkdown: "summary 3",
+			},
 			expectedChangeLogSize: 3,
-			expectedChange:        entity.Change{ID: "23456", Title: "title 3", SummaryMarkdown: "summary 3"},
+			expectedChange:        entity.Change{
+				ID: "23456",
+				Title: "title 3",
+				SummaryMarkdown: "summary 3",
+			},
 		},
 	}
 

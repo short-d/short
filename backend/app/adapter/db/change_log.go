@@ -31,7 +31,7 @@ WHERE "%s"=$1;`,
 	)
 
 	row := c.db.QueryRow(statement, id)
-	 change := entity.Change{}
+	change := entity.Change{}
 
 	err := row.Scan(&change.ID, &change.Title, &change.SummaryMarkdown, &change.ReleasedAt)
 	return change, err
@@ -51,9 +51,9 @@ FROM "%s";`,
 
 	rows, err := c.db.Query(statement)
 	if err != nil {
-		return changeLog, err
+		return []entity.Change{}, err
 	}
-	
+
 	var changeLog []entity.Change
 	for rows.Next() {
 		change := entity.Change{}
