@@ -125,7 +125,7 @@ func TestChangeLogSql_GetChangeLog(t *testing.T) {
 		{
 			name:              "get empty changelog",
 			tableRows:         []changeLogTableRow{},
-			expectedChangeLog: []entity.Chang{},
+			expectedChangeLog: []entity.Change{},
 		},
 	}
 
