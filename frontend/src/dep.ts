@@ -48,7 +48,7 @@ export function initUIFactory(
   const store = initStore();
   const searchService = new SearchService();
   const changeLogService = new ChangeLogService();
-  const extensionService = BrowserExtensionFactory.createBrowserExtensionService(
+  const extensionService = new BrowserExtensionFactory().makeBrowserExtensionService(
     envService
   );
 

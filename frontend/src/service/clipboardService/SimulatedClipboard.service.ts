@@ -1,7 +1,7 @@
 import { IClipboardService } from './Clipboard.service';
 
 export class SimulatedClipboardService implements IClipboardService {
-  private setupTextAreaWithText(text: string): HTMLTextAreaElement {
+  private addInvisibleTextArea(text: string): HTMLTextAreaElement {
     let textArea = this.createInvisibleTextArea();
     textArea.value = text;
     document.body.appendChild(textArea);
@@ -33,7 +33,7 @@ export class SimulatedClipboardService implements IClipboardService {
     textArea.select();
   }
 
-  private tearDownTextArea(textArea: HTMLTextAreaElement): void {
+  private removeTextArea(textArea: HTMLTextAreaElement): void {
     document.body.removeChild(textArea);
   }
 
@@ -46,12 +46,12 @@ export class SimulatedClipboardService implements IClipboardService {
   }
 
   copyTextToClipboard(text: string): Promise<void> {
-    let textArea = this.setupTextAreaWithText(text);
+    let textArea = this.addInvisibleTextArea(text);
 
     this.selectTextInTextArea(textArea);
     let isSuccessful = this.copySelectedText();
 
-    this.tearDownTextArea(textArea);
+    this.removeTextArea(textArea);
 
     if (isSuccessful) {
       return Promise.resolve();
