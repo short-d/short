@@ -29,67 +29,6 @@ type changeLogTableRow struct {
 	releasedAt      *time.Time
 }
 
-func TestChangeLogSql_GetChangeByID(t *testing.T) {
-	testCases := []struct {
-		name           string
-		id             string
-		tableRows      []changeLogTableRow
-		expectedChange entity.Change
-	}{
-		{
-			name: "ID does not exist",
-			id:   "12345",
-			tableRows: []changeLogTableRow{
-				{
-					id:              "12346",
-					title:           "title 2",
-					summaryMarkdown: "summary 2",
-				},
-			},
-			expectedChange: entity.Change{},
-		},
-		{
-			name: "ID exists",
-			id:   "12345",
-			tableRows: []changeLogTableRow{
-				{
-					id:              "12346",
-					title:           "title 2",
-					summaryMarkdown: "summary 2",
-				},
-				{
-					id:              "12345",
-					title:           "title 1",
-					summaryMarkdown: "summary 1",
-				},
-			},
-			expectedChange: entity.Change{
-				ID: "12345",
-				Title: "title 1",
-				SummaryMarkdown: "summary 1",
-			},
-		},
-	}
-
-	for _, testCase := range testCases {
-		t.Run(testCase.name, func(t *testing.T) {
-			mdtest.AccessTestDB(
-				dbConnector,
-				dbMigrationTool,
-				dbMigrationRoot,
-				dbConfig,
-				func(sqlDB *sql.DB) {
-					insertChangeLogTableRows(t, sqlDB, testCase.tableRows)
-
-					changeLogRepo := db.NewChangeLogSQL(sqlDB)
-					change, _ := changeLogRepo.GetChangeByID(testCase.id)
-
-					mdtest.Equal(t, testCase.expectedChange, change)
-				})
-		})
-	}
-}
-
 func TestChangeLogSql_GetChangeLog(t *testing.T) {
 	testCases := []struct {
 		name              string
@@ -157,28 +96,28 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 		expectedChange        entity.Change
 	}{
 		{
-			name:                  "create a change",
-			tableRows:             []changeLogTableRow{
+			name: "create a change",
+			tableRows: []changeLogTableRow{
 				{
-					id: "12345",
-					title: "title 1",
+					id:              "12345",
+					title:           "title 1",
 					summaryMarkdown: "summary 1",
 				},
 				{
-					id: "12346",
-					title: "title 2",
+					id:              "12346",
+					title:           "title 2",
 					summaryMarkdown: "summary 2",
 				},
 			},
-			change:                entity.Change{
-				ID: "23456",
-				Title: "title 3",
+			change: entity.Change{
+				ID:              "23456",
+				Title:           "title 3",
 				SummaryMarkdown: "summary 3",
 			},
 			expectedChangeLogSize: 3,
-			expectedChange:        entity.Change{
-				ID: "23456",
-				Title: "title 3",
+			expectedChange: entity.Change{
+				ID:              "23456",
+				Title:           "title 3",
 				SummaryMarkdown: "summary 3",
 			},
 		},
