@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/short-d/short/app/adapter/db/table"
-
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/repository"
 )
@@ -19,7 +18,10 @@ type ChangeLogSQL struct {
 
 // GetChangeByID finds Change from change_log table with given ID.
 func (c ChangeLogSQL) GetChangeByID(id string) (entity.Change, error) {
-	statement := fmt.Sprintf(`SELECT "%s","%s","%s","%s" FROM "%s" WHERE "%s"=$1;`,
+	statement := fmt.Sprintf(`
+SELECT "%s","%s","%s","%s" 
+FROM "%s" 
+WHERE "%s"=$1;`,
 		table.ChangeLog.ColumnID,
 		table.ChangeLog.ColumnTitle,
 		table.ChangeLog.ColumnSummaryMarkdown,
@@ -29,7 +31,7 @@ func (c ChangeLogSQL) GetChangeByID(id string) (entity.Change, error) {
 	)
 
 	row := c.db.QueryRow(statement, id)
-	var change = entity.Change{}
+	 change := entity.Change{}
 
 	err := row.Scan(&change.ID, &change.Title, &change.SummaryMarkdown, &change.ReleasedAt)
 	return change, err
@@ -37,7 +39,9 @@ func (c ChangeLogSQL) GetChangeByID(id string) (entity.Change, error) {
 
 // GetChangeLog retrieves full changelog from change_log table.
 func (c ChangeLogSQL) GetChangeLog() ([]entity.Change, error) {
-	statement := fmt.Sprintf(`SELECT "%s","%s","%s","%s" FROM "%s";`,
+	statement := fmt.Sprintf(`
+SELECT "%s","%s","%s","%s" 
+FROM "%s";`,
 		table.ChangeLog.ColumnID,
 		table.ChangeLog.ColumnTitle,
 		table.ChangeLog.ColumnSummaryMarkdown,
@@ -45,13 +49,12 @@ func (c ChangeLogSQL) GetChangeLog() ([]entity.Change, error) {
 		table.ChangeLog.TableName,
 	)
 
-	var changeLog []entity.Change
 	rows, err := c.db.Query(statement)
-
 	if err != nil {
 		return changeLog, err
 	}
-
+	
+	var changeLog []entity.Change
 	for rows.Next() {
 		change := entity.Change{}
 		err = rows.Scan(&change.ID, &change.Title, &change.SummaryMarkdown, &change.ReleasedAt)
@@ -85,7 +88,6 @@ VALUES ($1, $2, $3, $4);
 		newChange.SummaryMarkdown,
 		newChange.ReleasedAt,
 	)
-
 	if err != nil {
 		return entity.Change{}, err
 	}
