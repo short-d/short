@@ -7,6 +7,7 @@ import (
 	"github.com/short-d/short/app/usecase/repository"
 )
 
+// ChangeLog represents a ChangeLog creator and retriever
 type ChangeLog interface {
 	CreateChange(title string, summaryMarkdown string) (entity.Change, error)
 	GetChangeLog() ([]entity.Change, error)
