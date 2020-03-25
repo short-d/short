@@ -14,7 +14,9 @@ import (
 	"github.com/short-d/short/app/entity"
 )
 
-var insertChangeLogRowSQL = fmt.Sprintf(`INSERT INTO %s (%s, %s, %s, %s) VALUES ($1, $2, $3, $4)`,
+var insertChangeLogRowSQL = fmt.Sprintf(`
+INSERT INTO %s (%s, %s, %s, %s) 
+VALUES ($1, $2, $3, $4)`,
 	table.ChangeLog.TableName,
 	table.ChangeLog.ColumnID,
 	table.ChangeLog.ColumnTitle,
