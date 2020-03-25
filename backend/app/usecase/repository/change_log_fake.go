@@ -8,7 +8,6 @@ import (
 
 var _ ChangeLog = (*ChangeLogFake)(nil)
 
-// UserFake represents in memory implementation of user repository.
 type ChangeLogFake struct {
 	changeLog []entity.Change
 }
@@ -28,7 +27,6 @@ func (c *ChangeLogFake) CreateChange(newChange entity.Change) (entity.Change, er
 	return newChange, nil
 }
 
-// NewUserFake create in memory user repository implementation.
 func NewChangeLogFake(changeLog []entity.Change) ChangeLogFake {
 	return ChangeLogFake{
 		changeLog: changeLog,
