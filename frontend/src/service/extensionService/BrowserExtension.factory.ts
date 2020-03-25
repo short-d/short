@@ -10,7 +10,7 @@ export enum SupportedBrowsers {
 }
 
 export class BrowserExtensionFactory {
-  static createBrowserExtensionService(
+  public makeBrowserExtensionService(
     envService: EnvService
   ): IBrowserExtensionService {
     const browser = detect();
