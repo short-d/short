@@ -2,53 +2,49 @@ import React, { Component } from 'react';
 
 import './Toast.scss';
 
-interface Props {
+interface IProps {
   toastMessage: string;
 }
 
-interface States {
+interface IStates {
   isShown: boolean;
 }
 
-export class Toast extends Component<Props, States> {
-  private delayTimeoutHandle: any;
+export class Toast extends Component<IProps, IStates> {
+  private hideTimeoutHandle: any;
 
-  constructor(props: Props) {
+  constructor(props: IProps) {
     super(props);
     this.state = {
       isShown: false
     };
-    this.delayTimeoutHandle = null;
+    this.hideTimeoutHandle = null;
   }
 
-  private preemptiveHide() {
-    if (this.delayTimeoutHandle)
-      clearTimeout(this.delayTimeoutHandle);
-    this.hide();
-  }
-
-  showAndHide(delay: number) {
-    // reset timer if the toast is already being shown
-    if (this.state.isShown) {
-      this.preemptiveHide();
-    }
+  public notify(duration: number) {
+    this.hideIfAlreadyShown();
 
     this.show();
-    this.delayTimeoutHandle = setTimeout(() => {
+    this.hideAfter(duration);
+  }
+
+  private hideAfter(duration: number) {
+    this.hideTimeoutHandle = setTimeout(() => this.hide(), duration);
+  }
+
+  private hideIfAlreadyShown() {
+    if (this.state.isShown) {
+      this.hideTimeoutHandle && clearTimeout(this.hideTimeoutHandle);
       this.hide();
-    }, delay);
+    }
   }
 
-  show() {
-    this.setState({
-      isShown: true
-    });
+  private show() {
+    this.setState({ isShown: true });
   }
 
-  hide() {
-    this.setState({
-      isShown: false
-    });
+  private hide() {
+    this.setState({ isShown: false });
   }
 
   render() {
@@ -56,10 +52,8 @@ export class Toast extends Component<Props, States> {
 
     return (
       this.state.isShown && (
-        <div className={`toast`}>
-          <div>
-            <p className="toast-message">{toastMessage}</p>
-          </div>
+        <div className="toast">
+          <p className="toast-message">{toastMessage}</p>
         </div>
       )
     );

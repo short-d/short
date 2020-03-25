@@ -18,24 +18,8 @@ describe('Toast component', () => {
     );
 
     expect(container.textContent).not.toContain('Toast message.');
-    toastRef.current!.show();
-    jest.runAllTimers();
+    toastRef.current!.notify(1000);
     expect(container.textContent).toContain('Toast message.');
-  });
-
-  test('should hide content correctly when triggered to hide', () => {
-    const toastRef = React.createRef<Toast>();
-    const { container } = render(
-      <Toast ref={toastRef} toastMessage={'Toast message.'} />
-    );
-
-    toastRef.current!.show();
-    jest.runAllTimers();
-    expect(container.textContent).toContain('Toast message.');
-
-    toastRef.current!.hide();
-    jest.runAllTimers();
-    expect(container.textContent).not.toContain('Toast message.');
   });
 
   test('should automatically hide content after delay', () => {
@@ -45,7 +29,7 @@ describe('Toast component', () => {
     );
 
     expect(container.textContent).not.toContain('Toast message.');
-    toastRef.current!.showAndHide(2000);
+    toastRef.current!.notify(2000);
 
     jest.advanceTimersByTime(1000);
     expect(container.textContent).toContain('Toast message.');
@@ -56,18 +40,18 @@ describe('Toast component', () => {
     jest.clearAllTimers();
   });
 
-  test('second showAndHide call should replace first toast', () => {
+  test('second notify call should replace first toast', () => {
     const toastRef = React.createRef<Toast>();
     const { container } = render(
       <Toast ref={toastRef} toastMessage={'Toast message.'} />
     );
 
     expect(container.textContent).not.toContain('Toast message.');
-    toastRef.current!.showAndHide(2000);
+    toastRef.current!.notify(2000);
 
     jest.advanceTimersByTime(1000);
-    // second showAndHide trigger before the first one closes(at 1000ms)
-    toastRef.current!.showAndHide(2000);
+    // second notify before the first one closes(at 1000ms)
+    toastRef.current!.notify(2000);
     expect(container.textContent).toContain('Toast message.');
 
     jest.advanceTimersByTime(1500);
