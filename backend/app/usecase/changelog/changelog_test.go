@@ -145,19 +145,11 @@ func TestPersist_GetChangeLog(t *testing.T) {
 					SummaryMarkdown: "Summary 2",
 				},
 			},
-			availableKeys: []service.Key{
-				"11111",
-				"22222",
-				"33333",
-			},
+			availableKeys: []service.Key{},
 		}, {
 			name:      "get empty changelog successfully",
 			changeLog: []entity.Change{},
-			availableKeys: []service.Key{
-				"11111",
-				"22222",
-				"33333",
-			},
+			availableKeys: []service.Key{},
 		},
 	}
 
