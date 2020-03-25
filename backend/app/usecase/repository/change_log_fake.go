@@ -8,14 +8,17 @@ import (
 
 var _ ChangeLog = (*ChangeLogFake)(nil)
 
+// ChangeLogFake represents in memory implementation of ChangeLog repository
 type ChangeLogFake struct {
 	changeLog []entity.Change
 }
 
+// GetChangeLog fetches full ChangeLog from repository
 func (c ChangeLogFake) GetChangeLog() ([]entity.Change, error) {
 	return c.changeLog, nil
 }
 
+// CreateChange creates and persists new Change in the repository
 func (c *ChangeLogFake) CreateChange(newChange entity.Change) (entity.Change, error) {
 	for _, change := range c.changeLog {
 		if change.ID == newChange.ID {
@@ -27,6 +30,7 @@ func (c *ChangeLogFake) CreateChange(newChange entity.Change) (entity.Change, er
 	return newChange, nil
 }
 
+// NewChangeLogFake creates ChangeLogFake
 func NewChangeLogFake(changeLog []entity.Change) ChangeLogFake {
 	return ChangeLogFake{
 		changeLog: changeLog,

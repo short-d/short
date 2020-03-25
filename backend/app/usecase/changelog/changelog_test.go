@@ -147,8 +147,8 @@ func TestPersist_GetChangeLog(t *testing.T) {
 			},
 			availableKeys: []service.Key{},
 		}, {
-			name:      "get empty changelog successfully",
-			changeLog: []entity.Change{},
+			name:          "get empty changelog successfully",
+			changeLog:     []entity.Change{},
 			availableKeys: []service.Key{},
 		},
 	}
