@@ -8,59 +8,60 @@ describe('Toast component', () => {
   });
 
   test('should render without crash', () => {
-    render(<Toast toastMessage={'Toast message.'} />);
+    render(<Toast />);
   });
 
   test('should show content correctly when triggered to show', () => {
     const toastRef = React.createRef<Toast>();
-    const { container } = render(
-      <Toast ref={toastRef} toastMessage={'Toast message.'} />
-    );
+    const toastMessage = 'Toast Message';
+    const { container } = render(<Toast ref={toastRef} />);
 
-    expect(container.textContent).not.toContain('Toast message.');
-    toastRef.current!.notify(1000);
-    expect(container.textContent).toContain('Toast message.');
+    expect(container.textContent).not.toContain(toastMessage);
+    toastRef.current!.notify(toastMessage, 1000);
+    expect(container.textContent).toContain(toastMessage);
   });
 
   test('should automatically hide content after delay', () => {
     const toastRef = React.createRef<Toast>();
-    const { container } = render(
-      <Toast ref={toastRef} toastMessage={'Toast message.'} />
-    );
+    const toastMessage = 'Toast Message';
+    const { container } = render(<Toast ref={toastRef} />);
+    const TOTAL_DURATION = 2000;
+    const HALF_TIME = 1000;
 
-    expect(container.textContent).not.toContain('Toast message.');
-    toastRef.current!.notify(2000);
+    expect(container.textContent).not.toContain(toastMessage);
+    toastRef.current!.notify(toastMessage, TOTAL_DURATION);
 
-    jest.advanceTimersByTime(1000);
-    expect(container.textContent).toContain('Toast message.');
+    jest.advanceTimersByTime(HALF_TIME);
+    expect(container.textContent).toContain(toastMessage);
 
-    jest.advanceTimersByTime(1000);
-    expect(container.textContent).not.toContain('Toast message.');
+    jest.advanceTimersByTime(HALF_TIME);
+    expect(container.textContent).not.toContain(toastMessage);
 
     jest.clearAllTimers();
   });
 
   test('second notify call should replace first toast', () => {
     const toastRef = React.createRef<Toast>();
-    const { container } = render(
-      <Toast ref={toastRef} toastMessage={'Toast message.'} />
-    );
+    const firstToastMessage = 'First Toast Message';
+    const secondToastMessage = 'Second Toast Message';
+    const { container } = render(<Toast ref={toastRef} />);
+    const TOTAL_DURATION = 2000;
+    const HALF_TIME = 1000;
 
-    expect(container.textContent).not.toContain('Toast message.');
-    toastRef.current!.notify(2000);
+    expect(container.textContent).not.toContain(firstToastMessage);
+    toastRef.current!.notify(firstToastMessage, TOTAL_DURATION);
 
-    jest.advanceTimersByTime(1000);
-    // second notify before the first one closes(at 1000ms)
-    toastRef.current!.notify(2000);
-    expect(container.textContent).toContain('Toast message.');
+    jest.advanceTimersByTime(HALF_TIME);
+    // second notify before the first one closes
+    toastRef.current!.notify(secondToastMessage, TOTAL_DURATION);
+    expect(container.textContent).not.toContain(firstToastMessage);
+    expect(container.textContent).toContain(secondToastMessage);
 
-    jest.advanceTimersByTime(1500);
-    // time is currently 2500ms
-    expect(container.textContent).toContain('Toast message.');
+    jest.advanceTimersByTime(HALF_TIME);
+    expect(container.textContent).toContain(secondToastMessage);
 
-    jest.advanceTimersByTime(1000);
-    // time is currently 3500ms
-    expect(container.textContent).not.toContain('Toast message.');
+    jest.advanceTimersByTime(HALF_TIME);
+    expect(container.textContent).not.toContain(secondToastMessage);
 
     jest.clearAllTimers();
   });
