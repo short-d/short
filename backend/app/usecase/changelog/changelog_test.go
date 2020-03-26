@@ -109,7 +109,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				&changeLogRepo,
 			)
 
-			newChange, err := persist.CreateChange(testCase.change.Title, testCase.change.SummaryMarkdown)
+			newChange, err := persist.CreateChange(testCase.change.Title, &testCase.change.SummaryMarkdown)
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
 				return

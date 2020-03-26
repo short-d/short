@@ -21,7 +21,7 @@ type Persist struct {
 }
 
 // CreateChange creates a new change in the data store.
-func (p Persist) CreateChange(title string, summaryMarkdown string) (entity.Change, error) {
+func (p Persist) CreateChange(title string, summaryMarkdown *string) (entity.Change, error) {
 	now := p.timer.Now()
 	key, err := p.keyGen.NewKey()
 	if err != nil {
@@ -30,7 +30,7 @@ func (p Persist) CreateChange(title string, summaryMarkdown string) (entity.Chan
 	newChange := entity.Change{
 		ID:              string(key),
 		Title:           title,
-		SummaryMarkdown: summaryMarkdown,
+		SummaryMarkdown: *summaryMarkdown,
 		ReleasedAt:      &now,
 	}
 	return p.changeLogRepo.CreateChange(newChange)
