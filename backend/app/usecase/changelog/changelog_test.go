@@ -101,7 +101,7 @@ func TestPersist_CreateChange(t *testing.T) {
 			expectedChangeLogSize: 2,
 			hasErr:                true,
 		}, {
-			name: "Allow summary to be nil",
+			name: "allow summary to be nil",
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",
@@ -138,7 +138,6 @@ func TestPersist_CreateChange(t *testing.T) {
 			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
 			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-
 			mdtest.Equal(t, nil, err)
 
 			fakeTimer := mdtest.NewTimerFake(now)
@@ -216,8 +215,8 @@ func TestPersist_GetChangeLog(t *testing.T) {
 			)
 
 			changeLog, err := persist.GetChangeLog()
-
 			mdtest.Equal(t, nil, err)
+
 			mdtest.SameElements(t, testCase.changeLog, changeLog)
 		})
 	}

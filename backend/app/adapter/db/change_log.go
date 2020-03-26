@@ -36,7 +36,7 @@ FROM "%s";`,
 	var changeLog []entity.Change
 	for rows.Next() {
 		change := entity.Change{}
-		err = rows.Scan(&change.ID, &change.Title, change.SummaryMarkdown, &change.ReleasedAt)
+		err = rows.Scan(&change.ID, &change.Title, &change.SummaryMarkdown, &change.ReleasedAt)
 		if err != nil {
 			return changeLog, err
 		}
@@ -64,7 +64,7 @@ VALUES ($1, $2, $3, $4);
 		statement,
 		newChange.ID,
 		newChange.Title,
-		*newChange.SummaryMarkdown,
+		newChange.SummaryMarkdown,
 		newChange.ReleasedAt,
 	)
 	if err != nil {
