@@ -16,6 +16,7 @@ import (
 func TestPersist_CreateChange(t *testing.T) {
 	t.Parallel()
 
+	summaryMarkdown := "summary"
 	testCases := []struct {
 		name                  string
 		changeLog             []entity.Change
@@ -30,17 +31,17 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "Title 1",
-					SummaryMarkdown: "Summary 1",
+					SummaryMarkdown: &summaryMarkdown,
 				},
 				{
 					ID:              "54321",
 					Title:           "Title 2",
-					SummaryMarkdown: "Summary 2",
+					SummaryMarkdown: &summaryMarkdown,
 				},
 			},
 			change: entity.Change{
 				Title:           "Title 3",
-				SummaryMarkdown: "Summary 3",
+				SummaryMarkdown: &summaryMarkdown,
 			},
 			availableKeys:         []service.Key{"test"},
 			expectedChangeLogSize: 3,
@@ -51,17 +52,17 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "Title 1",
-					SummaryMarkdown: "Summary 1",
+					SummaryMarkdown: &summaryMarkdown,
 				},
 				{
 					ID:              "54321",
 					Title:           "Title 2",
-					SummaryMarkdown: "Summary 2",
+					SummaryMarkdown: &summaryMarkdown,
 				},
 			},
 			change: entity.Change{
 				Title:           "Title 3",
-				SummaryMarkdown: "Summary 3",
+				SummaryMarkdown: &summaryMarkdown,
 			},
 			availableKeys:         []service.Key{},
 			expectedChangeLogSize: 2,
@@ -72,21 +73,42 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "Title 1",
-					SummaryMarkdown: "Summary 1",
+					SummaryMarkdown: &summaryMarkdown,
 				},
 				{
 					ID:              "54321",
 					Title:           "Title 2",
-					SummaryMarkdown: "Summary 2",
+					SummaryMarkdown: &summaryMarkdown,
 				},
 			},
 			change: entity.Change{
 				Title:           "Title 3",
-				SummaryMarkdown: "Summary 3",
+				SummaryMarkdown: &summaryMarkdown,
 			},
 			availableKeys:         []service.Key{"12345"},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
+		}, {
+			name: "Allow summary to be nil",
+			changeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "Title 1",
+					SummaryMarkdown: &summaryMarkdown,
+				},
+				{
+					ID:              "54321",
+					Title:           "Title 2",
+					SummaryMarkdown: &summaryMarkdown,
+				},
+			},
+			change: entity.Change{
+				Title:           "Title 3",
+				SummaryMarkdown: nil,
+			},
+			availableKeys:         []service.Key{"22222"},
+			expectedChangeLogSize: 3,
+			hasErr:                false,
 		},
 	}
 
@@ -109,7 +131,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				&changeLogRepo,
 			)
 
-			newChange, err := persist.CreateChange(testCase.change.Title, &testCase.change.SummaryMarkdown)
+			newChange, err := persist.CreateChange(testCase.change.Title, testCase.change.SummaryMarkdown)
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
@@ -131,6 +153,7 @@ func TestPersist_CreateChange(t *testing.T) {
 func TestPersist_GetChangeLog(t *testing.T) {
 	t.Parallel()
 
+	summaryMarkdown := "summary"
 	testCases := []struct {
 		name          string
 		changeLog     []entity.Change
@@ -142,12 +165,12 @@ func TestPersist_GetChangeLog(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "Title 1",
-					SummaryMarkdown: "Summary 1",
+					SummaryMarkdown: &summaryMarkdown,
 				},
 				{
 					ID:              "54321",
 					Title:           "Title 2",
-					SummaryMarkdown: "Summary 2",
+					SummaryMarkdown: &summaryMarkdown,
 				},
 			},
 			availableKeys: []service.Key{},

@@ -30,7 +30,7 @@ func (p Persist) CreateChange(title string, summaryMarkdown *string) (entity.Cha
 	newChange := entity.Change{
 		ID:              string(key),
 		Title:           title,
-		SummaryMarkdown: *summaryMarkdown,
+		SummaryMarkdown: summaryMarkdown,
 		ReleasedAt:      &now,
 	}
 	return p.changeLogRepo.CreateChange(newChange)
