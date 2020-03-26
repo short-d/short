@@ -109,15 +109,15 @@ func TestPersist_CreateChange(t *testing.T) {
 				mdtest.NotEqual(t, nil, err)
 				return
 			}
-
 			mdtest.Equal(t, nil, err)
+
 			mdtest.Equal(t, testCase.change.Title, newChange.Title)
 			mdtest.Equal(t, testCase.change.SummaryMarkdown, newChange.SummaryMarkdown)
 			mdtest.Equal(t, fakeTimer.Now(), *newChange.ReleasedAt)
 
 			changeLog, err := persist.GetChangeLog()
-
 			mdtest.Equal(t, nil, err)
+
 			mdtest.Equal(t, len(testCase.changeLog)+1, len(changeLog))
 		})
 	}
