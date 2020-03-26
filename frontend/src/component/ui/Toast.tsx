@@ -22,7 +22,7 @@ export class Toast extends Component<IProps, IStates> {
   }
 
   public notify(duration: number) {
-    this.resetTimer();
+    this.hideIfAlreadyShown();
 
     this.show();
     this.hideAfter(duration);
@@ -32,11 +32,11 @@ export class Toast extends Component<IProps, IStates> {
     this.hideTimeoutHandle = setTimeout(() => this.hide(), duration);
   }
 
-  private resetTimer() {
-      if (!this.hideTimeoutHandle) {
-        return;
-      }
-      clearTimeout(this.hideTimeoutHandle);
+  private hideIfAlreadyShown() {
+    if (this.state.isShown) {
+      this.hideTimeoutHandle && clearTimeout(this.hideTimeoutHandle);
+      this.hide();
+    }
   }
 
   private show() {

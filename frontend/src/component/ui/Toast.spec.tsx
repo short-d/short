@@ -42,28 +42,25 @@ describe('Toast component', () => {
 
   test('second notify call should replace first toast', () => {
     const toastRef = React.createRef<Toast>();
-    let toastMessage = 'Toast Message';
     const { container } = render(
-      <Toast ref={toastRef} toastMessage={toastMessage} />
+      <Toast ref={toastRef} toastMessage={'Toast message.'} />
     );
 
-    expect(container.textContent).not.toContain('Toast message');
+    expect(container.textContent).not.toContain('Toast message.');
     toastRef.current!.notify(2000);
 
     jest.advanceTimersByTime(1000);
-    
-    toastMessage = 'New message';
     // second notify before the first one closes(at 1000ms)
     toastRef.current!.notify(2000);
-    expect(container.textContent).toContain('New message');
+    expect(container.textContent).toContain('Toast message.');
 
     jest.advanceTimersByTime(1500);
     // time is currently 2500ms
-    expect(container.textContent).toContain('New message');
+    expect(container.textContent).toContain('Toast message.');
 
     jest.advanceTimersByTime(1000);
     // time is currently 3500ms
-    expect(container.textContent).not.toContain('New message');
+    expect(container.textContent).not.toContain('Toast message.');
 
     jest.clearAllTimers();
   });
