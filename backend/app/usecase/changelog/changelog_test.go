@@ -17,11 +17,12 @@ func TestPersist_CreateChange(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name          string
-		changeLog     []entity.Change
-		change        entity.Change
-		availableKeys []service.Key
-		hasErr        bool
+		name                  string
+		changeLog             []entity.Change
+		change                entity.Change
+		availableKeys         []service.Key
+		expectedChangeLogSize int
+		hasErr                bool
 	}{
 		{
 			name: "create change successfully",
@@ -41,8 +42,9 @@ func TestPersist_CreateChange(t *testing.T) {
 				Title:           "Title 3",
 				SummaryMarkdown: "Summary 3",
 			},
-			availableKeys: []service.Key{"test"},
-			hasErr:        false,
+			availableKeys:         []service.Key{"test"},
+			expectedChangeLogSize: 3,
+			hasErr:                false,
 		}, {
 			name: "no available key",
 			changeLog: []entity.Change{
@@ -61,8 +63,9 @@ func TestPersist_CreateChange(t *testing.T) {
 				Title:           "Title 3",
 				SummaryMarkdown: "Summary 3",
 			},
-			availableKeys: []service.Key{},
-			hasErr:        true,
+			availableKeys:         []service.Key{},
+			expectedChangeLogSize: 2,
+			hasErr:                true,
 		}, {
 			name: "ID already exists",
 			changeLog: []entity.Change{
@@ -81,8 +84,9 @@ func TestPersist_CreateChange(t *testing.T) {
 				Title:           "Title 3",
 				SummaryMarkdown: "Summary 3",
 			},
-			availableKeys: []service.Key{"12345"},
-			hasErr:        true,
+			availableKeys:         []service.Key{"12345"},
+			expectedChangeLogSize: 2,
+			hasErr:                true,
 		},
 	}
 
@@ -91,13 +95,14 @@ func TestPersist_CreateChange(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
+			now := time.Now()
 			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
 			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 
 			mdtest.Equal(t, nil, err)
 
-			fakeTimer := mdtest.NewTimerFake(time.Now())
+			fakeTimer := mdtest.NewTimerFake(now)
 			persist := NewPersist(
 				keyGen,
 				fakeTimer,
@@ -113,12 +118,12 @@ func TestPersist_CreateChange(t *testing.T) {
 
 			mdtest.Equal(t, testCase.change.Title, newChange.Title)
 			mdtest.Equal(t, testCase.change.SummaryMarkdown, newChange.SummaryMarkdown)
-			mdtest.Equal(t, fakeTimer.Now(), *newChange.ReleasedAt)
+			mdtest.Equal(t, now, *newChange.ReleasedAt)
 
 			changeLog, err := persist.GetChangeLog()
 			mdtest.Equal(t, nil, err)
 
-			mdtest.Equal(t, len(testCase.changeLog)+1, len(changeLog))
+			mdtest.Equal(t, testCase.expectedChangeLogSize, len(changeLog))
 		})
 	}
 }
@@ -158,12 +163,13 @@ func TestPersist_GetChangeLog(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
+			now := time.Now()
 			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
 			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			mdtest.Equal(t, nil, err)
 
-			fakeTimer := mdtest.NewTimerFake(time.Now())
+			fakeTimer := mdtest.NewTimerFake(now)
 			persist := NewPersist(
 				keyGen,
 				fakeTimer,
@@ -173,7 +179,7 @@ func TestPersist_GetChangeLog(t *testing.T) {
 			changeLog, err := persist.GetChangeLog()
 
 			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, len(testCase.changeLog), len(changeLog))
+			mdtest.SameElements(t, testCase.changeLog, changeLog)
 		})
 	}
 }

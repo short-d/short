@@ -27,7 +27,12 @@ func (p Persist) CreateChange(title string, summaryMarkdown string) (entity.Chan
 	if err != nil {
 		return entity.Change{}, err
 	}
-	newChange := entity.Change{ID: string(key), Title: title, SummaryMarkdown: summaryMarkdown, ReleasedAt: &now}
+	newChange := entity.Change{
+		ID:              string(key),
+		Title:           title,
+		SummaryMarkdown: summaryMarkdown,
+		ReleasedAt:      &now,
+	}
 	return p.changeLogRepo.CreateChange(newChange)
 }
 
@@ -37,6 +42,14 @@ func (p Persist) GetChangeLog() ([]entity.Change, error) {
 }
 
 // NewPersist creates Persist
-func NewPersist(keyGen keygen.KeyGenerator, timer fw.Timer, changeLog repository.ChangeLog) Persist {
-	return Persist{keyGen, timer, changeLog}
+func NewPersist(
+	keyGen keygen.KeyGenerator,
+	timer fw.Timer,
+	changeLog repository.ChangeLog,
+) Persist {
+	return Persist{
+		keyGen:        keyGen,
+		timer:         timer,
+		changeLogRepo: changeLog,
+	}
 }
