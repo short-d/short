@@ -127,7 +127,7 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 			},
-		},{
+		}, {
 			name: "create a change with nil summary",
 			tableRows: []changeLogTableRow{
 				{
