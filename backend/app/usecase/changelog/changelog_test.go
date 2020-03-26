@@ -24,7 +24,7 @@ func TestPersist_CreateChange(t *testing.T) {
 		hasErr        bool
 	}{
 		{
-			name: "Create change successfully",
+			name: "create change successfully",
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",
@@ -161,7 +161,6 @@ func TestPersist_GetChangeLog(t *testing.T) {
 			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
 			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-
 			mdtest.Equal(t, nil, err)
 
 			fakeTimer := mdtest.NewTimerFake(time.Now())

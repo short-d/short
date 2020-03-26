@@ -13,7 +13,7 @@ type ChangeLogFake struct {
 	changeLog []entity.Change
 }
 
-// GetChangeLog fetches full ChangeLog from repository
+// GetChangeLog fetches full ChangeLog from memory
 func (c ChangeLogFake) GetChangeLog() ([]entity.Change, error) {
 	return c.changeLog, nil
 }

@@ -7,20 +7,20 @@ import (
 	"github.com/short-d/short/app/usecase/repository"
 )
 
-// ChangeLog represents a ChangeLog creator and retriever
+// ChangeLog retrieves change log and create changes.
 type ChangeLog interface {
 	CreateChange(title string, summaryMarkdown string) (entity.Change, error)
 	GetChangeLog() ([]entity.Change, error)
 }
 
-// Persist represents a ChangeLog creator and retriever
+// Persist retrieves change log from and saves changes to persistent data store.
 type Persist struct {
 	keyGen        keygen.KeyGenerator
 	timer         fw.Timer
 	changeLogRepo repository.ChangeLog
 }
 
-// CreateChange persists a new change in the repository
+// CreateChange creates a new change in the data store.
 func (p Persist) CreateChange(title string, summaryMarkdown string) (entity.Change, error) {
 	now := p.timer.Now()
 	key, err := p.keyGen.NewKey()
@@ -28,20 +28,12 @@ func (p Persist) CreateChange(title string, summaryMarkdown string) (entity.Chan
 		return entity.Change{}, err
 	}
 	newChange := entity.Change{ID: string(key), Title: title, SummaryMarkdown: summaryMarkdown, ReleasedAt: &now}
-	change, err := p.changeLogRepo.CreateChange(newChange)
-	if err != nil {
-		return entity.Change{}, err
-	}
-	return change, nil
+	return p.changeLogRepo.CreateChange(newChange)
 }
 
-// GetChangeLog retrieves full ChangeLog from persistent storage
+// GetChangeLog retrieves full ChangeLog from persistent data store.
 func (p Persist) GetChangeLog() ([]entity.Change, error) {
-	changeLog, err := p.changeLogRepo.GetChangeLog()
-	if err != nil {
-		return nil, err
-	}
-	return changeLog, nil
+	return p.changeLogRepo.GetChangeLog()
 }
 
 // NewPersist creates Persist
