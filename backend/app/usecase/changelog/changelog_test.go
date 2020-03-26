@@ -24,7 +24,7 @@ func TestPersist_CreateChange(t *testing.T) {
 		name                  string
 		changeLog             []entity.Change
 		change                entity.Change
-		expectedChange		  entity.Change
+		expectedChange        entity.Change
 		availableKeys         []service.Key
 		expectedChangeLogSize int
 		hasErr                bool
@@ -74,7 +74,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				Title:           "Title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 			},
-			expectedChange: entity.Change{},
+			expectedChange:        entity.Change{},
 			availableKeys:         []service.Key{},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
@@ -96,7 +96,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				Title:           "Title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 			},
-			expectedChange: entity.Change{},
+			expectedChange:        entity.Change{},
 			availableKeys:         []service.Key{"12345"},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
