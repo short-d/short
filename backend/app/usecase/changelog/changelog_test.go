@@ -34,22 +34,22 @@ func TestPersist_CreateChange(t *testing.T) {
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",
-					Title:           "Title 1",
+					Title:           "title 1",
 					SummaryMarkdown: &summaryMarkdown1,
 				},
 				{
 					ID:              "54321",
-					Title:           "Title 2",
+					Title:           "title 2",
 					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
 			change: entity.Change{
-				Title:           "Title 3",
+				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 			},
 			expectedChange: entity.Change{
 				ID:              "test",
-				Title:           "Title 3",
+				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 				ReleasedAt:      &now,
 			},
@@ -61,17 +61,17 @@ func TestPersist_CreateChange(t *testing.T) {
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",
-					Title:           "Title 1",
+					Title:           "title 1",
 					SummaryMarkdown: &summaryMarkdown1,
 				},
 				{
 					ID:              "54321",
-					Title:           "Title 2",
+					Title:           "title 2",
 					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
 			change: entity.Change{
-				Title:           "Title 3",
+				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 			},
 			expectedChange:        entity.Change{},
@@ -83,17 +83,17 @@ func TestPersist_CreateChange(t *testing.T) {
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",
-					Title:           "Title 1",
+					Title:           "title 1",
 					SummaryMarkdown: &summaryMarkdown1,
 				},
 				{
 					ID:              "54321",
-					Title:           "Title 2",
+					Title:           "title 2",
 					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
 			change: entity.Change{
-				Title:           "Title 3",
+				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 			},
 			expectedChange:        entity.Change{},
@@ -105,22 +105,22 @@ func TestPersist_CreateChange(t *testing.T) {
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",
-					Title:           "Title 1",
+					Title:           "title 1",
 					SummaryMarkdown: &summaryMarkdown1,
 				},
 				{
 					ID:              "54321",
-					Title:           "Title 2",
+					Title:           "title 2",
 					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
 			change: entity.Change{
-				Title:           "Title 3",
+				Title:           "title 3",
 				SummaryMarkdown: nil,
 			},
 			expectedChange: entity.Change{
 				ID:              "22222",
-				Title:           "Title 3",
+				Title:           "title 3",
 				SummaryMarkdown: nil,
 				ReleasedAt:      &now,
 			},
@@ -181,12 +181,12 @@ func TestPersist_GetChangeLog(t *testing.T) {
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",
-					Title:           "Title 1",
+					Title:           "title 1",
 					SummaryMarkdown: &summaryMarkdown1,
 				},
 				{
 					ID:              "54321",
-					Title:           "Title 2",
+					Title:           "title 2",
 					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
