@@ -16,11 +16,15 @@ import (
 func TestPersist_CreateChange(t *testing.T) {
 	t.Parallel()
 
-	summaryMarkdown := "summary"
+	now := time.Now()
+	summaryMarkdown1 := "summary 1"
+	summaryMarkdown2 := "summary 2"
+	summaryMarkdown3 := "summary 3"
 	testCases := []struct {
 		name                  string
 		changeLog             []entity.Change
 		change                entity.Change
+		expectedChange		  entity.Change
 		availableKeys         []service.Key
 		expectedChangeLogSize int
 		hasErr                bool
@@ -31,17 +35,23 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "Title 1",
-					SummaryMarkdown: &summaryMarkdown,
+					SummaryMarkdown: &summaryMarkdown1,
 				},
 				{
 					ID:              "54321",
 					Title:           "Title 2",
-					SummaryMarkdown: &summaryMarkdown,
+					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
 			change: entity.Change{
 				Title:           "Title 3",
-				SummaryMarkdown: &summaryMarkdown,
+				SummaryMarkdown: &summaryMarkdown3,
+			},
+			expectedChange: entity.Change{
+				ID:              "test",
+				Title:           "Title 3",
+				SummaryMarkdown: &summaryMarkdown3,
+				ReleasedAt:      &now,
 			},
 			availableKeys:         []service.Key{"test"},
 			expectedChangeLogSize: 3,
@@ -52,18 +62,19 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "Title 1",
-					SummaryMarkdown: &summaryMarkdown,
+					SummaryMarkdown: &summaryMarkdown1,
 				},
 				{
 					ID:              "54321",
 					Title:           "Title 2",
-					SummaryMarkdown: &summaryMarkdown,
+					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
 			change: entity.Change{
 				Title:           "Title 3",
-				SummaryMarkdown: &summaryMarkdown,
+				SummaryMarkdown: &summaryMarkdown3,
 			},
+			expectedChange: entity.Change{},
 			availableKeys:         []service.Key{},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
@@ -73,18 +84,19 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "Title 1",
-					SummaryMarkdown: &summaryMarkdown,
+					SummaryMarkdown: &summaryMarkdown1,
 				},
 				{
 					ID:              "54321",
 					Title:           "Title 2",
-					SummaryMarkdown: &summaryMarkdown,
+					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
 			change: entity.Change{
 				Title:           "Title 3",
-				SummaryMarkdown: &summaryMarkdown,
+				SummaryMarkdown: &summaryMarkdown3,
 			},
+			expectedChange: entity.Change{},
 			availableKeys:         []service.Key{"12345"},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
@@ -94,17 +106,23 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "Title 1",
-					SummaryMarkdown: &summaryMarkdown,
+					SummaryMarkdown: &summaryMarkdown1,
 				},
 				{
 					ID:              "54321",
 					Title:           "Title 2",
-					SummaryMarkdown: &summaryMarkdown,
+					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
 			change: entity.Change{
 				Title:           "Title 3",
 				SummaryMarkdown: nil,
+			},
+			expectedChange: entity.Change{
+				ID:              "22222",
+				Title:           "Title 3",
+				SummaryMarkdown: nil,
+				ReleasedAt:      &now,
 			},
 			availableKeys:         []service.Key{"22222"},
 			expectedChangeLogSize: 3,
@@ -117,7 +135,6 @@ func TestPersist_CreateChange(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			now := time.Now()
 			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
 			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
@@ -138,9 +155,7 @@ func TestPersist_CreateChange(t *testing.T) {
 			}
 			mdtest.Equal(t, nil, err)
 
-			mdtest.Equal(t, testCase.change.Title, newChange.Title)
-			mdtest.Equal(t, testCase.change.SummaryMarkdown, newChange.SummaryMarkdown)
-			mdtest.Equal(t, now, *newChange.ReleasedAt)
+			mdtest.Equal(t, testCase.expectedChange, newChange)
 
 			changeLog, err := persist.GetChangeLog()
 			mdtest.Equal(t, nil, err)
@@ -153,7 +168,9 @@ func TestPersist_CreateChange(t *testing.T) {
 func TestPersist_GetChangeLog(t *testing.T) {
 	t.Parallel()
 
-	summaryMarkdown := "summary"
+	now := time.Now()
+	summaryMarkdown1 := "summary 1"
+	summaryMarkdown2 := "summary 2"
 	testCases := []struct {
 		name          string
 		changeLog     []entity.Change
@@ -165,12 +182,12 @@ func TestPersist_GetChangeLog(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "Title 1",
-					SummaryMarkdown: &summaryMarkdown,
+					SummaryMarkdown: &summaryMarkdown1,
 				},
 				{
 					ID:              "54321",
 					Title:           "Title 2",
-					SummaryMarkdown: &summaryMarkdown,
+					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
 			availableKeys: []service.Key{},
@@ -186,7 +203,6 @@ func TestPersist_GetChangeLog(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			now := time.Now()
 			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
 			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
