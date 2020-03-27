@@ -14,6 +14,7 @@ import { UrlService } from './service/Url.service';
 import { SearchService } from './service/Search.service';
 import { BrowserExtensionFactory } from './service/extensionService/BrowserExtension.factory';
 import { ChangeLogService } from './service/ChangeLog.service';
+import { ClipboardServiceFactory } from './service/clipboardService/Clipboard.service.factory';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -48,12 +49,14 @@ export function initUIFactory(
   const store = initStore();
   const searchService = new SearchService();
   const changeLogService = new ChangeLogService();
-  const extensionService = BrowserExtensionFactory.createBrowserExtensionService(
+  const extensionService = new BrowserExtensionFactory().makeBrowserExtensionService(
     envService
   );
+  const clipboardService = new ClipboardServiceFactory().makeClipboardService();
 
   return new UIFactory(
     authService,
+    clipboardService,
     extensionService,
     urlService,
     qrCodeService,
