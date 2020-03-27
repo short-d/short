@@ -59,7 +59,7 @@ export class CreateShortLinkSection extends Component<Props> {
           </div>
         </div>
         <div className={'input-error'}>{this.props.inputErr}</div>
-        {this.props.createdUrl ? (
+        {this.props.createdUrl && (
           <div className={'short-link-usage-wrapper'}>
             <ShortLinkUsage
               shortLink={this.props.shortLink!}
@@ -67,8 +67,6 @@ export class CreateShortLinkSection extends Component<Props> {
               qrCodeUrl={this.props.qrCodeUrl!}
             />
           </div>
-        ) : (
-          false
         )}
       </Section>
     );

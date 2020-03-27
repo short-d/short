@@ -1,5 +1,6 @@
 @import '../styles/color.scss';
 @import '../styles/shadow.scss';
+@import '../styles/layer';
 
 .search-box {
   display: flex;
@@ -31,7 +32,7 @@
     list-style: none;
     padding: 0;
     width: calc(100% - 20px);
-    z-index: 1000;
+    z-index: $layer-search-suggestions;
     margin-top: 44px;
     border-radius: 4px;
     line-height: 2;

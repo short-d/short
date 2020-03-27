@@ -34,11 +34,14 @@ import { Update } from '../../entity/Update';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
 import { ChangeLogService } from '../../service/ChangeLog.service';
 import { CreateShortLinkSection } from './shared/CreateShortLinkSection';
+import { Toast } from '../ui/Toast';
+import { IClipboardService } from '../../service/clipboardService/Clipboard.service';
 
 interface Props {
   uiFactory: UIFactory;
   urlService: UrlService;
   authService: AuthService;
+  clipboardService: IClipboardService;
   extensionService: IBrowserExtensionService;
   versionService: VersionService;
   qrCodeService: QrCodeService;
@@ -69,6 +72,7 @@ export class Home extends Component<Props, State> {
   signInModal = React.createRef<SignInModal>();
   createShortLinkSection = React.createRef<CreateShortLinkSection>();
   changeLogModalRef = React.createRef<ChangeLogModal>();
+  toastRef = React.createRef<Toast>();
 
   constructor(props: Props) {
     super(props);
@@ -106,7 +110,7 @@ export class Home extends Component<Props, State> {
   }
 
   async setPromoDisplayStatus() {
-    var shouldShowPromo =
+    const shouldShowPromo =
       this.props.extensionService.isSupported() &&
       !(await this.props.extensionService.isInstalled());
     this.setState({ shouldShowPromo: shouldShowPromo });
@@ -206,13 +210,29 @@ export class Home extends Component<Props, State> {
     this.props.store.dispatch(raiseInputError(err));
   };
 
+  // TODO(issue#604): refactor into ShortLinkService to decouple business logic from view.
+  private copyShortenedLink = (shortLink: string) => {
+    const COPY_SUCCESS_MESSAGE = 'Short Link copied into clipboard';
+    const TOAST_DURATION = 2500;
+    this.props.clipboardService
+      .copyTextToClipboard(shortLink)
+      .then(() =>
+        this.toastRef.current!.notify(COPY_SUCCESS_MESSAGE, TOAST_DURATION)
+      )
+      .catch(() => console.log(`Failed to copy ${shortLink} into Clipboard`));
+  };
+
   handleCreateShortLinkClick = () => {
     const editingUrl = this.props.store.getState().editingUrl;
     this.props.urlService
       .createShortLink(editingUrl)
-      .then((createdUrl: Url) =>
-        this.props.store.dispatch(updateCreatedUrl(createdUrl))
-      )
+      .then((createdUrl: Url) => {
+        this.props.store.dispatch(updateCreatedUrl(createdUrl));
+        const shortLink = this.props.urlService.aliasToFrontendLink(
+          createdUrl.alias!
+        );
+        this.copyShortenedLink(shortLink);
+      })
       .catch(({ authorizationErr, createShortLinkErr }) => {
         if (authorizationErr) {
           this.requestSignIn();
@@ -306,6 +326,8 @@ export class Home extends Component<Props, State> {
             </div>
           )}
         </Modal>
+
+        <Toast ref={this.toastRef} />
       </div>
     );
   };
