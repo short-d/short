@@ -3,7 +3,7 @@ import { render, fireEvent, Matcher } from '@testing-library/react';
 import { SearchBar } from './SearchBar';
 
 describe('Searchbar', () => {
-  let changeHandler : () => void;
+  let changeHandler: () => void;
   let searchBarRef: any;
   let getByPlaceholderText: (id: Matcher) => HTMLElement;
   let input: HTMLInputElement;
@@ -26,10 +26,8 @@ describe('Searchbar', () => {
         ]}
       />
     ).getByPlaceholderText;
-    
-    input = getByPlaceholderText(
-      'Search short links'
-    ) as HTMLInputElement;
+
+    input = getByPlaceholderText('Search short links') as HTMLInputElement;
   });
 
   test('should render without auto complete suggestions', () => {
