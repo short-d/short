@@ -19,10 +19,12 @@ import { SearchService } from '../service/Search.service';
 import { SearchBar } from './ui/SearchBar';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 import { ChangeLogService } from '../service/ChangeLog.service';
+import { IClipboardService } from '../service/clipboardService/Clipboard.service';
 
 export class UIFactory {
   constructor(
     private authService: AuthService,
+    private clipboardService: IClipboardService,
     private extensionService: IBrowserExtensionService,
     private urlService: UrlService,
     private qrCodeService: QrCodeService,
@@ -40,6 +42,7 @@ export class UIFactory {
       <Home
         uiFactory={this}
         authService={this.authService}
+        clipboardService={this.clipboardService}
         extensionService={this.extensionService}
         qrCodeService={this.qrCodeService}
         versionService={this.versionService}
