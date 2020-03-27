@@ -210,7 +210,7 @@ export class Home extends Component<Props, State> {
     this.props.store.dispatch(raiseInputError(err));
   };
 
-  // TODO(issue#604): Refactor into ShortLinkService to decouple business logic from view.
+  // TODO(issue#604): refactor into ShortLinkService to decouple business logic from view.
   private copyShortenedLink = (shortLink: string) => {
     const COPY_SUCCESS_MESSAGE = 'Short Link copied into clipboard';
     const TOAST_DURATION = 2500;
