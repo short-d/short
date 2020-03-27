@@ -210,17 +210,16 @@ export class Home extends Component<Props, State> {
     this.props.store.dispatch(raiseInputError(err));
   };
 
-  private copyShortenedLink = (shortenedLink: string) => {
+  // TODO(issue#604): Refactor into ShortLinkService to decouple business logic from view.
+  private copyShortenedLink = (shortLink: string) => {
     const COPY_SUCCESS_MESSAGE = 'Short Link copied into clipboard';
     const TOAST_DURATION = 2500;
     this.props.clipboardService
-      .copyTextToClipboard(shortenedLink)
+      .copyTextToClipboard(shortLink)
       .then(() =>
         this.toastRef.current!.notify(COPY_SUCCESS_MESSAGE, TOAST_DURATION)
       )
-      .catch(() =>
-        console.log(`Failed to copy ${shortenedLink} into Clipboard`)
-      );
+      .catch(() => console.log(`Failed to copy ${shortLink} into Clipboard`));
   };
 
   handleCreateShortLinkClick = () => {
@@ -229,9 +228,10 @@ export class Home extends Component<Props, State> {
       .createShortLink(editingUrl)
       .then((createdUrl: Url) => {
         this.props.store.dispatch(updateCreatedUrl(createdUrl));
-        this.copyShortenedLink(
-          this.props.urlService.aliasToFrontendLink(createdUrl.alias!)
+        const shortLink = this.props.urlService.aliasToFrontendLink(
+          createdUrl.alias!
         );
+        this.copyShortenedLink(shortLink);
       })
       .catch(({ authorizationErr, createShortLinkErr }) => {
         if (authorizationErr) {
