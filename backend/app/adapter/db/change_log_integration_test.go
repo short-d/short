@@ -32,6 +32,8 @@ type changeLogTableRow struct {
 }
 
 func TestChangeLogSql_GetChangeLog(t *testing.T) {
+	summaryMarkdown1 := "summary 1"
+	summaryMarkdown2 := "summary 2"
 	testCases := []struct {
 		name              string
 		tableRows         []changeLogTableRow
@@ -43,23 +45,23 @@ func TestChangeLogSql_GetChangeLog(t *testing.T) {
 				{
 					id:              "12346",
 					title:           "title 2",
-					summaryMarkdown: "summary 2",
+					summaryMarkdown: summaryMarkdown2,
 				}, {
 					id:              "12345",
 					title:           "title 1",
-					summaryMarkdown: "summary 1",
+					summaryMarkdown: summaryMarkdown1,
 				},
 			},
 			expectedChangeLog: []entity.Change{
 				{
 					ID:              "12346",
 					Title:           "title 2",
-					SummaryMarkdown: "summary 2",
+					SummaryMarkdown: &summaryMarkdown2,
 				},
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: "summary 1",
+					SummaryMarkdown: &summaryMarkdown1,
 				},
 			},
 		},
@@ -90,6 +92,9 @@ func TestChangeLogSql_GetChangeLog(t *testing.T) {
 }
 
 func TestChangeLogSql_CreateChange(t *testing.T) {
+	summaryMarkdown1 := "summary 1"
+	summaryMarkdown2 := "summary 2"
+	summaryMarkdown3 := "summary 3"
 	testCases := []struct {
 		name                  string
 		tableRows             []changeLogTableRow
@@ -103,24 +108,49 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 				{
 					id:              "12345",
 					title:           "title 1",
-					summaryMarkdown: "summary 1",
+					summaryMarkdown: summaryMarkdown1,
 				},
 				{
 					id:              "12346",
 					title:           "title 2",
-					summaryMarkdown: "summary 2",
+					summaryMarkdown: summaryMarkdown2,
 				},
 			},
 			change: entity.Change{
 				ID:              "23456",
 				Title:           "title 3",
-				SummaryMarkdown: "summary 3",
+				SummaryMarkdown: &summaryMarkdown3,
 			},
 			expectedChangeLogSize: 3,
 			expectedChange: entity.Change{
 				ID:              "23456",
 				Title:           "title 3",
-				SummaryMarkdown: "summary 3",
+				SummaryMarkdown: &summaryMarkdown3,
+			},
+		}, {
+			name: "create a change with nil summary",
+			tableRows: []changeLogTableRow{
+				{
+					id:              "12345",
+					title:           "title 1",
+					summaryMarkdown: summaryMarkdown1,
+				},
+				{
+					id:              "12346",
+					title:           "title 2",
+					summaryMarkdown: summaryMarkdown2,
+				},
+			},
+			change: entity.Change{
+				ID:              "23456",
+				Title:           "title 3",
+				SummaryMarkdown: nil,
+			},
+			expectedChangeLogSize: 3,
+			expectedChange: entity.Change{
+				ID:              "23456",
+				Title:           "title 3",
+				SummaryMarkdown: nil,
 			},
 		},
 	}
