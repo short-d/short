@@ -1,6 +1,5 @@
 kind: pipeline
 name: default
-type: docker
 
 steps:
   - name: lint frontend
@@ -174,6 +173,27 @@ steps:
       event:
         - push
 
+  - name: create staging frontend assets
+    image: node:12.7.0-alpine
+    environment:
+      RECAPTCHA_SITE_KEY:
+        from_secret: STAGING_RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
+    volumes:
+      - name: frontend-dep
+        path: /drone/src/frontend/node_modules
+    commands:
+      - apk add --no-cache bash git
+      - cd frontend
+      - yarn
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY REACT_APP_CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID CI=true yarn build:staging
+    when:
+      branch:
+        - master
+      event:
+        - push
+
   - name: build testing frontend Docker image
     image: docker
     commands:
@@ -187,7 +207,20 @@ steps:
       event:
         - push
 
-  - name: build backend Docker image
+  - name: build staging frontend Docker image
+    image: docker
+    commands:
+      - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  - name: build testing backend Docker image
     image: docker
     commands:
       - docker build -t short-backend-testing:latest -f backend/Dockerfile backend
@@ -197,6 +230,19 @@ steps:
     when:
       branch:
         - testing
+      event:
+        - push
+
+  - name: build backend Docker image
+    image: docker
+    commands:
+      - docker build -t short-backend:latest -f backend/Dockerfile backend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
       event:
         - push
 
@@ -219,53 +265,6 @@ steps:
     when:
       branch:
         - testing
-      event:
-        - push
-
-  - name: create staging frontend assets
-    image: node:12.7.0-alpine
-    environment:
-      RECAPTCHA_SITE_KEY:
-        from_secret: STAGING_RECAPTCHA_SITE_KEY
-      CHROME_EXTENSION_ID:
-        from_secret: CHROME_EXTENSION_ID
-    volumes:
-      - name: frontend-dep
-        path: /drone/src/frontend/node_modules
-    commands:
-      - apk add --no-cache bash git
-      - cd frontend
-      - yarn
-      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY REACT_APP_CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID CI=true yarn build:staging
-    when:
-      branch:
-        - master
-      event:
-        - push
-
-  - name: build staging frontend Docker image
-    image: docker
-    commands:
-      - docker build -t short-frontend:latest -f frontend/Dockerfile frontend
-    volumes:
-      - name: docker
-        path: /var/run/docker.sock
-    when:
-      branch:
-        - master
-      event:
-        - push
-
-  - name: build backend Docker image
-    image: docker
-    commands:
-      - docker build -t short-backend:latest -f backend/Dockerfile backend
-    volumes:
-      - name: docker
-        path: /var/run/docker.sock
-    when:
-      branch:
-        - master
       event:
         - push
 
