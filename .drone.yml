@@ -253,12 +253,14 @@ steps:
         from_secret: DOCKERHUB_USERNAME
       DOCKERHUB_PASSWORD:
         from_secret: DOCKERHUB_PASSWORD
+      DOCKERHUB_ORG_ID:
+        from_secret: DOCKERHUB_ORG_ID
     commands:
       - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-      - docker tag short-frontend-testing:latest $DOCKERHUB_USERNAME/short-frontend-testing:latest
-      - docker tag short-backend-testing:latest $DOCKERHUB_USERNAME/short-backend-testing:latest
-      - docker push $DOCKERHUB_USERNAME/short-frontend-testing:latest
-      - docker push $DOCKERHUB_USERNAME/short-backend-testing:latest
+      - docker tag short-frontend-testing:latest $DOCKERHUB_ORG_ID/short-frontend-testing:latest
+      - docker tag short-backend-testing:latest $DOCKERHUB_ORG_ID/short-backend-testing:latest
+      - docker push $DOCKERHUB_ORG_ID/short-frontend-testing:latest
+      - docker push $DOCKERHUB_ORG_ID/short-backend-testing:latest
     volumes:
       - name: docker
         path: /var/run/docker.sock
