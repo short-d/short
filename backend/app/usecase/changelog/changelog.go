@@ -7,7 +7,6 @@ import (
 	"github.com/short-d/short/app/usecase/repository"
 )
 
-// Persist retrieves change log from and saves changes to persistent data store.
 var _ ChangeLog = (*Persist)(nil)
 
 // ChangeLog retrieves change log and create changes.
