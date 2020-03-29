@@ -60,7 +60,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
 			logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 			tracer := mdtest.NewTracerFake()
-			query := newQuery(&logger, &tracer, authenticator, retrieverFake)
+			query := newQuery(&logger, &tracer, authenticator, nil, retrieverFake)
 
 			mdtest.Equal(t, nil, err)
 			authQueryArgs := AuthQueryArgs{AuthToken: testCase.authToken}
