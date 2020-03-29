@@ -37,6 +37,7 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 	return &URL{url: u}, nil
 }
 
+// ChangeLog retrieves full ChangeLog from persistent storage
 func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	changeLog, err := v.changeLog.GetChangeLog()
 	currentTime := time.Now()
