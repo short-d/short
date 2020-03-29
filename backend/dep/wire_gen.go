@@ -7,8 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"time"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdcli"
@@ -29,10 +27,12 @@ import (
 	"github.com/short-d/short/app/adapter/google"
 	"github.com/short-d/short/app/adapter/graphql"
 	"github.com/short-d/short/app/usecase/account"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
 	"github.com/short-d/short/dep/provider"
+	"time"
 )
 
 // Injectors from wire.go:
@@ -70,13 +70,15 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	if err != nil {
 		return mdservice.Service{}, err
 	}
-	remote, err := provider.NewKeyGenerator(bufferSize, rpc)
+	keyGenerator, err := provider.NewKeyGenerator(bufferSize, rpc)
 	if err != nil {
 		return mdservice.Service{}, err
 	}
 	longLink := validator.NewLongLink()
 	customAlias := validator.NewCustomAlias()
-	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, remote, longLink, customAlias)
+	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias)
+	changeLogSQL := db.NewChangeLogSQL(sqlDB)
+	persist := changelog.NewPersist(keyGenerator, timer, changeLogSQL)
 	client := mdhttp.NewClient()
 	http := mdrequest.NewHTTP(client)
 	reCaptcha := provider.NewReCaptchaService(http, secret)
@@ -84,7 +86,7 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
-	short := graphql.NewShort(local, tracer, retrieverPersist, creatorPersist, verifier, authenticator)
+	short := graphql.NewShort(local, tracer, retrieverPersist, creatorPersist, persist, verifier, authenticator)
 	server := provider.NewGraphGophers(graphqlPath, local, tracer, short)
 	service := mdservice.New(name, server, local)
 	return service, nil

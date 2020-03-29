@@ -3,6 +3,7 @@ package resolver
 import (
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/url"
 )
@@ -17,16 +18,18 @@ type Resolver struct {
 func NewResolver(
 	logger fw.Logger,
 	tracer fw.Tracer,
+	changeLog changelog.ChangeLog,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
 	requesterVerifier requester.Verifier,
 	authenticator auth.Authenticator,
 ) Resolver {
 	return Resolver{
-		Query: newQuery(logger, tracer, authenticator, urlRetriever),
+		Query: newQuery(logger, tracer, authenticator, changeLog, urlRetriever),
 		Mutation: newMutation(
 			logger,
 			tracer,
+			changeLog,
 			urlCreator,
 			requesterVerifier,
 			authenticator,

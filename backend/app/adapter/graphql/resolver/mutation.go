@@ -3,6 +3,7 @@ package resolver
 import (
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/url"
 )
@@ -14,6 +15,7 @@ type Mutation struct {
 	urlCreator        url.Creator
 	requesterVerifier requester.Verifier
 	authenticator     auth.Authenticator
+	changeLog         changelog.ChangeLog
 }
 
 // AuthMutationArgs represents possible parameters for AuthMutation endpoint
@@ -25,6 +27,7 @@ type AuthMutationArgs struct {
 // AuthMutation extracts user information from authentication token
 func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
 	isHuman, err := m.requesterVerifier.IsHuman(args.CaptchaResponse)
+
 	if err != nil {
 		return nil, ErrUnknown{}
 	}
@@ -38,13 +41,14 @@ func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
 		return nil, err
 	}
 
-	authMutation := newAuthMutation(user, m.urlCreator)
+	authMutation := newAuthMutation(user, m.changeLog, m.urlCreator)
 	return &authMutation, nil
 }
 
 func newMutation(
 	logger fw.Logger,
 	tracer fw.Tracer,
+	changeLog changelog.ChangeLog,
 	urlCreator url.Creator,
 	requesterVerifier requester.Verifier,
 	authenticator auth.Authenticator,
@@ -52,6 +56,7 @@ func newMutation(
 	return Mutation{
 		logger:            logger,
 		tracer:            tracer,
+		changeLog:         changeLog,
 		urlCreator:        urlCreator,
 		requesterVerifier: requesterVerifier,
 		authenticator:     authenticator,

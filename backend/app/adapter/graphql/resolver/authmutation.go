@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/url"
 )
 
@@ -12,6 +13,7 @@ import (
 // on the identify of the user
 type AuthMutation struct {
 	user       *entity.User
+	changeLog  changelog.ChangeLog
 	urlCreator url.Creator
 }
 
@@ -26,6 +28,15 @@ type URLInput struct {
 type CreateURLArgs struct {
 	URL      URLInput
 	IsPublic bool
+}
+
+type CreateChangeArgs struct {
+	Change *ChangeInput
+}
+
+type ChangeInput struct {
+	Title           *string
+	SummaryMarkdown *string
 }
 
 // CreateURL creates mapping between an alias and a long link for a given user
@@ -59,9 +70,15 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 }
 
-func newAuthMutation(user *entity.User, urlCreator url.Creator) AuthMutation {
+func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
+	change, err := a.changeLog.CreateChange(*args.Change.Title, args.Change.SummaryMarkdown)
+	return newChange(change), err
+}
+
+func newAuthMutation(user *entity.User, changeLog changelog.ChangeLog, urlCreator url.Creator) AuthMutation {
 	return AuthMutation{
 		user:       user,
+		changeLog:  changeLog,
 		urlCreator: urlCreator,
 	}
 }
