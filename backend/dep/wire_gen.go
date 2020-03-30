@@ -7,6 +7,8 @@ package dep
 
 import (
 	"database/sql"
+	"time"
+
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdcli"
@@ -32,7 +34,6 @@ import (
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
 	"github.com/short-d/short/dep/provider"
-	"time"
 )
 
 // Injectors from wire.go:
