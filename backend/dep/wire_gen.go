@@ -86,7 +86,7 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	tokenValidDuration := _wireTokenValidDurationValue
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
-	short := graphql.NewShort(local, tracer, retrieverPersist, creatorPersist, persist, verifier, authenticator)
+	short := graphql.NewShort(local, tracer, timer, retrieverPersist, creatorPersist, persist, verifier, authenticator)
 	server := provider.NewGraphGophers(graphqlPath, local, tracer, short)
 	service := mdservice.New(name, server, local)
 	return service, nil

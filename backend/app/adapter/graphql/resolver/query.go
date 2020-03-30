@@ -11,6 +11,7 @@ import (
 type Query struct {
 	logger        fw.Logger
 	tracer        fw.Tracer
+	timer         fw.Timer
 	authenticator auth.Authenticator
 	changeLog     changelog.ChangeLog
 	urlRetriever  url.Retriever
@@ -28,13 +29,14 @@ func (q Query) AuthQuery(args *AuthQueryArgs) (*AuthQuery, error) {
 		return nil, err
 	}
 
-	authQuery := newAuthQuery(user, q.changeLog, q.urlRetriever)
+	authQuery := newAuthQuery(user, q.timer, q.changeLog, q.urlRetriever)
 	return &authQuery, nil
 }
 
 func newQuery(
 	logger fw.Logger,
 	tracer fw.Tracer,
+	timer fw.Timer,
 	authenticator auth.Authenticator,
 	changeLog changelog.ChangeLog,
 	urlRetriever url.Retriever,
@@ -42,6 +44,7 @@ func newQuery(
 	return Query{
 		logger:        logger,
 		tracer:        tracer,
+		timer:         timer,
 		authenticator: authenticator,
 		changeLog:     changeLog,
 		urlRetriever:  urlRetriever,

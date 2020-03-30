@@ -19,6 +19,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 		Email: "alpha@example.com",
 	}
 	authToken, err := authenticator.GenerateToken(user)
+	now := time.Now()
 	mdtest.Equal(t, nil, err)
 	randomToken := "random_token"
 
@@ -60,7 +61,8 @@ func TestQuery_AuthQuery(t *testing.T) {
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
 			logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 			tracer := mdtest.NewTracerFake()
-			query := newQuery(&logger, &tracer, authenticator, nil, retrieverFake)
+			timerFake := mdtest.NewTimerFake(now)
+			query := newQuery(&logger, &tracer, timerFake, authenticator, nil, retrieverFake)
 
 			mdtest.Equal(t, nil, err)
 			authQueryArgs := AuthQueryArgs{AuthToken: testCase.authToken}

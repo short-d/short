@@ -5,7 +5,7 @@ import (
 	"github.com/short-d/short/app/entity"
 )
 
-// Change represents single change entity in ChangeLog
+// Change represents single change in ChangeLog
 type Change struct {
 	change entity.Change
 }

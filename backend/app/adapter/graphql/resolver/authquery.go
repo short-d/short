@@ -3,6 +3,8 @@ package resolver
 import (
 	"time"
 
+	"github.com/short-d/app/fw"
+
 	"github.com/short-d/short/app/adapter/graphql/scalar"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/changelog"
@@ -13,6 +15,7 @@ import (
 // on the identify of the user
 type AuthQuery struct {
 	user         *entity.User
+	timer        fw.Timer
 	changeLog    changelog.ChangeLog
 	urlRetriever url.Retriever
 }
@@ -40,13 +43,14 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 // ChangeLog retrieves full ChangeLog from persistent storage
 func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	changeLog, err := v.changeLog.GetChangeLog()
-	currentTime := time.Now()
-	return newChangeLog(changeLog, currentTime), err
+	now := v.timer.Now()
+	return newChangeLog(changeLog, now), err
 }
 
-func newAuthQuery(user *entity.User, changeLog changelog.ChangeLog, urlRetriever url.Retriever) AuthQuery {
+func newAuthQuery(user *entity.User, timer fw.Timer, changeLog changelog.ChangeLog, urlRetriever url.Retriever) AuthQuery {
 	return AuthQuery{
 		user:         user,
+		timer:        timer,
 		changeLog:    changeLog,
 		urlRetriever: urlRetriever,
 	}

@@ -17,6 +17,7 @@ import (
 )
 
 func TestGraphQlAPI(t *testing.T) {
+	now := time.Now()
 	sqlDB, _, err := mdtest.NewSQLStub()
 	mdtest.Equal(t, nil, err)
 	defer sqlDB.Close()
@@ -43,6 +44,7 @@ func TestGraphQlAPI(t *testing.T) {
 
 	logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 	tracer := mdtest.NewTracerFake()
-	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, nil, verifier, authenticator)
+	timerFake := mdtest.NewTimerFake(now)
+	graphqlAPI := NewShort(&logger, &tracer, timerFake, retriever, creator, nil, verifier, authenticator)
 	mdtest.Equal(t, true, mdtest.IsGraphQlAPIValid(graphqlAPI))
 }
