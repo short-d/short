@@ -33,7 +33,7 @@ type Change {
 
 type AuthMutation {
 	createURL(url: URLInput!, isPublic: Boolean!): URL
-	createChange(change: ChangeInput): Change!
+	createChange(change: ChangeInput!): Change!
 }
 
 input URLInput {
@@ -43,7 +43,7 @@ input URLInput {
 }
 
 input ChangeInput {
-  	title: String
+  	title: String!
   	summaryMarkdown: String
 }
 

@@ -43,7 +43,7 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	changeLog, err := v.changeLog.GetChangeLog()
 	now := v.timer.Now()
-	return newChangeLog(changeLog, now), err
+	return newChangeLog(changeLog, &now), err
 }
 
 func newAuthQuery(user *entity.User, timer fw.Timer, changeLog changelog.ChangeLog, urlRetriever url.Retriever) AuthQuery {

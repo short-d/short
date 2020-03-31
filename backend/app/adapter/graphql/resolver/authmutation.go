@@ -32,12 +32,12 @@ type CreateURLArgs struct {
 
 // CreateChangeArgs represents the possible parameters for CreateChange endpoint
 type CreateChangeArgs struct {
-	Change *ChangeInput
+	Change ChangeInput
 }
 
 // ChangeInput represents possible Change attributes
 type ChangeInput struct {
-	Title           *string
+	Title           string
 	SummaryMarkdown *string
 }
 
@@ -74,7 +74,7 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 // CreateChange creates a Change in the change log
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
-	change, err := a.changeLog.CreateChange(*args.Change.Title, args.Change.SummaryMarkdown)
+	change, err := a.changeLog.CreateChange(args.Change.Title, args.Change.SummaryMarkdown)
 	return newChange(change), err
 }
 
