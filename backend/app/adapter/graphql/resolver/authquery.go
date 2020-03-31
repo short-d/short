@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/short-d/app/fw"
-
 	"github.com/short-d/short/app/adapter/graphql/scalar"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/changelog"
