@@ -72,7 +72,7 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 }
 
-// CreateChange creates a new Change in the ChangeLog
+// CreateChange creates a Change in the change log
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
 	change, err := a.changeLog.CreateChange(*args.Change.Title, args.Change.SummaryMarkdown)
 	return newChange(change), err

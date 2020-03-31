@@ -7,19 +7,22 @@ import (
 	"github.com/short-d/short/app/entity"
 )
 
-// ChangeLog represents ChangeLog entity and user Last Viewed ChangeLog time
+// ChangeLog retrieves full change log and the time when the user viewed it.
 type ChangeLog struct {
 	changeLog    []Change
 	lastViewedAt time.Time
 }
 
-// Changes retrieves full ChangeLog
+// Changes retrieves full change log
 func (c ChangeLog) Changes() []Change {
 	return c.changeLog
 }
 
-// LastViewedAt retrieves lastViewedAt for given user
+// LastViewedAt retrieves the time the user viewed the change log.
 func (c ChangeLog) LastViewedAt() *scalar.Time {
+        if c.lastViewedAt == nil {
+		return nil
+	}
 	return &scalar.Time{Time: c.lastViewedAt}
 }
 
