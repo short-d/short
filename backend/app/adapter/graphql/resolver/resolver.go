@@ -18,7 +18,6 @@ type Resolver struct {
 func NewResolver(
 	logger fw.Logger,
 	tracer fw.Tracer,
-	timer fw.Timer,
 	changeLog changelog.ChangeLog,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
@@ -26,7 +25,7 @@ func NewResolver(
 	authenticator auth.Authenticator,
 ) Resolver {
 	return Resolver{
-		Query: newQuery(logger, tracer, timer, authenticator, changeLog, urlRetriever),
+		Query: newQuery(logger, tracer, authenticator, changeLog, urlRetriever),
 		Mutation: newMutation(
 			logger,
 			tracer,

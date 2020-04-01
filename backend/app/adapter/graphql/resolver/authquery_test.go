@@ -86,8 +86,7 @@ func TestAuthQuery_URL(t *testing.T) {
 
 			fakeRepo := repository.NewURLFake(testCase.urls)
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
-			timerFake := mdtest.NewTimerFake(now)
-			query := newAuthQuery(&testCase.user, timerFake, nil, retrieverFake)
+			query := newAuthQuery(&testCase.user, nil, retrieverFake)
 
 			urlArgs := &URLArgs{
 				Alias:       testCase.alias,

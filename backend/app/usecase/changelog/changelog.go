@@ -1,6 +1,8 @@
 package changelog
 
 import (
+	"time"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
@@ -13,6 +15,7 @@ var _ ChangeLog = (*Persist)(nil)
 type ChangeLog interface {
 	CreateChange(title string, summaryMarkdown *string) (entity.Change, error)
 	GetChangeLog() ([]entity.Change, error)
+	GetLastViewedAt() *time.Time
 }
 
 // Persist retrieves change log from and saves changes to persistent data store.
@@ -41,6 +44,12 @@ func (p Persist) CreateChange(title string, summaryMarkdown *string) (entity.Cha
 // GetChangeLog retrieves full ChangeLog from persistent data store.
 func (p Persist) GetChangeLog() ([]entity.Change, error) {
 	return p.changeLogRepo.GetChangeLog()
+}
+
+// GetLastViewedAt retrieves the last time the user viewed the change log
+func (p Persist) GetLastViewedAt() *time.Time {
+	now := p.timer.Now()
+	return &now
 }
 
 // NewPersist creates Persist

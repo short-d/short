@@ -31,7 +31,6 @@ func (t Short) GetResolver() fw.Resolver {
 func NewShort(
 	logger fw.Logger,
 	tracer fw.Tracer,
-	timer fw.Timer,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
 	changeLog changelog.ChangeLog,
@@ -41,7 +40,6 @@ func NewShort(
 	r := resolver.NewResolver(
 		logger,
 		tracer,
-		timer,
 		changeLog,
 		urlRetriever,
 		urlCreator,
