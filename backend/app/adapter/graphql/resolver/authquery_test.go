@@ -7,7 +7,11 @@ import (
 	"time"
 
 	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/adapter/graphql/scalar"
+	"github.com/short-d/short/app/usecase/changelog"
+	"github.com/short-d/short/app/usecase/keygen"
+	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/url"
@@ -86,7 +90,16 @@ func TestAuthQuery_URL(t *testing.T) {
 
 			fakeRepo := repository.NewURLFake(testCase.urls)
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
-			query := newAuthQuery(&testCase.user, retrieverFake)
+
+			keyFetcher := service.NewKeyFetcherFake([]service.Key{})
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			mdtest.Equal(t, nil, err)
+
+			timerFake := mdtest.NewTimerFake(now)
+			changeLogRepo := db.NewChangeLogSQL(sqlDB)
+			changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
+
+			query := newAuthQuery(&testCase.user, changeLog, retrieverFake)
 
 			urlArgs := &URLArgs{
 				Alias:       testCase.alias,
