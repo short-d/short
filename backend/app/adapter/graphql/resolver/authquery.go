@@ -40,7 +40,8 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 // ChangeLog retrieves full ChangeLog from persistent storage
 func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	changeLog, err := v.changeLog.GetChangeLog()
-	return newChangeLog(changeLog, v.changeLog.GetLastViewedAt()), err
+	lastViewedAt := v.changeLog.GetLastViewedAt()
+	return newChangeLog(changeLog, lastViewedAt), err
 }
 
 func newAuthQuery(user *entity.User, changeLog changelog.ChangeLog, urlRetriever url.Retriever) AuthQuery {

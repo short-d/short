@@ -35,7 +35,7 @@ type CreateChangeArgs struct {
 	Change ChangeInput
 }
 
-// ChangeInput represents possible Change attributes
+// ChangeInput represents possible properties for Change
 type ChangeInput struct {
 	Title           string
 	SummaryMarkdown *string
