@@ -10,7 +10,6 @@ import (
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/service"
-
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/auth"

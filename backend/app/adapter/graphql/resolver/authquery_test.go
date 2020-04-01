@@ -12,7 +12,6 @@ import (
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/service"
-
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/url"
