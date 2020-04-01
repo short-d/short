@@ -26,11 +26,8 @@ func (c Change) SummaryMarkdown() *string {
 }
 
 // ReleasedAt retrieves ReleasedAt of Change entity
-func (c Change) ReleasedAt() *scalar.Time {
-	if c.change.ReleasedAt == nil {
-		return nil
-	}
-	return &scalar.Time{Time: *c.change.ReleasedAt}
+func (c Change) ReleasedAt() scalar.Time {
+	return scalar.Time{Time: c.change.ReleasedAt}
 }
 
 func newChange(change entity.Change) Change {

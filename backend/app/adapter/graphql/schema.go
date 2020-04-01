@@ -28,7 +28,7 @@ type Change {
   	id: String!
   	title: String!
   	summaryMarkdown: String
-  	releasedAt: Time
+  	releasedAt: Time!
 }
 
 type AuthMutation {

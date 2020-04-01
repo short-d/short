@@ -36,7 +36,7 @@ func (p Persist) CreateChange(title string, summaryMarkdown *string) (entity.Cha
 		ID:              string(key),
 		Title:           title,
 		SummaryMarkdown: summaryMarkdown,
-		ReleasedAt:      &now,
+		ReleasedAt:      now,
 	}
 	return p.changeLogRepo.CreateChange(newChange)
 }
@@ -47,6 +47,7 @@ func (p Persist) GetChangeLog() ([]entity.Change, error) {
 }
 
 // GetLastViewedAt retrieves the last time the user viewed the change log
+// TODO(issue#613): fetch the last time the user viewed the change log from persistent storage.
 func (p Persist) GetLastViewedAt() *time.Time {
 	now := p.timer.Now()
 	return &now

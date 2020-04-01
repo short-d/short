@@ -40,7 +40,7 @@ FROM "%s";`,
 		if err != nil {
 			return changeLog, err
 		}
-		change.ReleasedAt = utc(change.ReleasedAt)
+		change.ReleasedAt = *utc(&change.ReleasedAt)
 		changeLog = append(changeLog, change)
 	}
 
