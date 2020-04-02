@@ -4,12 +4,12 @@ import './Table.scss';
 
 interface IProps {
   headings?: ReactChild[];
-  rows: ReactChild[][];
+  rows?: ReactChild[][];
 }
 
 export class Table extends Component<IProps> {
   private constructHeadIfExists(headings: ReactChild[] | undefined) {
-    if (!headings) {
+    if (!headings || headings.length === 0) {
       return null;
     }
     return <tr>{this.constructRow(headings, true)}</tr>;
@@ -39,7 +39,10 @@ export class Table extends Component<IProps> {
     );
   }
 
-  private constructBody(rows: ReactChild[][]) {
+  private constructBodyIfExists(rows: ReactChild[][] | undefined) {
+    if (!rows || rows.length === 0) {
+      return null;
+    }
     return rows.map((row: ReactChild[], rowIndex: number) => {
       return <tr key={`row-${rowIndex}`}>{this.constructRow(row, false)}</tr>;
     });
@@ -49,7 +52,7 @@ export class Table extends Component<IProps> {
     const { headings, rows } = this.props;
 
     const theadMarkup = this.constructHeadIfExists(headings);
-    const tbodyMarkup = this.constructBody(rows);
+    const tbodyMarkup = this.constructBodyIfExists(rows);
 
     return (
       <div className="table-container">
