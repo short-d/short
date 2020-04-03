@@ -9,7 +9,7 @@ import (
 
 var _ Payload = (*Email)(nil)
 
-// Email represents a payload contains user's email
+// Email represents a payload that contains user's email
 type Email struct {
 	user entity.User
 }
@@ -47,7 +47,7 @@ func (e EmailFactory) FromTokenPayload(tokenPayload fw.TokenPayload) (Payload, e
 	return Email{user: user}, nil
 }
 
-// FromUser coverts user info into email payload.
+// FromUser converts user info into email payload.
 func (e EmailFactory) FromUser(user entity.User) (Payload, error) {
 	if user.Email == "" {
 		return nil, errors.New("user email cannot be empty")

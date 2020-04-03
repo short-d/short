@@ -5,7 +5,7 @@ import (
 	"github.com/short-d/short/app/entity"
 )
 
-// Payload represents the metadata encoded in a message.
+// Payload represents a message with encoded metadata.
 type Payload interface {
 	GetTokenPayload() fw.TokenPayload
 	GetUser() entity.User
