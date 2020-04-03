@@ -71,7 +71,7 @@ describe('Table component', () => {
       <Table ref={toastRef} rows={sampleRows} headers={sampleHeaders} />
     );
 
-    expect(container.getElementsByTagName('tbody')[0].childElementCount).toBe(
+    expect(container.querySelector('tbody')!.childElementCount).toBe(
       sampleRows.length
     );
     for (let row = 0; row < sampleRows.length; row++) {
