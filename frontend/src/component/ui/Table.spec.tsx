@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { Table } from './Table';
 
 describe('Table component', () => {
-  const sampleHeadings = ['Heading1', 'Heading2', 'Heading3'];
+  const sampleHeaders = ['Header1', 'Header2', 'Header3'];
   const sampleRows = [
     ['row1-cell1', 'row1-cell2', 'row1-cell3'],
     ['row2-cell1', 'row2-cell2', 'row2-cell3'],
@@ -14,84 +14,74 @@ describe('Table component', () => {
     render(<Table />);
   });
 
-  test('should have no children for thead when headings prop not passed', () => {
+  test('should have no children for thead when Headers prop not passed', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(<Table ref={toastRef} rows={sampleRows} />);
 
-    expect(container.getElementsByTagName('thead')[0].childElementCount).toBe(
-      0
-    );
+    expect(container.querySelector('thead')!.childElementCount).toBe(0);
   });
 
-  test('should have no children for thead when headings prop passed empty', () => {
+  test('should have no children for thead when Headers prop passed empty', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(
-      <Table ref={toastRef} rows={sampleRows} headings={[]} />
+      <Table ref={toastRef} rows={sampleRows} headers={[]} />
     );
 
-    expect(container.getElementsByTagName('thead')[0].childElementCount).toBe(
-      0
-    );
+    expect(container.querySelector('thead')!.childElementCount).toBe(0);
   });
 
   test('should have no children for tbody when rows prop not passed', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(
-      <Table ref={toastRef} headings={sampleHeadings} />
+      <Table ref={toastRef} headers={sampleHeaders} />
     );
 
-    expect(container.getElementsByTagName('tbody')[0].childElementCount).toBe(
-      0
-    );
+    expect(container.querySelector('tbody')!.childElementCount).toBe(0);
   });
 
   test('should have no children for tbody when rows prop passed empty', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(
-      <Table ref={toastRef} rows={[]} headings={sampleHeadings} />
+      <Table ref={toastRef} rows={[]} headers={sampleHeaders} />
     );
 
-    expect(container.getElementsByTagName('tbody')[0].childElementCount).toBe(
-      0
-    );
+    expect(container.querySelector('tbody')!.childElementCount).toBe(0);
   });
 
-  test('should render passed headings correctly', () => {
+  test('should render passed Headers correctly', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(
-      <Table ref={toastRef} rows={sampleRows} headings={sampleHeadings} />
+      <Table ref={toastRef} rows={sampleRows} headers={sampleHeaders} />
     );
 
-    expect(container.getElementsByTagName('thead')[0].childElementCount).toBe(
-      1
-    );
-    for (let i = 0; i < sampleHeadings.length; i++) {
+    expect(container.querySelector('thead')!.childElementCount).toBe(1);
+    for (let column = 0; column < sampleHeaders.length; column++) {
       expect(
         container
-          .getElementsByTagName('thead')[0]
-          .getElementsByTagName('tr')[0]
-          .getElementsByTagName('th')[i].innerHTML
-      ).toMatch(sampleHeadings[i]);
+          .querySelector('thead')!
+          .querySelector('tr')!
+          .querySelectorAll('th')[column].innerHTML
+      ).toMatch(sampleHeaders[column]);
     }
   });
 
   test('should render passed rows correctly', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(
-      <Table ref={toastRef} rows={sampleRows} headings={sampleHeadings} />
+      <Table ref={toastRef} rows={sampleRows} headers={sampleHeaders} />
     );
 
     expect(container.getElementsByTagName('tbody')[0].childElementCount).toBe(
       sampleRows.length
     );
-    for (let i = 0; i < sampleRows.length; i++) {
-      for (let j = 0; j < sampleRows[i].length; j++) {
+    for (let row = 0; row < sampleRows.length; row++) {
+      for (let column = 0; column < sampleRows[row].length; column++) {
         expect(
           container
-            .getElementsByTagName('tbody')[0]
-            .getElementsByTagName('tr')
-            [i].getElementsByTagName('td')[j].innerHTML
-        ).toMatch(sampleRows[i][j]);
+            .querySelector('tbody')!
+            .querySelectorAll('tr')
+            [row].querySelectorAll('td')[column].innerHTML
+        ).toMatch(sampleRows[row][column]);
       }
     }
   });

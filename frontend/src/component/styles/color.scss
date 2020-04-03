@@ -9,7 +9,7 @@ $color-divider: #dbdbdb;
 $color-time: #999999;
 $color-toast-background: $color-dark-gray;
 $color-toast-text: $color-light-gray;
-$color-table-heading-background: $color-light-gray;
+$color-table-header-background: $color-light-gray;
 
 @function color-transparent-white($opacity) {
   @return rgba(255, 255, 255, $opacity);

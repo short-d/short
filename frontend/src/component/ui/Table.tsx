@@ -1,64 +1,57 @@
-import React, { Component, ReactChild, ReactText } from 'react';
+import React, { Component, ReactChild } from 'react';
 
 import './Table.scss';
 
 interface IProps {
-  headings?: ReactChild[];
+  headers?: ReactChild[];
   rows?: ReactChild[][];
 }
 
 export class Table extends Component<IProps> {
-  private constructHeadIfExists(headings: ReactChild[] | undefined) {
-    if (!headings || headings.length === 0) {
+  private createHeaders(headers: ReactChild[] | undefined) {
+    if (!headers || headers.length === 0) {
       return null;
     }
-    return <tr>{this.constructRow(headings, true)}</tr>;
-  }
-
-  private constructRow(row: ReactChild[], isHeader: boolean) {
-    return row.map((cell: ReactChild, cellIndex: number) => {
-      return isHeader
-        ? this.constructHeadingCell(cellIndex, cell)
-        : this.constructBodyCell(cellIndex, cell);
-    });
-  }
-
-  private constructHeadingCell(key: ReactText, content: ReactChild) {
     return (
-      <th key={`${key}`} className="table-cell">
-        {content}
-      </th>
+      <tr key={`header`}>
+        {headers.map((cell: ReactChild, cellIndex: number) => {
+          return (
+            <th key={`cell-${cellIndex}`} className="table-cell">
+              {cell}
+            </th>
+          );
+        })}
+      </tr>
     );
   }
 
-  private constructBodyCell(key: ReactText, content: ReactChild) {
-    return (
-      <td key={`${key}`} className="table-cell">
-        {content}
-      </td>
-    );
-  }
-
-  private constructBodyIfExists(rows: ReactChild[][] | undefined) {
+  private createBody(rows: ReactChild[][] | undefined) {
     if (!rows || rows.length === 0) {
       return null;
     }
     return rows.map((row: ReactChild[], rowIndex: number) => {
-      return <tr key={`row-${rowIndex}`}>{this.constructRow(row, false)}</tr>;
+      return <tr key={`row-${rowIndex}`}>{this.createBodyRow(row)}</tr>;
+    });
+  }
+
+  private createBodyRow(row: ReactChild[]) {
+    return row.map((cell: ReactChild, cellIndex: number) => {
+      return (
+        <td key={`cell-${cellIndex}`} className="table-cell">
+          {cell}
+        </td>
+      );
     });
   }
 
   render() {
-    const { headings, rows } = this.props;
-
-    const theadMarkup = this.constructHeadIfExists(headings);
-    const tbodyMarkup = this.constructBodyIfExists(rows);
+    const { headers, rows } = this.props;
 
     return (
       <div className="table-container">
         <table className="table">
-          <thead>{theadMarkup}</thead>
-          <tbody>{tbodyMarkup}</tbody>
+          <thead>{this.createHeaders(headers)}</thead>
+          <tbody>{this.createBody(rows)}</tbody>
         </table>
       </div>
     );

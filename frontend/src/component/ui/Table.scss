@@ -12,8 +12,8 @@
     border-collapse: collapse;
     width: 100%;
 
-    th.table-cell {
-      background-color: $color-table-heading-background;
+    thead {
+      background-color: $color-table-header-background;
     }
 
     .table-cell {
