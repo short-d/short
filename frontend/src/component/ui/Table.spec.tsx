@@ -57,10 +57,7 @@ describe('Table component', () => {
     expect(container.querySelector('thead')!.childElementCount).toBe(1);
     for (let column = 0; column < sampleHeaders.length; column++) {
       expect(
-        container
-          .querySelector('thead')!
-          .querySelector('tr')!
-          .querySelectorAll('th')[column].innerHTML
+        container.querySelectorAll('thead > tr > th')[column].innerHTML
       ).toMatch(sampleHeaders[column]);
     }
   });
@@ -77,10 +74,9 @@ describe('Table component', () => {
     for (let row = 0; row < sampleRows.length; row++) {
       for (let column = 0; column < sampleRows[row].length; column++) {
         expect(
-          container
-            .querySelector('tbody')!
-            .querySelectorAll('tr')
-            [row].querySelectorAll('td')[column].innerHTML
+          container.querySelectorAll('tbody > tr')[row].querySelectorAll('td')[
+            column
+          ].innerHTML
         ).toMatch(sampleRows[row][column]);
       }
     }
