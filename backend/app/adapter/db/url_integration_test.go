@@ -323,6 +323,318 @@ func TestURLSql_GetByAliases(t *testing.T) {
 	}
 }
 
+func TestURLSql_FindURLsByUser(t *testing.T) {
+	testCases := []struct {
+		name                     string
+		urlTableRows             []urlTableRow
+		userURLRelationTableRows []userURLRelationTableRow
+		userTableRows            []userTableRow
+		user                     entity.User
+		expectedURLs             []entity.URL
+	}{
+		{
+			name: "URL's present for given user",
+			urlTableRows: []urlTableRow{
+				{
+					alias:    "google",
+					longLink: "https://www.google.com/",
+				},
+				{
+					alias:    "short",
+					longLink: "https://github.com/short-d/short/",
+				},
+				{
+					alias:    "mozilla",
+					longLink: "https://www.mozilla.org/",
+				},
+			},
+			userURLRelationTableRows: []userURLRelationTableRow{
+				{
+					alias:     "google",
+					userEmail: "test@gmail.com",
+				},
+				{
+					alias:     "short",
+					userEmail: "test@gmail.com",
+				},
+				{
+					alias:     "mozilla",
+					userEmail: "test2@gmail.com",
+				},
+			},
+			userTableRows: []userTableRow{
+				{
+					id:    "12345",
+					email: "test@gmail.com",
+					name:  "Test User",
+				},
+				{
+					id:    "12346",
+					email: "test2@gmail.com",
+					name:  "Test User",
+				},
+			},
+			user: entity.User{
+				ID:    "test",
+				Name:  "test user",
+				Email: "test@gmail.com",
+			},
+			expectedURLs: []entity.URL{
+				{
+					Alias:       "google",
+					OriginalURL: "https://www.google.com/",
+				},
+				{
+					Alias:       "short",
+					OriginalURL: "https://github.com/short-d/short/",
+				},
+			},
+		}, {
+			name: "No URL present for given user",
+			urlTableRows: []urlTableRow{
+				{
+					alias:    "google",
+					longLink: "https://www.google.com/",
+				},
+				{
+					alias:    "short",
+					longLink: "https://github.com/short-d/short/",
+				},
+				{
+					alias:    "mozilla",
+					longLink: "https://www.mozilla.org/",
+				},
+			},
+			userURLRelationTableRows: []userURLRelationTableRow{
+				{
+					alias:     "google",
+					userEmail: "test@gmail.com",
+				},
+				{
+					alias:     "short",
+					userEmail: "test@gmail.com",
+				},
+				{
+					alias:     "mozilla",
+					userEmail: "test@gmail.com",
+				},
+			},
+			userTableRows: []userTableRow{
+				{
+					id:    "12345",
+					email: "test@gmail.com",
+					name:  "Test User",
+				},
+				{
+					id:    "12346",
+					email: "test2@gmail.com",
+					name:  "Test User",
+				},
+			},
+			user: entity.User{
+				ID:    "test",
+				Name:  "test user",
+				Email: "test2@gmail.com",
+			},
+			expectedURLs: []entity.URL{},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
+					insertURLTableRows(t, sqlDB, testCase.urlTableRows)
+					insertUserURLRelationTableRows(t, sqlDB, testCase.userURLRelationTableRows)
+
+					urlRepo := db.NewURLSql(sqlDB)
+					urls, err := urlRepo.FindURLsByUser(testCase.user)
+
+					mdtest.Equal(t, nil, err)
+					mdtest.Equal(t, testCase.expectedURLs, urls)
+				},
+			)
+		})
+	}
+}
+
+func TestURLSql_DeleteURLByUser(t *testing.T) {
+	testCases := []struct {
+		name                     string
+		urlTableRows             []urlTableRow
+		userURLRelationTableRows []userURLRelationTableRow
+		userTableRows            []userTableRow
+		user                     entity.User
+		alias                    string
+		hasErr                   bool
+		expectedURLs             []entity.URL
+		deletedURL               entity.URL
+	}{
+		{
+			name: "Delete alias created by given user",
+			urlTableRows: []urlTableRow{
+				{
+					alias:    "google",
+					longLink: "https://www.google.com/",
+				},
+				{
+					alias:    "short",
+					longLink: "https://github.com/short-d/short/",
+				},
+				{
+					alias:    "mozilla",
+					longLink: "https://www.mozilla.org/",
+				},
+			},
+			userURLRelationTableRows: []userURLRelationTableRow{
+				{
+					alias:     "google",
+					userEmail: "test@gmail.com",
+				},
+				{
+					alias:     "short",
+					userEmail: "test@gmail.com",
+				},
+				{
+					alias:     "mozilla",
+					userEmail: "test2@gmail.com",
+				},
+			},
+			userTableRows: []userTableRow{
+				{
+					id:    "12345",
+					email: "test@gmail.com",
+					name:  "Test User",
+				},
+				{
+					id:    "12346",
+					email: "test2@gmail.com",
+					name:  "Test User",
+				},
+			},
+			user: entity.User{
+				ID:    "test",
+				Name:  "test user",
+				Email: "test@gmail.com",
+			},
+			alias:  "google",
+			hasErr: false,
+			expectedURLs: []entity.URL{
+				{
+					Alias:       "short",
+					OriginalURL: "https://github.com/short-d/short/",
+				},
+			},
+			deletedURL: entity.URL{
+				Alias:       "google",
+				OriginalURL: "https://www.google.com/",
+			},
+		},
+		{
+			name: "Cannot delete alias created by different user",
+			urlTableRows: []urlTableRow{
+				{
+					alias:    "google",
+					longLink: "https://www.google.com/",
+				},
+				{
+					alias:    "short",
+					longLink: "https://github.com/short-d/short/",
+				},
+				{
+					alias:    "mozilla",
+					longLink: "https://www.mozilla.org/",
+				},
+			},
+			userURLRelationTableRows: []userURLRelationTableRow{
+				{
+					alias:     "google",
+					userEmail: "test@gmail.com",
+				},
+				{
+					alias:     "short",
+					userEmail: "test@gmail.com",
+				},
+				{
+					alias:     "mozilla",
+					userEmail: "test2@gmail.com",
+				},
+			},
+			userTableRows: []userTableRow{
+				{
+					id:    "12345",
+					email: "test@gmail.com",
+					name:  "Test User",
+				},
+				{
+					id:    "12346",
+					email: "test2@gmail.com",
+					name:  "Test User",
+				},
+			},
+			user: entity.User{
+				ID:    "test",
+				Name:  "test user",
+				Email: "test2@gmail.com",
+			},
+			alias:  "google",
+			hasErr: true,
+			expectedURLs: []entity.URL{
+				{
+					Alias:       "google",
+					OriginalURL: "https://www.google.com/",
+				},
+				{
+					Alias:       "short",
+					OriginalURL: "https://github.com/short-d/short/",
+				},
+				{
+					Alias:       "mozilla",
+					OriginalURL: "https://www.mozilla.org/",
+				},
+			},
+			deletedURL: entity.URL{},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
+					insertURLTableRows(t, sqlDB, testCase.urlTableRows)
+					insertUserURLRelationTableRows(t, sqlDB, testCase.userURLRelationTableRows)
+
+					urlRepo := db.NewURLSql(sqlDB)
+					url, err := urlRepo.DeleteURLByUser(testCase.user, testCase.alias)
+
+					if testCase.hasErr {
+						mdtest.NotEqual(t, nil, err)
+						return
+					} else {
+						mdtest.Equal(t, nil, err)
+						mdtest.Equal(t, testCase.deletedURL, url)
+					}
+
+					urls, err := urlRepo.FindURLsByUser(testCase.user)
+
+					mdtest.Equal(t, nil, err)
+					mdtest.Equal(t, testCase.expectedURLs, urls)
+				},
+			)
+		})
+	}
+}
+
 func insertURLTableRows(t *testing.T, sqlDB *sql.DB, tableRows []urlTableRow) {
 	for _, tableRow := range tableRows {
 		_, err := sqlDB.Exec(

@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -168,6 +169,99 @@ func (u URLSql) composeParamList(numParams int) string {
 
 	parameterStr := strings.Join(params, ", ")
 	return parameterStr
+}
+
+func (u URLSql) FindURLsByUser(user entity.User) ([]entity.URL, error) {
+	statement := fmt.Sprintf(`
+SELECT %s, %s, %s, %s, %s
+FROM %s
+INNER JOIN %s ON %s.%s = %s.%s
+WHERE "%s"=$1;`,
+		table.URL.ColumnAlias,
+		table.URL.ColumnOriginalURL,
+		table.URL.ColumnExpireAt,
+		table.URL.ColumnCreatedAt,
+		table.URL.ColumnUpdatedAt,
+
+		table.URL.TableName,
+
+		table.UserURLRelation.TableName,
+
+		table.URL.TableName,
+		table.URL.ColumnAlias,
+		table.UserURLRelation.TableName,
+		table.UserURLRelation.ColumnURLAlias,
+
+		table.UserURLRelation.ColumnUserEmail,
+	)
+
+	urls := []entity.URL{}
+	rows, err := u.db.Query(statement, user.Email)
+
+	if err != nil {
+		return urls, nil
+	}
+
+	for rows.Next() {
+		var url entity.URL
+		err = rows.Scan(
+			&url.Alias,
+			&url.OriginalURL,
+			&url.ExpireAt,
+			&url.CreatedAt,
+			&url.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		urls = append(urls, url)
+	}
+
+	return urls, nil
+}
+
+func (u *URLSql) DeleteURLByUser(user entity.User, alias string) (entity.URL, error) {
+	url, err := u.GetByAlias(alias)
+	if err != nil {
+		return url, err
+	}
+
+	statement := fmt.Sprintf(`
+DELETE 
+FROM %s as A
+USING %s as B
+WHERE A.%s = B.%s AND B.%s=$1 AND B.%s=$2;`,
+		table.URL.TableName,
+		table.UserURLRelation.TableName,
+
+		table.URL.ColumnAlias,
+		table.UserURLRelation.ColumnURLAlias,
+
+		table.UserURLRelation.ColumnUserEmail,
+		table.UserURLRelation.ColumnURLAlias,
+	)
+
+	result, err := u.db.Exec(
+		statement,
+		user.Email,
+		alias,
+	)
+
+	if err != nil {
+		return entity.URL{}, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return entity.URL{}, err
+	}
+
+	if rowsAffected == 0 {
+		return entity.URL{}, errors.New("delete unsuccessful")
+	}
+
+	return url, err
 }
 
 // NewURLSql creates URLSql
