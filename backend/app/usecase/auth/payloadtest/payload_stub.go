@@ -3,9 +3,10 @@ package payloadtest
 import (
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/auth/payload"
 )
 
-var _ Payload = (*Stub)(nil)
+var _ payload.Payload = (*Stub)(nil)
 
 type Stub struct {
 	TokenPayload fw.TokenPayload

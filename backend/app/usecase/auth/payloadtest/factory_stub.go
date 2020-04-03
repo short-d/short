@@ -6,10 +6,10 @@ import (
 	"github.com/short-d/short/app/usecase/auth/payload"
 )
 
-var _ Factory = (*FactoryStub)(nil)
+var _ payload.Factory = (*FactoryStub)(nil)
 
 type FactoryStub struct {
-	Payload  Payload
+	Payload  payload.Payload
 	TokenErr error
 	UserErr  error
 }
