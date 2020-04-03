@@ -7,6 +7,8 @@ import (
 	"github.com/short-d/short/app/entity"
 )
 
+const emailKey = "email"
+
 var _ Payload = (*Email)(nil)
 
 // Email represents a payload that contains user's email
@@ -18,7 +20,7 @@ type Email struct {
 // payload.
 func (e Email) GetTokenPayload() fw.TokenPayload {
 	return map[string]interface{}{
-		"email": e.user.Email,
+		emailKey: e.user.Email,
 	}
 }
 
@@ -35,7 +37,7 @@ type EmailFactory struct {
 
 // FromTokenPayload parses token payload into email payload.
 func (e EmailFactory) FromTokenPayload(tokenPayload fw.TokenPayload) (Payload, error) {
-	JSONEmail := tokenPayload["email"]
+	JSONEmail := tokenPayload[emailKey]
 	email, ok := JSONEmail.(string)
 	if !ok {
 		return nil, errors.New("expect payload to contain email")
