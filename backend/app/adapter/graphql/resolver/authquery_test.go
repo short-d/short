@@ -9,11 +9,11 @@ import (
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/adapter/graphql/scalar"
+	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/keygen"
-	"github.com/short-d/short/app/usecase/service"
-	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/url"
 )
 
