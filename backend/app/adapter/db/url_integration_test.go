@@ -375,8 +375,8 @@ func TestURLSql_FindURLsByUser(t *testing.T) {
 				},
 			},
 			user: entity.User{
-				ID:    "test",
-				Name:  "test user",
+				ID:    "12345",
+				Name:  "Test User",
 				Email: "test@gmail.com",
 			},
 			expectedURLs: []entity.URL{
@@ -432,8 +432,8 @@ func TestURLSql_FindURLsByUser(t *testing.T) {
 				},
 			},
 			user: entity.User{
-				ID:    "test",
-				Name:  "test user",
+				ID:    "12346",
+				Name:  "Test User",
 				Email: "test2@gmail.com",
 			},
 			expectedURLs: []entity.URL{},
@@ -518,8 +518,8 @@ func TestURLSql_DeleteURLByUser(t *testing.T) {
 				},
 			},
 			user: entity.User{
-				ID:    "test",
-				Name:  "test user",
+				ID:    "12345",
+				Name:  "Test User",
 				Email: "test@gmail.com",
 			},
 			alias:  "google",
@@ -578,8 +578,8 @@ func TestURLSql_DeleteURLByUser(t *testing.T) {
 				},
 			},
 			user: entity.User{
-				ID:    "test",
-				Name:  "test user",
+				ID:    "12346",
+				Name:  "Test User",
 				Email: "test2@gmail.com",
 			},
 			alias:  "google",

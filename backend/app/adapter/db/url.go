@@ -171,6 +171,7 @@ func (u URLSql) composeParamList(numParams int) string {
 	return parameterStr
 }
 
+// FindURLsByUser finds all urls created by a given user
 func (u URLSql) FindURLsByUser(user entity.User) ([]entity.URL, error) {
 	statement := fmt.Sprintf(`
 SELECT %s, %s, %s, %s, %s
@@ -221,6 +222,7 @@ WHERE "%s"=$1;`,
 	return urls, nil
 }
 
+// DeleteURLByUser removes URL having given alias created by given user
 func (u *URLSql) DeleteURLByUser(user entity.User, alias string) (entity.URL, error) {
 	url, err := u.GetByAlias(alias)
 	if err != nil {
