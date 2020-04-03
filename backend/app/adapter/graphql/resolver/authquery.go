@@ -5,6 +5,7 @@ import (
 
 	"github.com/short-d/short/app/adapter/graphql/scalar"
 	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/url"
 )
 
@@ -12,6 +13,7 @@ import (
 // on the identify of the user
 type AuthQuery struct {
 	user         *entity.User
+	changeLog    changelog.ChangeLog
 	urlRetriever url.Retriever
 }
 
@@ -35,9 +37,17 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 	return &URL{url: u}, nil
 }
 
-func newAuthQuery(user *entity.User, urlRetriever url.Retriever) AuthQuery {
+// ChangeLog retrieves full ChangeLog from persistent storage
+func (v AuthQuery) ChangeLog() (ChangeLog, error) {
+	changeLog, err := v.changeLog.GetChangeLog()
+	lastViewedAt := v.changeLog.GetLastViewedAt()
+	return newChangeLog(changeLog, lastViewedAt), err
+}
+
+func newAuthQuery(user *entity.User, changeLog changelog.ChangeLog, urlRetriever url.Retriever) AuthQuery {
 	return AuthQuery{
 		user:         user,
+		changeLog:    changeLog,
 		urlRetriever: urlRetriever,
 	}
 }

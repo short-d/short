@@ -40,7 +40,7 @@ FROM "%s";`,
 		if err != nil {
 			return changeLog, err
 		}
-		change.ReleasedAt = utc(change.ReleasedAt)
+		change.ReleasedAt = change.ReleasedAt.UTC()
 		changeLog = append(changeLog, change)
 	}
 

@@ -3,6 +3,7 @@ package graphql
 import (
 	"github.com/short-d/short/app/adapter/graphql/resolver"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/url"
 
@@ -32,12 +33,14 @@ func NewShort(
 	tracer fw.Tracer,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
+	changeLog changelog.ChangeLog,
 	requesterVerifier requester.Verifier,
 	authenticator auth.Authenticator,
 ) Short {
 	r := resolver.NewResolver(
 		logger,
 		tracer,
+		changeLog,
 		urlRetriever,
 		urlCreator,
 		requesterVerifier,
