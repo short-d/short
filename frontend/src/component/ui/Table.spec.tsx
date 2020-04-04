@@ -8,32 +8,32 @@ describe('Table component', () => {
   });
 
   test('should have no children for thead without passing headers', () => {
-    const toastRef = React.createRef<Table>();
-    const { container } = render(<Table ref={toastRef} />);
+    const tableRef = React.createRef<Table>();
+    const { container } = render(<Table ref={tableRef} />);
 
     expect(container.querySelector('thead')).not.toBeNull();
     expect(container.querySelector('thead')!.childElementCount).toBe(0);
   });
 
   test('should have no children for thead with empty headers', () => {
-    const toastRef = React.createRef<Table>();
-    const { container } = render(<Table ref={toastRef} headers={[]} />);
+    const tableRef = React.createRef<Table>();
+    const { container } = render(<Table ref={tableRef} headers={[]} />);
 
     expect(container.querySelector('thead')).not.toBeNull();
     expect(container.querySelector('thead')!.childElementCount).toBe(0);
   });
 
   test('should have no children for tbody without passing rows', () => {
-    const toastRef = React.createRef<Table>();
-    const { container } = render(<Table ref={toastRef} />);
+    const tableRef = React.createRef<Table>();
+    const { container } = render(<Table ref={tableRef} />);
 
     expect(container.querySelector('tbody')).not.toBeNull();
     expect(container.querySelector('tbody')!.childElementCount).toBe(0);
   });
 
   test('should have no children for tbody with empty rows', () => {
-    const toastRef = React.createRef<Table>();
-    const { container } = render(<Table ref={toastRef} rows={[]} />);
+    const tableRef = React.createRef<Table>();
+    const { container } = render(<Table ref={tableRef} rows={[]} />);
 
     expect(container.querySelector('tbody')).not.toBeNull();
     expect(container.querySelector('tbody')!.childElementCount).toBe(0);
@@ -41,9 +41,9 @@ describe('Table component', () => {
 
   test('should render correctly with headers', () => {
     const sampleHeaders = ['Header1', 'Header2', 'Header3'];
-    const toastRef = React.createRef<Table>();
+    const tableRef = React.createRef<Table>();
     const { container } = render(
-      <Table ref={toastRef} headers={sampleHeaders} />
+      <Table ref={tableRef} headers={sampleHeaders} />
     );
 
     const tableHeaders = container.querySelectorAll('thead > tr > th');
@@ -60,8 +60,8 @@ describe('Table component', () => {
       ['row2-cell1', 'row2-cell2', 'row2-cell3'],
       ['row3-cell1', 'row3-cell2', 'row3-cell3']
     ];
-    const toastRef = React.createRef<Table>();
-    const { container } = render(<Table ref={toastRef} rows={sampleRows} />);
+    const tableRef = React.createRef<Table>();
+    const { container } = render(<Table ref={tableRef} rows={sampleRows} />);
 
     const tableRows = container.querySelectorAll('tbody > tr');
     expect(tableRows).toHaveLength(sampleRows.length);
@@ -83,9 +83,9 @@ describe('Table component', () => {
       ['row2-cell1', 'row2-cell2', 'row2-cell3'],
       ['row3-cell1', 'row3-cell2', 'row3-cell3']
     ];
-    const toastRef = React.createRef<Table>();
+    const tableRef = React.createRef<Table>();
     const { container } = render(
-      <Table ref={toastRef} headers={sampleHeaders} rows={sampleRows} />
+      <Table ref={tableRef} headers={sampleHeaders} rows={sampleRows} />
     );
 
     const tableHeaders = container.querySelectorAll('thead > tr > th');
@@ -114,8 +114,8 @@ describe('Table component', () => {
       ['row2-cell1', 'row2-cell2'],
       ['row3-cell1', 'row3-cell2', 'row3-cell3', 'row3-cell4', 'row3-cell5']
     ];
-    const toastRef = React.createRef<Table>();
-    const { container } = render(<Table ref={toastRef} rows={unequalRows} />);
+    const tableRef = React.createRef<Table>();
+    const { container } = render(<Table ref={tableRef} rows={unequalRows} />);
 
     const tableRows = container.querySelectorAll('tbody > tr');
     expect(tableRows).toHaveLength(unequalRows.length);
