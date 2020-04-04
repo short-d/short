@@ -7,7 +7,7 @@ describe('Table component', () => {
     render(<Table />);
   });
 
-  test('should have no children for thead with headers not passed', () => {
+  test('should have no children for thead without passing headers', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(<Table ref={toastRef} />);
 
@@ -23,7 +23,7 @@ describe('Table component', () => {
     expect(container.querySelector('thead')!.childElementCount).toBe(0);
   });
 
-  test('should have no children for tbody with rows not passed', () => {
+  test('should have no children for tbody without passing rows', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(<Table ref={toastRef} />);
 
@@ -39,7 +39,7 @@ describe('Table component', () => {
     expect(container.querySelector('tbody')!.childElementCount).toBe(0);
   });
 
-  test('should render correctly with headers passed', () => {
+  test('should render correctly with headers', () => {
     const sampleHeaders = ['Header1', 'Header2', 'Header3'];
     const toastRef = React.createRef<Table>();
     const { container } = render(
@@ -54,7 +54,7 @@ describe('Table component', () => {
     }
   });
 
-  test('should render correctly with rows passed', () => {
+  test('should render correctly with rows', () => {
     const sampleRows = [
       ['row1-cell1', 'row1-cell2', 'row1-cell3'],
       ['row2-cell1', 'row2-cell2', 'row2-cell3'],
@@ -76,7 +76,7 @@ describe('Table component', () => {
     }
   });
 
-  test('should render correctly with both headers and rows passed', () => {
+  test('should render correctly with both headers and rows', () => {
     const sampleHeaders = ['Header1', 'Header2', 'Header3'];
     const sampleRows = [
       ['row1-cell1', 'row1-cell2', 'row1-cell3'],
@@ -108,7 +108,7 @@ describe('Table component', () => {
     }
   });
 
-  test('should render correctly with unequal number of data in rows', () => {
+  test('should render correctly with unequal number of cells in rows', () => {
     const unequalRows = [
       ['row1-cell1', 'row1-cell2', 'row1-cell3'],
       ['row2-cell1', 'row2-cell2'],
