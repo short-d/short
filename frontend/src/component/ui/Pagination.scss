@@ -1,0 +1,31 @@
+@import '../styles/center';
+@import '../styles/color';
+@import '../styles/shadow';
+@import '../styles/font';
+
+.pagination {
+  display: block;
+  text-align: center;
+  @include default-font;
+
+  button {
+    display: inline;
+    padding: 0.5rem 0.75rem;
+    background-color: $color-white;
+    box-shadow: $shadow-button;
+    font-size: 0.75em;
+    border: none;
+    outline: none;
+
+    &:hover {
+      background-color: $color-light-gray;
+      cursor: pointer;
+      opacity: 0.9;
+    }
+  }
+
+  button.active {
+    background-color: $color-primary !important;
+    color: $color-white;
+  }
+}
