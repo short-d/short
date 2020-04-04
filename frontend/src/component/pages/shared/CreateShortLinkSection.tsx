@@ -63,7 +63,8 @@ export class CreateShortLinkSection extends Component<Props> {
         <div className={'input-error'}>{this.props.inputErr}</div>
         <div>
           <Toggle onClick={this.props.onPublicToggle}>
-            Make this short link public?<br />( will be publicly listed )
+            Make this short link public?
+            <br />(&nbsp;will be publicly listed&nbsp;)
           </Toggle>
         </div>
         {this.props.createdUrl && (

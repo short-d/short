@@ -250,7 +250,7 @@ export class Home extends Component<Props, State> {
       isPublic: enabled
     });
   };
-  
+
   getLongLinkFromQueryParams(): string {
     let urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('long_link')!;

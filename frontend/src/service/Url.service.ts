@@ -142,7 +142,12 @@ export class UrlService {
       CREATE_SHORT_LINK
     );
     let alias = link.alias === '' ? null : link.alias!;
-    let variables = this.gqlCreateURLVariable(captchaResponse, link, alias, isPublic);
+    let variables = this.gqlCreateURLVariable(
+      captchaResponse,
+      link,
+      alias,
+      isPublic
+    );
     return new Promise<Url>( // TODO(issue#599): simplify business logic below to improve readability
       (
         resolve: (createdURL: Url) => void,
