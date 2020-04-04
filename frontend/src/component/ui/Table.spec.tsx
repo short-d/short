@@ -18,6 +18,7 @@ describe('Table component', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(<Table ref={toastRef} rows={sampleRows} />);
 
+    expect(container.querySelector('thead')).not.toBeNull();
     expect(container.querySelector('thead')!.childElementCount).toBe(0);
   });
 
@@ -27,6 +28,7 @@ describe('Table component', () => {
       <Table ref={toastRef} rows={sampleRows} headers={[]} />
     );
 
+    expect(container.querySelector('thead')).not.toBeNull();
     expect(container.querySelector('thead')!.childElementCount).toBe(0);
   });
 
@@ -36,6 +38,7 @@ describe('Table component', () => {
       <Table ref={toastRef} headers={sampleHeaders} />
     );
 
+    expect(container.querySelector('tbody')).not.toBeNull();
     expect(container.querySelector('tbody')!.childElementCount).toBe(0);
   });
 
@@ -45,39 +48,58 @@ describe('Table component', () => {
       <Table ref={toastRef} rows={[]} headers={sampleHeaders} />
     );
 
+    expect(container.querySelector('tbody')).not.toBeNull();
     expect(container.querySelector('tbody')!.childElementCount).toBe(0);
   });
 
-  test('should render passed Headers correctly', () => {
+  test('should render when passed Headers correctly', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(
       <Table ref={toastRef} rows={sampleRows} headers={sampleHeaders} />
     );
 
-    expect(container.querySelector('thead')!.childElementCount).toBe(1);
+    const tableHeaders = container.querySelectorAll('thead > tr > th');
+    expect(tableHeaders).toHaveLength(sampleHeaders.length);
     for (let column = 0; column < sampleHeaders.length; column++) {
-      expect(
-        container.querySelectorAll('thead > tr > th')[column].innerHTML
-      ).toMatch(sampleHeaders[column]);
+      expect(tableHeaders[column].innerHTML).toMatch(sampleHeaders[column]);
     }
   });
 
-  test('should render passed rows correctly', () => {
+  test('should render when passed rows correctly', () => {
     const toastRef = React.createRef<Table>();
     const { container } = render(
       <Table ref={toastRef} rows={sampleRows} headers={sampleHeaders} />
     );
 
-    expect(container.querySelector('tbody')!.childElementCount).toBe(
-      sampleRows.length
-    );
+    const tableRows = container.querySelectorAll('tbody > tr');
+    expect(tableRows).toHaveLength(sampleRows.length);
     for (let row = 0; row < sampleRows.length; row++) {
+      const curRowData = tableRows[row].querySelectorAll('td');
+      expect(curRowData).toHaveLength(sampleRows[row].length);
       for (let column = 0; column < sampleRows[row].length; column++) {
-        expect(
-          container.querySelectorAll('tbody > tr')[row].querySelectorAll('td')[
-            column
-          ].innerHTML
-        ).toMatch(sampleRows[row][column]);
+        expect(curRowData[column].innerHTML).toMatch(sampleRows[row][column]);
+      }
+    }
+  });
+
+  test('should render when unequal row widths are passed', () => {
+    const unequalRows = [
+      ['row1-cell1', 'row1-cell2', 'row1-cell3'],
+      ['row2-cell1', 'row2-cell2'],
+      ['row3-cell1', 'row3-cell2', 'row3-cell3', 'row3-cell4', 'row3-cell5']
+    ];
+    const toastRef = React.createRef<Table>();
+    const { container } = render(
+      <Table ref={toastRef} rows={unequalRows} headers={sampleHeaders} />
+    );
+
+    const tableRows = container.querySelectorAll('tbody > tr');
+    expect(tableRows).toHaveLength(unequalRows.length);
+    for (let row = 0; row < unequalRows.length; row++) {
+      const curRowData = tableRows[row].querySelectorAll('td');
+      expect(curRowData).toHaveLength(unequalRows[row].length);
+      for (let column = 0; column < unequalRows[row].length; column++) {
+        expect(curRowData[column].innerHTML).toMatch(unequalRows[row][column]);
       }
     }
   });
