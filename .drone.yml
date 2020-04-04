@@ -23,6 +23,7 @@ steps:
         - master
       event:
         - pull_request
+
   - name: run frontend tests
     image: docker
     environment:
@@ -151,6 +152,27 @@ steps:
         - push
         - pull_request
 
+  - name: create testing frontend assets
+    image: node:12.7.0-alpine
+    environment:
+      RECAPTCHA_SITE_KEY:
+        from_secret: TESTING_RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
+    volumes:
+      - name: frontend-dep
+        path: /drone/src/frontend/node_modules
+    commands:
+      - apk add --no-cache bash git
+      - cd frontend
+      - yarn
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY REACT_APP_CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID CI=true yarn build:testing
+    when:
+      branch:
+        - testing
+      event:
+        - push
+
   - name: create staging frontend assets
     image: node:12.7.0-alpine
     environment:
@@ -172,6 +194,19 @@ steps:
       event:
         - push
 
+  - name: build testing frontend Docker image
+    image: docker
+    commands:
+      - docker build -t short-frontend-testing:latest -f frontend/Dockerfile frontend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - testing
+      event:
+        - push
+
   - name: build staging frontend Docker image
     image: docker
     commands:
@@ -185,6 +220,19 @@ steps:
       event:
         - push
 
+  - name: build testing backend Docker image
+    image: docker
+    commands:
+      - docker build -t short-backend-testing:latest -f backend/Dockerfile backend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - testing
+      event:
+        - push
+
   - name: build backend Docker image
     image: docker
     commands:
@@ -195,6 +243,30 @@ steps:
     when:
       branch:
         - master
+      event:
+        - push
+
+  - name: publish testing images to DockerHub
+    image: docker
+    environment:
+      DOCKERHUB_USERNAME:
+        from_secret: DOCKERHUB_USERNAME
+      DOCKERHUB_PASSWORD:
+        from_secret: DOCKERHUB_PASSWORD
+      DOCKERHUB_ORG_ID:
+        from_secret: DOCKERHUB_ORG_ID
+    commands:
+      - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - docker tag short-frontend-testing:latest $DOCKERHUB_ORG_ID/short-frontend-testing:latest
+      - docker tag short-backend-testing:latest $DOCKERHUB_ORG_ID/short-backend-testing:latest
+      - docker push $DOCKERHUB_ORG_ID/short-frontend-testing:latest
+      - docker push $DOCKERHUB_ORG_ID/short-backend-testing:latest
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - testing
       event:
         - push
 

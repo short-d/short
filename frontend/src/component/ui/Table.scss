@@ -1,0 +1,24 @@
+@import '../styles/color';
+@import '../styles/corner';
+@import '../styles/font';
+
+.table-container {
+  max-width: 100%;
+  overflow-x: auto;
+  @include default-font;
+  @include round-corner;
+
+  .table {
+    border-collapse: collapse;
+    width: 100%;
+
+    thead {
+      background-color: $color-table-header-background;
+    }
+
+    .table-cell {
+      padding: 5px;
+      text-align: left;
+    }
+  }
+}

@@ -7,13 +7,18 @@ import (
 	"time"
 
 	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/changelog"
+	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/url"
 )
 
 func TestQuery_AuthQuery(t *testing.T) {
+	now := time.Now()
 	authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
 	user := entity.User{
 		Email: "alpha@example.com",
@@ -60,7 +65,16 @@ func TestQuery_AuthQuery(t *testing.T) {
 			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
 			logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 			tracer := mdtest.NewTracerFake()
-			query := newQuery(&logger, &tracer, authenticator, retrieverFake)
+
+			keyFetcher := service.NewKeyFetcherFake([]service.Key{})
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			mdtest.Equal(t, nil, err)
+
+			timerFake := mdtest.NewTimerFake(now)
+			changeLogRepo := db.NewChangeLogSQL(sqlDB)
+			changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
+
+			query := newQuery(&logger, &tracer, authenticator, changeLog, retrieverFake)
 
 			mdtest.Equal(t, nil, err)
 			authQueryArgs := AuthQueryArgs{AuthToken: testCase.authToken}
