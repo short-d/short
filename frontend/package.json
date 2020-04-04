@@ -9,22 +9,25 @@
     "apollo-link": "^1.2.13",
     "apollo-link-http": "^1.5.16",
     "classnames": "^2.2.6",
+    "detect-browser": "^5.0.0",
     "es-cookie": "^1.2.0",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "material-design-icons": "^3.0.1",
+    "moment": "^2.24.0",
     "qrcode": "^1.4.2",
     "react": "^16.10.2",
-    "react-debounce-input": "^3.2.2",
     "react-dom": "^16.10.2",
     "react-router-dom": "^5.1.2",
     "recaptcha-v3": "^1.7.0",
-    "redux": "^4.0.4"
+    "redux": "^4.0.4",
+    "rxjs": "^6.5.4"
   },
   "scripts": {
     "start": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts start",
     "build": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` sh -ac '. .env.${REACT_APP_ENV}; react-scripts build'",
     "build:development": "REACT_APP_ENV=development yarn build",
+    "build:testing": "REACT_APP_ENV=testing yarn build",
     "build:staging": "REACT_APP_ENV=staging yarn build",
     "build:production": "REACT_APP_ENV=production yarn build",
     "test": "REACT_APP_GIT_SHA=`git rev-parse --short HEAD` react-scripts test",
@@ -52,6 +55,8 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/react": "^10.0.1",
+    "@types/chrome": "^0.0.87",
     "@types/classnames": "^2.2.9",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.12",

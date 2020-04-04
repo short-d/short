@@ -13,6 +13,16 @@ type UserFake struct {
 	users []entity.User
 }
 
+// IsIDExist checks whether a given user id exists in the repository.
+func (u UserFake) IsIDExist(id string) (bool, error) {
+	for _, user := range u.users {
+		if user.ID == id {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 // IsEmailExist checks whether an user with given email exists in the repository.
 func (u UserFake) IsEmailExist(email string) (bool, error) {
 	for _, user := range u.users {
@@ -31,6 +41,16 @@ func (u UserFake) IsUserIDExist(userID string) bool {
 		}
 	}
 	return false
+}
+
+// GetUserByID finds an user with a given user ID.
+func (u UserFake) GetUserByID(id string) (entity.User, error) {
+	for _, user := range u.users {
+		if user.ID == id {
+			return user, nil
+		}
+	}
+	return entity.User{}, errors.New("ID not found")
 }
 
 // GetUserByEmail finds an user with a given email.

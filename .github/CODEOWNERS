@@ -8,4 +8,14 @@
 #
 # Order is important; the last matching pattern takes the most
 # precedence.
-*.go    @alldroll
+
+# Backend
+*.go    @alldroll @byliuyang
+
+# Frontend
+*.ts    @rohithbalaji123 @byliuyang
+*.tsx   @rohithbalaji123 @byliuyang
+*.js    @byliuyang
+*.html  @byliuyang
+*.scss  @byliuyang
+*.png   @byliuyang

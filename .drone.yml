@@ -7,8 +7,13 @@ steps:
     environment:
       RECAPTCHA_SITE_KEY:
         from_secret: RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
     commands:
-      - docker build -t lint-frontend --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY -f frontend/Dockerfile-lint frontend
+      - docker build -t lint-frontend
+        --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY
+        --build-arg CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID
+        -f frontend/Dockerfile-lint frontend
       - docker run lint-frontend
     volumes:
       - name: docker
@@ -18,13 +23,19 @@ steps:
         - master
       event:
         - pull_request
+
   - name: run frontend tests
     image: docker
     environment:
       RECAPTCHA_SITE_KEY:
         from_secret: RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
     commands:
-      - docker build -t test-frontend --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY -f frontend/Dockerfile-test frontend
+      - docker build -t test-frontend
+        --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY
+        --build-arg CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID
+        -f frontend/Dockerfile-test frontend
       - docker run test-frontend
     volumes:
       - name: docker
@@ -33,6 +44,32 @@ steps:
       branch:
         - master
       event:
+        - pull_request
+  
+  - name: report frontend code coverage
+    image: docker
+    environment:
+      CODECOV_TOKEN:
+        from_secret: CODECOV_TOKEN
+      RECAPTCHA_SITE_KEY:
+        from_secret: RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
+    commands:
+      - docker build -t report-frontend-coverage
+        --build-arg RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY
+        --build-arg CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID
+        --build-arg CODECOV_TOKEN=$CODECOV_TOKEN
+        -f Dockerfile-frontend-coverage .
+      - docker run report-frontend-coverage
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - master
+      event:
+        - push
         - pull_request
 
   - name: run backend unit tests
@@ -80,7 +117,7 @@ steps:
       event:
         - pull_request
 
-  - name: report code coverage
+  - name: report backend code coverage
     image: docker
     environment:
       DB_HOST:
@@ -96,15 +133,15 @@ steps:
       CODECOV_TOKEN:
         from_secret: CODECOV_TOKEN
     commands:
-      - docker build -t report-coverage
+      - docker build -t report-backend-coverage
         --build-arg DB_HOST=$DB_HOST
         --build-arg DB_PORT=$DB_PORT
         --build-arg DB_USER=$DB_USER
         --build-arg DB_PASSWORD=$DB_PASSWORD
         --build-arg DB_NAME=$DB_NAME
         --build-arg CODECOV_TOKEN=$CODECOV_TOKEN
-        -f Dockerfile-coverage .
-      - docker run report-coverage
+        -f Dockerfile-backend-coverage .
+      - docker run report-backend-coverage
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -115,11 +152,13 @@ steps:
         - push
         - pull_request
 
-  - name: create staging frontend assets
+  - name: create testing frontend assets
     image: node:12.7.0-alpine
     environment:
       RECAPTCHA_SITE_KEY:
-        from_secret: STAGING_RECAPTCHA_SITE_KEY
+        from_secret: TESTING_RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
     volumes:
       - name: frontend-dep
         path: /drone/src/frontend/node_modules
@@ -127,10 +166,44 @@ steps:
       - apk add --no-cache bash git
       - cd frontend
       - yarn
-      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build:staging
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY REACT_APP_CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID CI=true yarn build:testing
+    when:
+      branch:
+        - testing
+      event:
+        - push
+
+  - name: create staging frontend assets
+    image: node:12.7.0-alpine
+    environment:
+      RECAPTCHA_SITE_KEY:
+        from_secret: STAGING_RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
+    volumes:
+      - name: frontend-dep
+        path: /drone/src/frontend/node_modules
+    commands:
+      - apk add --no-cache bash git
+      - cd frontend
+      - yarn
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY REACT_APP_CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID CI=true yarn build:staging
     when:
       branch:
         - master
+      event:
+        - push
+
+  - name: build testing frontend Docker image
+    image: docker
+    commands:
+      - docker build -t short-frontend-testing:latest -f frontend/Dockerfile frontend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - testing
       event:
         - push
 
@@ -147,6 +220,19 @@ steps:
       event:
         - push
 
+  - name: build testing backend Docker image
+    image: docker
+    commands:
+      - docker build -t short-backend-testing:latest -f backend/Dockerfile backend
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - testing
+      event:
+        - push
+
   - name: build backend Docker image
     image: docker
     commands:
@@ -157,6 +243,30 @@ steps:
     when:
       branch:
         - master
+      event:
+        - push
+
+  - name: publish testing images to DockerHub
+    image: docker
+    environment:
+      DOCKERHUB_USERNAME:
+        from_secret: DOCKERHUB_USERNAME
+      DOCKERHUB_PASSWORD:
+        from_secret: DOCKERHUB_PASSWORD
+      DOCKERHUB_ORG_ID:
+        from_secret: DOCKERHUB_ORG_ID
+    commands:
+      - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - docker tag short-frontend-testing:latest $DOCKERHUB_ORG_ID/short-frontend-testing:latest
+      - docker tag short-backend-testing:latest $DOCKERHUB_ORG_ID/short-backend-testing:latest
+      - docker push $DOCKERHUB_ORG_ID/short-frontend-testing:latest
+      - docker push $DOCKERHUB_ORG_ID/short-backend-testing:latest
+    volumes:
+      - name: docker
+        path: /var/run/docker.sock
+    when:
+      branch:
+        - testing
       event:
         - push
 
@@ -187,6 +297,8 @@ steps:
     environment:
       RECAPTCHA_SITE_KEY:
         from_secret: RECAPTCHA_SITE_KEY
+      CHROME_EXTENSION_ID:
+        from_secret: CHROME_EXTENSION_ID
     volumes:
       - name: frontend-dep
         path: /drone/src/frontend/node_modules
@@ -194,7 +306,7 @@ steps:
       - apk add --no-cache bash git
       - cd frontend
       - yarn
-      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY CI=true yarn build:production
+      - REACT_APP_RECAPTCHA_SITE_KEY=$RECAPTCHA_SITE_KEY REACT_APP_CHROME_EXTENSION_ID=$CHROME_EXTENSION_ID CI=true yarn build:production
     when:
       branch:
         - production

@@ -2,14 +2,8 @@ import React, { Component } from 'react';
 import './Home.scss';
 
 import { Header } from './shared/Header';
-import { Section } from '../ui/Section';
-import { Subsection } from '../ui/Subsection';
-import { TextField } from '../form/TextField';
-import { Button } from '../ui/Button';
-import { Toggle } from '../ui/Toggle';
 import { Url } from '../../entity/Url';
 import { Footer } from './shared/Footer';
-import { ShortLinkUsage } from './shared/ShortLinkUsage';
 import { SignInModal } from './shared/sign-in/SignInModal';
 import { Modal } from '../ui/Modal';
 import { ExtPromo } from './shared/promos/ExtPromo';
@@ -18,6 +12,7 @@ import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
 import { Location } from 'history';
 import { AuthService } from '../../service/Auth.service';
+import { IBrowserExtensionService } from '../../service/extensionService/BrowserExtension.service';
 import { VersionService } from '../../service/Version.service';
 import { QrCodeService } from '../../service/QrCode.service';
 import { UIFactory } from '../UIFactory';
@@ -35,43 +30,61 @@ import { ErrorService } from '../../service/Error.service';
 import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
+import { Update } from '../../entity/Update';
+import { ChangeLogModal } from '../ui/ChangeLogModal';
+import { ChangeLogService } from '../../service/ChangeLog.service';
+import { CreateShortLinkSection } from './shared/CreateShortLinkSection';
+import { Toast } from '../ui/Toast';
+import { IClipboardService } from '../../service/clipboardService/Clipboard.service';
 
 interface Props {
   uiFactory: UIFactory;
   urlService: UrlService;
   authService: AuthService;
+  clipboardService: IClipboardService;
+  extensionService: IBrowserExtensionService;
   versionService: VersionService;
   qrCodeService: QrCodeService;
   captchaService: CaptchaService;
   searchService: SearchService;
   errorService: ErrorService;
+  changeLogService: ChangeLogService;
   store: Store<IAppState>;
   location: Location;
 }
 
 interface State {
   isUserSignedIn?: boolean;
+  shouldShowPromo?: boolean;
   longLink?: string;
   alias?: string;
+  shortLink?: string;
   createdUrl?: Url;
   qrCodeUrl?: string;
   err?: IErr;
   inputErr?: string;
   isPublic?: boolean;
   autoCompleteSuggestions?: Array<Url>;
+  changeLog?: Array<Update>;
 }
 
 export class Home extends Component<Props, State> {
   errModal = React.createRef<Modal>();
   signInModal = React.createRef<SignInModal>();
-  shortLinkTextField = React.createRef<TextField>();
+  createShortLinkSection = React.createRef<CreateShortLinkSection>();
+  changeLogModalRef = React.createRef<ChangeLogModal>();
+  toastRef = React.createRef<Toast>();
 
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      changeLog: []
+    };
   }
 
-  componentDidMount(): void {
+  async componentDidMount() {
+    this.setPromoDisplayStatus();
+
     this.props.authService.cacheAuthToken(this.props.location.search);
     if (!this.props.authService.isSignedIn()) {
       this.setState({
@@ -85,14 +98,32 @@ export class Home extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
+
+    const changeLog = await this.props.changeLogService.getChangeLog();
+    this.setState({ changeLog }, async () => {
+      const hasUpdates = await this.props.changeLogService.hasUpdates();
+      if (!hasUpdates) {
+        return;
+      }
+
+      this.showChangeLogs();
+    });
+  }
+
+  async setPromoDisplayStatus() {
+    const shouldShowPromo =
+      this.props.extensionService.isSupported() &&
+      !(await this.props.extensionService.isInstalled());
+    this.setState({ shouldShowPromo: shouldShowPromo });
   }
 
   autoFillLongLink() {
     const longLink = this.getLongLinkFromQueryParams();
-    if (validateLongLinkFormat(longLink) == null) {
-      this.props.store.dispatch(updateLongLink(longLink));
-      this.shortLinkTextField.current!.focus();
+    if (validateLongLinkFormat(longLink) != null) {
+      return;
     }
+    this.props.store.dispatch(updateLongLink(longLink));
+    this.createShortLinkSection.current!.focusShortLinkTextField();
   }
 
   handleStateChange() {
@@ -108,13 +139,16 @@ export class Home extends Component<Props, State> {
       };
 
       if (state.createdUrl && state.createdUrl.alias) {
+        const shortLink = this.props.urlService.aliasToFrontendLink(
+          state.createdUrl.alias!
+        );
+        newState.shortLink = shortLink;
         newState.qrCodeUrl = await this.props.qrCodeService.newQrCode(
-          this.props.urlService.aliasToFrontendLink(state.createdUrl.alias)
+          shortLink
         );
       }
 
       if (newState.err) {
-        console.log(newState.err);
         this.showError(newState.err);
       }
       this.setState(newState);
@@ -159,6 +193,9 @@ export class Home extends Component<Props, State> {
 
   handleOnErrModalCloseClick = () => {
     this.errModal.current!.close();
+  };
+
+  handleOnErrModalClose = () => {
     this.props.store.dispatch(clearError());
   };
 
@@ -174,13 +211,29 @@ export class Home extends Component<Props, State> {
     this.props.store.dispatch(raiseInputError(err));
   };
 
+  // TODO(issue#604): refactor into ShortLinkService to decouple business logic from view.
+  private copyShortenedLink = (shortLink: string) => {
+    const COPY_SUCCESS_MESSAGE = 'Short Link copied into clipboard';
+    const TOAST_DURATION = 2500;
+    this.props.clipboardService
+      .copyTextToClipboard(shortLink)
+      .then(() =>
+        this.toastRef.current!.notify(COPY_SUCCESS_MESSAGE, TOAST_DURATION)
+      )
+      .catch(() => console.log(`Failed to copy ${shortLink} into Clipboard`));
+  };
+
   handleCreateShortLinkClick = () => {
     const editingUrl = this.props.store.getState().editingUrl;
     this.props.urlService
       .createShortLink(editingUrl, this.state.isPublic)
-      .then((createdUrl: Url) =>
-        this.props.store.dispatch(updateCreatedUrl(createdUrl))
-      )
+      .then((createdUrl: Url) => {
+        this.props.store.dispatch(updateCreatedUrl(createdUrl));
+        const shortLink = this.props.urlService.aliasToFrontendLink(
+          createdUrl.alias!
+        );
+        this.copyShortenedLink(shortLink);
+      })
       .catch(({ authorizationErr, createShortLinkErr }) => {
         if (authorizationErr) {
           this.requestSignIn();
@@ -210,10 +263,20 @@ export class Home extends Component<Props, State> {
     this.errModal.current!.open();
   }
 
+  handleShowChangeLogBtnClick = () => {
+    this.showChangeLogs();
+  };
+
+  showChangeLogs = () => {
+    if (this.changeLogModalRef.current) {
+      this.changeLogModalRef.current.open();
+    }
+  };
+
   render = () => {
     return (
       <div className="home">
-        <ExtPromo />
+        {this.state.shouldShowPromo && <ExtPromo />}
         <Header
           uiFactory={this.props.uiFactory}
           onSearchBarInputChange={this.handleSearchBarInputChange}
@@ -222,59 +285,41 @@ export class Home extends Component<Props, State> {
           onSignOutButtonClick={this.handleSignOutButtonClick}
         />
         <div className={'main'}>
-          <Section title={'New Short Link'}>
-            <div className={'control create-short-link'}>
-              <div className={'text-field-wrapper'}>
-                <TextField
-                  text={this.state.longLink}
-                  placeHolder={'Long Link'}
-                  onBlur={this.handlerLongLinkTextFieldBlur}
-                  onChange={this.handlerLongLinkChange}
-                />
-              </div>
-              <div className={'text-field-wrapper'}>
-                <TextField
-                  ref={this.shortLinkTextField}
-                  text={this.state.alias}
-                  placeHolder={'Custom Short Link ( Optional )'}
-                  onBlur={this.handlerCustomAliasTextFieldBlur}
-                  onChange={this.handleAliasChange}
-                />
-              </div>
-              <Button onClick={this.handleCreateShortLinkClick}>
-                Create Short Link
-              </Button>
-            </div>
-              <Subsection title={'Options'}>
-                <Toggle onClick={this.handlePublicToggle}>
-                  Make this short link public?<br/>( will be publicly listed )
-                </Toggle>
-              </Subsection>
-            <div className={'input-error'}>{this.state.inputErr}</div>
-            {this.state.createdUrl ? (
-              <div className={'short-link-usage-wrapper'}>
-                <ShortLinkUsage
-                  shortLink={this.props.urlService.aliasToFrontendLink(
-                    this.state.createdUrl.alias!
-                  )}
-                  originalUrl={this.state.createdUrl.originalUrl!}
-                  qrCodeUrl={this.state.qrCodeUrl!}
-                />
-              </div>
-            ) : (
-              false
-            )}
-          </Section>
+          <CreateShortLinkSection
+            ref={this.createShortLinkSection}
+            longLinkText={this.state.longLink}
+            alias={this.state.alias}
+            shortLink={this.state.shortLink}
+            inputErr={this.state.inputErr}
+            createdUrl={this.state.createdUrl}
+            qrCodeUrl={this.state.qrCodeUrl}
+            onLongLinkTextFieldBlur={this.handlerLongLinkTextFieldBlur}
+            onLongLinkTextFieldChange={this.handlerLongLinkChange}
+            onShortLinkTextFieldBlur={this.handlerCustomAliasTextFieldBlur}
+            onShortLinkTextFieldChange={this.handleAliasChange}
+            onCreateShortLinkButtonClick={this.handleCreateShortLinkClick}
+          />
         </div>
         <Footer
+          uiFactory={this.props.uiFactory}
+          onShowChangeLogBtnClick={this.handleShowChangeLogBtnClick}
           authorName={'Harry'}
           authorPortfolio={'https://github.com/byliuyang'}
           version={this.props.versionService.getAppVersion()}
         />
+        <ChangeLogModal
+          ref={this.changeLogModalRef}
+          changeLog={this.state.changeLog}
+          defaultVisibleLogs={3}
+        />
 
         <SignInModal ref={this.signInModal} uiFactory={this.props.uiFactory} />
-        <Modal canClose={true} ref={this.errModal}>
-          {this.state.err ? (
+        <Modal
+          canClose={true}
+          onModalClose={this.handleOnErrModalClose}
+          ref={this.errModal}
+        >
+          {this.state.err && (
             <div className={'err'}>
               <i
                 className={'material-icons close'}
@@ -286,10 +331,10 @@ export class Home extends Component<Props, State> {
               <div className={'title'}>{this.state.err.name}</div>
               <div className={'description'}>{this.state.err.description}</div>
             </div>
-          ) : (
-            false
           )}
         </Modal>
+
+        <Toast ref={this.toastRef} />
       </div>
     );
   };

@@ -1,21 +1,18 @@
 @import '../styles/easing';
 @import '../styles/color';
 @import '../styles/shadow';
+@import '../styles/center';
+@import '../styles/layer';
 
 .modal {
   bottom: 0;
-  display: none;
   left: 0;
   opacity: 0;
   position: fixed;
   right: 0;
   top: 0;
   transition: opacity $ease-in-out-quart;
-  z-index: 1000;
-
-  &.shown {
-    display: block;
-  }
+  z-index: $layer-modal;
 
   &.showing {
     opacity: 1;
@@ -24,10 +21,8 @@
   .card {
     background-color: $color-white;
     box-shadow: $shadow-card;
-    left: 50%;
     position: fixed;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    @include align-center;
   }
 
   .mask {

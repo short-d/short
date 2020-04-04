@@ -3,6 +3,7 @@
 @import '../styles/color';
 @import '../styles/corner';
 @import '../styles/icon';
+@import '../styles/layouts';
 
 .home {
   .control {
@@ -14,14 +15,45 @@
         margin-right: 20px;
       }
     }
+
+    .create-short-link-btn {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  @include respond-to($phone) {
+    .title {
+      text-align: center;
+    }
+
+    .control.create-short-link {
+      flex-direction: column;
+      height: 180px;
+
+      .text-field-wrapper {
+        display: flex;
+        margin: 4px;
+
+        input {
+          width: 100%;
+        }
+      }
+
+      .create-short-link-btn {
+        flex: 1;
+        margin: 4px;
+        margin-top: 20px;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
   }
 
   .main {
     padding: 40px 0;
-  }
-
-  .short-link-usage-wrapper {
-    margin-top: 40px;
   }
 
   .err {
@@ -62,14 +94,5 @@
         opacity: 0.9;
       }
     }
-  }
-
-  .input-error {
-    color: #b71c1c;
-    font-size: 12px;
-    font-weight: $font-weight-semi-bold;
-    height: 20px;
-    line-height: 20px;
-    margin: 10px;
   }
 }

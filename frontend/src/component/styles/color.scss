@@ -1,7 +1,13 @@
 $color-primary: #e91e63;
 $color-white: #fff;
+$color-modal-background: #f5f5f5;
 $color-dark-gray: #343434;
 $color-highlight: lightblue;
+$color-scrollbar-track: #cccccc;
+$color-divider: #dbdbdb;
+$color-time: #999999;
+$color-toast-background: $color-dark-gray;
+$color-toast-text: #dedede;
 
 @function color-transparent-white($opacity) {
   @return rgba(255, 255, 255, $opacity);

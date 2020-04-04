@@ -3,6 +3,7 @@ package resolver
 import (
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/url"
 )
 
@@ -11,6 +12,7 @@ type Query struct {
 	logger        fw.Logger
 	tracer        fw.Tracer
 	authenticator auth.Authenticator
+	changeLog     changelog.ChangeLog
 	urlRetriever  url.Retriever
 }
 
@@ -26,7 +28,7 @@ func (q Query) AuthQuery(args *AuthQueryArgs) (*AuthQuery, error) {
 		return nil, err
 	}
 
-	authQuery := newAuthQuery(user, q.urlRetriever)
+	authQuery := newAuthQuery(user, q.changeLog, q.urlRetriever)
 	return &authQuery, nil
 }
 
@@ -34,12 +36,14 @@ func newQuery(
 	logger fw.Logger,
 	tracer fw.Tracer,
 	authenticator auth.Authenticator,
+	changeLog changelog.ChangeLog,
 	urlRetriever url.Retriever,
 ) Query {
 	return Query{
 		logger:        logger,
 		tracer:        tracer,
 		authenticator: authenticator,
+		changeLog:     changeLog,
 		urlRetriever:  urlRetriever,
 	}
 }

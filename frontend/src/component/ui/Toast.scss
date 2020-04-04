@@ -1,0 +1,44 @@
+@import '../styles/color';
+@import '../styles/corner';
+@import '../styles/font';
+@import '../styles/center';
+@import '../styles/layer';
+
+.toast:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.toast-message {
+  font-size: 14px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @include default-font;
+}
+
+.toast {
+  z-index: $layer-notification;
+  width: 80vw;
+  max-width: 300px;
+  color: $color-toast-text;
+  background-color: $color-toast-background;
+  position: fixed;
+  animation-name: fade-in;
+  animation-duration: 0.5s;
+  opacity: 0.9;
+  bottom: 5vh;
+
+  @include round-corner;
+  @include align-center-horizontal;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.9;
+  }
+}
