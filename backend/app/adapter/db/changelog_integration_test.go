@@ -34,7 +34,6 @@ type changeLogTableRow struct {
 func TestChangeLogSql_GetChangeLog(t *testing.T) {
 	summaryMarkdown1 := "summary 1"
 	summaryMarkdown2 := "summary 2"
-	defaultTime := time.Time{}
 
 	testCases := []struct {
 		name              string
@@ -48,12 +47,10 @@ func TestChangeLogSql_GetChangeLog(t *testing.T) {
 					id:              "12346",
 					title:           "title 2",
 					summaryMarkdown: summaryMarkdown2,
-					releasedAt:      defaultTime,
 				}, {
 					id:              "12345",
 					title:           "title 1",
 					summaryMarkdown: summaryMarkdown1,
-					releasedAt:      defaultTime,
 				},
 			},
 			expectedChangeLog: []entity.Change{
@@ -61,13 +58,11 @@ func TestChangeLogSql_GetChangeLog(t *testing.T) {
 					ID:              "12346",
 					Title:           "title 2",
 					SummaryMarkdown: &summaryMarkdown2,
-					ReleasedAt:      defaultTime,
 				},
 				{
 					ID:              "12345",
 					Title:           "title 1",
 					SummaryMarkdown: &summaryMarkdown1,
-					ReleasedAt:      defaultTime,
 				},
 			},
 		},
@@ -102,7 +97,6 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 	summaryMarkdown1 := "summary 1"
 	summaryMarkdown2 := "summary 2"
 	summaryMarkdown3 := "summary 3"
-	defaultTime := time.Time{}
 
 	testCases := []struct {
 		name                  string
@@ -118,27 +112,23 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 					id:              "12345",
 					title:           "title 1",
 					summaryMarkdown: summaryMarkdown1,
-					releasedAt:      defaultTime,
 				},
 				{
 					id:              "12346",
 					title:           "title 2",
 					summaryMarkdown: summaryMarkdown2,
-					releasedAt:      defaultTime,
 				},
 			},
 			change: entity.Change{
 				ID:              "23456",
 				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
-				ReleasedAt:      defaultTime,
 			},
 			expectedChangeLogSize: 3,
 			expectedChange: entity.Change{
 				ID:              "23456",
 				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
-				ReleasedAt:      defaultTime,
 			},
 		}, {
 			name: "create a change with nil summary",
@@ -147,27 +137,23 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 					id:              "12345",
 					title:           "title 1",
 					summaryMarkdown: summaryMarkdown1,
-					releasedAt:      defaultTime,
 				},
 				{
 					id:              "12346",
 					title:           "title 2",
 					summaryMarkdown: summaryMarkdown2,
-					releasedAt:      defaultTime,
 				},
 			},
 			change: entity.Change{
 				ID:              "23456",
 				Title:           "title 3",
 				SummaryMarkdown: nil,
-				ReleasedAt:      defaultTime,
 			},
 			expectedChangeLogSize: 3,
 			expectedChange: entity.Change{
 				ID:              "23456",
 				Title:           "title 3",
 				SummaryMarkdown: nil,
-				ReleasedAt:      defaultTime,
 			},
 		},
 	}
