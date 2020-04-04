@@ -6,6 +6,7 @@ import { Button } from '../../ui/Button';
 import { ShortLinkUsage } from './ShortLinkUsage';
 import { Section } from '../../ui/Section';
 import { Url } from '../../../entity/Url';
+import { Toggle } from '../../ui/Toggle';
 
 interface Props {
   longLinkText?: string;
@@ -18,6 +19,7 @@ interface Props {
   onLongLinkTextFieldChange?: (newLongLink: string) => void;
   onShortLinkTextFieldBlur?: () => void;
   onShortLinkTextFieldChange?: (newAlias: string) => void;
+  onPublicToggle?: (enabled: boolean) => void;
   onCreateShortLinkButtonClick?: () => void;
 }
 
@@ -59,6 +61,11 @@ export class CreateShortLinkSection extends Component<Props> {
           </div>
         </div>
         <div className={'input-error'}>{this.props.inputErr}</div>
+        <div>
+          <Toggle onClick={this.props.onPublicToggle}>
+            Make this short link public?<br />( will be publicly listed )
+          </Toggle>
+        </div>
         {this.props.createdUrl && (
           <div className={'short-link-usage-wrapper'}>
             <ShortLinkUsage

@@ -297,6 +297,7 @@ export class Home extends Component<Props, State> {
             onLongLinkTextFieldChange={this.handlerLongLinkChange}
             onShortLinkTextFieldBlur={this.handlerCustomAliasTextFieldBlur}
             onShortLinkTextFieldChange={this.handleAliasChange}
+            onPublicToggle={this.handlePublicToggle}
             onCreateShortLinkButtonClick={this.handleCreateShortLinkClick}
           />
         </div>
