@@ -33,7 +33,7 @@ FROM "%s";`,
 		return []entity.Change{}, err
 	}
 
-	var changeLog []entity.Change
+	changeLog := []entity.Change{}
 	for rows.Next() {
 		change := entity.Change{}
 		err = rows.Scan(&change.ID, &change.Title, &change.SummaryMarkdown, &change.ReleasedAt)
