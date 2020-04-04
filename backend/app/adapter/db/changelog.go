@@ -33,7 +33,7 @@ FROM "%s";`,
 		return []entity.Change{}, err
 	}
 
-	// should not initialize as a a nil slice (using var keyword)
+	// the consumer of GetChangeLog expects empty slice instead of `nil`
 	changeLog := []entity.Change{}
 	for rows.Next() {
 		change := entity.Change{}
