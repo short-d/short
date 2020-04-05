@@ -1,4 +1,4 @@
-import React, { ReactText } from 'react';
+import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { Pagination } from './Pagination';
 
@@ -13,6 +13,7 @@ const range = (from: number, to: number) => {
 const NAVIGATOR_BUTTONS_COUNT = 2;
 const PREV_NAV_BUTTON_TEXT = '< Previous';
 const NEXT_NAV_BUTTON_TEXT = 'Next >';
+const ELLIPSES = '…';
 
 describe('Pagination component', () => {
   test('should render without crash', () => {
@@ -31,9 +32,93 @@ describe('Pagination component', () => {
     const paginationBlocks = container.querySelectorAll('button');
     expect(paginationBlocks).toHaveLength(totalPages + NAVIGATOR_BUTTONS_COUNT);
 
-    const expectedBlockContents = range(1, totalPages);
+    const expectedBlockContents = [
+      PREV_NAV_BUTTON_TEXT,
+      ...range(1, totalPages),
+      NEXT_NAV_BUTTON_TEXT
+    ];
     for (let i = 0; i < expectedBlockContents.length; i++) {
-      expect(paginationBlocks[i + 1].textContent).toContain(
+      expect(paginationBlocks[i].textContent).toContain(
+        expectedBlockContents[i]
+      );
+    }
+  });
+
+  test('should render with only right spill initially', () => {
+    const pageLimit = 5;
+    const totalPages = 7;
+    const totalRecords = totalPages * pageLimit;
+
+    const { container } = render(
+      <Pagination pageLimit={pageLimit} totalRecords={totalRecords} />
+    );
+    const paginationBlocks = container.querySelectorAll('button');
+
+    const expectedBlockContents = [
+      PREV_NAV_BUTTON_TEXT,
+      1,
+      2,
+      3,
+      ELLIPSES,
+      totalPages,
+      NEXT_NAV_BUTTON_TEXT];
+    for (let i = 0; i < expectedBlockContents.length; i++) {
+      expect(paginationBlocks[i].textContent).toContain(
+        expectedBlockContents[i]
+      );
+    }
+  });
+
+  test('should render with only left spill when in last page', () => {
+    const pageLimit = 5;
+    const totalPages = 7;
+    const totalRecords = totalPages * pageLimit;
+    const lastPage = totalPages;
+
+    const { container, getByText } = render(
+      <Pagination pageLimit={pageLimit} totalRecords={totalRecords} />
+    );
+    const paginationBlocks = container.querySelectorAll('button');
+    getByText(lastPage.toString()).click();
+
+    const expectedBlockContents = [
+      PREV_NAV_BUTTON_TEXT,
+      1,
+      ELLIPSES,
+      lastPage - 2,
+      lastPage - 1,
+      lastPage,
+      NEXT_NAV_BUTTON_TEXT];
+    for (let i = 0; i < expectedBlockContents.length; i++) {
+      expect(paginationBlocks[i].textContent).toContain(
+        expectedBlockContents[i]
+      );
+    }
+  });
+
+  test('should render both spills when in middle pages', () => {
+    const pageLimit = 5;
+    const totalPages = 7;
+    const totalRecords = totalPages * pageLimit;
+    const lastPage = totalPages;
+    const currentPage = 3;
+
+    const { container, getByText } = render(
+      <Pagination pageLimit={pageLimit} totalRecords={totalRecords} />
+    );
+    const paginationBlocks = container.querySelectorAll('button');
+    getByText(currentPage.toString()).click();
+
+    const expectedBlockContents = [
+      PREV_NAV_BUTTON_TEXT,
+      1,
+      ELLIPSES,
+      currentPage,
+      ELLIPSES,
+      lastPage,
+      NEXT_NAV_BUTTON_TEXT];
+    for (let i = 0; i < expectedBlockContents.length; i++) {
+      expect(paginationBlocks[i].textContent).toContain(
         expectedBlockContents[i]
       );
     }
@@ -152,6 +237,23 @@ describe('Pagination component', () => {
     expect(paginationRef.current!.state.currentPage).toBe(secondPage);
   });
 
+  test('should call onPageChanged once rendered to fetch initial data', () => {
+    const pageLimit = 5;
+    const totalPages = 7;
+    const totalRecords = totalPages * pageLimit;
+    const onPageChanged = jest.fn();
+
+    render(
+      <Pagination
+        pageLimit={pageLimit}
+        totalRecords={totalRecords}
+        onPageChanged={onPageChanged}
+      />
+    );
+
+    expect(onPageChanged).toHaveBeenCalledTimes(1);
+  });
+
   test('should call onPageChanged when navigating to a different page', () => {
     const pageLimit = 5;
     const totalPages = 7;
@@ -170,6 +272,6 @@ describe('Pagination component', () => {
     getByText(PREV_NAV_BUTTON_TEXT).click();
     getByText(NEXT_NAV_BUTTON_TEXT).click();
 
-    expect(onPageChanged).toHaveBeenCalledTimes(3);
+    expect(onPageChanged).toHaveBeenCalledTimes(4);
   });
 });
