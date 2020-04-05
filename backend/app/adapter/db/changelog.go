@@ -33,7 +33,7 @@ FROM "%s";`,
 		return []entity.Change{}, err
 	}
 
-	// the consumer of GetChangeLog expects empty slice instead of `nil`
+	// the consumer of GetChangeLog expects empty slice instead of `nil` if there are no records
 	changeLog := []entity.Change{}
 	for rows.Next() {
 		change := entity.Change{}
