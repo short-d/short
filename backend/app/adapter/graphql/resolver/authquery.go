@@ -44,6 +44,7 @@ func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	return newChangeLog(changeLog, lastViewedAt), err
 }
 
+// ListURLs retrieves urls for given user from persistent storage
 func (v AuthQuery) ListURLs() ([]URL, error) {
 	urls, err := v.urlRetriever.GetURLsByUser(*v.user)
 	if err != nil {

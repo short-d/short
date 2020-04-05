@@ -57,6 +57,7 @@ func (r RetrieverPersist) getURL(alias string) (entity.URL, error) {
 	return url, nil
 }
 
+// GetURLsByUser retrieves URLs from persistent storage created by given user
 func (r RetrieverPersist) GetURLsByUser(user entity.User) ([]entity.URL, error) {
 	aliases, err := r.userURLRelationRepo.FindAliasesByUser(user)
 
