@@ -151,4 +151,25 @@ describe('Pagination component', () => {
     getByText(PREV_NAV_BUTTON_TEXT).click();
     expect(paginationRef.current!.state.currentPage).toBe(secondPage);
   });
+
+  test('should call onPageChanged when navigating to a different page', () => {
+    const pageLimit = 5;
+    const totalPages = 7;
+    const totalRecords = totalPages * pageLimit;
+    const thirdPage = 3;
+    const onPageChanged = jest.fn();
+
+    const { getByText } = render(
+      <Pagination
+        pageLimit={pageLimit}
+        totalRecords={totalRecords}
+        onPageChanged={onPageChanged}
+      />
+    );
+    getByText(thirdPage.toString()).click();
+    getByText(PREV_NAV_BUTTON_TEXT).click();
+    getByText(NEXT_NAV_BUTTON_TEXT).click();
+
+    expect(onPageChanged).toHaveBeenCalledTimes(3);
+  });
 });
