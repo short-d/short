@@ -65,17 +65,7 @@ func (r RetrieverPersist) GetURLsByUser(user entity.User) ([]entity.URL, error) 
 		return []entity.URL{}, err
 	}
 
-	urls := []entity.URL{}
-
-	for _, v := range aliases {
-		url, err := r.urlRepo.GetByAlias(v)
-		if err != nil {
-			return []entity.URL{}, err
-		}
-		urls = append(urls, url)
-	}
-
-	return urls, nil
+	return r.urlRepo.GetByAliases(aliases)
 }
 
 // NewRetrieverPersist creates persistent URL retriever
