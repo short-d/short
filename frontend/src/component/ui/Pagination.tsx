@@ -38,6 +38,10 @@ export class Pagination extends Component<IProps, IStates> {
     };
   }
 
+  componentDidMount(): void {
+    this.gotoPage(1);
+  }
+
   private hasEnoughPages(totalPages: number) {
     return totalPages > this.MIN_PAGE_ITEMS_COUNT;
   }
