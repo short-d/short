@@ -17,6 +17,7 @@ type Mutation {
 type AuthQuery {
 	URL(alias: String!, expireAfter: Time): URL
 	changeLog: ChangeLog!
+	listURLs: [URL!]!
 }
 
 type ChangeLog {

@@ -60,9 +60,10 @@ func TestQuery_AuthQuery(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			defer sqlDB.Close()
 
-			fakeRepo := repository.NewURLFake(map[string]entity.URL{})
+			fakeURLRepo := repository.NewURLFake(map[string]entity.URL{})
+			fakeUserURLRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.URL{})
 			authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
-			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
+			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 			logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 			tracer := mdtest.NewTracerFake()
 

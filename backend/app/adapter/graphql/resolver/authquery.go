@@ -44,6 +44,20 @@ func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	return newChangeLog(changeLog, lastViewedAt), err
 }
 
+func (v AuthQuery) ListURLs() ([]URL, error) {
+	urls, err := v.urlRetriever.GetURLsByUser(*v.user)
+	if err != nil {
+		return []URL{}, err
+	}
+
+	listOfURLs := []URL{}
+	for _, v := range urls {
+		listOfURLs = append(listOfURLs, newURL(v))
+	}
+
+	return listOfURLs, nil
+}
+
 func newAuthQuery(user *entity.User, changeLog changelog.ChangeLog, urlRetriever url.Retriever) AuthQuery {
 	return AuthQuery{
 		user:         user,

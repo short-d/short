@@ -179,6 +179,7 @@ func InjectRoutingService(
 		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
+		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
 		wire.Bind(new(repository.User), new(*(db.UserSQL))),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
@@ -201,6 +202,7 @@ func InjectRoutingService(
 
 		db.NewUserSQL,
 		db.NewURLSql,
+		db.NewUserURLRelationSQL,
 		url.NewRetrieverPersist,
 		account.NewProvider,
 		provider.NewShortRoutes,
