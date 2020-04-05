@@ -14,7 +14,8 @@ interface IStates {
 
 enum PageNavigator {
   LEFT = 'LEFT',
-  RIGHT = 'RIGHT'
+  RIGHT = 'RIGHT',
+  ELLIPSES = 'ELLIPSES'
 }
 
 const range = (from: number, to: number) => {
@@ -38,11 +39,15 @@ export class Pagination extends Component<IProps, IStates> {
 
   private fetchBlocks(currentPage: number, totalPages: number) {
     const blocksCount = 5;
+
+    let pages: ReactText[];
     if (totalPages <= blocksCount) {
-      return range(1, totalPages);
+      pages = range(1, totalPages);
+    } else {
+      pages = this.fetchMiddleBlocks(currentPage, totalPages);
     }
 
-    return [1, ...this.fetchMiddleBlocks(currentPage, totalPages), totalPages];
+    return [PageNavigator.LEFT, ...pages, PageNavigator.RIGHT];
   }
 
   private fetchMiddleBlocks(currentPage: number, lastPage: number) {
@@ -53,27 +58,31 @@ export class Pagination extends Component<IProps, IStates> {
 
     let middleBlocks: ReactText[];
     switch (true) {
-      // case: 1 < 8 9 10
+      // case: 1 [.. 8 9] 10
       case hasLeftSpill && !hasRightSpill: {
-        middleBlocks = [PageNavigator.LEFT, lastPage - 2, lastPage - 1];
+        middleBlocks = [PageNavigator.ELLIPSES, lastPage - 2, lastPage - 1];
         break;
       }
 
-      // case: 1 2 3 > 10
+      // case: 1 [2 3 ..] 10
       case !hasLeftSpill && hasRightSpill: {
-        middleBlocks = [2, 3, PageNavigator.RIGHT];
+        middleBlocks = [2, 3, PageNavigator.ELLIPSES];
         break;
       }
 
-      // case: 1 < 5 > 10
+      // case: 1 [.. 5 ..] 10
       case hasLeftSpill && hasRightSpill:
       default: {
-        middleBlocks = [PageNavigator.LEFT, currentPage, PageNavigator.RIGHT];
+        middleBlocks = [
+          PageNavigator.ELLIPSES,
+          currentPage,
+          PageNavigator.ELLIPSES
+        ];
         break;
       }
     }
 
-    return middleBlocks;
+    return [1, ...middleBlocks, lastPage];
   }
 
   private gotoPage = (page: number) => {
@@ -112,33 +121,48 @@ export class Pagination extends Component<IProps, IStates> {
 
     const { currentPage } = this.state;
     const totalPages = Math.ceil(totalRecords / pageLimit);
-    const blocks = this.fetchBlocks(currentPage, totalPages);
+    const pages = this.fetchBlocks(currentPage, totalPages);
 
     return (
       <div className="pagination">
-        {blocks.map((block: ReactText, index: number) => {
-          if (block === PageNavigator.LEFT)
-            return (
-              <button key={`${index}`} onClick={this.handleLeftNav}>
-                &laquo;
-              </button>
-            );
-
-          if (block === PageNavigator.RIGHT)
-            return (
-              <button key={`${index}`} onClick={this.handleRightNav}>
-                &raquo;
-              </button>
-            );
-
-          if (typeof block === 'number')
+        {pages.map((page: ReactText, index: number) => {
+          if (page === PageNavigator.LEFT)
             return (
               <button
                 key={`${index}`}
-                className={`${currentPage === block ? 'active' : ''}`}
-                onClick={this.handlePageClick(block)}
+                onClick={this.handleLeftNav}
+                disabled={currentPage === 1}
               >
-                {block}
+                &lt; Previous
+              </button>
+            );
+
+          if (page === PageNavigator.RIGHT)
+            return (
+              <button
+                key={`${index}`}
+                onClick={this.handleRightNav}
+                disabled={currentPage === totalPages}
+              >
+                Next &gt;
+              </button>
+            );
+
+          if (page === PageNavigator.ELLIPSES)
+            return (
+              <button key={`${index}`} disabled={true}>
+                &hellip;
+              </button>
+            );
+
+          if (typeof page === 'number')
+            return (
+              <button
+                key={`${index}`}
+                className={`${currentPage === page ? 'active' : ''}`}
+                onClick={this.handlePageClick(page)}
+              >
+                {page}
               </button>
             );
 
