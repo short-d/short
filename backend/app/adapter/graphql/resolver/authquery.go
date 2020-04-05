@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"errors"
 	"time"
 
 	"github.com/short-d/short/app/adapter/graphql/scalar"
@@ -46,6 +47,10 @@ func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 
 // ListURLs retrieves urls for given user from persistent storage
 func (v AuthQuery) ListURLs() ([]URL, error) {
+	if v.user == nil {
+		return []URL{}, errors.New("permission denied")
+	}
+
 	urls, err := v.urlRetriever.GetURLsByUser(*v.user)
 	if err != nil {
 		return []URL{}, err
