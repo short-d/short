@@ -3,9 +3,9 @@ import React, { Component, ReactText } from 'react';
 import './Pagination.scss';
 
 interface IProps {
-  pageLimit?: number;
-  totalRecords?: number;
-  onPageChanged?: (paginationData: any) => void;
+  pageLimit: number;
+  totalRecords: number;
+  onPageChanged: (currentPage: number, pageLimit: number) => void;
 }
 
 interface IStates {
@@ -26,8 +26,14 @@ const range = (from: number, to: number) => {
   return result;
 };
 
+const DEFAULT_PAGE_LIMIT: number = 10;
+
 export class Pagination extends Component<IProps, IStates> {
-  private DEFAULT_PAGE_LIMIT: number = 10;
+  public static defaultProps: Partial<IProps> = {
+    pageLimit: DEFAULT_PAGE_LIMIT,
+    totalRecords: 0,
+    onPageChanged: () => {}
+  };
   private MIN_PAGE_ITEMS_COUNT = 5;
 
   constructor(props: IProps) {
@@ -42,11 +48,19 @@ export class Pagination extends Component<IProps, IStates> {
     this.gotoPage(1);
   }
 
-  private hasEnoughPages(totalPages: number) {
+  private hasEnoughPages = (totalPages: number) => {
     return totalPages > this.MIN_PAGE_ITEMS_COUNT;
-  }
+  };
 
-  private createPaginationItems(currentPage: number, totalPages: number) {
+  private calculateTotalPages = () => {
+    const { pageLimit, totalRecords } = this.props;
+    return Math.ceil(totalRecords / pageLimit);
+  };
+
+  private createPaginationItems = () => {
+    const { currentPage } = this.state;
+    const totalPages = this.calculateTotalPages();
+
     let pages: ReactText[];
     if (this.hasEnoughPages(totalPages)) {
       pages = this.createPageItems(currentPage, totalPages);
@@ -55,9 +69,9 @@ export class Pagination extends Component<IProps, IStates> {
     }
 
     return [PageNavigator.LEFT, ...pages, PageNavigator.RIGHT];
-  }
+  };
 
-  private createPageItems(currentPage: number, lastPage: number) {
+  private createPageItems = (currentPage: number, lastPage: number) => {
     // has hidden pages to the left
     const hasLeftSpill = currentPage > 2;
     // has hidden pages to the right
@@ -90,24 +104,20 @@ export class Pagination extends Component<IProps, IStates> {
     }
 
     return [1, ...middlePageItems, lastPage];
-  }
-
-  private gotoPage = (page: number) => {
-    const {
-      pageLimit = this.DEFAULT_PAGE_LIMIT,
-      totalRecords = 0,
-      onPageChanged = () => {}
-    } = this.props;
-
-    const totalPages = Math.ceil(totalRecords / pageLimit);
-    const currentPage = Math.max(1, Math.min(page, totalPages));
-
-    const paginationData = { currentPage, pageLimit };
-    this.setState({ currentPage }, () => onPageChanged(paginationData));
   };
 
-  private handlePageClick = (page: number) => () => {
-    this.gotoPage(page);
+  private gotoPage = (page: number) => {
+    const { pageLimit, onPageChanged } = this.props;
+    const totalPages = this.calculateTotalPages();
+    const currentPage = Math.max(1, Math.min(page, totalPages));
+
+    this.setState({ currentPage }, () => onPageChanged(currentPage, pageLimit));
+  };
+
+  private handlePageClick = (page: ReactText) => () => {
+    if (typeof page === 'number') {
+      this.gotoPage(page);
+    }
   };
 
   private handleLeftNav = () => {
@@ -118,64 +128,69 @@ export class Pagination extends Component<IProps, IStates> {
     this.gotoPage(this.state.currentPage + 1);
   };
 
-  render() {
-    const {
-      pageLimit = this.DEFAULT_PAGE_LIMIT,
-      totalRecords = 0
-    } = this.props;
+  private renderPaginationItem = (page: ReactText, index: number) => {
+    const { currentPage } = this.state;
+    const lastPage = this.calculateTotalPages();
 
+    let paginationItem;
+    switch (page) {
+      case PageNavigator.LEFT: {
+        paginationItem = (
+          <button
+            key={`${index}`}
+            onClick={this.handleLeftNav}
+            disabled={currentPage === 1}
+          >
+            &lt; Previous
+          </button>
+        );
+        break;
+      }
+
+      case PageNavigator.RIGHT: {
+        paginationItem = (
+          <button
+            key={`${index}`}
+            onClick={this.handleRightNav}
+            disabled={currentPage === lastPage}
+          >
+            Next &gt;
+          </button>
+        );
+        break;
+      }
+
+      case PageNavigator.ELLIPSES: {
+        paginationItem = (
+          <button key={`${index}`} disabled={true}>
+            &hellip;
+          </button>
+        );
+        break;
+      }
+
+      default: {
+        paginationItem = (
+          <button
+            key={`${index}`}
+            className={`${currentPage === page ? 'active' : ''}`}
+            onClick={this.handlePageClick(page)}
+          >
+            {page}
+          </button>
+        );
+      }
+    }
+    return paginationItem;
+  };
+
+  render() {
+    const { totalRecords } = this.props;
     if (!totalRecords) return null;
 
-    const { currentPage } = this.state;
-    const totalPages = Math.ceil(totalRecords / pageLimit);
-    const pages = this.createPaginationItems(currentPage, totalPages);
-
+    const pages = this.createPaginationItems();
     return (
-      <div className="pagination">
-        {pages.map((page: ReactText, index: number) => {
-          if (page === PageNavigator.LEFT)
-            return (
-              <button
-                key={`${index}`}
-                onClick={this.handleLeftNav}
-                disabled={currentPage === 1}
-              >
-                &lt; Previous
-              </button>
-            );
-
-          if (page === PageNavigator.RIGHT)
-            return (
-              <button
-                key={`${index}`}
-                onClick={this.handleRightNav}
-                disabled={currentPage === totalPages}
-              >
-                Next &gt;
-              </button>
-            );
-
-          if (page === PageNavigator.ELLIPSES)
-            return (
-              <button key={`${index}`} disabled={true}>
-                &hellip;
-              </button>
-            );
-
-          if (typeof page === 'number')
-            return (
-              <button
-                key={`${index}`}
-                className={`${currentPage === page ? 'active' : ''}`}
-                onClick={this.handlePageClick(page)}
-              >
-                {page}
-              </button>
-            );
-
-          return null;
-        })}
-      </div>
+      <div className="pagination">{pages.map(this.renderPaginationItem)}</div>
     );
   }
 }
