@@ -274,8 +274,8 @@ func TestRetrieverPersist_GetURLsByUser(t *testing.T) {
 					OriginalURL: "https://www.mozilla.org/",
 				},
 			},
-			user:   nil,
-			hasErr: true,
+			user:         nil,
+			hasErr:       true,
 			expectedURLs: []entity.URL{},
 		},
 	}
