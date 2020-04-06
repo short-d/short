@@ -47,8 +47,11 @@ func (u URLFake) GetByAlias(alias string) (entity.URL, error) {
 
 // GetByAliases finds all URL for a list of aliases
 func (u URLFake) GetByAliases(aliases []string) ([]entity.URL, error) {
-	var urls []entity.URL
+	if len(aliases) == 0 {
+		return []entity.URL{}, nil
+	}
 
+	var urls []entity.URL
 	for _, alias := range aliases {
 		url, err := u.GetByAlias(alias)
 

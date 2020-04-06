@@ -65,8 +65,8 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	local := provider.NewLocalLogger(prefix, logLevel, stdOut, timer, buildIn)
 	tracer := mdtracer.NewLocal()
 	urlSql := db.NewURLSql(sqlDB)
-	retrieverPersist := url.NewRetrieverPersist(urlSql)
 	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
+	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
 	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
 		return mdservice.Service{}, err
@@ -104,7 +104,8 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	local := provider.NewLocalLogger(prefix, logLevel, stdOut, timer, buildIn)
 	tracer := mdtracer.NewLocal()
 	urlSql := db.NewURLSql(sqlDB)
-	retrieverPersist := url.NewRetrieverPersist(urlSql)
+	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
+	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
 	client := mdhttp.NewClient()
 	http := mdrequest.NewHTTP(client)
 	identityProvider := provider.NewGithubIdentityProvider(http, githubClientID, githubClientSecret)

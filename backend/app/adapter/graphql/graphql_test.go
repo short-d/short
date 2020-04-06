@@ -24,8 +24,8 @@ func TestGraphQlAPI(t *testing.T) {
 	defer sqlDB.Close()
 
 	urlRepo := db.NewURLSql(sqlDB)
-	retriever := url.NewRetrieverPersist(urlRepo)
 	urlRelationRepo := db.NewUserURLRelationSQL(sqlDB)
+	retriever := url.NewRetrieverPersist(urlRepo, urlRelationRepo)
 	keyFetcher := service.NewKeyFetcherFake([]service.Key{})
 	keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 	mdtest.Equal(t, nil, err)

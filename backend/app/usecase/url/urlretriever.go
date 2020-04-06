@@ -1,6 +1,7 @@
 package url
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -13,12 +14,14 @@ var _ Retriever = (*RetrieverPersist)(nil)
 // Retriever represents URL retriever
 type Retriever interface {
 	GetURL(alias string, expiringAt *time.Time) (entity.URL, error)
+	GetURLsByUser(user *entity.User) ([]entity.URL, error)
 }
 
 // RetrieverPersist represents URL retriever that fetches URL from persistent
 // storage, such as database
 type RetrieverPersist struct {
-	urlRepo repository.URL
+	urlRepo             repository.URL
+	userURLRelationRepo repository.UserURLRelation
 }
 
 // GetURL retrieves URL from persistent storage given alias
@@ -55,9 +58,23 @@ func (r RetrieverPersist) getURL(alias string) (entity.URL, error) {
 	return url, nil
 }
 
+// GetURLsByUser retrieves URLs created by given user from persistent storage
+func (r RetrieverPersist) GetURLsByUser(user *entity.User) ([]entity.URL, error) {
+	if user == nil {
+		return []entity.URL{}, errors.New("fail to find the owner of the URLs")
+	}
+	aliases, err := r.userURLRelationRepo.FindAliasesByUser(*user)
+	if err != nil {
+		return []entity.URL{}, err
+	}
+
+	return r.urlRepo.GetByAliases(aliases)
+}
+
 // NewRetrieverPersist creates persistent URL retriever
-func NewRetrieverPersist(urlRepo repository.URL) RetrieverPersist {
+func NewRetrieverPersist(urlRepo repository.URL, userURLRelationRepo repository.UserURLRelation) RetrieverPersist {
 	return RetrieverPersist{
-		urlRepo: urlRepo,
+		urlRepo:             urlRepo,
+		userURLRelationRepo: userURLRelationRepo,
 	}
 }
