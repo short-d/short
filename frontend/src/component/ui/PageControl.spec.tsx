@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Pagination } from './Pagination';
+import { PageControl } from './PageControl';
 
 const range = (from: number, to: number) => {
   const result = [];
@@ -15,9 +15,9 @@ const PREV_NAV_BUTTON_TEXT = '< Previous';
 const NEXT_NAV_BUTTON_TEXT = 'Next >';
 const ELLIPSES = '…';
 
-describe('Pagination component', () => {
+describe('PageControl component', () => {
   test('should render without crash', () => {
-    render(<Pagination />);
+    render(<PageControl />);
   });
 
   test('should render without hidden pages when number of pages less than or equal to 5', () => {
@@ -26,11 +26,13 @@ describe('Pagination component', () => {
     const totalRecords = totalPages * pageLimit;
 
     const { container } = render(
-      <Pagination pageLimit={pageLimit} totalRecords={totalRecords} />
+      <PageControl pageSize={pageLimit} totalItems={totalRecords} />
     );
 
-    const paginationBlocks = container.querySelectorAll('button');
-    expect(paginationBlocks).toHaveLength(totalPages + NAVIGATOR_BUTTONS_COUNT);
+    const pageControlBlocks = container.querySelectorAll('button');
+    expect(pageControlBlocks).toHaveLength(
+      totalPages + NAVIGATOR_BUTTONS_COUNT
+    );
 
     const expectedBlockContents = [
       PREV_NAV_BUTTON_TEXT,
@@ -38,7 +40,7 @@ describe('Pagination component', () => {
       NEXT_NAV_BUTTON_TEXT
     ];
     for (let i = 0; i < expectedBlockContents.length; i++) {
-      expect(paginationBlocks[i].textContent).toContain(
+      expect(pageControlBlocks[i].textContent).toContain(
         expectedBlockContents[i]
       );
     }
@@ -50,9 +52,9 @@ describe('Pagination component', () => {
     const totalRecords = totalPages * pageLimit;
 
     const { container } = render(
-      <Pagination pageLimit={pageLimit} totalRecords={totalRecords} />
+      <PageControl pageSize={pageLimit} totalItems={totalRecords} />
     );
-    const paginationBlocks = container.querySelectorAll('button');
+    const pageControlBlocks = container.querySelectorAll('button');
 
     const expectedBlockContents = [
       PREV_NAV_BUTTON_TEXT,
@@ -61,9 +63,10 @@ describe('Pagination component', () => {
       3,
       ELLIPSES,
       totalPages,
-      NEXT_NAV_BUTTON_TEXT];
+      NEXT_NAV_BUTTON_TEXT
+    ];
     for (let i = 0; i < expectedBlockContents.length; i++) {
-      expect(paginationBlocks[i].textContent).toContain(
+      expect(pageControlBlocks[i].textContent).toContain(
         expectedBlockContents[i]
       );
     }
@@ -76,9 +79,9 @@ describe('Pagination component', () => {
     const lastPage = totalPages;
 
     const { container, getByText } = render(
-      <Pagination pageLimit={pageLimit} totalRecords={totalRecords} />
+      <PageControl pageSize={pageLimit} totalItems={totalRecords} />
     );
-    const paginationBlocks = container.querySelectorAll('button');
+    const pageControlBlocks = container.querySelectorAll('button');
     getByText(lastPage.toString()).click();
 
     const expectedBlockContents = [
@@ -88,9 +91,10 @@ describe('Pagination component', () => {
       lastPage - 2,
       lastPage - 1,
       lastPage,
-      NEXT_NAV_BUTTON_TEXT];
+      NEXT_NAV_BUTTON_TEXT
+    ];
     for (let i = 0; i < expectedBlockContents.length; i++) {
-      expect(paginationBlocks[i].textContent).toContain(
+      expect(pageControlBlocks[i].textContent).toContain(
         expectedBlockContents[i]
       );
     }
@@ -104,9 +108,9 @@ describe('Pagination component', () => {
     const currentPage = 3;
 
     const { container, getByText } = render(
-      <Pagination pageLimit={pageLimit} totalRecords={totalRecords} />
+      <PageControl pageSize={pageLimit} totalItems={totalRecords} />
     );
-    const paginationBlocks = container.querySelectorAll('button');
+    const pageControlBlocks = container.querySelectorAll('button');
     getByText(currentPage.toString()).click();
 
     const expectedBlockContents = [
@@ -116,9 +120,10 @@ describe('Pagination component', () => {
       currentPage,
       ELLIPSES,
       lastPage,
-      NEXT_NAV_BUTTON_TEXT];
+      NEXT_NAV_BUTTON_TEXT
+    ];
     for (let i = 0; i < expectedBlockContents.length; i++) {
-      expect(paginationBlocks[i].textContent).toContain(
+      expect(pageControlBlocks[i].textContent).toContain(
         expectedBlockContents[i]
       );
     }
@@ -130,7 +135,7 @@ describe('Pagination component', () => {
     const totalRecords = totalPages * pageLimit;
 
     const { getByText } = render(
-      <Pagination pageLimit={pageLimit} totalRecords={totalRecords} />
+      <PageControl pageSize={pageLimit} totalItems={totalRecords} />
     );
 
     expect(
@@ -145,7 +150,7 @@ describe('Pagination component', () => {
     const lastPage = totalPages;
 
     const { getByText } = render(
-      <Pagination pageLimit={pageLimit} totalRecords={totalRecords} />
+      <PageControl pageSize={pageLimit} totalItems={totalRecords} />
     );
     getByText(lastPage.toString()).click();
 
@@ -161,7 +166,7 @@ describe('Pagination component', () => {
     const secondPage = 2;
 
     const { getByText } = render(
-      <Pagination pageLimit={pageLimit} totalRecords={totalRecords} />
+      <PageControl pageSize={pageLimit} totalItems={totalRecords} />
     );
     getByText(secondPage.toString()).click();
 
@@ -174,26 +179,26 @@ describe('Pagination component', () => {
   });
 
   test('should navigate to selected page when clicked on page button', () => {
-    const paginationRef = React.createRef<Pagination>();
+    const pageControlRef = React.createRef<PageControl>();
     const pageLimit = 5;
     const totalPages = 5;
     const totalRecords = totalPages * pageLimit;
     const secondPage = 2;
 
     const { getByText } = render(
-      <Pagination
-        ref={paginationRef}
-        pageLimit={pageLimit}
-        totalRecords={totalRecords}
+      <PageControl
+        ref={pageControlRef}
+        pageSize={pageLimit}
+        totalItems={totalRecords}
       />
     );
     getByText(secondPage.toString()).click();
 
-    expect(paginationRef.current!.state.currentPage).toBe(secondPage);
+    expect(pageControlRef.current!.state.currentPage).toBe(secondPage);
   });
 
   test('should navigate to next page when clicked on next button', () => {
-    const paginationRef = React.createRef<Pagination>();
+    const pageControlRef = React.createRef<PageControl>();
     const pageLimit = 5;
     const totalPages = 5;
     const totalRecords = totalPages * pageLimit;
@@ -201,21 +206,21 @@ describe('Pagination component', () => {
     const secondPage = 2;
 
     const { getByText } = render(
-      <Pagination
-        ref={paginationRef}
-        pageLimit={pageLimit}
-        totalRecords={totalRecords}
+      <PageControl
+        ref={pageControlRef}
+        pageSize={pageLimit}
+        totalItems={totalRecords}
       />
     );
 
-    expect(paginationRef.current!.state.currentPage).toBe(firstPage);
+    expect(pageControlRef.current!.state.currentPage).toBe(firstPage);
 
     getByText(NEXT_NAV_BUTTON_TEXT).click();
-    expect(paginationRef.current!.state.currentPage).toBe(secondPage);
+    expect(pageControlRef.current!.state.currentPage).toBe(secondPage);
   });
 
   test('should navigate to previous page when clicked on previous button', () => {
-    const paginationRef = React.createRef<Pagination>();
+    const pageControlRef = React.createRef<PageControl>();
     const pageLimit = 5;
     const totalPages = 7;
     const totalRecords = totalPages * pageLimit;
@@ -223,18 +228,18 @@ describe('Pagination component', () => {
     const thirdPage = 3;
 
     const { getByText } = render(
-      <Pagination
-        ref={paginationRef}
-        pageLimit={pageLimit}
-        totalRecords={totalRecords}
+      <PageControl
+        ref={pageControlRef}
+        pageSize={pageLimit}
+        totalItems={totalRecords}
       />
     );
 
     getByText(thirdPage.toString()).click();
-    expect(paginationRef.current!.state.currentPage).toBe(thirdPage);
+    expect(pageControlRef.current!.state.currentPage).toBe(thirdPage);
 
     getByText(PREV_NAV_BUTTON_TEXT).click();
-    expect(paginationRef.current!.state.currentPage).toBe(secondPage);
+    expect(pageControlRef.current!.state.currentPage).toBe(secondPage);
   });
 
   test('should call onPageChanged once rendered to fetch initial data', () => {
@@ -244,9 +249,9 @@ describe('Pagination component', () => {
     const onPageChanged = jest.fn();
 
     render(
-      <Pagination
-        pageLimit={pageLimit}
-        totalRecords={totalRecords}
+      <PageControl
+        pageSize={pageLimit}
+        totalItems={totalRecords}
         onPageChanged={onPageChanged}
       />
     );
@@ -262,9 +267,9 @@ describe('Pagination component', () => {
     const onPageChanged = jest.fn();
 
     const { getByText } = render(
-      <Pagination
-        pageLimit={pageLimit}
-        totalRecords={totalRecords}
+      <PageControl
+        pageSize={pageLimit}
+        totalItems={totalRecords}
         onPageChanged={onPageChanged}
       />
     );

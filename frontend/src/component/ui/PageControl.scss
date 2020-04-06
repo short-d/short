@@ -1,21 +1,23 @@
+@import '../styles/corner';
 @import '../styles/font';
 @import '../styles/layouts';
-@import '../styles/corner';
 
-.pagination {
-  display: block;
+.page-control {
+  display: flex;
   margin: 1rem 0;
-  @include default-font;
+  justify-content: center;
 
   button {
-    display: inline;
+    display: block;
     padding: 0.25rem 0.25rem;
     margin: 0 0.25rem;
-    font-size: 0.75em;
+    font-size: 0.75rem;
     background: transparent;
     border: none;
     outline: none;
     font-weight: $font-weight-medium;
+
+    @include default-font;
 
     &:hover {
       cursor: pointer;
@@ -25,14 +27,10 @@
     &:disabled {
       cursor: auto;
     }
-  }
 
-  button.active {
-    border: 1px solid;
-    @include round-corner;
-  }
-
-  @include respond-to($phone) {
-    text-align: center;
+    &.active {
+      border: 1px solid;
+      @include round-corner;
+    }
   }
 }
