@@ -15,10 +15,6 @@ export class Button extends Component<Props> {
   };
 
   render() {
-    return (
-      <button className="button" onClick={this.handleClick}>
-        {this.props.children}
-      </button>
-    );
+    return <button onClick={this.handleClick}>{this.props.children}</button>;
   }
 }
