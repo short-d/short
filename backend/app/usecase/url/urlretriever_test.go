@@ -103,7 +103,7 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 	}
 }
 
-func TestRetrieverPersist_GetURLsByUser(t *testing.T) {
+func TestRetrieverPersist_GetURLs(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
@@ -288,7 +288,7 @@ func TestRetrieverPersist_GetURLsByUser(t *testing.T) {
 			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(testCase.users, testCase.createdURLs)
 			retriever := NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 
-			urls, err := retriever.GetURLsByUser(testCase.user)
+			urls, err := retriever.GetURLs(testCase.user)
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
 				return

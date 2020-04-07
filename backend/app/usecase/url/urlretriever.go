@@ -14,7 +14,7 @@ var _ Retriever = (*RetrieverPersist)(nil)
 // Retriever represents URL retriever
 type Retriever interface {
 	GetURL(alias string, expiringAt *time.Time) (entity.URL, error)
-	GetURLsByUser(user *entity.User) ([]entity.URL, error)
+	GetURLs(user *entity.User) ([]entity.URL, error)
 }
 
 // RetrieverPersist represents URL retriever that fetches URL from persistent
@@ -59,11 +59,16 @@ func (r RetrieverPersist) getURL(alias string) (entity.URL, error) {
 }
 
 // GetURLsByUser retrieves URLs created by given user from persistent storage
-func (r RetrieverPersist) GetURLsByUser(user *entity.User) ([]entity.URL, error) {
+func (r RetrieverPersist) GetURLs(user *entity.User) ([]entity.URL, error) {
 	if user == nil {
-		return []entity.URL{}, errors.New("fail to find the owner of the URLs")
+		return nil, errors.New("fail to find the owner of the URLs")
 	}
-	aliases, err := r.userURLRelationRepo.FindAliasesByUser(*user)
+	return r.getURLsByUser(*user)
+}
+
+
+func (r RetrieverPersist) getURLsByUser(user entity.User) ([]entity.URL, error) {
+	aliases, err := r.userURLRelationRepo.FindAliasesByUser(user)
 	if err != nil {
 		return []entity.URL{}, err
 	}
