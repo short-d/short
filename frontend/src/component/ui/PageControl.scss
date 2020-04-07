@@ -1,36 +1,70 @@
-@import '../styles/corner';
+@import '../styles/shape';
 @import '../styles/font';
+@import '../styles/color';
+@import '../styles/easing';
 @import '../styles/layouts';
 
 .page-control {
   display: flex;
   margin: 1rem 0;
-  justify-content: center;
 
   button {
-    display: block;
-    padding: 0.25rem 0.25rem;
-    margin: 0 0.25rem;
-    font-size: 0.75rem;
-    background: transparent;
     border: none;
+    box-sizing: border-box;
+    font-size: 0.75rem;
+    font-weight: $font-weight-semi-bold;
+    line-height: 0.75rem;
+    margin: 0;
     outline: none;
-    font-weight: $font-weight-medium;
+    padding: 0;
 
     @include default-font;
 
     &:hover {
       cursor: pointer;
-      opacity: 0.9;
     }
+  }
 
-    &:disabled {
-      cursor: auto;
+  .nav {
+    &:hover {
+      opacity: 0.8;
     }
+  }
 
-    &.active {
-      border: 1px solid;
-      @include round-corner;
+  .page-numbers {
+    display: flex;
+    margin-left: 0.8rem;
+    margin-right: 0.8rem;
+
+    .page-number {
+      align-items: center;
+      background-color: $color-page-indicator-background;
+      color: $color-page-indicator-text;
+      height: 2rem;
+      @include circle;
+      justify-content: center;
+
+      transition: background-color 0.2s $ease-in-out-quart;
+
+      width: 2rem;
+      &:not(:first-child) {
+        margin-left: 0.4rem;
+      }
+
+      &:hover {
+        background-color: $color-page-indicator-hover-background;
+        color: $color-page-indicator-hover-text;
+      }
+
+      &.active {
+        background-color: $color-page-indicator-active-background;
+        color: $color-page-indicator-active-text;
+
+        &:hover {
+          background-color: $color-page-indicator-active-hover-background;
+          color: $color-page-indicator-active-hover-text;
+        }
+      }
     }
   }
 }

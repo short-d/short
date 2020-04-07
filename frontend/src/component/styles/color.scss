@@ -11,6 +11,17 @@ $color-toast-background: $color-dark-gray;
 $color-toast-text: $color-light-gray;
 $color-table-header-background: $color-light-gray;
 
+// Page Indicator
+$color-page-indicator-background: transparent;
+$color-page-indicator-text: $color-dark-gray;
+$color-page-indicator-hover-background: $color-light-gray;
+$color-page-indicator-hover-text: $color-dark-gray;
+
+$color-page-indicator-active-background: #303030;
+$color-page-indicator-active-text: white;
+$color-page-indicator-active-hover-background: #464646;
+$color-page-indicator-active-hover-text: white;
+
 @function color-transparent-white($opacity) {
   @return rgba(255, 255, 255, $opacity);
 }

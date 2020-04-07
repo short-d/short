@@ -1,182 +1,133 @@
-import React, { Component, ReactText } from 'react';
+import React, { Component } from 'react';
 
 import './PageControl.scss';
+import classNames from 'classnames';
 
 interface IProps {
-  pageSize: number;
-  totalItems: number;
-  onPageChanged: (currentPage: number, pageLimit: number) => void;
+  totalPages: number;
+  onPageChanged?: (currentPageIdx: number) => void;
 }
 
 interface IStates {
-  currentPage: number;
+  currentPageIdx: number;
 }
 
-const DEFAULT_PAGE_SIZE: number = 10;
-const ELLIPSES = 'ELLIPSES';
-
 export class PageControl extends Component<IProps, IStates> {
-  public static defaultProps: Partial<IProps> = {
-    pageSize: DEFAULT_PAGE_SIZE,
-    totalItems: 0,
-    onPageChanged: () => {}
-  };
-  private PAGE_CONTROL_ITEMS_COUNT = 5;
-
   constructor(props: IProps) {
     super(props);
 
     this.state = {
-      currentPage: 1
+      currentPageIdx: 0
     };
   }
 
   componentDidMount(): void {
-    this.gotoPage(1);
+    this.showPage(0);
   }
 
   render() {
-    const { totalItems } = this.props;
-    if (!totalItems) return null;
+    const { totalPages } = this.props;
 
-    return <div className="page-control">{this.renderPageControlItems()}</div>;
-  }
-
-  private renderPageControlItems = () => {
-    const pageContents = this.fetchPageContents();
-    return [
-      this.createPreviousPageNavComponent(),
-      pageContents.map(this.createPageItem),
-      this.createNextPageNavComponent()
-    ];
-  };
-
-  private createPageItem = (page: ReactText, index: number) => {
-    const attrs = { key: index };
-    if (page === ELLIPSES) {
-      return this.createEllipsesComponent(attrs);
+    if (!totalPages) {
+      return false;
     }
 
-    return this.createPageNumberComponent(page, attrs);
-  };
+    if (totalPages < 1) {
+      return false;
+    }
 
-  private createPreviousPageNavComponent = () => {
-    const { currentPage } = this.state;
+    return (
+      <div className="page-control">
+        {this.renderPreviousButton()}
+        <div className={'page-numbers'}>{this.renderPageNumberButtons()}</div>
+        {this.renderNextButton()}
+      </div>
+    );
+  }
+
+  private renderPreviousButton = () => {
+    const { currentPageIdx } = this.state;
+
+    const hasItemBefore = currentPageIdx > 0;
 
     return (
       <button
         key={`previous`}
-        onClick={this.handlePreviousPageNavClick}
-        disabled={currentPage === 1}
+        onClick={this.handlePreviousButtonClick}
+        disabled={!hasItemBefore}
+        className={'nav previous'}
       >
         &lt; Previous
       </button>
     );
   };
 
-  private handlePreviousPageNavClick = () => {
-    this.gotoPage(this.state.currentPage - 1);
-  };
+  private renderNextButton = () => {
+    const { currentPageIdx } = this.state;
+    const { totalPages } = this.props;
 
-  private createNextPageNavComponent = () => {
-    const { currentPage } = this.state;
-    const lastPage = this.calculateTotalPages();
+    const hasPageAfter = currentPageIdx < totalPages - 1;
 
     return (
       <button
         key={`next`}
-        onClick={this.handleNextPageNavClick}
-        disabled={currentPage === lastPage}
+        onClick={this.handleNextButtonClick}
+        disabled={!hasPageAfter}
+        className={'nav next'}
       >
         Next &gt;
       </button>
     );
   };
 
-  private handleNextPageNavClick = () => {
-    this.gotoPage(this.state.currentPage + 1);
+  private renderPageNumberButtons = () => {
+    const { totalPages } = this.props;
+    let pageNumberButtons = [];
+
+    for (let idx = 0; idx < totalPages; idx++) {
+      let button = this.renderPageNumberButton(idx);
+      pageNumberButtons.push(button);
+    }
+    return pageNumberButtons;
   };
 
-  private createEllipsesComponent = (attrs: any) => {
-    const { key } = attrs;
-    return (
-      <button key={key} disabled={true}>
-        &hellip;
-      </button>
-    );
-  };
+  private renderPageNumberButton = (pageIdx: number) => {
+    const { currentPageIdx } = this.state;
 
-  private createPageNumberComponent = (page: ReactText, attrs: any) => {
-    const { currentPage } = this.state;
-    const { key } = attrs;
+    const isHighLighted = pageIdx === currentPageIdx;
 
     return (
       <button
-        key={key}
-        className={`${currentPage === page ? 'active' : ''}`}
-        onClick={this.handlePageClick(page)}
+        key={pageIdx}
+        className={classNames({
+          'page-number': true,
+          active: isHighLighted
+        })}
+        onClick={this.handlePageNumberButtonClick(pageIdx)}
       >
-        {page}
+        {pageIdx + 1}
       </button>
     );
   };
 
-  private handlePageClick = (page: ReactText) => () => {
-    if (typeof page === 'number') {
-      this.gotoPage(page);
+  private handlePreviousButtonClick = () => {
+    this.showPage(this.state.currentPageIdx - 1);
+  };
+
+  private handleNextButtonClick = () => {
+    this.showPage(this.state.currentPageIdx + 1);
+  };
+
+  private handlePageNumberButtonClick = (pageIdx: number) => () => {
+    this.showPage(pageIdx);
+  };
+
+  private showPage(pageIdx: number) {
+    const { onPageChanged } = this.props;
+    this.setState({ currentPageIdx: pageIdx });
+    if (!onPageChanged) {
+      return;
     }
-  };
-
-  private gotoPage = (page: number) => {
-    const { pageSize, onPageChanged } = this.props;
-    const totalPages = this.calculateTotalPages();
-    const currentPage = Math.max(1, Math.min(page, totalPages));
-
-    this.setState({ currentPage }, () => onPageChanged(currentPage, pageSize));
-  };
-
-  private fetchPageContents = () => {
-    const lastPage = this.calculateTotalPages();
-    const { currentPage } = this.state;
-
-    // show all page numbers when number of pages are less than minimum pages
-    // required to construct ellipses based page controls
-    if (!this.hasEnoughPages()) {
-      return range(1, lastPage);
-    }
-
-    const hasLeftHiddenPages = currentPage > 2;
-    const hasRightHiddenPages = lastPage - currentPage > 1;
-
-    // case: 1 2 3 .. 10
-    if (!hasLeftHiddenPages && hasRightHiddenPages) {
-      return [1, 2, 3, ELLIPSES, lastPage];
-    }
-
-    // case: 1 .. 8 9 10
-    if (hasLeftHiddenPages && !hasRightHiddenPages) {
-      return [1, ELLIPSES, lastPage - 2, lastPage - 1, lastPage];
-    }
-
-    // case: 1 .. 5 .. 10
-    return [1, ELLIPSES, currentPage, ELLIPSES, lastPage];
-  };
-
-  private hasEnoughPages = () => {
-    const totalPages = this.calculateTotalPages();
-    return totalPages > this.PAGE_CONTROL_ITEMS_COUNT;
-  };
-
-  private calculateTotalPages = () => {
-    const { pageSize, totalItems } = this.props;
-    return Math.ceil(totalItems / pageSize);
-  };
-}
-
-const range = (from: number, to: number) => {
-  const result = [];
-  for (let i = from; i <= to; i++) {
-    result.push(i);
+    onPageChanged(pageIdx);
   }
-  return result;
-};
+}
