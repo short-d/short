@@ -88,8 +88,9 @@ func TestAuthQuery_URL(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			defer sqlDB.Close()
 
-			fakeRepo := repository.NewURLFake(testCase.urls)
-			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
+			fakeURLRepo := repository.NewURLFake(testCase.urls)
+			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
+			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 
 			keyFetcher := service.NewKeyFetcherFake([]service.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
