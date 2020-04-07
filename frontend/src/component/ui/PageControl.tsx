@@ -13,6 +13,10 @@ interface IStates {
 }
 
 export class PageControl extends Component<IProps, IStates> {
+  // TODO(issue#631): support responsive layouts.
+  // TODO(issue#632): support rendering large number of pages gracefully.
+  // Reference: https://www.digitalocean.com/community/tutorials/how-to-build-custom-pagination-with-react
+
   constructor(props: IProps) {
     super(props);
 
