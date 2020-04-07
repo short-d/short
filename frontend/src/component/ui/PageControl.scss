@@ -26,8 +26,12 @@
   }
 
   .nav {
-    &:hover {
+    &:not(:disabled):hover {
       opacity: 0.8;
+    }
+
+    &:disabled {
+      cursor: default;
     }
   }
 
