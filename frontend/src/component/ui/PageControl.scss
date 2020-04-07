@@ -26,6 +26,8 @@
   }
 
   .nav {
+    background-color: inherit;
+
     &:not(:disabled):hover {
       opacity: 0.8;
     }
