@@ -149,6 +149,7 @@ func getEnv(key, defaultValue string) string {
 	return goDotEnv.GetEnv(key, defaultValue)
 }
 
+// MustInt converts the string to int and panics in case of error
 func MustInt(numStr string) int {
 	num, err := strconv.Atoi(numStr)
 	if err != nil {
