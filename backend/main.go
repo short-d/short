@@ -1,8 +1,6 @@
 package main
 
 import (
-	"strconv"
-
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/cmd"
 	"github.com/short-d/short/dep"
@@ -14,7 +12,7 @@ func main() {
 
 	host := env.GetEnv("DB_HOST", "localhost")
 	portStr := env.GetEnv("DB_PORT", "5432")
-	port := mustInt(portStr)
+	port := dep.MustInt(portStr)
 	user := env.GetEnv("DB_USER", "postgres")
 	password := env.GetEnv("DB_PASSWORD", "password")
 	dbName := env.GetEnv("DB_NAME", "short")
@@ -24,12 +22,12 @@ func main() {
 	githubClientSecret := env.GetEnv("GITHUB_CLIENT_SECRET", "")
 	jwtSecret := env.GetEnv("JWT_SECRET", "")
 	webFrontendURL := env.GetEnv("WEB_FRONTEND_URL", "")
-	graphQLAPIPort := mustInt(env.GetEnv("GRAPHQL_API_PORT", "8080"))
-	httpAPIPort := mustInt(env.GetEnv("HTTP_API_PORT", "80"))
+	graphQLAPIPort := dep.MustInt(env.GetEnv("GRAPHQL_API_PORT", "8080"))
+	httpAPIPort := dep.MustInt(env.GetEnv("HTTP_API_PORT", "80"))
 
-	keyGenBufferSize := mustInt(env.GetEnv("KEY_GEN_BUFFER_SIZE", "50"))
+	keyGenBufferSize := dep.MustInt(env.GetEnv("KEY_GEN_BUFFER_SIZE", "50"))
 	kgsHostname := env.GetEnv("KEY_GEN_HOSTNAME", "localhost")
-	kgsPort := mustInt(env.GetEnv("KEY_GEN_PORT", "8080"))
+	kgsPort := dep.MustInt(env.GetEnv("KEY_GEN_PORT", "8080"))
 
 	facebookClientID := env.GetEnv("FACEBOOK_CLIENT_ID", "")
 	facebookClientSecret := env.GetEnv("FACEBOOK_CLIENT_SECRET", "")
@@ -80,12 +78,4 @@ func main() {
 		dbMigrationTool,
 	)
 	cmd.Execute(rootCmd)
-}
-
-func mustInt(numStr string) int {
-	num, err := strconv.Atoi(numStr)
-	if err != nil {
-		panic(err)
-	}
-	return num
 }

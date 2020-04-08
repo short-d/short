@@ -149,7 +149,7 @@ func getEnv(key, defaultValue string) string {
 	return goDotEnv.GetEnv(key, defaultValue)
 }
 
-func mustInt(numStr string) int {
+func MustInt(numStr string) int {
 	num, err := strconv.Atoi(numStr)
 	if err != nil {
 		panic(err)
@@ -158,5 +158,5 @@ func mustInt(numStr string) int {
 }
 
 func getTokenDuration() time.Duration {
-	return time.Duration(mustInt(getEnv("AUTH_TOKEN_LIFETIME_IN_SEC", "604800"))) * time.Second
+	return time.Duration(MustInt(getEnv("AUTH_TOKEN_LIFETIME_IN_SEC", "604800"))) * time.Second
 }
