@@ -158,5 +158,5 @@ func mustInt(numStr string) int {
 }
 
 func getTokenDuration() time.Duration {
-	return time.Duration(mustInt(getEnv("AUTH_TOKEN_DURATION", "604800000000"))) * time.Nanosecond
+	return time.Duration(mustInt(getEnv("AUTH_TOKEN_LIFETIME_IN_SEC", "604800"))) * time.Second
 }
