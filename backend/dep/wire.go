@@ -4,6 +4,7 @@ package dep
 
 import (
 	"database/sql"
+	"strconv"
 	"time"
 
 	"github.com/google/wire"
@@ -36,14 +37,12 @@ import (
 	"github.com/short-d/short/dep/provider"
 )
 
-// TODO(issue#640): replace with value from env variable.
-const oneDay = 24 * time.Hour
-const oneWeek = 7 * oneDay
+var tokenDuration = getTokenDuration()
 
 var authSet = wire.NewSet(
 	provider.NewJwtGo,
 
-	wire.Value(provider.TokenValidDuration(oneWeek)),
+	wire.Value(provider.TokenValidDuration(tokenDuration)),
 	provider.NewAuthenticator,
 )
 
@@ -210,4 +209,23 @@ func InjectRoutingService(
 		provider.NewShortRoutes,
 	)
 	return mdservice.Service{}
+}
+
+func getEnv(key, defaultValue string) string {
+	goDotEnv := mdenv.NewGoDotEnv()
+	goDotEnv.AutoLoadDotEnvFile()
+
+	return goDotEnv.GetEnv(key, defaultValue)
+}
+
+func mustInt(numStr string) int {
+	num, err := strconv.Atoi(numStr)
+	if err != nil {
+		panic(err)
+	}
+	return num
+}
+
+func getTokenDuration() time.Duration {
+	return time.Duration(mustInt(getEnv("AUTH_TOKEN_DURATION", "604800000000"))) * time.Nanosecond
 }

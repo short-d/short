@@ -7,6 +7,9 @@ package dep
 
 import (
 	"database/sql"
+	"strconv"
+	"time"
+
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdcli"
@@ -32,7 +35,6 @@ import (
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
 	"github.com/short-d/short/dep/provider"
-	"time"
 )
 
 // Injectors from wire.go:
@@ -93,7 +95,7 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 }
 
 var (
-	_wireTokenValidDurationValue = provider.TokenValidDuration(oneWeek)
+	_wireTokenValidDurationValue = provider.TokenValidDuration(tokenDuration)
 )
 
 func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL) mdservice.Service {
@@ -128,14 +130,9 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	return service
 }
 
-// wire.go:
+var tokenDuration = getTokenDuration()
 
-// TODO(issue#640): replace with value from env variable.
-const oneDay = 24 * time.Hour
-
-const oneWeek = 7 * oneDay
-
-var authSet = wire.NewSet(provider.NewJwtGo, wire.Value(provider.TokenValidDuration(oneWeek)), provider.NewAuthenticator)
+var authSet = wire.NewSet(provider.NewJwtGo, wire.Value(provider.TokenValidDuration(tokenDuration)), provider.NewAuthenticator)
 
 var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Local)), provider.NewLocalLogger, mdtracer.NewLocal)
 
@@ -144,3 +141,22 @@ var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAcc
 var facebookAPISet = wire.NewSet(provider.NewFacebookIdentityProvider, facebook.NewAccount, facebook.NewAPI)
 
 var googleAPISet = wire.NewSet(provider.NewGoogleIdentityProvider, google.NewAccount, google.NewAPI)
+
+func getEnv(key, defaultValue string) string {
+	goDotEnv := mdenv.NewGoDotEnv()
+	goDotEnv.AutoLoadDotEnvFile()
+
+	return goDotEnv.GetEnv(key, defaultValue)
+}
+
+func mustInt(numStr string) int {
+	num, err := strconv.Atoi(numStr)
+	if err != nil {
+		panic(err)
+	}
+	return num
+}
+
+func getTokenDuration() time.Duration {
+	return time.Duration(mustInt(getEnv("AUTH_TOKEN_DURATION", "604800000000"))) * time.Nanosecond
+}
