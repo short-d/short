@@ -36,7 +36,7 @@ import (
 	"github.com/short-d/short/dep/provider"
 )
 
-// TODO(issue#)
+// TODO(issue#640): Replace with value from env variable.
 const oneDay = 24 * time.Hour
 const oneWeek = 7 * oneDay
 

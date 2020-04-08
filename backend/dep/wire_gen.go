@@ -7,8 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"time"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdcli"
@@ -34,6 +32,7 @@ import (
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
 	"github.com/short-d/short/dep/provider"
+	"time"
 )
 
 // Injectors from wire.go:
@@ -131,6 +130,7 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 
 // wire.go:
 
+// TODO(issue#640): Replace with value from env variable.
 const oneDay = 24 * time.Hour
 
 const oneWeek = 7 * oneDay
