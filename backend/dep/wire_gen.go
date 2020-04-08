@@ -7,8 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"time"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdcli"
@@ -34,6 +32,7 @@ import (
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
 	"github.com/short-d/short/dep/provider"
+	"time"
 )
 
 // Injectors from wire.go:
@@ -94,7 +93,7 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 }
 
 var (
-	_wireTokenValidDurationValue = provider.TokenValidDuration(oneDay)
+	_wireTokenValidDurationValue = provider.TokenValidDuration(oneWeek)
 )
 
 func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL) mdservice.Service {
@@ -131,9 +130,12 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 
 // wire.go:
 
+// TODO(issue#640): replace with value from env variable.
 const oneDay = 24 * time.Hour
 
-var authSet = wire.NewSet(provider.NewJwtGo, wire.Value(provider.TokenValidDuration(oneDay)), provider.NewAuthenticator)
+const oneWeek = 7 * oneDay
+
+var authSet = wire.NewSet(provider.NewJwtGo, wire.Value(provider.TokenValidDuration(oneWeek)), provider.NewAuthenticator)
 
 var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Local)), provider.NewLocalLogger, mdtracer.NewLocal)
 
