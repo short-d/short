@@ -36,12 +36,14 @@ import (
 	"github.com/short-d/short/dep/provider"
 )
 
+// TODO(issue#)
 const oneDay = 24 * time.Hour
+const oneWeek = 7 * oneDay
 
 var authSet = wire.NewSet(
 	provider.NewJwtGo,
 
-	wire.Value(provider.TokenValidDuration(oneDay)),
+	wire.Value(provider.TokenValidDuration(oneWeek)),
 	provider.NewAuthenticator,
 )
 
