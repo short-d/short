@@ -130,7 +130,7 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 
 // wire.go:
 
-// TODO(issue#640): Replace with value from env variable.
+// TODO(issue#640): replace with value from env variable.
 const oneDay = 24 * time.Hour
 
 const oneWeek = 7 * oneDay
