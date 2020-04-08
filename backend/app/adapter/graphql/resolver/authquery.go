@@ -4,15 +4,18 @@ import (
 	"time"
 
 	"github.com/short-d/short/app/adapter/graphql/scalar"
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/url"
 )
 
 // AuthQuery represents GraphQL query resolver that acts differently based
 // on the identify of the user
 type AuthQuery struct {
-	user         *entity.User
-	urlRetriever url.Retriever
+	authToken     *string
+	authenticator auth.Authenticator
+	changeLog     changelog.ChangeLog
+	urlRetriever  url.Retriever
 }
 
 // URLArgs represents possible parameters for URL endpoint
@@ -35,9 +38,23 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 	return &URL{url: u}, nil
 }
 
-func newAuthQuery(user *entity.User, urlRetriever url.Retriever) AuthQuery {
+// ChangeLog retrieves full ChangeLog from persistent storage
+func (v AuthQuery) ChangeLog() (ChangeLog, error) {
+	changeLog, err := v.changeLog.GetChangeLog()
+	lastViewedAt := v.changeLog.GetLastViewedAt()
+	return newChangeLog(changeLog, lastViewedAt), err
+}
+
+func newAuthQuery(
+	authToken *string,
+	authenticator auth.Authenticator,
+	changeLog changelog.ChangeLog,
+	urlRetriever url.Retriever,
+) AuthQuery {
 	return AuthQuery{
-		user:         user,
-		urlRetriever: urlRetriever,
+		authToken:     authToken,
+		authenticator: authenticator,
+		changeLog:     changeLog,
+		urlRetriever:  urlRetriever,
 	}
 }

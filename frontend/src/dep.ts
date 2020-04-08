@@ -61,7 +61,6 @@ export function initUIFactory(
     urlService,
     qrCodeService,
     versionService,
-    captchaService,
     errorService,
     searchService,
     changeLogService,

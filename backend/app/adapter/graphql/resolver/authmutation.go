@@ -1,18 +1,21 @@
 package resolver
 
 import (
-	"errors"
 	"time"
 
 	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/url"
 )
 
 // AuthMutation represents GraphQL mutation resolver that acts differently based
 // on the identify of the user
 type AuthMutation struct {
-	user       *entity.User
-	urlCreator url.Creator
+	authToken     *string
+	authenticator auth.Authenticator
+	changeLog     changelog.ChangeLog
+	urlCreator    url.Creator
 }
 
 // URLInput represents possible URL attributes
@@ -28,10 +31,22 @@ type CreateURLArgs struct {
 	IsPublic bool
 }
 
+// CreateChangeArgs represents the possible parameters for CreateChange endpoint
+type CreateChangeArgs struct {
+	Change ChangeInput
+}
+
+// ChangeInput represents possible properties for Change
+type ChangeInput struct {
+	Title           string
+	SummaryMarkdown *string
+}
+
 // CreateURL creates mapping between an alias and a long link for a given user
 func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
-	if a.user == nil {
-		return nil, errors.New("unauthorized request")
+	user, err := viewer(a.authToken, a.authenticator)
+	if err != nil {
+		return nil, ErrInvalidAuthToken{}
 	}
 
 	customAlias := args.URL.CustomAlias
@@ -42,7 +57,7 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 	isPublic := args.IsPublic
 
-	newURL, err := a.urlCreator.CreateURL(u, customAlias, *a.user, isPublic)
+	newURL, err := a.urlCreator.CreateURL(u, customAlias, user, isPublic)
 	if err == nil {
 		return &URL{url: newURL}, nil
 	}
@@ -59,9 +74,22 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 }
 
-func newAuthMutation(user *entity.User, urlCreator url.Creator) AuthMutation {
+// CreateChange creates a Change in the change log
+func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
+	change, err := a.changeLog.CreateChange(args.Change.Title, args.Change.SummaryMarkdown)
+	return newChange(change), err
+}
+
+func newAuthMutation(
+	authToken *string,
+	authenticator auth.Authenticator,
+	changeLog changelog.ChangeLog,
+	urlCreator url.Creator,
+) AuthMutation {
 	return AuthMutation{
-		user:       user,
-		urlCreator: urlCreator,
+		authToken:     authToken,
+		authenticator: authenticator,
+		changeLog:     changeLog,
+		urlCreator:    urlCreator,
 	}
 }

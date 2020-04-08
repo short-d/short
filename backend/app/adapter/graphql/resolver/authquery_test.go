@@ -6,10 +6,16 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/short/app/usecase/auth"
+
 	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/adapter/graphql/scalar"
 	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/changelog"
+	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/url"
 )
 
@@ -84,9 +90,26 @@ func TestAuthQuery_URL(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			defer sqlDB.Close()
 
-			fakeRepo := repository.NewURLFake(testCase.urls)
-			retrieverFake := url.NewRetrieverPersist(&fakeRepo)
-			query := newAuthQuery(&testCase.user, retrieverFake)
+			fakeURLRepo := repository.NewURLFake(testCase.urls)
+			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
+			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
+
+			keyFetcher := service.NewKeyFetcherFake([]service.Key{})
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			mdtest.Equal(t, nil, err)
+
+			timerFake := mdtest.NewTimerFake(now)
+			changeLogRepo := db.NewChangeLogSQL(sqlDB)
+			changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
+
+			tokenizer := mdtest.NewCryptoTokenizerFake()
+			timer := mdtest.NewTimerFake(time.Now())
+			authenticator := auth.NewAuthenticator(tokenizer, timer, time.Hour)
+
+			authToken, err := authenticator.GenerateToken(testCase.user)
+			mdtest.Equal(t, nil, err)
+
+			query := newAuthQuery(&authToken, authenticator, changeLog, retrieverFake)
 
 			urlArgs := &URLArgs{
 				Alias:       testCase.alias,

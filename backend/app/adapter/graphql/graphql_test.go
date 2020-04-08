@@ -9,6 +9,7 @@ import (
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/service"
@@ -17,13 +18,14 @@ import (
 )
 
 func TestGraphQlAPI(t *testing.T) {
+	now := time.Now()
 	sqlDB, _, err := mdtest.NewSQLStub()
 	mdtest.Equal(t, nil, err)
 	defer sqlDB.Close()
 
 	urlRepo := db.NewURLSql(sqlDB)
-	retriever := url.NewRetrieverPersist(urlRepo)
 	urlRelationRepo := db.NewUserURLRelationSQL(sqlDB)
+	retriever := url.NewRetrieverPersist(urlRepo, urlRelationRepo)
 	keyFetcher := service.NewKeyFetcherFake([]service.Key{})
 	keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 	mdtest.Equal(t, nil, err)
@@ -43,6 +45,10 @@ func TestGraphQlAPI(t *testing.T) {
 
 	logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 	tracer := mdtest.NewTracerFake()
-	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, verifier, authenticator)
+
+	timerFake := mdtest.NewTimerFake(now)
+	changeLogRepo := db.NewChangeLogSQL(sqlDB)
+	changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
+	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, changeLog, verifier, authenticator)
 	mdtest.Equal(t, true, mdtest.IsGraphQlAPIValid(graphqlAPI))
 }

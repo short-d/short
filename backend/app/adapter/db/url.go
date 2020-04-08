@@ -99,6 +99,10 @@ WHERE "%s"=$1;`,
 
 // GetByAliases finds URLs for a list of aliases
 func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
+	if len(aliases) == 0 {
+		return []entity.URL{}, nil
+	}
+
 	parameterStr := u.composeParamList(len(aliases))
 
 	// create a list of interface{} to hold aliases for db.Query()

@@ -33,14 +33,15 @@ FROM "%s";`,
 		return []entity.Change{}, err
 	}
 
-	var changeLog []entity.Change
+	// the consumer of GetChangeLog expects empty slice instead of `nil` if there are no records
+	changeLog := []entity.Change{}
 	for rows.Next() {
 		change := entity.Change{}
 		err = rows.Scan(&change.ID, &change.Title, &change.SummaryMarkdown, &change.ReleasedAt)
 		if err != nil {
 			return changeLog, err
 		}
-		change.ReleasedAt = utc(change.ReleasedAt)
+		change.ReleasedAt = change.ReleasedAt.UTC()
 		changeLog = append(changeLog, change)
 	}
 
