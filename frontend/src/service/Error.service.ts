@@ -1,6 +1,8 @@
 import { IErr } from '../entity/Err';
 
 export enum Err {
+  ReCaptchaNotReady = 'reCaptchaNotReady',
+  InvalidReCaptchaSiteKey = 'invalidReCaptchaSiteKey',
   AliasAlreadyExist = 'aliasAlreadyExist',
   UserNotHuman = 'requesterNotHuman',
   Unauthorized = 'invalidAuthToken',
@@ -15,6 +17,13 @@ const unknownErr = {
                 Please email byliuyang11@gmail.com the screenshots and detailed 
                 steps to reproduce it so that I can investigate.
                 `
+};
+
+const invalidReCaptchaSiteKeyErr = {
+  name: 'Invalid reCaptcha site key',
+  description: `
+  Please email byliuyang11@gmail.com the screenshots and detailed steps to 
+  reproduce it so that I can investigate.`
 };
 
 const aliasNotAvailableErr = {
@@ -51,6 +60,8 @@ export class ErrorService {
         return userNotHumanErr;
       case Err.NetworkError:
         return networkErr;
+      case Err.InvalidReCaptchaSiteKey:
+        return invalidReCaptchaSiteKeyErr;
       case Err.Unknown:
       default:
         return unknownErr;
