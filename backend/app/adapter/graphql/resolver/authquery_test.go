@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/short/app/usecase/auth"
+
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/adapter/graphql/scalar"
@@ -100,7 +102,14 @@ func TestAuthQuery_URL(t *testing.T) {
 			changeLogRepo := db.NewChangeLogSQL(sqlDB)
 			changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
 
-			query := newAuthQuery(&testCase.user, changeLog, retrieverFake)
+			tokenizer := mdtest.NewCryptoTokenizerFake()
+			timer := mdtest.NewTimerFake(time.Now())
+			authenticator := auth.NewAuthenticator(tokenizer, timer, time.Hour)
+
+			authToken, err := authenticator.GenerateToken(testCase.user)
+			mdtest.Equal(t, nil, err)
+
+			query := newAuthQuery(&authToken, authenticator, changeLog, retrieverFake)
 
 			urlArgs := &URLArgs{
 				Alias:       testCase.alias,

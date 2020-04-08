@@ -44,7 +44,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 		{
 			name:      "with invalid auth token",
 			authToken: &randomToken,
-			expHasErr: true,
+			expHasErr: false,
 		},
 		{
 			name:      "without auth token",
@@ -79,13 +79,12 @@ func TestQuery_AuthQuery(t *testing.T) {
 
 			mdtest.Equal(t, nil, err)
 			authQueryArgs := AuthQueryArgs{AuthToken: testCase.authToken}
-			authQuery, err := query.AuthQuery(&authQueryArgs)
+			_, err = query.AuthQuery(&authQueryArgs)
 			if testCase.expHasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
 			}
 			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expUser, authQuery.user)
 		})
 	}
 }
