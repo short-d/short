@@ -2,7 +2,7 @@ import { IErr } from '../entity/Err';
 
 export enum Err {
   ReCaptchaNotReady = 'reCaptchaNotReady',
-  InvalidRecaptchaSiteKey = 'invalidRecaptchaSiteKey',
+  InvalidReCaptchaSiteKey = 'invalidReCaptchaSiteKey',
   AliasAlreadyExist = 'aliasAlreadyExist',
   UserNotHuman = 'requesterNotHuman',
   Unauthorized = 'invalidAuthToken',
@@ -19,7 +19,7 @@ const unknownErr = {
                 `
 };
 
-const invalidRecaptchaSiteKeyErr = {
+const invalidReCaptchaSiteKeyErr = {
   name: 'Invalid reCaptcha site key',
   description: `
   Please email byliuyang11@gmail.com the screenshots and detailed steps to 
@@ -60,8 +60,8 @@ export class ErrorService {
         return userNotHumanErr;
       case Err.NetworkError:
         return networkErr;
-      case Err.InvalidRecaptchaSiteKey:
-        return invalidRecaptchaSiteKeyErr;
+      case Err.InvalidReCaptchaSiteKey:
+        return invalidReCaptchaSiteKeyErr;
       case Err.Unknown:
       default:
         return unknownErr;
