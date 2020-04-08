@@ -231,8 +231,8 @@ export class Home extends Component<Props, State> {
         );
         this.copyShortenedLink(shortLink);
       })
-      .catch(({ authorizationErr, createShortLinkErr }) => {
-        if (authorizationErr) {
+      .catch(({ authenticationErr, createShortLinkErr }) => {
+        if (authenticationErr) {
           this.requestSignIn();
           return;
         }

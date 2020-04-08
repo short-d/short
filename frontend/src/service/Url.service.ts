@@ -84,9 +84,9 @@ export class UrlService {
         resolve(url);
         return;
       } catch (errCode) {
-        if (errCode === Err.Unauthorized) {
+        if (errCode === Err.Unauthenticated) {
           reject({
-            authorizationErr: 'Unauthorized to create short link'
+            authenticationErr: 'User is not authenticated'
           });
           return;
         }
