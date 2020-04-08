@@ -1,15 +1,16 @@
 package resolver
 
 import (
+	"errors"
+
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/auth"
 )
 
-func viewer(authToken *string, authenticator auth.Authenticator) (*entity.User, error) {
+func viewer(authToken *string, authenticator auth.Authenticator) (entity.User, error) {
 	if authToken == nil {
-		return nil, nil
+		return entity.User{}, errors.New("auth token can't be empty")
 	}
 
-	user, err := authenticator.GetUser(*authToken)
-	return &user, err
+	return authenticator.GetUser(*authToken)
 }

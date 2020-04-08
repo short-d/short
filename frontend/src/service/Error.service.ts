@@ -5,7 +5,7 @@ export enum Err {
   InvalidReCaptchaSiteKey = 'invalidReCaptchaSiteKey',
   AliasAlreadyExist = 'aliasAlreadyExist',
   UserNotHuman = 'requesterNotHuman',
-  Unauthorized = 'invalidAuthToken',
+  Unauthenticated = 'invalidAuthToken',
   NetworkError = 'networkError',
   Unknown = 'unknownError'
 }

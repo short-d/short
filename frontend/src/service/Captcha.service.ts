@@ -34,7 +34,7 @@ export class CaptchaService {
       this.reCaptcha.execute(action).then(resolve, err => {
         const errMsg = err.message;
         if (CaptchaService.contains(errMsg, INVALID_SITE_KEY_ERR_MSG)) {
-          reject(Err.InvalidRecaptchaSiteKey);
+          reject(Err.InvalidReCaptchaSiteKey);
           return;
         }
         reject(Err.Unknown);
