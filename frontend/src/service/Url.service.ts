@@ -10,7 +10,7 @@ import { AuthService } from './Auth.service';
 import { CaptchaService, CREATE_SHORT_LINK } from './Captcha.service';
 import { validateLongLinkFormat } from '../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../validators/CustomAlias.validator';
-import { ErrorService, Err } from './Error.service';
+import { Err, ErrorService } from './Error.service';
 import { IErr } from '../entity/Err';
 
 interface ICreatedUrl {
@@ -83,8 +83,7 @@ export class UrlService {
         const url = await this.invokeCreateShortLinkApi(editingUrl);
         resolve(url);
         return;
-      } catch (errCodes) {
-        const errCode = errCodes[0];
+      } catch (errCode) {
         if (errCode === Err.Unauthorized) {
           reject({
             authorizationErr: 'Unauthorized to create short link'
@@ -135,16 +134,18 @@ export class UrlService {
   }
 
   private async invokeCreateShortLinkApi(link: Url): Promise<Url> {
-    const captchaResponse = await this.captchaService.execute(
-      CREATE_SHORT_LINK
-    );
+    let captchaResponse = '';
+
+    try {
+      captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+
     let alias = link.alias === '' ? null : link.alias!;
     let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
     return new Promise<Url>( // TODO(issue#599): simplify business logic below to improve readability
-      (
-        resolve: (createdURL: Url) => void,
-        reject: (errCodes: Err[]) => any
-      ) => {
+      (resolve: (createdURL: Url) => void, reject: (errCode: Err) => any) => {
         this.gqlClient
           .mutate({
             variables: variables,
@@ -152,7 +153,7 @@ export class UrlService {
           })
           .then((res: FetchResult<ICreateURLData>) => {
             if (!res || !res.data) {
-              return reject([]);
+              return reject(Err.Unknown);
             }
             const url = this.getUrlFromCreatedUrl(
               res.data.authMutation.createURL
@@ -161,11 +162,11 @@ export class UrlService {
           })
           .catch(({ graphQLErrors, networkError, message }) => {
             if (networkError) {
-              reject([Err.NetworkError]);
+              reject(Err.NetworkError);
               return;
             }
             if (!graphQLErrors || graphQLErrors.length === 0) {
-              reject([Err.Unknown]);
+              reject(Err.Unknown);
               return;
             }
             const errCodes = graphQLErrors.map((graphQLError: GraphQlError) =>
@@ -173,7 +174,7 @@ export class UrlService {
                 ? graphQLError.extensions.code
                 : Err.Unknown
             );
-            reject(errCodes);
+            reject(errCodes[0]);
           });
       }
     );
