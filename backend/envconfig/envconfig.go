@@ -1,5 +1,5 @@
-// TODO(issue#649): move this package into app framework
 package envconfig
+// TODO(issue#649): move this package into app framework
 
 import (
 	"errors"
@@ -10,10 +10,13 @@ import (
 	"github.com/short-d/app/fw"
 )
 
+// EnvConfig parses configuration from environmental variables.
 type EnvConfig struct {
 	environment fw.Environment
 }
 
+// ParseConfigFromEnv retrieves configurations from environmental variables and
+// parse them into the given struct.
 func (e EnvConfig) ParseConfigFromEnv(config interface{}) error {
 	configVal := reflect.ValueOf(config)
 	if configVal.Kind() != reflect.Ptr || configVal.IsNil() {
@@ -69,6 +72,7 @@ func setFieldValue(field reflect.StructField, fieldValue reflect.Value, newValue
 	}
 }
 
+// NewEnvConfig creates EnvConfig.
 func NewEnvConfig(environment fw.Environment) EnvConfig {
 	return EnvConfig{environment: environment}
 }
