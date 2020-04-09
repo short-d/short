@@ -20,8 +20,12 @@ type EnvConfig struct {
 // parse them into the given struct.
 func (e EnvConfig) ParseConfigFromEnv(config interface{}) error {
 	configVal := reflect.ValueOf(config)
-	if configVal.Kind() != reflect.Ptr || configVal.IsNil() {
+	if configVal.Kind() != reflect.Ptr {
 		return errors.New("config must be a pointer")
+	}
+
+	if configVal.IsNil() {
+		return errors.New("config can't be nil")
 	}
 
 	elem := configVal.Elem()
