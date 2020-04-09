@@ -1,4 +1,3 @@
-// TODO(issue#): move this package into app framework
 package envconfig
 
 import (
