@@ -53,6 +53,9 @@ func (v AuthQuery) URLs() ([]URL, error) {
 	}
 
 	urls, err := v.urlRetriever.GetURLsByUser(user)
+	if err != nil {
+		return []URL{}, err
+	}
 
 	listOfURLs := []URL{}
 	for _, v := range urls {
