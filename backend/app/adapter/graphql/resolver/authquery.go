@@ -45,6 +45,23 @@ func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	return newChangeLog(changeLog, lastViewedAt), err
 }
 
+// URLs retrieves urls created by a given user from persistent storage
+func (v AuthQuery) URLs() ([]URL, error) {
+	user, err := viewer(v.authToken, v.authenticator)
+	if err != nil {
+		return []URL{}, err
+	}
+
+	urls, err := v.urlRetriever.GetURLsByUser(user)
+
+	listOfURLs := []URL{}
+	for _, v := range urls {
+		listOfURLs = append(listOfURLs, newURL(v))
+	}
+
+	return listOfURLs, nil
+}
+
 func newAuthQuery(
 	authToken *string,
 	authenticator auth.Authenticator,
