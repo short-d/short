@@ -5,12 +5,13 @@ import { SearchBar } from './SearchBar';
 describe('Searchbar', () => {
   let changeHandler: () => void;
   let searchBarRef: any;
+  let container: HTMLElement;
   let getByPlaceholderText: (id: Matcher) => HTMLElement;
   let input: HTMLInputElement;
   beforeEach(() => {
     changeHandler = jest.fn();
     searchBarRef = React.createRef<SearchBar>();
-    getByPlaceholderText = render(
+    ({ getByPlaceholderText, container } = render(
       <SearchBar
         ref={searchBarRef}
         onChange={changeHandler}
@@ -25,7 +26,7 @@ describe('Searchbar', () => {
           }
         ]}
       />
-    ).getByPlaceholderText;
+    ));
 
     input = getByPlaceholderText('Search short links') as HTMLInputElement;
   });
@@ -48,19 +49,19 @@ describe('Searchbar', () => {
   });
 
   test('should show autocomplete box on focus', () => {
-    expect(searchBarRef.current.state.showAutoCompleteBox).toBe(false);
+    expect(container.querySelector('.suggestions.show')).toBeFalsy();
     input.focus();
-    expect(searchBarRef.current.state.showAutoCompleteBox).toBe(true);
+    expect(container.querySelector('.suggestions.show')).toBeTruthy();
   });
 
   test('should hide autocomplete box on blur', async () => {
-    expect(searchBarRef.current.state.showAutoCompleteBox).toBe(false);
+    expect(container.querySelector('.suggestions.show')).toBeFalsy();
     input.focus();
-    expect(searchBarRef.current.state.showAutoCompleteBox).toBe(true);
+    expect(container.querySelector('.suggestions.show')).toBeTruthy();
     input.blur();
 
     await new Promise(r => setTimeout(r, 300));
 
-    expect(searchBarRef.current.state.showAutoCompleteBox).toBe(false);
+    expect(container.querySelector('.suggestions.show')).toBeFalsy();
   });
 });
