@@ -111,7 +111,7 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 		urls         urlMap
 		users        []entity.User
 		createdURLs  []entity.URL
-		user         *entity.User
+		user         entity.User
 		hasErr       bool
 		expectedURLs []entity.URL
 	}{
@@ -160,7 +160,7 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 					OriginalURL: "https://www.mozilla.org/",
 				},
 			},
-			user: &entity.User{
+			user: entity.User{
 				ID:    "12345",
 				Name:  "Test User",
 				Email: "test@gmail.com",
@@ -222,60 +222,12 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 					OriginalURL: "https://www.mozilla.org/",
 				},
 			},
-			user: &entity.User{
+			user: entity.User{
 				ID:    "12346",
 				Name:  "Test User 2",
 				Email: "test2@gmail.com",
 			},
 			hasErr:       false,
-			expectedURLs: []entity.URL{},
-		}, {
-			name: "user is nil",
-			urls: urlMap{
-				"google": entity.URL{
-					Alias:       "google",
-					OriginalURL: "https://www.google.com/",
-				},
-				"short": entity.URL{
-					Alias:       "short",
-					OriginalURL: "https://github.com/short-d/short/",
-				},
-				"mozilla": entity.URL{
-					Alias:       "mozilla",
-					OriginalURL: "https://www.mozilla.org/",
-				},
-			},
-			users: []entity.User{
-				{
-					ID:    "12345",
-					Name:  "Test User",
-					Email: "test@gmail.com",
-				}, {
-					ID:    "12345",
-					Name:  "Test User",
-					Email: "test@gmail.com",
-				}, {
-					ID:    "12346",
-					Name:  "Test User 2",
-					Email: "test2@gmail.com",
-				},
-			},
-			createdURLs: []entity.URL{
-				{
-					Alias:       "google",
-					OriginalURL: "https://www.google.com/",
-				},
-				{
-					Alias:       "short",
-					OriginalURL: "https://github.com/short-d/short/",
-				},
-				{
-					Alias:       "mozilla",
-					OriginalURL: "https://www.mozilla.org/",
-				},
-			},
-			user:         nil,
-			hasErr:       true,
 			expectedURLs: []entity.URL{},
 		},
 	}
@@ -289,7 +241,7 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(testCase.users, testCase.createdURLs)
 			retriever := NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 
-			urls, err := retriever.GetURLs(testCase.user)
+			urls, err := retriever.GetURLsByUser(testCase.user)
 			if testCase.hasErr {
 				mdtest.NotEqual(t, nil, err)
 				return
