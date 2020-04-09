@@ -57,12 +57,12 @@ func (v AuthQuery) URLs() ([]URL, error) {
 		return []URL{}, err
 	}
 
-	listOfURLs := []URL{}
+	var gqlURls []URL
 	for _, v := range urls {
-		listOfURLs = append(listOfURLs, newURL(v))
+		gqlURls = append(gqlURls, newURL(v))
 	}
 
-	return listOfURLs, nil
+	return gqlURls, nil
 }
 
 func newAuthQuery(
