@@ -23,12 +23,7 @@ type AuthQueryArgs struct {
 
 // AuthQuery extracts user information from authentication token
 func (q Query) AuthQuery(args *AuthQueryArgs) (*AuthQuery, error) {
-	user, err := viewer(args.AuthToken, q.authenticator)
-	if err != nil {
-		return nil, err
-	}
-
-	authQuery := newAuthQuery(user, q.changeLog, q.urlRetriever)
+	authQuery := newAuthQuery(args.AuthToken, q.authenticator, q.changeLog, q.urlRetriever)
 	return &authQuery, nil
 }
 

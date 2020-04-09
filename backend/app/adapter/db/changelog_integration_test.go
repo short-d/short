@@ -28,12 +28,13 @@ type changeLogTableRow struct {
 	id              string
 	title           string
 	summaryMarkdown string
-	releasedAt      *time.Time
+	releasedAt      time.Time
 }
 
 func TestChangeLogSql_GetChangeLog(t *testing.T) {
 	summaryMarkdown1 := "summary 1"
 	summaryMarkdown2 := "summary 2"
+
 	testCases := []struct {
 		name              string
 		tableRows         []changeLogTableRow
@@ -83,8 +84,9 @@ func TestChangeLogSql_GetChangeLog(t *testing.T) {
 					insertChangeLogTableRows(t, sqlDB, testCase.tableRows)
 
 					changeLogRepo := db.NewChangeLogSQL(sqlDB)
-					changeLog, _ := changeLogRepo.GetChangeLog()
+					changeLog, err := changeLogRepo.GetChangeLog()
 
+					mdtest.Equal(t, nil, err)
 					mdtest.Equal(t, testCase.expectedChangeLog, changeLog)
 				})
 		})
@@ -95,6 +97,7 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 	summaryMarkdown1 := "summary 1"
 	summaryMarkdown2 := "summary 2"
 	summaryMarkdown3 := "summary 3"
+
 	testCases := []struct {
 		name                  string
 		tableRows             []changeLogTableRow

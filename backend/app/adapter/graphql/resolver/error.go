@@ -115,7 +115,7 @@ func (e ErrInvalidCustomAlias) Error() string {
 }
 
 // ErrInvalidAuthToken signifies the provided authentication is invalid.
-type ErrInvalidAuthToken string
+type ErrInvalidAuthToken struct{}
 
 var _ GraphQlError = (*ErrInvalidAuthToken)(nil)
 
@@ -123,8 +123,7 @@ var _ GraphQlError = (*ErrInvalidAuthToken)(nil)
 // handle the error.
 func (e ErrInvalidAuthToken) Extensions() map[string]interface{} {
 	return map[string]interface{}{
-		"code":      ErrCodeInvalidAuthToken,
-		"authToken": string(e),
+		"code": ErrCodeInvalidAuthToken,
 	}
 }
 

@@ -1,5 +1,6 @@
 import { load } from 'recaptcha-v3';
 import { EnvService } from './Env.service';
+import { Err } from './Error.service';
 
 export interface ReCaptcha {
   execute: (action: string) => Promise<string>;
@@ -8,8 +9,11 @@ export interface ReCaptcha {
 export const CREATE_SHORT_LINK = 'createShortLink';
 export const SEARCH_SHORT_LINK = 'searchShortLink';
 
+const INVALID_SITE_KEY_ERR_MSG = 'Invalid site key or not loaded in api.js';
+
 export class CaptchaService {
   private reCaptcha?: ReCaptcha;
+
   constructor(private envService: EnvService) {}
 
   public initRecaptchaV3(): Promise<void> {
@@ -21,9 +25,24 @@ export class CaptchaService {
   }
 
   public execute(action: string): Promise<string> {
-    if (!this.reCaptcha) {
-      return Promise.reject('ReCaptcha is not ready yet');
-    }
-    return this.reCaptcha.execute(action);
+    return new Promise<string>((resolve, reject) => {
+      if (!this.reCaptcha) {
+        reject(Err.ReCaptchaNotReady);
+        return;
+      }
+
+      this.reCaptcha.execute(action).then(resolve, err => {
+        const errMsg = err.message;
+        if (CaptchaService.contains(errMsg, INVALID_SITE_KEY_ERR_MSG)) {
+          reject(Err.InvalidReCaptchaSiteKey);
+          return;
+        }
+        reject(Err.Unknown);
+      });
+    });
+  }
+
+  private static contains(text: string, substr: string): boolean {
+    return text.indexOf(substr) > -1;
   }
 }

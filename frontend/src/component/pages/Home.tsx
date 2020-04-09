@@ -7,7 +7,6 @@ import { Footer } from './shared/Footer';
 import { SignInModal } from './shared/sign-in/SignInModal';
 import { Modal } from '../ui/Modal';
 import { ExtPromo } from './shared/promos/ExtPromo';
-import { CaptchaService } from '../../service/Captcha.service';
 import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
 import { Location } from 'history';
@@ -45,7 +44,6 @@ interface Props {
   extensionService: IBrowserExtensionService;
   versionService: VersionService;
   qrCodeService: QrCodeService;
-  captchaService: CaptchaService;
   searchService: SearchService;
   errorService: ErrorService;
   changeLogService: ChangeLogService;
@@ -233,8 +231,8 @@ export class Home extends Component<Props, State> {
         );
         this.copyShortenedLink(shortLink);
       })
-      .catch(({ authorizationErr, createShortLinkErr }) => {
-        if (authorizationErr) {
+      .catch(({ authenticationErr, createShortLinkErr }) => {
+        if (authenticationErr) {
           this.requestSignIn();
           return;
         }

@@ -36,12 +36,7 @@ func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
 		return nil, ErrNotHuman{}
 	}
 
-	user, err := viewer(args.AuthToken, m.authenticator)
-	if err != nil {
-		return nil, err
-	}
-
-	authMutation := newAuthMutation(user, m.changeLog, m.urlCreator)
+	authMutation := newAuthMutation(args.AuthToken, m.authenticator, m.changeLog, m.urlCreator)
 	return &authMutation, nil
 }
 
