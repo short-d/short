@@ -12,25 +12,25 @@ const (
 )
 
 // ParseDuration reads a human-readable duration and returns duration in seconds
-func ParseDuration(s string) (time.Duration, error) {
+func ParseDuration(readableDuration string) (time.Duration, error) {
 	var (
 		duration time.Duration
 		err      error
-		length   int
+		value    int
 	)
-	timeVariable := s[len(s)-1]
-	length, err = strconv.Atoi(s[:len(s)-1])
-	switch timeVariable {
+	unit := readableDuration[len(readableDuration)-1]
+	value, err = strconv.Atoi(readableDuration[:len(readableDuration)-1])
+	switch unit {
 	case 's':
-		duration = time.Duration(length) * time.Second
+		duration = time.Duration(value) * time.Second
 	case 'm':
-		duration = time.Duration(length) * time.Minute
+		duration = time.Duration(value) * time.Minute
 	case 'h':
-		duration = time.Duration(length) * time.Hour
+		duration = time.Duration(value) * time.Hour
 	case 'd':
-		duration = time.Duration(length) * oneDay
+		duration = time.Duration(value) * oneDay
 	case 'w':
-		duration = time.Duration(length) * oneWeak
+		duration = time.Duration(value) * oneWeak
 	default:
 		err = errors.New("unknown time type")
 	}

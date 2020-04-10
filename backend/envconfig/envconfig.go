@@ -60,12 +60,12 @@ func setFieldValue(field reflect.StructField, fieldValue reflect.Value, newValue
 	case reflect.String:
 		fieldValue.SetString(newValue)
 		return nil
-	case reflect.Int:
-		num, err := strconv.Atoi(newValue)
+	case reflect.Int, reflect.Int64:
+		num, err := processInt(newValue, field.Type.Name())
 		if err != nil {
 			return err
 		}
-		fieldValue.SetInt(int64(num))
+		fieldValue.SetInt(num)
 		return nil
 	case reflect.Bool:
 		boolean, err := strconv.ParseBool(newValue)
@@ -73,14 +73,6 @@ func setFieldValue(field reflect.StructField, fieldValue reflect.Value, newValue
 			return err
 		}
 		fieldValue.SetBool(boolean)
-		return nil
-	case reflect.Int64:
-		// right now the only env var of type int64 is AuthTokenLifetime
-		duration, err := unit.ParseDuration(newValue)
-		if err != nil {
-			return err
-		}
-		fieldValue.SetInt(int64(duration))
 		return nil
 	default:
 		return fmt.Errorf("unexpected field type: %s", kind)
@@ -90,4 +82,15 @@ func setFieldValue(field reflect.StructField, fieldValue reflect.Value, newValue
 // NewEnvConfig creates EnvConfig.
 func NewEnvConfig(environment fw.Environment) EnvConfig {
 	return EnvConfig{environment: environment}
+}
+
+func processInt(value, kind string) (int64, error) {
+	if kind == "int" {
+		num, err := strconv.Atoi(value)
+		return int64(num), err
+	} else if kind == "Duration" {
+		duration, err := unit.ParseDuration(value)
+		return int64(duration), err
+	}
+	return 0, errors.New("unknown kind")
 }
