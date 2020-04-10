@@ -88,8 +88,9 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			fakeRepo := repository.NewURLFake(testCase.urls)
-			retriever := NewRetrieverPersist(&fakeRepo)
+			fakeURLRepo := repository.NewURLFake(testCase.urls)
+			fakeUserURLRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.URL{})
+			retriever := NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 			url, err := retriever.GetURL(testCase.alias, testCase.expiringAt)
 
 			if testCase.hasErr {
@@ -98,6 +99,156 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 			}
 			mdtest.Equal(t, nil, err)
 			mdtest.Equal(t, testCase.expectedURL, url)
+		})
+	}
+}
+
+func TestRetrieverPersist_GetURLs(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name         string
+		urls         urlMap
+		users        []entity.User
+		createdURLs  []entity.URL
+		user         entity.User
+		hasErr       bool
+		expectedURLs []entity.URL
+	}{
+		{
+			name: "user created URLs",
+			urls: urlMap{
+				"google": entity.URL{
+					Alias:       "google",
+					OriginalURL: "https://www.google.com/",
+				},
+				"short": entity.URL{
+					Alias:       "short",
+					OriginalURL: "https://github.com/short-d/short/",
+				},
+				"mozilla": entity.URL{
+					Alias:       "mozilla",
+					OriginalURL: "https://www.mozilla.org/",
+				},
+			},
+			users: []entity.User{
+				{
+					ID:    "12345",
+					Name:  "Test User",
+					Email: "test@gmail.com",
+				}, {
+					ID:    "12345",
+					Name:  "Test User",
+					Email: "test@gmail.com",
+				}, {
+					ID:    "12346",
+					Name:  "Test User 2",
+					Email: "test2@gmail.com",
+				},
+			},
+			createdURLs: []entity.URL{
+				{
+					Alias:       "google",
+					OriginalURL: "https://www.google.com/",
+				},
+				{
+					Alias:       "short",
+					OriginalURL: "https://github.com/short-d/short/",
+				},
+				{
+					Alias:       "mozilla",
+					OriginalURL: "https://www.mozilla.org/",
+				},
+			},
+			user: entity.User{
+				ID:    "12345",
+				Name:  "Test User",
+				Email: "test@gmail.com",
+			},
+			hasErr: false,
+			expectedURLs: []entity.URL{
+				{
+					Alias:       "google",
+					OriginalURL: "https://www.google.com/",
+				},
+				{
+					Alias:       "short",
+					OriginalURL: "https://github.com/short-d/short/",
+				},
+			},
+		},
+		{
+			name: "user has no URL",
+			urls: urlMap{
+				"google": entity.URL{
+					Alias:       "google",
+					OriginalURL: "https://www.google.com/",
+				},
+				"short": entity.URL{
+					Alias:       "short",
+					OriginalURL: "https://github.com/short-d/short/",
+				},
+				"mozilla": entity.URL{
+					Alias:       "mozilla",
+					OriginalURL: "https://www.mozilla.org/",
+				},
+			},
+			users: []entity.User{
+				{
+					ID:    "12345",
+					Name:  "Test User",
+					Email: "test@gmail.com",
+				}, {
+					ID:    "12345",
+					Name:  "Test User",
+					Email: "test@gmail.com",
+				}, {
+					ID:    "12345",
+					Name:  "Test User",
+					Email: "test@gmail.com",
+				},
+			},
+			createdURLs: []entity.URL{
+				{
+					Alias:       "google",
+					OriginalURL: "https://www.google.com/",
+				},
+				{
+					Alias:       "short",
+					OriginalURL: "https://github.com/short-d/short/",
+				},
+				{
+					Alias:       "mozilla",
+					OriginalURL: "https://www.mozilla.org/",
+				},
+			},
+			user: entity.User{
+				ID:    "12346",
+				Name:  "Test User 2",
+				Email: "test2@gmail.com",
+			},
+			hasErr:       false,
+			expectedURLs: []entity.URL{},
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
+			fakeURLRepo := repository.NewURLFake(testCase.urls)
+			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(testCase.users, testCase.createdURLs)
+			retriever := NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
+
+			urls, err := retriever.GetURLsByUser(testCase.user)
+			if testCase.hasErr {
+				mdtest.NotEqual(t, nil, err)
+				return
+			}
+
+			mdtest.Equal(t, nil, err)
+			mdtest.Equal(t, testCase.expectedURLs, urls)
 		})
 	}
 }

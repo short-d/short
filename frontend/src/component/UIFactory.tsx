@@ -1,6 +1,5 @@
 import React, { ReactElement } from 'react';
 import { App } from './App';
-import { CaptchaService } from '../service/Captcha.service';
 import { IFeatureDecisionService } from '../service/FeatureDecision.service';
 import { Home } from './pages/Home';
 import H from 'history';
@@ -29,7 +28,6 @@ export class UIFactory {
     private urlService: UrlService,
     private qrCodeService: QrCodeService,
     private versionService: VersionService,
-    private captchaService: CaptchaService,
     private errorService: ErrorService,
     private searchService: SearchService,
     private changeLogService: ChangeLogService,
@@ -47,7 +45,6 @@ export class UIFactory {
         qrCodeService={this.qrCodeService}
         versionService={this.versionService}
         urlService={this.urlService}
-        captchaService={this.captchaService}
         errorService={this.errorService}
         searchService={this.searchService}
         changeLogService={this.changeLogService}

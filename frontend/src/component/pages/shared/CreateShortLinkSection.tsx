@@ -64,7 +64,8 @@ export class CreateShortLinkSection extends Component<Props> {
         <div>
           <Toggle onClick={this.props.onPublicToggle}>
             Make this short link public?
-            <br />(&nbsp;will be publicly listed&nbsp;)
+            <br />
+            (&nbsp;will be publicly listed&nbsp;)
           </Toggle>
         </div>
         {this.props.createdUrl && (

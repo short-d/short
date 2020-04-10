@@ -36,12 +36,14 @@ import (
 	"github.com/short-d/short/dep/provider"
 )
 
+// TODO(issue#640): replace with value from env variable.
 const oneDay = 24 * time.Hour
+const oneWeek = 7 * oneDay
 
 var authSet = wire.NewSet(
 	provider.NewJwtGo,
 
-	wire.Value(provider.TokenValidDuration(oneDay)),
+	wire.Value(provider.TokenValidDuration(oneWeek)),
 	provider.NewAuthenticator,
 )
 
@@ -179,6 +181,7 @@ func InjectRoutingService(
 		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
+		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
 		wire.Bind(new(repository.User), new(*(db.UserSQL))),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
@@ -201,6 +204,7 @@ func InjectRoutingService(
 
 		db.NewUserSQL,
 		db.NewURLSql,
+		db.NewUserURLRelationSQL,
 		url.NewRetrieverPersist,
 		account.NewProvider,
 		provider.NewShortRoutes,
