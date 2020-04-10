@@ -128,7 +128,6 @@ func InjectGraphQLService(
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
-		//wire.Bind(provider.NewJwtGo, fw.CryptoTokenizer()),
 		authSet,
 
 		mdio.NewBuildInStdOut,
