@@ -1,6 +1,8 @@
 package app
 
 import (
+	"time"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/dep"
 	"github.com/short-d/short/dep/provider"
@@ -27,6 +29,7 @@ type ServiceConfig struct {
 	KeyGenBufferSize     int
 	KgsHostname          string
 	KgsPort              int
+	AuthTokenLifetime    time.Duration
 }
 
 // Start launches the GraphQL & HTTP APIs
@@ -59,12 +62,12 @@ func Start(
 			Hostname: config.KgsHostname,
 			Port:     config.KgsPort,
 		},
+		provider.TokenValidDuration(config.AuthTokenLifetime),
 	)
 	if err != nil {
 		panic(err)
 	}
 	graphqlAPI.Start(config.GraphQLAPIPort)
-
 	httpAPI := dep.InjectRoutingService(
 		"Routing API",
 		provider.LogPrefix(config.LogPrefix),
@@ -80,6 +83,7 @@ func Start(
 		provider.GoogleRedirectURI(config.GoogleRedirectURI),
 		provider.JwtSecret(config.JwtSecret),
 		provider.WebFrontendURL(config.WebFrontendURL),
+		provider.TokenValidDuration(config.AuthTokenLifetime),
 	)
 	httpAPI.StartAndWait(config.HTTPAPIPort)
 }

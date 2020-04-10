@@ -8,6 +8,8 @@ import (
 	"reflect"
 	"strconv"
 
+	"github.com/short-d/short/unit"
+
 	"github.com/short-d/app/fw"
 )
 
@@ -71,6 +73,14 @@ func setFieldValue(field reflect.StructField, fieldValue reflect.Value, newValue
 			return err
 		}
 		fieldValue.SetBool(boolean)
+		return nil
+	case reflect.Int64:
+		// right now the only env var of type int64 is AuthTokenLifetime
+		duration, err := unit.ParseDuration(newValue)
+		if err != nil {
+			return err
+		}
+		fieldValue.SetInt(int64(duration))
 		return nil
 	default:
 		return fmt.Errorf("unexpected field type: %s", kind)

@@ -306,6 +306,7 @@ func InjectGraphQlService(
   jwtSecret provider.JwtSecret,
   bufferSize provider.KeyGenBufferSize,
   kgsRPCConfig provider.KgsRPCConfig,
+  tokenValidDuration provider.TokenValidDuration,
 ) (mdservice.Service, error) {
   wire.Build(
     wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),

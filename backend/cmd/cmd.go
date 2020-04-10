@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app"
@@ -29,6 +30,7 @@ type ServiceConfig struct {
 	KeyGenBufferSize     int
 	KgsHostname          string
 	KgsPort              int
+	AuthTokenLifetime    time.Duration
 }
 
 // NewRootCmd creates the base command.
@@ -67,6 +69,7 @@ func NewRootCmd(
 					KeyGenBufferSize:     config.KeyGenBufferSize,
 					KgsHostname:          config.KgsHostname,
 					KgsPort:              config.KgsPort,
+					AuthTokenLifetime:    config.AuthTokenLifetime,
 				}
 
 				app.Start(
