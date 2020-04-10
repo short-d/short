@@ -68,7 +68,7 @@ func Start(
 		panic(err)
 	}
 	graphqlAPI.Start(config.GraphQLAPIPort)
-	
+
 	httpAPI := dep.InjectRoutingService(
 		"Routing API",
 		provider.LogPrefix(config.LogPrefix),
