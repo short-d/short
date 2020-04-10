@@ -13,26 +13,28 @@ const (
 
 // ParseDuration reads a human-readable duration and returns duration in seconds
 func ParseDuration(readableDuration string) (time.Duration, error) {
-	var (
-		duration time.Duration
-		err      error
-		value    int
-	)
+	if len(readableDuration) == 0 {
+		return 0, nil
+	}
+
+	value, err := strconv.Atoi(readableDuration[:len(readableDuration)-1])
+	if err != nil {
+		return 0, err
+	}
+
 	unit := readableDuration[len(readableDuration)-1]
-	value, err = strconv.Atoi(readableDuration[:len(readableDuration)-1])
 	switch unit {
 	case 's':
-		duration = time.Duration(value) * time.Second
+		return time.Duration(value) * time.Second, nil
 	case 'm':
-		duration = time.Duration(value) * time.Minute
+		return time.Duration(value) * time.Minute, nil
 	case 'h':
-		duration = time.Duration(value) * time.Hour
+		return time.Duration(value) * time.Hour, nil
 	case 'd':
-		duration = time.Duration(value) * oneDay
+		return time.Duration(value) * oneDay, nil
 	case 'w':
-		duration = time.Duration(value) * oneWeak
+		return time.Duration(value) * oneWeak, nil
 	default:
-		err = errors.New("unknown time type")
+		return 0, errors.New("unknown time type")
 	}
-	return duration, err
 }
