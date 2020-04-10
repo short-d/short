@@ -7,7 +7,6 @@ package dep
 
 import (
 	"database/sql"
-	"strconv"
 	"time"
 
 	"github.com/google/wire"
@@ -95,7 +94,7 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 }
 
 var (
-	_wireTokenValidDurationValue = provider.TokenValidDuration(tokenDuration)
+	_wireTokenValidDurationValue = provider.TokenValidDuration(oneWeek)
 )
 
 func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL) mdservice.Service {
@@ -130,9 +129,14 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	return service
 }
 
-var tokenDuration = getTokenDuration()
+// wire.go:
 
-var authSet = wire.NewSet(provider.NewJwtGo, wire.Value(provider.TokenValidDuration(tokenDuration)), provider.NewAuthenticator)
+// TODO(issue#640): replace with value from env variable.
+const oneDay = 24 * time.Hour
+
+const oneWeek = 7 * oneDay
+
+var authSet = wire.NewSet(provider.NewJwtGo, wire.Value(provider.TokenValidDuration(oneWeek)), provider.NewAuthenticator)
 
 var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Local)), provider.NewLocalLogger, mdtracer.NewLocal)
 
@@ -141,23 +145,3 @@ var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAcc
 var facebookAPISet = wire.NewSet(provider.NewFacebookIdentityProvider, facebook.NewAccount, facebook.NewAPI)
 
 var googleAPISet = wire.NewSet(provider.NewGoogleIdentityProvider, google.NewAccount, google.NewAPI)
-
-func getEnv(key, defaultValue string) string {
-	goDotEnv := mdenv.NewGoDotEnv()
-	goDotEnv.AutoLoadDotEnvFile()
-
-	return goDotEnv.GetEnv(key, defaultValue)
-}
-
-// MustInt converts the string to int and panics in case of error
-func MustInt(numStr string) int {
-	num, err := strconv.Atoi(numStr)
-	if err != nil {
-		panic(err)
-	}
-	return num
-}
-
-func getTokenDuration() time.Duration {
-	return time.Duration(MustInt(getEnv("AUTH_TOKEN_LIFETIME_IN_SEC", "604800"))) * time.Second
-}
