@@ -61,7 +61,7 @@ interface State {
   qrCodeUrl?: string;
   err?: IErr;
   inputErr?: string;
-  isPublic?: boolean;
+  isShortLinkPublic?: boolean;
   autoCompleteSuggestions?: Array<Url>;
   changeLog?: Array<Update>;
 }
@@ -224,7 +224,7 @@ export class Home extends Component<Props, State> {
   handleCreateShortLinkClick = () => {
     const editingUrl = this.props.store.getState().editingUrl;
     this.props.urlService
-      .createShortLink(editingUrl, this.state.isPublic)
+      .createShortLink(editingUrl, this.state.isShortLinkPublic)
       .then((createdUrl: Url) => {
         this.props.store.dispatch(updateCreatedUrl(createdUrl));
         const shortLink = this.props.urlService.aliasToFrontendLink(
@@ -243,9 +243,9 @@ export class Home extends Component<Props, State> {
       });
   };
 
-  handlePublicToggle = (enabled: boolean) => {
+  handlePublicToggleClick = (enabled: boolean) => {
     this.setState({
-      isPublic: enabled
+      isShortLinkPublic: enabled
     });
   };
 
@@ -295,7 +295,7 @@ export class Home extends Component<Props, State> {
             onLongLinkTextFieldChange={this.handlerLongLinkChange}
             onShortLinkTextFieldBlur={this.handlerCustomAliasTextFieldBlur}
             onShortLinkTextFieldChange={this.handleAliasChange}
-            onPublicToggle={this.handlePublicToggle}
+            onPublicToggleClick={this.handlePublicToggleClick}
             onCreateShortLinkButtonClick={this.handleCreateShortLinkClick}
           />
         </div>

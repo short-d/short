@@ -134,7 +134,7 @@ export class UrlService {
   }
 
   private async invokeCreateShortLinkApi(
-    link: Url,
+    shortLink: Url,
     isPublic: boolean
   ): Promise<Url> {
     let captchaResponse = '';
@@ -145,11 +145,9 @@ export class UrlService {
       return Promise.reject(err);
     }
 
-    let alias = link.alias === '' ? null : link.alias!;
     let variables = this.gqlCreateURLVariable(
       captchaResponse,
-      link,
-      alias,
+      shortLink,
       isPublic
     );
     return new Promise<Url>( // TODO(issue#599): simplify business logic below to improve readability
@@ -198,7 +196,6 @@ export class UrlService {
   private gqlCreateURLVariable(
     captchaResponse: string,
     link: Url,
-    alias: string | null,
     isPublic: boolean = false
   ) {
     return {
@@ -206,7 +203,7 @@ export class UrlService {
       authToken: this.authService.getAuthToken(),
       urlInput: {
         originalURL: link.originalUrl,
-        customAlias: alias
+        customAlias: link.alias === '' ? null : link.alias!
       },
       isPublic
     };

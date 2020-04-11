@@ -19,7 +19,7 @@ interface Props {
   onLongLinkTextFieldChange?: (newLongLink: string) => void;
   onShortLinkTextFieldBlur?: () => void;
   onShortLinkTextFieldChange?: (newAlias: string) => void;
-  onPublicToggle?: (enabled: boolean) => void;
+  onPublicToggleClick?: (enabled: boolean) => void;
   onCreateShortLinkButtonClick?: () => void;
 }
 
@@ -62,7 +62,7 @@ export class CreateShortLinkSection extends Component<Props> {
         </div>
         <div className={'input-error'}>{this.props.inputErr}</div>
         <div>
-          <Toggle onClick={this.props.onPublicToggle}>
+          <Toggle onClick={this.props.onPublicToggleClick}>
             Make this short link public?
             <br />
             (&nbsp;will be publicly listed&nbsp;)
