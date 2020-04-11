@@ -6,24 +6,27 @@ import (
 	"time"
 )
 
+// TODO(issue#659): extend and add other units
+
 const (
 	oneDay  = time.Hour * 24
 	oneWeak = oneDay * 7
 )
 
-// ParseDuration reads a human-readable duration and returns duration in seconds
-// TODO: extend to ms or add other units, such as storage (B, KB, MB, GB, TB, PB) and temperature ( C, F).
+// ParseDuration converts a human-readable duration and returns duration into seconds
 func ParseDuration(readableDuration string) (time.Duration, error) {
 	if len(readableDuration) == 0 {
-		return 0, errors.New("duration string is empty")
+		return 0, errors.New("readable duration can't be empty")
 	}
 
-	value, err := strconv.Atoi(readableDuration[:len(readableDuration)-1])
+	end := len(readableDuration) - 1
+	valueStr := readableDuration[:end]
+	value, err := strconv.Atoi(valueStr)
 	if err != nil {
 		return 0, err
 	}
 
-	unit := readableDuration[len(readableDuration)-1]
+	unit := readableDuration[end]
 	switch unit {
 	case 's':
 		return time.Duration(value) * time.Second, nil
@@ -36,6 +39,6 @@ func ParseDuration(readableDuration string) (time.Duration, error) {
 	case 'w':
 		return time.Duration(value) * oneWeak, nil
 	default:
-		return 0, errors.New("unknown time type")
+		return 0, errors.New("unknown duration unit")
 	}
 }
