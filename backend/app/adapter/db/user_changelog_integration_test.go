@@ -182,7 +182,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 	}
 }
 
-func TestUserChangeLogSQL_Create(t *testing.T) {
+func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 	now := time.Now()
 	monthAgo := now.AddDate(0, -1, 0)
 
@@ -223,7 +223,7 @@ func TestUserChangeLogSQL_Create(t *testing.T) {
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
 					userChangeLogRepo := db.NewUserChangeLogSQL(sqlDB)
-					_, err := userChangeLogRepo.Create(testCase.user, now)
+					_, err := userChangeLogRepo.CreateRelation(testCase.user, now)
 
 					mdtest.Equal(t, nil, err)
 

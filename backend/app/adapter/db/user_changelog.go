@@ -60,8 +60,8 @@ WHERE %s=$2
 	return currentTime, err
 }
 
-// Create inserts a new entry into user_changelog table.
-func (u UserChangeLogSQL) Create(user entity.User, currentTime time.Time) (time.Time, error) {
+// CreateRelation inserts a new entry into user_changelog table.
+func (u UserChangeLogSQL) CreateRelation(user entity.User, currentTime time.Time) (time.Time, error) {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s")
 VALUES ($1, $2, $3);

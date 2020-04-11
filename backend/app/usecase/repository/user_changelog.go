@@ -10,5 +10,5 @@ import (
 type UserChangeLog interface {
 	GetLastViewedAt(user entity.User) (time.Time, error)
 	UpdateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error)
-	Create(user entity.User, currentTime time.Time) (time.Time, error)
+	CreateRelation(user entity.User, currentTime time.Time) (time.Time, error)
 }
