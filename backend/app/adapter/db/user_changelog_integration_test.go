@@ -119,7 +119,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 		hasErr                 bool
 	}{
 		{
-			name: "user does not exist",
+			name: "entry for user does not exist",
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
@@ -195,7 +195,7 @@ func TestUserChangeLogSQL_CreateLastViewedAt(t *testing.T) {
 		hasErr                 bool
 	}{
 		{
-			name: "user does not exist",
+			name: "entry for user does not exist",
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
