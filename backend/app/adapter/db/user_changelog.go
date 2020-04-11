@@ -54,7 +54,6 @@ WHERE %s=$2
 		currentTime,
 		user.Email,
 	)
-
 	return currentTime, err
 }
 
