@@ -167,13 +167,14 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 					userChangeLogRepo := db.NewUserChangeLogSQL(sqlDB)
 
 					_, err := userChangeLogRepo.UpdateLastViewedAt(testCase.user, now)
-					mdtest.Equal(t, nil, err)
-
-					lastViewedAt, err := userChangeLogRepo.GetLastViewedAt(testCase.user)
 					if testCase.hasErr {
 						mdtest.NotEqual(t, nil, err)
 						return
 					}
+
+					mdtest.Equal(t, nil, err)
+
+					lastViewedAt, err := userChangeLogRepo.GetLastViewedAt(testCase.user)
 
 					mdtest.Equal(t, nil, err)
 					mdtest.Equal(t, testCase.expectedLastViewedAt.Unix(), lastViewedAt.Unix())

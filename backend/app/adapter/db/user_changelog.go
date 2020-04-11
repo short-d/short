@@ -37,6 +37,11 @@ WHERE "%s"=$1;`,
 }
 
 func (u UserChangeLogSQL) UpdateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error) {
+	lastViewedAt, err := u.GetLastViewedAt(user)
+	if err != nil {
+		return lastViewedAt, err
+	}
+
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET %s=$1
@@ -47,7 +52,7 @@ WHERE %s=$2
 		table.UserChangeLog.ColumnEmail,
 	)
 
-	_, err := u.db.Exec(
+	_, err = u.db.Exec(
 		statement,
 		currentTime,
 		user.Email,
