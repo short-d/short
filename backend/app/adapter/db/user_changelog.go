@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/db/table"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/repository"
@@ -14,8 +13,7 @@ import (
 var _ repository.UserChangeLog = (*UserChangeLogSQL)(nil)
 
 type UserChangeLogSQL struct {
-	db    *sql.DB
-	timer fw.Timer
+	db *sql.DB
 }
 
 func (u UserChangeLogSQL) GetLastViewedAt(user entity.User) (time.Time, error) {
@@ -40,7 +38,7 @@ WHERE "%s"=$1;`,
 	return lastViewedAt, nil
 }
 
-func (u UserChangeLogSQL) UpdateLastViewedAt(user entity.User) (time.Time, error) {
+func (u UserChangeLogSQL) UpdateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error) {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s")
 VALUES ($1, $2, $3)
@@ -55,24 +53,22 @@ DO UPDATE SET %s=$3;
 		table.UserChangeLog.ColumnLastViewedAt,
 	)
 
-	now := u.timer.Now()
 	_, err := u.db.Exec(
 		statement,
 		user.ID,
 		user.Email,
-		now,
+		currentTime,
 	)
 
 	if err != nil {
 		return time.Time{}, err
 	}
 
-	return now, nil
+	return currentTime, nil
 }
 
-func NewUserChangeLogSql(db *sql.DB, timer fw.Timer) *UserChangeLogSQL {
-	return &UserChangeLogSQL{
-		db:    db,
-		timer: timer,
+func NewUserChangeLogSql(db *sql.DB) UserChangeLogSQL {
+	return UserChangeLogSQL{
+		db: db,
 	}
 }

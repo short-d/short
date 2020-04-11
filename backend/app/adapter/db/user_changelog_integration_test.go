@@ -89,8 +89,7 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
-					timerFake := mdtest.NewTimerFake(now)
-					userChangeLogRepo := db.NewUserChangeLogSql(sqlDB, timerFake)
+					userChangeLogRepo := db.NewUserChangeLogSql(sqlDB)
 
 					lastViewedAt, err := userChangeLogRepo.GetLastViewedAt(testCase.user)
 					mdtest.Equal(t, nil, err)
@@ -148,10 +147,9 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
-					timerFake := mdtest.NewTimerFake(now)
-					userChangeLogRepo := db.NewUserChangeLogSql(sqlDB, timerFake)
+					userChangeLogRepo := db.NewUserChangeLogSql(sqlDB)
 
-					_, err := userChangeLogRepo.UpdateLastViewedAt(testCase.user)
+					_, err := userChangeLogRepo.UpdateLastViewedAt(testCase.user, now)
 					mdtest.Equal(t, nil, err)
 
 					lastViewedAt, err := userChangeLogRepo.GetLastViewedAt(testCase.user)
