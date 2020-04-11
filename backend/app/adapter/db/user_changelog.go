@@ -29,9 +29,7 @@ WHERE "%s"=$1;`,
 	row := u.db.QueryRow(statement, user.Email)
 	lastViewedAt := time.Time{}
 	err := row.Scan(&lastViewedAt)
-	if err == sql.ErrNoRows {
-		return lastViewedAt, nil
-	} else if err != nil {
+	if err != nil {
 		return lastViewedAt, err
 	}
 
@@ -40,15 +38,35 @@ WHERE "%s"=$1;`,
 
 func (u UserChangeLogSQL) UpdateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error) {
 	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET %s=$1
+WHERE %s=$2
+`,
+		table.UserChangeLog.TableName,
+		table.UserChangeLog.ColumnLastViewedAt,
+		table.UserChangeLog.ColumnEmail,
+	)
+
+	_, err := u.db.Exec(
+		statement,
+		currentTime,
+		user.Email,
+	)
+
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return currentTime, nil
+}
+
+func (u UserChangeLogSQL) CreateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error) {
+	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s")
-VALUES ($1, $2, $3)
-ON CONFLICT (%s)
-DO UPDATE SET %s=$3;
+VALUES ($1, $2, $3);
 `,
 		table.UserChangeLog.TableName,
 		table.UserChangeLog.ColumnUserID,
-		table.UserChangeLog.ColumnEmail,
-		table.UserChangeLog.ColumnLastViewedAt,
 		table.UserChangeLog.ColumnEmail,
 		table.UserChangeLog.ColumnLastViewedAt,
 	)
