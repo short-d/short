@@ -31,7 +31,6 @@ WHERE "%s"=$1;`,
 	row := u.db.QueryRow(statement, user.Email)
 	lastViewedAt := time.Time{}
 	err := row.Scan(&lastViewedAt)
-
 	return lastViewedAt, err
 }
 
