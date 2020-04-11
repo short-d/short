@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/app/mdtest"
+	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/adapter/db/table"
 	"github.com/short-d/short/app/entity"
 )
@@ -182,7 +182,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 	}
 }
 
-func TestUserChangeLogSQL_CreateLastViewedAt(t *testing.T) {
+func TestUserChangeLogSQL_Create(t *testing.T) {
 	now := time.Now()
 	monthAgo := now.AddDate(0, -1, 0)
 
@@ -223,7 +223,7 @@ func TestUserChangeLogSQL_CreateLastViewedAt(t *testing.T) {
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
 					userChangeLogRepo := db.NewUserChangeLogSQL(sqlDB)
-					_, err := userChangeLogRepo.CreateLastViewedAt(testCase.user, now)
+					_, err := userChangeLogRepo.Create(testCase.user, now)
 
 					mdtest.Equal(t, nil, err)
 

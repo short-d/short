@@ -12,10 +12,12 @@ import (
 
 var _ repository.UserChangeLog = (*UserChangeLogSQL)(nil)
 
+// UserChangeLogSQL accesses UserChangeLog information in user_changelog table through SQL.
 type UserChangeLogSQL struct {
 	db *sql.DB
 }
 
+// GetLastViewedAt finds LastViewedAt time for given user.
 func (u UserChangeLogSQL) GetLastViewedAt(user entity.User) (time.Time, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s" 
@@ -33,6 +35,7 @@ WHERE "%s"=$1;`,
 	return lastViewedAt, err
 }
 
+// UpdateLastViewedAt updates LastViewedAt time for given user to currentTime.
 func (u UserChangeLogSQL) UpdateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error) {
 	lastViewedAt, err := u.GetLastViewedAt(user)
 	if err != nil {
@@ -57,7 +60,8 @@ WHERE %s=$2
 	return currentTime, err
 }
 
-func (u UserChangeLogSQL) CreateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error) {
+// Create inserts a new entry into user_changelog table.
+func (u UserChangeLogSQL) Create(user entity.User, currentTime time.Time) (time.Time, error) {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s")
 VALUES ($1, $2, $3);
@@ -78,8 +82,9 @@ VALUES ($1, $2, $3);
 	return currentTime, err
 }
 
-func NewUserChangeLogSQL(db *sql.DB) *UserChangeLogSQL {
-	return &UserChangeLogSQL{
+// NewUserChangeLogSQL creates UserChangeLogSQL
+func NewUserChangeLogSQL(db *sql.DB) UserChangeLogSQL {
+	return UserChangeLogSQL{
 		db: db,
 	}
 }
