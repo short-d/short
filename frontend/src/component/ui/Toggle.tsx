@@ -18,7 +18,7 @@ export class Toggle extends Component<Props, State> {
     super(props);
     this.state = {
       enabled: false,
-      buttonClassName: classNames('button'),
+      buttonClassName: classNames('knob'),
       backgroundClassName: classNames('background')
     };
   }
@@ -36,13 +36,13 @@ export class Toggle extends Component<Props, State> {
         this.props.onClick(enabled);
         if (enabled) {
           this.setState({
-            buttonClassName: classNames('button', 'active'),
+            buttonClassName: classNames('knob', 'active'),
             backgroundClassName: classNames('background', 'active')
           });
           return;
         }
         this.setState({
-          buttonClassName: classNames('button'),
+          buttonClassName: classNames('knob'),
           backgroundClassName: classNames('background')
         });
       }

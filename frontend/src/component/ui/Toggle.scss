@@ -33,7 +33,7 @@ $toggle-shrink-size: 4px;
     background-color: $color-primary;
   }
 
-  .button {
+  .knob {
     background-color: white;
     width: $toggle-height - $toggle-shrink-size;
     height: $toggle-height - $toggle-shrink-size;
@@ -44,7 +44,7 @@ $toggle-shrink-size: 4px;
     transition: margin-left 0.5s;
   }
 
-  .button.active {
+  .knob.active {
     margin-left: $toggle-width - $toggle-height + $toggle-shrink-size / 2;
   }
 }
