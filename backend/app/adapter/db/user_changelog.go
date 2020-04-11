@@ -29,11 +29,8 @@ WHERE "%s"=$1;`,
 	row := u.db.QueryRow(statement, user.Email)
 	lastViewedAt := time.Time{}
 	err := row.Scan(&lastViewedAt)
-	if err != nil {
-		return lastViewedAt, err
-	}
 
-	return lastViewedAt, nil
+	return lastViewedAt, err
 }
 
 func (u UserChangeLogSQL) UpdateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error) {
@@ -58,11 +55,7 @@ WHERE %s=$2
 		user.Email,
 	)
 
-	if err != nil {
-		return time.Time{}, err
-	}
-
-	return currentTime, nil
+	return currentTime, err
 }
 
 func (u UserChangeLogSQL) CreateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error) {
@@ -83,11 +76,7 @@ VALUES ($1, $2, $3);
 		currentTime,
 	)
 
-	if err != nil {
-		return time.Time{}, err
-	}
-
-	return currentTime, nil
+	return currentTime, err
 }
 
 func NewUserChangeLogSQL(db *sql.DB) *UserChangeLogSQL {
