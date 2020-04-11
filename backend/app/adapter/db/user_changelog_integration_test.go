@@ -89,7 +89,7 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
-					userChangeLogRepo := db.NewUserChangeLogSql(sqlDB)
+					userChangeLogRepo := db.NewUserChangeLogSQL(sqlDB)
 
 					lastViewedAt, err := userChangeLogRepo.GetLastViewedAt(testCase.user)
 					mdtest.Equal(t, nil, err)
@@ -147,7 +147,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
-					userChangeLogRepo := db.NewUserChangeLogSql(sqlDB)
+					userChangeLogRepo := db.NewUserChangeLogSQL(sqlDB)
 
 					_, err := userChangeLogRepo.UpdateLastViewedAt(testCase.user, now)
 					mdtest.Equal(t, nil, err)

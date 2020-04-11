@@ -67,8 +67,8 @@ DO UPDATE SET %s=$3;
 	return currentTime, nil
 }
 
-func NewUserChangeLogSql(db *sql.DB) UserChangeLogSQL {
-	return UserChangeLogSQL{
+func NewUserChangeLogSQL(db *sql.DB) *UserChangeLogSQL {
+	return &UserChangeLogSQL{
 		db: db,
 	}
 }
