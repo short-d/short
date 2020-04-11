@@ -52,7 +52,6 @@ export class Toggle extends Component<Props, State> {
   render() {
     return (
       <div className={'toggle'}>
-        {this.props.children}
         <div
           className={this.state.backgroundClassName}
           onClick={this.handleClick}

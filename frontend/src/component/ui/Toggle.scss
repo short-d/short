@@ -13,11 +13,6 @@ $toggle-shrink-size: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 60%;
-
-  @include respond-to($phone) {
-    width: 96%;
-  }
 
   .background {
     display: inline-block;
