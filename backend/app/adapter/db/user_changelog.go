@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -36,11 +37,6 @@ WHERE "%s"=$1;`,
 
 // UpdateLastViewedAt updates LastViewedAt time for given user to currentTime.
 func (u UserChangeLogSQL) UpdateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error) {
-	lastViewedAt, err := u.GetLastViewedAt(user)
-	if err != nil {
-		return lastViewedAt, err
-	}
-
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET %s=$1
@@ -51,11 +47,24 @@ WHERE %s=$2
 		table.UserChangeLog.ColumnEmail,
 	)
 
-	_, err = u.db.Exec(
+	result, err := u.db.Exec(
 		statement,
 		currentTime,
 		user.Email,
 	)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	rowsUpdated, err := result.RowsAffected()
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	if rowsUpdated == 0 {
+		return time.Time{}, errors.New("sql: no rows updated")
+	}
+
 	return currentTime, err
 }
 
