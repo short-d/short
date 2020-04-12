@@ -4,27 +4,31 @@ import { Section } from '../../ui/Section';
 import { PageControl } from '../../ui/PageControl';
 import { Table } from '../../ui/Table';
 import { Url } from '../../../entity/Url';
-import { IQueryUrlData } from '../../../service/ShortLink.service';
+import { IPagedShortLinks } from '../../../service/ShortLink.service';
 
 interface IProps {
-  urlData?: IQueryUrlData;
-  updateUrlData: (offset: number, limit: number) => void;
+  pagedShortLinks?: IPagedShortLinks;
+  pageSize: number;
+  onPageLoad: (offset: number, pageSize: number) => void;
 }
 
+const DEFAULT_PROPS = {
+  pageSize: 10
+};
+
 export class UserShortLinksSection extends Component<IProps> {
-  private PAGE_SIZE = 10;
-  private TABLE_HEADERS = ['Long URL', 'Alias'];
+  static defaultProps: Partial<IProps> = DEFAULT_PROPS;
 
   componentDidMount(): void {
-    this.displayPage(0);
+    this.showPage(0);
   }
 
   render() {
-    if (!this.props.urlData) {
+    if (!this.props.pagedShortLinks) {
       return false;
     }
 
-    if (this.props.urlData.total <= 0) {
+    if (this.props.pagedShortLinks.totalCount <= 0) {
       return false;
     }
 
@@ -32,11 +36,11 @@ export class UserShortLinksSection extends Component<IProps> {
       <div>
         <Section title={'Created Short Links'}>
           <Table
-            headers={this.TABLE_HEADERS}
-            rows={this.createTableRows(this.props.urlData.urls)}
+            headers={['Long URL', 'Alias']}
+            rows={this.createTableRows()}
           />
           <PageControl
-            totalPages={this.calculateTotalPages(this.props.urlData.total)}
+            totalPages={this.calculateTotalPages()}
             onPageChanged={this.onPageChanged}
           />
         </Section>
@@ -44,24 +48,26 @@ export class UserShortLinksSection extends Component<IProps> {
     );
   }
 
-  private createTableRows = (urls: Url[]) => {
-    return urls.map((url: Url) => {
-      return [url.originalUrl, url.alias];
+  private createTableRows = () => {
+    const { shortLinks } = this.props.pagedShortLinks!;
+    return shortLinks.map((shortLink: Url) => {
+      return [shortLink.originalUrl, shortLink.alias];
     });
   };
 
   public onPageChanged = (currentPageIdx: number) => {
-    this.displayPage(currentPageIdx);
+    this.showPage(currentPageIdx);
   };
 
-  private displayPage = (pageIdx: number) => {
-    const offset = pageIdx * this.PAGE_SIZE;
-    const limit = this.PAGE_SIZE;
+  private showPage = (pageIdx: number) => {
+    const { pageSize } = this.props;
+    const offset = pageIdx * pageSize;
 
-    this.props.updateUrlData(offset, limit);
+    this.props.onPageLoad(offset, pageSize);
   };
 
-  private calculateTotalPages = (totalUrls: number) => {
-    return Math.ceil(totalUrls / this.PAGE_SIZE);
+  private calculateTotalPages = () => {
+    const totalShortLinksCount = this.props.pagedShortLinks!.totalCount;
+    return Math.ceil(totalShortLinksCount / this.props.pageSize);
   };
 }
