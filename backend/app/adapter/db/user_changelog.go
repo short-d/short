@@ -18,7 +18,7 @@ type UserChangeLogSQL struct {
 	db *sql.DB
 }
 
-// GetLastViewedAt finds LastViewedAt time for given user.
+// GetLastViewedAt retrieves LastViewedAt for a given user.
 func (u UserChangeLogSQL) GetLastViewedAt(user entity.User) (time.Time, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s" 
@@ -65,7 +65,7 @@ WHERE %s=$2
 		return time.Time{}, errors.New("sql: no rows updated")
 	}
 
-	return currentTime, err
+	return currentTime, nil
 }
 
 // CreateRelation inserts a new entry into user_changelog table.
