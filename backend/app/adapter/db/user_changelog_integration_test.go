@@ -185,6 +185,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 	now := time.Now()
 	monthAgo := now.AddDate(0, -1, 0)
+	twoMonthsAgo := monthAgo.AddDate(0, -1, 0)
 
 	testCases := []struct {
 		name                   string
@@ -210,6 +211,28 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 			expectedLastViewedAt: now,
 			hasErr:               false,
 		},
+		{
+			name: "user already exists",
+			userChangeLogTableRows: []userChangeLogTableRow{
+				{
+					userID:       "12346",
+					email:        "test2@gmail.com",
+					lastViewedAt: twoMonthsAgo,
+				},
+				{
+					userID:       "12345",
+					email:        "test@gmail.com",
+					lastViewedAt: monthAgo,
+				},
+			},
+			user: entity.User{
+				ID:    "12345",
+				Name:  "Test User",
+				Email: "test@gmail.com",
+			},
+			expectedLastViewedAt: time.Time{},
+			hasErr:               true,
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -223,7 +246,11 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
 					userChangeLogRepo := db.NewUserChangeLogSQL(sqlDB)
-					_, err := userChangeLogRepo.CreateRelation(testCase.user, now)
+					err := userChangeLogRepo.CreateRelation(testCase.user, now)
+					if testCase.hasErr {
+						mdtest.NotEqual(t, nil, err)
+						return
+					}
 
 					mdtest.Equal(t, nil, err)
 
