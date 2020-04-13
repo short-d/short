@@ -1,6 +1,6 @@
 package table
 
-// UserChangeLog represents database table columns for 'user_change_log' table
+// UserChangeLog represents database table columns for 'user_changelog' table
 var UserChangeLog = struct {
 	TableName          string
 	ColumnUserID       string

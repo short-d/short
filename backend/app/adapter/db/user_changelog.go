@@ -35,7 +35,7 @@ WHERE "%s"=$1;`,
 	return lastViewedAt, err
 }
 
-// UpdateLastViewedAt updates LastViewedAt time for given user to currentTime.
+// UpdateLastViewedAt updates LastViewedAt for the given user.
 func (u UserChangeLogSQL) UpdateLastViewedAt(user entity.User, currentTime time.Time) (time.Time, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"

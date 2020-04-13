@@ -16,7 +16,7 @@ import (
 
 var insertUserChangeLogRowSQL = fmt.Sprintf(`
 INSERT INTO %s (%s, %s, %s)
-VALUES ($1, $2, $3)`,
+VALUES ($1, $2, $3);`,
 	table.UserChangeLog.TableName,
 	table.UserChangeLog.ColumnUserID,
 	table.UserChangeLog.ColumnEmail,
