@@ -40,7 +40,7 @@ func (u UserChangeLogSQL) UpdateLastViewedAt(user entity.User, currentTime time.
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET %s=$1
-WHERE %s=$2
+WHERE %s=$2;
 `,
 		table.UserChangeLog.TableName,
 		table.UserChangeLog.ColumnLastViewedAt,
