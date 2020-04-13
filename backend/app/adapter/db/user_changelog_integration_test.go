@@ -30,7 +30,7 @@ type userChangeLogTableRow struct {
 }
 
 func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
-	now := time.Now()
+	now := mustParseTime(t, "2020-04-04T08:02:16-07:00")
 	monthAgo := now.AddDate(0, -1, 0)
 
 	testCases := []struct {
@@ -100,14 +100,14 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 					}
 
 					mdtest.Equal(t, nil, err)
-					mdtest.Equal(t, testCase.expectedLastViewedAt.Unix(), lastViewedAt.Unix())
+					mdtest.Equal(t, testCase.expectedLastViewedAt.UTC(), lastViewedAt)
 				})
 		})
 	}
 }
 
 func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
-	now := time.Now()
+	now := mustParseTime(t, "2020-04-04T08:02:16-07:00")
 	monthAgo := now.AddDate(0, -1, 0)
 
 	testCases := []struct {
@@ -176,14 +176,14 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 					lastViewedAt, err := userChangeLogRepo.GetLastViewedAt(testCase.user)
 
 					mdtest.Equal(t, nil, err)
-					mdtest.Equal(t, testCase.expectedLastViewedAt.Unix(), lastViewedAt.Unix())
+					mdtest.Equal(t, testCase.expectedLastViewedAt.UTC(), lastViewedAt)
 				})
 		})
 	}
 }
 
 func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
-	now := time.Now()
+	now := mustParseTime(t, "2020-04-04T08:02:16-07:00")
 	monthAgo := now.AddDate(0, -1, 0)
 	twoMonthsAgo := monthAgo.AddDate(0, -1, 0)
 
@@ -256,7 +256,7 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 
 					lastViewedAt, err := userChangeLogRepo.GetLastViewedAt(testCase.user)
 					mdtest.Equal(t, nil, err)
-					mdtest.Equal(t, testCase.expectedLastViewedAt.Unix(), lastViewedAt.Unix())
+					mdtest.Equal(t, testCase.expectedLastViewedAt.UTC(), lastViewedAt)
 				})
 		})
 	}
