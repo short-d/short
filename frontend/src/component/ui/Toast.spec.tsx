@@ -7,6 +7,10 @@ describe('Toast component', () => {
     jest.useFakeTimers();
   });
 
+  afterEach(() => {
+    jest.clearAllTimers();
+  });
+
   test('should render without crash', () => {
     render(<Toast />);
   });
@@ -36,8 +40,6 @@ describe('Toast component', () => {
 
     jest.advanceTimersByTime(HALF_TIME);
     expect(container.textContent).not.toContain(toastMessage);
-
-    jest.clearAllTimers();
   });
 
   test('second notify call should replace first toast', () => {
@@ -62,7 +64,5 @@ describe('Toast component', () => {
 
     jest.advanceTimersByTime(HALF_TIME);
     expect(container.textContent).not.toContain(secondToastMessage);
-
-    jest.clearAllTimers();
   });
 });
