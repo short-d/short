@@ -28,7 +28,7 @@ export class UserShortLinksSection extends Component<IProps> {
       return false;
     }
 
-    if (this.props.pagedShortLinks.totalCount <= 0) {
+    if (this.props.pagedShortLinks.totalCount < 1) {
       return false;
     }
 
@@ -51,8 +51,19 @@ export class UserShortLinksSection extends Component<IProps> {
   private createTableRows = () => {
     const { shortLinks } = this.props.pagedShortLinks!;
     return shortLinks.map((shortLink: Url) => {
-      return [shortLink.originalUrl, shortLink.alias];
+      return [
+        this.renderLongLink(shortLink.originalUrl),
+        this.renderAlias(shortLink.alias)
+      ];
     });
+  };
+
+  private renderLongLink = (longLink: string) => {
+    return longLink;
+  };
+
+  private renderAlias = (alias: string) => {
+    return alias;
   };
 
   public onPageChanged = (currentPageIdx: number) => {

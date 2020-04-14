@@ -4,27 +4,12 @@ import { UserShortLinksSection } from './UserShortLinksSection';
 import { fireEvent, render } from '@testing-library/react';
 import { IPagedShortLinks } from '../../../service/ShortLink.service';
 
-const sampleShortLinks = [
-  { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
-  { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
-  { originalUrl: 'https://longurl.com/3', alias: 'alias3' },
-  { originalUrl: 'https://longurl.com/4', alias: 'alias4' },
-  { originalUrl: 'https://longurl.com/5', alias: 'alias5' },
-  { originalUrl: 'https://longurl.com/6', alias: 'alias6' },
-  { originalUrl: 'https://longurl.com/7', alias: 'alias7' },
-  { originalUrl: 'https://longurl.com/8', alias: 'alias8' },
-  { originalUrl: 'https://longurl.com/9', alias: 'alias9' },
-  { originalUrl: 'https://longurl.com/10', alias: 'alias10' },
-  { originalUrl: 'https://longurl.com/11', alias: 'alias11' },
-  { originalUrl: 'https://longurl.com/12', alias: 'alias12' }
-];
-
 describe('UserShortLinksSection component', () => {
   test('should render without crash', () => {
     render(<UserShortLinksSection onPageLoad={jest.fn} />);
   });
 
-  test('should render nothing when no data is sent', () => {
+  test('should render nothing when there is no short link', () => {
     const { container } = render(
       <UserShortLinksSection onPageLoad={jest.fn} />
     );
@@ -34,7 +19,7 @@ describe('UserShortLinksSection component', () => {
     expect(container.textContent).not.toContain('Alias');
   });
 
-  test('should render nothing when "total" attribute in pagedShortLinks is zero', () => {
+  test('should render nothing when there is 0 total pages', () => {
     const pagedShortLinks: IPagedShortLinks = {
       shortLinks: [],
       totalCount: 0
@@ -52,7 +37,7 @@ describe('UserShortLinksSection component', () => {
     expect(container.textContent).not.toContain('Alias');
   });
 
-  test('should render when "total" attribute in pagedShortLinks is non zero with empty shortLinks', () => {
+  test('should render short links correctly when given at least 1 page', () => {
     const pagedShortLinks: IPagedShortLinks = {
       shortLinks: [],
       totalCount: 1
@@ -70,10 +55,14 @@ describe('UserShortLinksSection component', () => {
     expect(container.textContent).toContain('Alias');
   });
 
-  test('should render passed short links correctly', () => {
+  test('should render short links correctly', () => {
     const pagedShortLinks: IPagedShortLinks = {
-      shortLinks: sampleShortLinks.slice(0, 3),
-      totalCount: sampleShortLinks.length
+      shortLinks: [
+        { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
+        { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
+        { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
+      ],
+      totalCount: 12
     };
 
     const { container } = render(
@@ -94,9 +83,13 @@ describe('UserShortLinksSection component', () => {
     }
   });
 
-  test('should render correctly when total short links passed is less than page size', () => {
+  test('should render short links correctly when the short links does not fill the full page', () => {
     const pagedShortLinks: IPagedShortLinks = {
-      shortLinks: sampleShortLinks.slice(0, 3),
+      shortLinks: [
+        { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
+        { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
+        { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
+      ],
       totalCount: 3
     };
     const pageSize = 5;
@@ -112,11 +105,17 @@ describe('UserShortLinksSection component', () => {
     expect(container.querySelectorAll('.page-number')).toHaveLength(1);
   });
 
-  test('should render multiple pages when total short link count exceeds page size', () => {
+  test('should allow users to navigate between pages when there are multiple pages', () => {
     const pageSize = 5;
     const pagedShortLinks: IPagedShortLinks = {
-      shortLinks: sampleShortLinks.slice(0, pageSize),
-      totalCount: sampleShortLinks.length
+      shortLinks: [
+        { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
+        { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
+        { originalUrl: 'https://longurl.com/3', alias: 'alias3' },
+        { originalUrl: 'https://longurl.com/4', alias: 'alias4' },
+        { originalUrl: 'https://longurl.com/5', alias: 'alias5' }
+      ],
+      totalCount: 5
     };
 
     const { container } = render(
@@ -133,7 +132,7 @@ describe('UserShortLinksSection component', () => {
     );
   });
 
-  test('should request short links for initial page correctly', () => {
+  test('should load short links for initial page correctly', () => {
     const onPageLoad = jest.fn();
 
     render(<UserShortLinksSection onPageLoad={onPageLoad} />);
@@ -141,7 +140,7 @@ describe('UserShortLinksSection component', () => {
     expect(onPageLoad).toBeCalledTimes(1);
   });
 
-  test('should request short links with non default page size when passed as prop', () => {
+  test('should load short links with custom page size', () => {
     const onPageLoad = jest.fn();
     const pageSize = 5;
 
@@ -153,18 +152,17 @@ describe('UserShortLinksSection component', () => {
     expect(onPageLoad).toBeCalledWith(0, pageSize);
   });
 
-  test('should request and render short links with correct offset when page changed', () => {
+  test('should load correct short links when page changed', () => {
     const pageSize = 3;
     let pagedShortLinks: IPagedShortLinks = {
-      shortLinks: sampleShortLinks.slice(0, pageSize),
-      totalCount: sampleShortLinks.length
+      shortLinks: [
+        { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
+        { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
+        { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
+      ],
+      totalCount: 12
     };
-    const onPageLoad = jest.fn((offset: number, pageSize: number) => {
-      pagedShortLinks = {
-        shortLinks: sampleShortLinks.slice(offset, offset + pageSize),
-        totalCount: sampleShortLinks.length
-      };
-    });
+    const onPageLoad = jest.fn();
 
     const { container } = render(
       <UserShortLinksSection
@@ -179,12 +177,6 @@ describe('UserShortLinksSection component', () => {
 
     fireEvent.click(pageNumbers[2]);
     const offset = 2 * pageSize;
-    const expectedShortLinks = sampleShortLinks.slice(
-      offset,
-      offset + pageSize
-    );
-    expect(onPageLoad).toBeCalledTimes(2);
     expect(onPageLoad).toHaveBeenLastCalledWith(offset, pageSize);
-    expect(pagedShortLinks.shortLinks).toEqual(expectedShortLinks);
   });
 });
