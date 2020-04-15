@@ -7,7 +7,6 @@ import (
 )
 
 // TODO(issue#659): extend and add other units
-
 const (
 	oneDay  = time.Hour * 24
 	oneWeak = oneDay * 7
