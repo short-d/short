@@ -251,23 +251,23 @@ func TestParseConfigFromEnv(t *testing.T) {
 	})
 
 	t.Run("Duration", func(t *testing.T) {
-		type fakeDuration int64
+		type Duration int64
 
-		type fakeConfig struct {
-			AuthTokenLifetime fakeDuration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
+		type config struct {
+			AuthTokenLifetime Duration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
 		}
 
 		testCases := []struct {
-			name       string
-			envs       map[string]string
-			fakeConfig fakeConfig
+			name   string
+			envs   map[string]string
+			config config
 		}{
 			{
 				name: "incorrect type",
 				envs: map[string]string{
 					"AUTH_TOKEN_LIFETIME": "1h",
 				},
-				fakeConfig: fakeConfig{AuthTokenLifetime: fakeDuration(time.Hour)},
+				config: config{AuthTokenLifetime: Duration(time.Hour)},
 			},
 		}
 
@@ -277,7 +277,7 @@ func TestParseConfigFromEnv(t *testing.T) {
 					envs: testCase.envs,
 				}
 				envConfig := EnvConfig{environment: envFake}
-				err := envConfig.ParseConfigFromEnv(&testCase.fakeConfig)
+				err := envConfig.ParseConfigFromEnv(&testCase.config)
 				mdtest.NotEqual(t, nil, err)
 				return
 			})
