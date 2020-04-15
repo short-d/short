@@ -8,9 +8,8 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/short-d/short/unit"
-
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/unit"
 )
 
 // EnvConfig parses configuration from environmental variables.
@@ -87,11 +86,13 @@ func NewEnvConfig(environment fw.Environment) EnvConfig {
 func parseInt(newValue string, typeOfValue reflect.Type) (int64, error) {
 	pkg, kind := typeOfValue.PkgPath(), typeOfValue.Name()
 	switch {
-	case pkg == "" && kind == "int":
+	case kind == "int":
 		num, err := strconv.Atoi(newValue)
 		return int64(num), err
-
-	case pkg == "time" && kind == "Duration":
+	case kind == "Duration":
+		if pkg != "time" {
+			return 0, errors.New("unknown package or kind")
+		}
 		duration, err := unit.ParseDuration(newValue)
 		return int64(duration), err
 	default:

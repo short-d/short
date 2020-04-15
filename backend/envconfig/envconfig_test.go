@@ -198,20 +198,12 @@ func TestParseConfigFromEnv(t *testing.T) {
 			AuthTokenLifetime time.Duration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
 		}
 
-		type fakeDuration int64
-
-		type fakeConfig struct {
-			AuthTokenLifetime fakeDuration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
-		}
-
 		testCases := []struct {
 			name           string
 			envs           map[string]string
 			config         config
 			expectHasError bool
 			expectedConfig config
-			hasFakeType    bool
-			fakeConfig     fakeConfig
 		}{
 			{
 				name: "parse from environmental variables",
@@ -239,14 +231,43 @@ func TestParseConfigFromEnv(t *testing.T) {
 				config:         config{},
 				expectHasError: true,
 			},
+		}
+
+		for _, testCase := range testCases {
+			t.Run(testCase.name, func(t *testing.T) {
+				envFake := EnvironmentFake{
+					envs: testCase.envs,
+				}
+				envConfig := EnvConfig{environment: envFake}
+				err := envConfig.ParseConfigFromEnv(&testCase.config)
+				if testCase.expectHasError {
+					mdtest.NotEqual(t, nil, err)
+					return
+				}
+				mdtest.Equal(t, nil, err)
+				mdtest.Equal(t, testCase.expectedConfig, testCase.config)
+			})
+		}
+	})
+
+	t.Run("Duration", func(t *testing.T) {
+		type fakeDuration int64
+
+		type fakeConfig struct {
+			AuthTokenLifetime fakeDuration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
+		}
+
+		testCases := []struct {
+			name       string
+			envs       map[string]string
+			fakeConfig fakeConfig
+		}{
 			{
 				name: "incorrect type",
 				envs: map[string]string{
 					"AUTH_TOKEN_LIFETIME": "1h",
 				},
-				hasFakeType:    true,
-				fakeConfig:     fakeConfig{AuthTokenLifetime: fakeDuration(time.Hour)},
-				expectHasError: true,
+				fakeConfig: fakeConfig{AuthTokenLifetime: fakeDuration(time.Hour)},
 			},
 		}
 
@@ -256,18 +277,9 @@ func TestParseConfigFromEnv(t *testing.T) {
 					envs: testCase.envs,
 				}
 				envConfig := EnvConfig{environment: envFake}
-				var err error
-				if testCase.hasFakeType {
-					err = envConfig.ParseConfigFromEnv(&testCase.fakeConfig)
-				} else {
-					err = envConfig.ParseConfigFromEnv(&testCase.config)
-				}
-				if testCase.expectHasError {
-					mdtest.NotEqual(t, nil, err)
-					return
-				}
-				mdtest.Equal(t, nil, err)
-				mdtest.Equal(t, testCase.expectedConfig, testCase.config)
+				err := envConfig.ParseConfigFromEnv(&testCase.fakeConfig)
+				mdtest.NotEqual(t, nil, err)
+				return
 			})
 		}
 	})
