@@ -4,7 +4,6 @@ package dep
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
@@ -36,14 +35,9 @@ import (
 	"github.com/short-d/short/dep/provider"
 )
 
-// TODO(issue#640): replace with value from env variable.
-const oneDay = 24 * time.Hour
-const oneWeek = 7 * oneDay
-
 var authSet = wire.NewSet(
 	provider.NewJwtGo,
 
-	wire.Value(provider.TokenValidDuration(oneWeek)),
 	provider.NewAuthenticator,
 )
 
@@ -118,6 +112,7 @@ func InjectGraphQLService(
 	jwtSecret provider.JwtSecret,
 	bufferSize provider.KeyGenBufferSize,
 	kgsRPCConfig provider.KgsRPCConfig,
+	tokenValidDuration provider.TokenValidDuration,
 ) (mdservice.Service, error) {
 	wire.Build(
 		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
@@ -176,6 +171,7 @@ func InjectRoutingService(
 	googleRedirectURI provider.GoogleRedirectURI,
 	jwtSecret provider.JwtSecret,
 	webFrontendURL provider.WebFrontendURL,
+	tokenValidDuration provider.TokenValidDuration,
 ) mdservice.Service {
 	wire.Build(
 		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),

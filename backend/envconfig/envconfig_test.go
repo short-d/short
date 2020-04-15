@@ -2,6 +2,7 @@ package envconfig
 
 import (
 	"testing"
+	"time"
 
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/mdtest"
@@ -188,6 +189,97 @@ func TestParseConfigFromEnv(t *testing.T) {
 				}
 				mdtest.Equal(t, nil, err)
 				mdtest.Equal(t, testCase.expectedConfig, testCase.config)
+			})
+		}
+	})
+
+	t.Run("time.Duration", func(t *testing.T) {
+		type config struct {
+			AuthTokenLifetime time.Duration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
+		}
+
+		testCases := []struct {
+			name           string
+			envs           map[string]string
+			config         config
+			expectHasError bool
+			expectedConfig config
+		}{
+			{
+				name: "parse from environmental variables",
+				envs: map[string]string{
+					"AUTH_TOKEN_LIFETIME": "2h",
+				},
+				config: config{},
+				expectedConfig: config{
+					AuthTokenLifetime: 2 * time.Hour,
+				},
+			},
+			{
+				name:   "use default value",
+				envs:   map[string]string{},
+				config: config{},
+				expectedConfig: config{
+					AuthTokenLifetime: 168 * time.Hour,
+				},
+			},
+			{
+				name: "incorrect format",
+				envs: map[string]string{
+					"AUTH_TOKEN_LIFETIME": "random",
+				},
+				config:         config{},
+				expectHasError: true,
+			},
+		}
+
+		for _, testCase := range testCases {
+			t.Run(testCase.name, func(t *testing.T) {
+				envFake := EnvironmentFake{
+					envs: testCase.envs,
+				}
+				envConfig := EnvConfig{environment: envFake}
+				err := envConfig.ParseConfigFromEnv(&testCase.config)
+				if testCase.expectHasError {
+					mdtest.NotEqual(t, nil, err)
+					return
+				}
+				mdtest.Equal(t, nil, err)
+				mdtest.Equal(t, testCase.expectedConfig, testCase.config)
+			})
+		}
+	})
+
+	t.Run("Duration", func(t *testing.T) {
+		type Duration int64
+
+		type config struct {
+			AuthTokenLifetime Duration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
+		}
+
+		testCases := []struct {
+			name   string
+			envs   map[string]string
+			config config
+		}{
+			{
+				name: "Duration not from time package",
+				envs: map[string]string{
+					"AUTH_TOKEN_LIFETIME": "1h",
+				},
+				config: config{AuthTokenLifetime: Duration(time.Hour)},
+			},
+		}
+
+		for _, testCase := range testCases {
+			t.Run(testCase.name, func(t *testing.T) {
+				envFake := EnvironmentFake{
+					envs: testCase.envs,
+				}
+				envConfig := EnvConfig{environment: envFake}
+				err := envConfig.ParseConfigFromEnv(&testCase.config)
+				mdtest.NotEqual(t, nil, err)
+				return
 			})
 		}
 	})
