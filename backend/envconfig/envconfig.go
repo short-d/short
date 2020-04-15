@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/unit"
 )
 
 // EnvConfig parses configuration from environmental variables.
@@ -58,12 +59,12 @@ func setFieldValue(field reflect.StructField, fieldValue reflect.Value, newValue
 	case reflect.String:
 		fieldValue.SetString(newValue)
 		return nil
-	case reflect.Int:
-		num, err := strconv.Atoi(newValue)
+	case reflect.Int, reflect.Int64:
+		num, err := parseInt(newValue, field.Type)
 		if err != nil {
 			return err
 		}
-		fieldValue.SetInt(int64(num))
+		fieldValue.SetInt(num)
 		return nil
 	case reflect.Bool:
 		boolean, err := strconv.ParseBool(newValue)
@@ -80,4 +81,21 @@ func setFieldValue(field reflect.StructField, fieldValue reflect.Value, newValue
 // NewEnvConfig creates EnvConfig.
 func NewEnvConfig(environment fw.Environment) EnvConfig {
 	return EnvConfig{environment: environment}
+}
+
+func parseInt(newValue string, typeOfValue reflect.Type) (int64, error) {
+	pkg, kind := typeOfValue.PkgPath(), typeOfValue.Name()
+	switch {
+	case kind == "int":
+		num, err := strconv.Atoi(newValue)
+		return int64(num), err
+	case kind == "Duration":
+		if pkg != "time" {
+			return 0, errors.New("unknown package or kind")
+		}
+		duration, err := unit.ParseDuration(newValue)
+		return int64(duration), err
+	default:
+		return 0, errors.New("unknown package or kind")
+	}
 }
