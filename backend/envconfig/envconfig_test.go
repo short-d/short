@@ -263,7 +263,7 @@ func TestParseConfigFromEnv(t *testing.T) {
 			config config
 		}{
 			{
-				name: "incorrect type",
+				name: "Duration not from time package",
 				envs: map[string]string{
 					"AUTH_TOKEN_LIFETIME": "1h",
 				},
