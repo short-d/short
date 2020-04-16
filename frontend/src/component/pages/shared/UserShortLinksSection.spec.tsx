@@ -41,7 +41,7 @@ describe('UserShortLinksSection component', () => {
     expect(container.textContent).not.toContain('Alias');
   });
 
-  test('should render short links correctly when given at least 1 page', () => {
+  test('should render correctly when given at least 1 page', () => {
     const pagedShortLinks: IPagedShortLinks = {
       shortLinks: [],
       totalCount: 1
