@@ -159,6 +159,7 @@ describe('UserShortLinksSection component', () => {
       totalCount: 12
     };
 
+    let rerender: any;
     const onPageLoad = jest.fn((offset: number, pageSize: number) => {
       setTimeout(() => {
         rerender(
@@ -171,9 +172,11 @@ describe('UserShortLinksSection component', () => {
       }, 10);
     });
 
-    const { container, rerender } = render(
+    const component = render(
       <UserShortLinksSection onPageLoad={onPageLoad} pageSize={pageSize} />
     );
+    const container = component.container;
+    rerender = component.rerender;
     jest.advanceTimersByTime(10);
 
     expect(onPageLoad).toHaveBeenLastCalledWith(0, pageSize);
@@ -181,7 +184,6 @@ describe('UserShortLinksSection component', () => {
       expect(container.textContent).toContain(shortLink.originalUrl);
       expect(container.textContent).toContain(shortLink.originalUrl);
     });
-
     jest.clearAllTimers();
   });
 
@@ -201,6 +203,8 @@ describe('UserShortLinksSection component', () => {
       { originalUrl: 'https://longurl.com/11', alias: 'alias11' },
       { originalUrl: 'https://longurl.com/12', alias: 'alias12' }
     ];
+
+    let rerender: any;
     const onPageLoad = jest.fn((offset: number, pageSize: number) => {
       setTimeout(() => {
         rerender(
@@ -216,7 +220,7 @@ describe('UserShortLinksSection component', () => {
       }, 10);
     });
 
-    const { container, rerender } = render(
+    const component = render(
       <UserShortLinksSection
         onPageLoad={onPageLoad}
         pageSize={pageSize}
@@ -226,6 +230,8 @@ describe('UserShortLinksSection component', () => {
         }}
       />
     );
+    const container = component.container;
+    rerender = component.rerender;
 
     const pageNumbers = container.querySelectorAll('.page-number');
     expect(pageNumbers[2]).toBeTruthy();
