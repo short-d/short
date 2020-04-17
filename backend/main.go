@@ -3,9 +3,8 @@ package main
 import (
 	"time"
 
-	"github.com/short-d/short/app"
-
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app"
 	"github.com/short-d/short/cmd"
 	"github.com/short-d/short/dep"
 	"github.com/short-d/short/envconfig"
@@ -67,7 +66,6 @@ func main() {
 		LogPrefix:            "Short",
 		ServerEnv:            config.ServerEnv,
 		LogLevel:             fw.LogTrace,
-		MigrationRoot:        "",
 		RecaptchaSecret:      config.ReCaptchaSecret,
 		GithubClientID:       config.GithubClientID,
 		GithubClientSecret:   config.GithubClientSecret,
