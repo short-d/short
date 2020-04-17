@@ -26,7 +26,9 @@ export class PageControl extends Component<IProps, IStates> {
   }
 
   componentDidMount(): void {
-    this.showPage(0);
+    this.setState({
+      currentPageIdx: 0
+    });
   }
 
   render() {
