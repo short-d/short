@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app"
 	"github.com/short-d/short/cmd"
 	"github.com/short-d/short/dep"
 	"github.com/short-d/short/envconfig"
@@ -40,6 +41,8 @@ func main() {
 		HTTPAPIPort          int           `env:"HTTP_API_PORT" default:"80"`
 		AuthTokenLifeTime    time.Duration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
 		DataDogAPIKey        string        `env:"DATA_DOG_API_KEY" default:""`
+		SegmentAPIKey        string        `env:"SEGMENT_API_KEY" default:""`
+		IPStackAPIKey        string        `env:"IP_STACK_API_KEY" default:""`
 	}{}
 
 	err := envConfig.ParseConfigFromEnv(&config)
@@ -59,7 +62,7 @@ func main() {
 		DbName:   config.DBName,
 	}
 
-	serviceConfig := cmd.ServiceConfig{
+	serviceConfig := app.ServiceConfig{
 		LogPrefix:            "Short",
 		ServerEnv:            config.ServerEnv,
 		LogLevel:             fw.LogTrace,
@@ -81,6 +84,8 @@ func main() {
 		KgsPort:              config.KgsPort,
 		AuthTokenLifetime:    config.AuthTokenLifeTime,
 		DataDogAPIKey:        config.DataDogAPIKey,
+		SegmentAPIKey:        config.SegmentAPIKey,
+		IPStackAPIKey:        config.IPStackAPIKey,
 	}
 
 	rootCmd := cmd.NewRootCmd(

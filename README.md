@@ -177,10 +177,7 @@ Create a new Client ID at
    cp backend/.env.dist backend/.env
    ```
 
-1. Update `ENV`,`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
-   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `FACEBOOK_CLIENT_ID`,
-   `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`, `JWT_SECRET`, `AUTH_TOKEN_LIFETIME`,
-   `DATA_DOG_API_KEY` with your own configurations.
+1. Update placeholder values with your own configurations.
 
 1. Launch backend server
 

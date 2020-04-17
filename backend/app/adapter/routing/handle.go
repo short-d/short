@@ -4,9 +4,8 @@ import (
 	"net/http"
 	netURL "net/url"
 
-	"github.com/short-d/short/app/adapter/instrumentation"
-
 	"github.com/short-d/app/fw"
+	"github.com/short-d/short/app/adapter/instrumentation"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/sso"
@@ -22,6 +21,7 @@ func NewOriginalURL(
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		i := instrumentationFactory.NewHTTPRequest(r)
+		i.RedirectingAliasToLongLink(nil)
 
 		alias := params["alias"]
 		now := timer.Now()
@@ -35,6 +35,7 @@ func NewOriginalURL(
 
 		originURL := u.OriginalURL
 		http.Redirect(w, r, originURL, http.StatusSeeOther)
+		i.RedirectedAliasToLongLink(nil)
 	}
 }
 

@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
+	"github.com/short-d/app/modern/mdanalytics"
 	"github.com/short-d/app/modern/mdcli"
 	"github.com/short-d/app/modern/mddb"
 	"github.com/short-d/app/modern/mdenv"
@@ -60,7 +61,7 @@ func InjectEnvironment() fw.Environment {
 	return goDotEnv
 }
 
-func InjectGraphQLService(name string, serverEnv fw.ServerEnv, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey) (mdservice.Service, error) {
+func InjectGraphQLService(name string, serverEnv fw.ServerEnv, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey) (mdservice.Service, error) {
 	timer := mdtimer.NewTimer()
 	buildIn := mdruntime.NewBuildIn()
 	client := mdhttp.NewClient()
@@ -94,7 +95,7 @@ func InjectGraphQLService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	return service, nil
 }
 
-func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, webFrontendURL provider.WebFrontendURL, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey) (mdservice.Service, error) {
+func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, webFrontendURL provider.WebFrontendURL, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey) (mdservice.Service, error) {
 	timer := mdtimer.NewTimer()
 	buildIn := mdruntime.NewBuildIn()
 	client := mdhttp.NewClient()
@@ -103,6 +104,8 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	logger := provider.NewLogger(prefix, logLevel, timer, buildIn, dataDogEntryRepo)
 	tracer := mdtracer.NewLocal()
 	dataDog := provider.NewDataDogMetrics(dataDogAPIKey, http, timer, serverEnv)
+	segment := provider.NewSegment(segmentAPIKey, timer, logger)
+	ipStack := provider.NewIPStack(ipStackAPIKey, http, logger)
 	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
 		return mdservice.Service{}, err
@@ -111,7 +114,7 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	if err != nil {
 		return mdservice.Service{}, err
 	}
-	factory := instrumentation.NewFactory(serverEnv, logger, tracer, timer, dataDog, keyGenerator)
+	factory := instrumentation.NewFactory(serverEnv, logger, tracer, timer, dataDog, segment, ipStack, keyGenerator)
 	urlSql := db.NewURLSql(sqlDB)
 	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
@@ -139,7 +142,7 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 
 var authSet = wire.NewSet(provider.NewJwtGo, provider.NewAuthenticator)
 
-var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Logger)), wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)), wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)), provider.NewDataDogEntryRepo, provider.NewLogger, mdtracer.NewLocal, provider.NewDataDogMetrics, instrumentation.NewFactory)
+var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Logger)), wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)), wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)), wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)), provider.NewDataDogEntryRepo, provider.NewLogger, mdtracer.NewLocal, provider.NewDataDogMetrics, provider.NewSegment, instrumentation.NewFactory)
 
 var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAccount, github.NewAPI)
 
