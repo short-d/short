@@ -5,8 +5,6 @@ package dep
 import (
 	"database/sql"
 
-	"github.com/short-d/app/modern/mdtracer"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdcli"
@@ -19,6 +17,7 @@ import (
 	"github.com/short-d/app/modern/mdruntime"
 	"github.com/short-d/app/modern/mdservice"
 	"github.com/short-d/app/modern/mdtimer"
+	"github.com/short-d/app/modern/mdtracer"
 	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
