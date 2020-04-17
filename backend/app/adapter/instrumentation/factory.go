@@ -1,6 +1,7 @@
 package instrumentation
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/short-d/app/fw"
@@ -28,10 +29,13 @@ func (f Factory) NewHTTPRequest(req *http.Request) Instrumentation {
 	}
 
 	clientIP := req.RemoteAddr
+	f.logger.Info(clientIP)
+
 	location, err := f.geoLocation.GetLocation(clientIP)
 	if err != nil {
 		f.logger.Error(err)
 	}
+	f.logger.Info(fmt.Sprintf("%v", location))
 
 	ctx := fw.ExecutionContext{
 		RequestID:      string(requestID),
