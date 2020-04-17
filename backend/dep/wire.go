@@ -12,6 +12,7 @@ import (
 	"github.com/short-d/app/modern/mdenv"
 	"github.com/short-d/app/modern/mdhttp"
 	"github.com/short-d/app/modern/mdlogger"
+	"github.com/short-d/app/modern/mdmetrics"
 	"github.com/short-d/app/modern/mdrequest"
 	"github.com/short-d/app/modern/mdrouting"
 	"github.com/short-d/app/modern/mdruntime"
@@ -23,6 +24,7 @@ import (
 	"github.com/short-d/short/app/adapter/github"
 	"github.com/short-d/short/app/adapter/google"
 	"github.com/short-d/short/app/adapter/graphql"
+	"github.com/short-d/short/app/adapter/instrumentation"
 	"github.com/short-d/short/app/adapter/kgs"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/changelog"
@@ -43,9 +45,13 @@ var authSet = wire.NewSet(
 var observabilitySet = wire.NewSet(
 	wire.Bind(new(fw.Logger), new(mdlogger.Logger)),
 	wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)),
+	wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)),
+
 	provider.NewDataDogEntryRepo,
 	provider.NewLogger,
 	mdtracer.NewLocal,
+	provider.NewDataDogMetrics,
+	instrumentation.NewFactory,
 )
 
 var githubAPISet = wire.NewSet(
@@ -64,6 +70,12 @@ var googleAPISet = wire.NewSet(
 	provider.NewGoogleIdentityProvider,
 	google.NewAccount,
 	google.NewAPI,
+)
+
+var keyGenSet = wire.NewSet(
+	wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
+	provider.NewKgsRPC,
+	provider.NewKeyGenerator,
 )
 
 // InjectCommandFactory creates CommandFactory with configured dependencies.
@@ -126,11 +138,11 @@ func InjectGraphQLService(
 		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
 		wire.Bind(new(repository.ChangeLog), new(db.ChangeLogSQL)),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
-		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
 		authSet,
+		keyGenSet,
 
 		mdruntime.NewBuildIn,
 		mdservice.New,
@@ -142,13 +154,11 @@ func InjectGraphQLService(
 		db.NewChangeLogSQL,
 		db.NewURLSql,
 		db.NewUserURLRelationSQL,
-		provider.NewKeyGenerator,
 		validator.NewLongLink,
 		validator.NewCustomAlias,
 		changelog.NewPersist,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
-		provider.NewKgsRPC,
 		provider.NewReCaptchaService,
 		requester.NewVerifier,
 		graphql.NewShort,
@@ -172,10 +182,12 @@ func InjectRoutingService(
 	googleClientSecret provider.GoogleClientSecret,
 	googleRedirectURI provider.GoogleRedirectURI,
 	jwtSecret provider.JwtSecret,
+	bufferSize provider.KeyGenBufferSize,
+	kgsRPCConfig provider.KgsRPCConfig,
 	webFrontendURL provider.WebFrontendURL,
 	tokenValidDuration provider.TokenValidDuration,
 	dataDogAPIKey provider.DataDogAPIKey,
-) mdservice.Service {
+) (mdservice.Service, error) {
 	wire.Build(
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
@@ -190,6 +202,7 @@ func InjectRoutingService(
 		githubAPISet,
 		facebookAPISet,
 		googleAPISet,
+		keyGenSet,
 
 		mdruntime.NewBuildIn,
 		mdservice.New,
@@ -206,5 +219,5 @@ func InjectRoutingService(
 		account.NewProvider,
 		provider.NewShortRoutes,
 	)
-	return mdservice.Service{}
+	return mdservice.Service{}, nil
 }

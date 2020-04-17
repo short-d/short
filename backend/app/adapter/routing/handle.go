@@ -4,6 +4,8 @@ import (
 	"net/http"
 	netURL "net/url"
 
+	"github.com/short-d/short/app/adapter/instrumentation"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/service"
@@ -13,31 +15,26 @@ import (
 
 // NewOriginalURL translates alias to the original long link.
 func NewOriginalURL(
-	logger fw.Logger,
-	tracer fw.Tracer,
+	instrumentationFactory instrumentation.Factory,
 	urlRetriever url.Retriever,
 	timer fw.Timer,
 	webFrontendURL netURL.URL,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		trace := tracer.BeginTrace("OriginalURL")
+		i := instrumentationFactory.NewHTTPRequest(r)
 
 		alias := params["alias"]
-
-		trace1 := trace.Next("GetUrlAfter")
 		now := timer.Now()
 		u, err := urlRetriever.GetURL(alias, &now)
-		trace1.End()
-
 		if err != nil {
-			logger.Error(err)
+			i.LongLinkRetrievalFailed(err)
 			serve404(w, r, webFrontendURL)
 			return
 		}
+		i.LongLinkRetrievalSucceed()
 
 		originURL := u.OriginalURL
 		http.Redirect(w, r, originURL, http.StatusSeeOther)
-		trace.End()
 	}
 }
 
@@ -48,8 +45,6 @@ func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL)
 
 // NewSSOSignIn redirects user to the sign in page.
 func NewSSOSignIn(
-	logger fw.Logger,
-	tracer fw.Tracer,
 	identityProvider service.IdentityProvider,
 	authenticator auth.Authenticator,
 	webFrontendURL string,
@@ -67,8 +62,6 @@ func NewSSOSignIn(
 
 // NewSSOSignInCallback generates Short's authentication token given identity provider's authorization code.
 func NewSSOSignInCallback(
-	logger fw.Logger,
-	tracer fw.Tracer,
 	singleSignOn sso.SingleSignOn,
 	webFrontendURL netURL.URL,
 ) fw.Handle {
