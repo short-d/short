@@ -5,20 +5,20 @@ package dep
 import (
 	"database/sql"
 
+	"github.com/short-d/app/modern/mdtracer"
+
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdcli"
 	"github.com/short-d/app/modern/mddb"
 	"github.com/short-d/app/modern/mdenv"
 	"github.com/short-d/app/modern/mdhttp"
-	"github.com/short-d/app/modern/mdio"
 	"github.com/short-d/app/modern/mdlogger"
 	"github.com/short-d/app/modern/mdrequest"
 	"github.com/short-d/app/modern/mdrouting"
 	"github.com/short-d/app/modern/mdruntime"
 	"github.com/short-d/app/modern/mdservice"
 	"github.com/short-d/app/modern/mdtimer"
-	"github.com/short-d/app/modern/mdtracer"
 	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
@@ -42,8 +42,10 @@ var authSet = wire.NewSet(
 )
 
 var observabilitySet = wire.NewSet(
-	wire.Bind(new(fw.Logger), new(mdlogger.Local)),
-	provider.NewLocalLogger,
+	wire.Bind(new(fw.Logger), new(mdlogger.Logger)),
+	wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)),
+	provider.NewDataDogEntryRepo,
+	provider.NewLogger,
 	mdtracer.NewLocal,
 )
 
@@ -104,6 +106,7 @@ func InjectEnvironment() fw.Environment {
 // InjectGraphQLService creates GraphQL service with configured dependencies.
 func InjectGraphQLService(
 	name string,
+	serverEnv fw.ServerEnv,
 	prefix provider.LogPrefix,
 	logLevel fw.LogLevel,
 	sqlDB *sql.DB,
@@ -113,9 +116,9 @@ func InjectGraphQLService(
 	bufferSize provider.KeyGenBufferSize,
 	kgsRPCConfig provider.KgsRPCConfig,
 	tokenValidDuration provider.TokenValidDuration,
+	dataDogAPIKey provider.DataDogAPIKey,
 ) (mdservice.Service, error) {
 	wire.Build(
-		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
 		wire.Bind(new(fw.GraphQLAPI), new(graphql.Short)),
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
@@ -130,7 +133,6 @@ func InjectGraphQLService(
 		observabilitySet,
 		authSet,
 
-		mdio.NewBuildInStdOut,
 		mdruntime.NewBuildIn,
 		mdservice.New,
 		provider.NewGraphGophers,
@@ -158,6 +160,7 @@ func InjectGraphQLService(
 // InjectRoutingService creates routing service with configured dependencies.
 func InjectRoutingService(
 	name string,
+	serverEnv fw.ServerEnv,
 	prefix provider.LogPrefix,
 	logLevel fw.LogLevel,
 	sqlDB *sql.DB,
@@ -172,13 +175,13 @@ func InjectRoutingService(
 	jwtSecret provider.JwtSecret,
 	webFrontendURL provider.WebFrontendURL,
 	tokenValidDuration provider.TokenValidDuration,
+	dataDogAPIKey provider.DataDogAPIKey,
 ) mdservice.Service {
 	wire.Build(
-		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
-		wire.Bind(new(repository.User), new(*(db.UserSQL))),
+		wire.Bind(new(repository.User), new(*db.UserSQL)),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 		wire.Bind(new(fw.GraphQlRequest), new(mdrequest.GraphQL)),
@@ -189,7 +192,6 @@ func InjectRoutingService(
 		facebookAPISet,
 		googleAPISet,
 
-		mdio.NewBuildInStdOut,
 		mdruntime.NewBuildIn,
 		mdservice.New,
 		mdrouting.NewBuiltIn,

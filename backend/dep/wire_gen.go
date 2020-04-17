@@ -14,7 +14,6 @@ import (
 	"github.com/short-d/app/modern/mddb"
 	"github.com/short-d/app/modern/mdenv"
 	"github.com/short-d/app/modern/mdhttp"
-	"github.com/short-d/app/modern/mdio"
 	"github.com/short-d/app/modern/mdlogger"
 	"github.com/short-d/app/modern/mdrequest"
 	"github.com/short-d/app/modern/mdrouting"
@@ -57,11 +56,13 @@ func InjectEnvironment() fw.Environment {
 	return goDotEnv
 }
 
-func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration) (mdservice.Service, error) {
-	stdOut := mdio.NewBuildInStdOut()
+func InjectGraphQLService(name string, serverEnv fw.ServerEnv, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey) (mdservice.Service, error) {
 	timer := mdtimer.NewTimer()
 	buildIn := mdruntime.NewBuildIn()
-	local := provider.NewLocalLogger(prefix, logLevel, stdOut, timer, buildIn)
+	client := mdhttp.NewClient()
+	http := mdrequest.NewHTTP(client)
+	dataDogEntryRepo := provider.NewDataDogEntryRepo(dataDogAPIKey, http, serverEnv)
+	logger := provider.NewLogger(prefix, logLevel, timer, buildIn, dataDogEntryRepo)
 	tracer := mdtracer.NewLocal()
 	urlSql := db.NewURLSql(sqlDB)
 	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
@@ -79,29 +80,27 @@ func InjectGraphQLService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias)
 	changeLogSQL := db.NewChangeLogSQL(sqlDB)
 	persist := changelog.NewPersist(keyGenerator, timer, changeLogSQL)
-	client := mdhttp.NewClient()
-	http := mdrequest.NewHTTP(client)
 	reCaptcha := provider.NewReCaptchaService(http, secret)
 	verifier := requester.NewVerifier(reCaptcha)
 	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
-	short := graphql.NewShort(local, tracer, retrieverPersist, creatorPersist, persist, verifier, authenticator)
-	server := provider.NewGraphGophers(graphqlPath, local, tracer, short)
-	service := mdservice.New(name, server, local)
+	short := graphql.NewShort(logger, tracer, retrieverPersist, creatorPersist, persist, verifier, authenticator)
+	server := provider.NewGraphGophers(graphqlPath, logger, tracer, short)
+	service := mdservice.New(name, server, logger)
 	return service, nil
 }
 
-func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL, tokenValidDuration provider.TokenValidDuration) mdservice.Service {
-	stdOut := mdio.NewBuildInStdOut()
+func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey) mdservice.Service {
 	timer := mdtimer.NewTimer()
 	buildIn := mdruntime.NewBuildIn()
-	local := provider.NewLocalLogger(prefix, logLevel, stdOut, timer, buildIn)
+	client := mdhttp.NewClient()
+	http := mdrequest.NewHTTP(client)
+	dataDogEntryRepo := provider.NewDataDogEntryRepo(dataDogAPIKey, http, serverEnv)
+	logger := provider.NewLogger(prefix, logLevel, timer, buildIn, dataDogEntryRepo)
 	tracer := mdtracer.NewLocal()
 	urlSql := db.NewURLSql(sqlDB)
 	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
-	client := mdhttp.NewClient()
-	http := mdrequest.NewHTTP(client)
 	identityProvider := provider.NewGithubIdentityProvider(http, githubClientID, githubClientSecret)
 	graphQL := mdrequest.NewGraphQL(http)
 	githubAccount := github.NewAccount(graphQL)
@@ -116,9 +115,9 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	accountProvider := account.NewProvider(userSQL, timer)
-	v := provider.NewShortRoutes(local, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
-	server := mdrouting.NewBuiltIn(local, tracer, v)
-	service := mdservice.New(name, server, local)
+	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
+	server := mdrouting.NewBuiltIn(logger, tracer, v)
+	service := mdservice.New(name, server, logger)
 	return service
 }
 
@@ -126,7 +125,7 @@ func InjectRoutingService(name string, prefix provider.LogPrefix, logLevel fw.Lo
 
 var authSet = wire.NewSet(provider.NewJwtGo, provider.NewAuthenticator)
 
-var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Local)), provider.NewLocalLogger, mdtracer.NewLocal)
+var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Logger)), wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)), provider.NewDataDogEntryRepo, provider.NewLogger, mdtracer.NewLocal)
 
 var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAccount, github.NewAPI)
 

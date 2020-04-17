@@ -13,6 +13,7 @@ import (
 // backend APIs.
 type ServiceConfig struct {
 	LogPrefix            string
+	ServerEnv            string
 	LogLevel             fw.LogLevel
 	RecaptchaSecret      string
 	GithubClientID       string
@@ -31,6 +32,7 @@ type ServiceConfig struct {
 	KgsHostname          string
 	KgsPort              int
 	AuthTokenLifetime    time.Duration
+	DataDogAPIKey        string
 }
 
 // NewRootCmd creates the base command.
@@ -51,6 +53,7 @@ func NewRootCmd(
 
 				serviceConfig := app.ServiceConfig{
 					LogPrefix:            config.LogPrefix,
+					ServerEnv:            config.ServerEnv,
 					LogLevel:             config.LogLevel,
 					MigrationRoot:        migrationRoot,
 					RecaptchaSecret:      config.RecaptchaSecret,
@@ -70,6 +73,7 @@ func NewRootCmd(
 					KgsHostname:          config.KgsHostname,
 					KgsPort:              config.KgsPort,
 					AuthTokenLifetime:    config.AuthTokenLifetime,
+					DataDogAPIKey:        config.DataDogAPIKey,
 				}
 
 				app.Start(

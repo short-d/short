@@ -16,6 +16,7 @@ func main() {
 	envConfig := envconfig.NewEnvConfig(env)
 
 	config := struct {
+		ServerEnv            string        `env:"ENV" default:"testing"`
 		DBHost               string        `env:"DB_HOST" default:"localhost"`
 		DBPort               int           `env:"DB_PORT" default:"5432"`
 		DBUser               string        `env:"DB_USER" default:"postgres"`
@@ -38,6 +39,7 @@ func main() {
 		GraphQLAPIPort       int           `env:"GRAPHQL_API_PORT" default:"8080"`
 		HTTPAPIPort          int           `env:"HTTP_API_PORT" default:"80"`
 		AuthTokenLifeTime    time.Duration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
+		DataDogAPIKey        string        `env:"DATA_DOG_API_KEY" default:""`
 	}{}
 
 	err := envConfig.ParseConfigFromEnv(&config)
@@ -59,6 +61,7 @@ func main() {
 
 	serviceConfig := cmd.ServiceConfig{
 		LogPrefix:            "Short",
+		ServerEnv:            config.ServerEnv,
 		LogLevel:             fw.LogTrace,
 		RecaptchaSecret:      config.ReCaptchaSecret,
 		GithubClientID:       config.GithubClientID,
@@ -77,6 +80,7 @@ func main() {
 		KgsHostname:          config.KgsHostname,
 		KgsPort:              config.KgsPort,
 		AuthTokenLifetime:    config.AuthTokenLifeTime,
+		DataDogAPIKey:        config.DataDogAPIKey,
 	}
 
 	rootCmd := cmd.NewRootCmd(

@@ -10,6 +10,7 @@ import (
 
 // ServiceConfig represents require parameters for the backend APIs
 type ServiceConfig struct {
+	ServerEnv            string
 	LogPrefix            string
 	LogLevel             fw.LogLevel
 	MigrationRoot        string
@@ -30,6 +31,7 @@ type ServiceConfig struct {
 	KgsHostname          string
 	KgsPort              int
 	AuthTokenLifetime    time.Duration
+	DataDogAPIKey        string
 }
 
 // Start launches the GraphQL & HTTP APIs
@@ -49,8 +51,12 @@ func Start(
 		panic(err)
 	}
 
+	serverEnv := fw.ServerEnv(config.ServerEnv)
+	dataDogAPIKey := provider.DataDogAPIKey(config.DataDogAPIKey)
+
 	graphqlAPI, err := dep.InjectGraphQLService(
 		"GraphQL API",
+		serverEnv,
 		provider.LogPrefix(config.LogPrefix),
 		config.LogLevel,
 		db,
@@ -63,6 +69,7 @@ func Start(
 			Port:     config.KgsPort,
 		},
 		provider.TokenValidDuration(config.AuthTokenLifetime),
+		dataDogAPIKey,
 	)
 	if err != nil {
 		panic(err)
@@ -71,6 +78,7 @@ func Start(
 
 	httpAPI := dep.InjectRoutingService(
 		"Routing API",
+		serverEnv,
 		provider.LogPrefix(config.LogPrefix),
 		config.LogLevel,
 		db,
@@ -85,6 +93,7 @@ func Start(
 		provider.JwtSecret(config.JwtSecret),
 		provider.WebFrontendURL(config.WebFrontendURL),
 		provider.TokenValidDuration(config.AuthTokenLifetime),
+		dataDogAPIKey,
 	)
 
 	httpAPI.StartAndWait(config.HTTPAPIPort)
