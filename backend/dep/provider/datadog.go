@@ -19,6 +19,8 @@ func NewDataDogEntryRepo(
 	return mdlogger.NewDataDogEntryRepo(string(apiKey), httpRequest, env)
 }
 
+// NewDataDogMetrics creates new DataDog Metrics with DataDogAPIKey to uniquely
+// identify apiKey during dependency injection.
 func NewDataDogMetrics(
 	apiKey DataDogAPIKey,
 	httpRequest fw.HTTPRequest,

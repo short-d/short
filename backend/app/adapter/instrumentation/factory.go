@@ -7,6 +7,7 @@ import (
 	"github.com/short-d/short/app/usecase/keygen"
 )
 
+// Factory initializes instrumentation code.
 type Factory struct {
 	serverEnv fw.ServerEnv
 	keyGen    keygen.KeyGenerator
@@ -16,6 +17,8 @@ type Factory struct {
 	metrics   fw.Metrics
 }
 
+// NewHTTPRequest creates and initializes Instrumentation tied to the given HTTP
+// request.
 func (f Factory) NewHTTPRequest(req *http.Request) Instrumentation {
 	requestID, err := f.keyGen.NewKey()
 	if err != nil {
@@ -36,6 +39,7 @@ func (f Factory) NewHTTPRequest(req *http.Request) Instrumentation {
 	}
 }
 
+// NewFactory creates Instrumentation factory.
 func NewFactory(
 	serverEnv fw.ServerEnv,
 	logger fw.Logger,
