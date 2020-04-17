@@ -52,6 +52,11 @@ func Start(
 	}
 
 	serverEnv := fw.ServerEnv(config.ServerEnv)
+	kgsBufferSize := provider.KeyGenBufferSize(config.KeyGenBufferSize)
+	kgsRPCConfig := provider.KgsRPCConfig{
+		Hostname: config.KgsHostname,
+		Port:     config.KgsPort,
+	}
 	dataDogAPIKey := provider.DataDogAPIKey(config.DataDogAPIKey)
 
 	graphqlAPI, err := dep.InjectGraphQLService(
@@ -63,20 +68,18 @@ func Start(
 		"/graphql",
 		provider.ReCaptchaSecret(config.RecaptchaSecret),
 		provider.JwtSecret(config.JwtSecret),
-		provider.KeyGenBufferSize(config.KeyGenBufferSize),
-		provider.KgsRPCConfig{
-			Hostname: config.KgsHostname,
-			Port:     config.KgsPort,
-		},
+		kgsBufferSize,
+		kgsRPCConfig,
 		provider.TokenValidDuration(config.AuthTokenLifetime),
 		dataDogAPIKey,
 	)
 	if err != nil {
 		panic(err)
 	}
+
 	graphqlAPI.Start(config.GraphQLAPIPort)
 
-	httpAPI := dep.InjectRoutingService(
+	httpAPI, err := dep.InjectRoutingService(
 		"Routing API",
 		serverEnv,
 		provider.LogPrefix(config.LogPrefix),
@@ -91,10 +94,15 @@ func Start(
 		provider.GoogleClientSecret(config.GoogleClientSecret),
 		provider.GoogleRedirectURI(config.GoogleRedirectURI),
 		provider.JwtSecret(config.JwtSecret),
+		kgsBufferSize,
+		kgsRPCConfig,
 		provider.WebFrontendURL(config.WebFrontendURL),
 		provider.TokenValidDuration(config.AuthTokenLifetime),
 		dataDogAPIKey,
 	)
+	if err != nil {
+		panic(err)
+	}
 
 	httpAPI.StartAndWait(config.HTTPAPIPort)
 }

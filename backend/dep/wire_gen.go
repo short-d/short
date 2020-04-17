@@ -15,6 +15,7 @@ import (
 	"github.com/short-d/app/modern/mdenv"
 	"github.com/short-d/app/modern/mdhttp"
 	"github.com/short-d/app/modern/mdlogger"
+	"github.com/short-d/app/modern/mdmetrics"
 	"github.com/short-d/app/modern/mdrequest"
 	"github.com/short-d/app/modern/mdrouting"
 	"github.com/short-d/app/modern/mdruntime"
@@ -26,9 +27,12 @@ import (
 	"github.com/short-d/short/app/adapter/github"
 	"github.com/short-d/short/app/adapter/google"
 	"github.com/short-d/short/app/adapter/graphql"
+	"github.com/short-d/short/app/adapter/instrumentation"
+	"github.com/short-d/short/app/adapter/kgs"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
 	"github.com/short-d/short/dep/provider"
@@ -90,7 +94,7 @@ func InjectGraphQLService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	return service, nil
 }
 
-func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, webFrontendURL provider.WebFrontendURL, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey) mdservice.Service {
+func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, webFrontendURL provider.WebFrontendURL, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey) (mdservice.Service, error) {
 	timer := mdtimer.NewTimer()
 	buildIn := mdruntime.NewBuildIn()
 	client := mdhttp.NewClient()
@@ -98,6 +102,16 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	dataDogEntryRepo := provider.NewDataDogEntryRepo(dataDogAPIKey, http, serverEnv)
 	logger := provider.NewLogger(prefix, logLevel, timer, buildIn, dataDogEntryRepo)
 	tracer := mdtracer.NewLocal()
+	dataDog := provider.NewDataDogMetrics(dataDogAPIKey, http, timer, serverEnv)
+	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
+	if err != nil {
+		return mdservice.Service{}, err
+	}
+	keyGenerator, err := provider.NewKeyGenerator(bufferSize, rpc)
+	if err != nil {
+		return mdservice.Service{}, err
+	}
+	factory := instrumentation.NewFactory(serverEnv, logger, tracer, timer, dataDog, keyGenerator)
 	urlSql := db.NewURLSql(sqlDB)
 	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
@@ -115,20 +129,22 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	accountProvider := account.NewProvider(userSQL, timer)
-	v := provider.NewShortRoutes(logger, tracer, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
+	v := provider.NewShortRoutes(factory, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
-	return service
+	return service, nil
 }
 
 // wire.go:
 
 var authSet = wire.NewSet(provider.NewJwtGo, provider.NewAuthenticator)
 
-var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Logger)), wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)), provider.NewDataDogEntryRepo, provider.NewLogger, mdtracer.NewLocal)
+var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Logger)), wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)), wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)), provider.NewDataDogEntryRepo, provider.NewLogger, mdtracer.NewLocal, provider.NewDataDogMetrics, instrumentation.NewFactory)
 
 var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAccount, github.NewAPI)
 
 var facebookAPISet = wire.NewSet(provider.NewFacebookIdentityProvider, facebook.NewAccount, facebook.NewAPI)
 
 var googleAPISet = wire.NewSet(provider.NewGoogleIdentityProvider, google.NewAccount, google.NewAPI)
+
+var keyGenSet = wire.NewSet(wire.Bind(new(service.KeyFetcher), new(kgs.RPC)), provider.NewKgsRPC, provider.NewKeyGenerator)
