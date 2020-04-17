@@ -3,6 +3,8 @@ package routing
 import (
 	netURL "net/url"
 
+	"github.com/short-d/short/app/adapter/instrumentation"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
@@ -22,7 +24,7 @@ type Observability struct {
 
 // NewShort creates HTTP routing table.
 func NewShort(
-	observability Observability,
+	instrumentationFactory instrumentation.Factory,
 	webFrontendURL string,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
@@ -54,15 +56,11 @@ func NewShort(
 	if err != nil {
 		panic(err)
 	}
-	logger := observability.Logger
-	tracer := observability.Tracer
 	return []fw.Route{
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
 			Handle: NewSSOSignIn(
-				logger,
-				tracer,
 				githubAPI.IdentityProvider,
 				authenticator,
 				webFrontendURL,
@@ -72,8 +70,6 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/github/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				logger,
-				tracer,
 				githubSignIn,
 				*frontendURL,
 			),
@@ -82,8 +78,6 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in",
 			Handle: NewSSOSignIn(
-				logger,
-				tracer,
 				facebookAPI.IdentityProvider,
 				authenticator,
 				webFrontendURL,
@@ -93,8 +87,6 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				logger,
-				tracer,
 				facebookSignIn,
 				*frontendURL,
 			),
@@ -103,8 +95,6 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/google/sign-in",
 			Handle: NewSSOSignIn(
-				logger,
-				tracer,
 				googleAPI.IdentityProvider,
 				authenticator,
 				webFrontendURL,
@@ -114,8 +104,6 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/google/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				logger,
-				tracer,
 				googleSignIn,
 				*frontendURL,
 			),
@@ -124,8 +112,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/r/:alias",
 			Handle: NewOriginalURL(
-				logger,
-				tracer,
+				instrumentationFactory,
 				urlRetriever,
 				timer,
 				*frontendURL,
