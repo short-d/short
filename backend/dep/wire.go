@@ -5,6 +5,9 @@ package dep
 import (
 	"database/sql"
 
+	"github.com/short-d/app/modern/mdanalytics"
+	"github.com/short-d/app/modern/mdgeo"
+
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdcli"
@@ -46,11 +49,13 @@ var observabilitySet = wire.NewSet(
 	wire.Bind(new(fw.Logger), new(mdlogger.Logger)),
 	wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)),
 	wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)),
+	wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)),
 
 	provider.NewDataDogEntryRepo,
 	provider.NewLogger,
 	mdtracer.NewLocal,
 	provider.NewDataDogMetrics,
+	provider.NewSegment,
 	instrumentation.NewFactory,
 )
 
@@ -128,6 +133,8 @@ func InjectGraphQLService(
 	kgsRPCConfig provider.KgsRPCConfig,
 	tokenValidDuration provider.TokenValidDuration,
 	dataDogAPIKey provider.DataDogAPIKey,
+	segmentAPIKey provider.SegmentAPIKey,
+	ipStackAPIKey provider.IPStackAPIKey,
 ) (mdservice.Service, error) {
 	wire.Build(
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
@@ -187,6 +194,8 @@ func InjectRoutingService(
 	webFrontendURL provider.WebFrontendURL,
 	tokenValidDuration provider.TokenValidDuration,
 	dataDogAPIKey provider.DataDogAPIKey,
+	segmentAPIKey provider.SegmentAPIKey,
+	ipStackAPIKey provider.IPStackAPIKey,
 ) (mdservice.Service, error) {
 	wire.Build(
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
@@ -196,6 +205,7 @@ func InjectRoutingService(
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 		wire.Bind(new(fw.GraphQlRequest), new(mdrequest.GraphQL)),
+		wire.Bind(new(fw.GeoLocation), new(mdgeo.IPStack)),
 
 		observabilitySet,
 		authSet,
@@ -211,6 +221,7 @@ func InjectRoutingService(
 		mdrequest.NewHTTP,
 		mdrequest.NewGraphQL,
 		mdtimer.NewTimer,
+		provider.NewIPStack,
 
 		db.NewUserSQL,
 		db.NewURLSql,
