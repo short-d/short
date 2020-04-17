@@ -5,8 +5,11 @@ import (
 	"github.com/short-d/app/modern/mdgeo"
 )
 
+// IPStackAPIKey represents credential for IP Stack APIs.
 type IPStackAPIKey string
 
+// NewIPStack creates IPStack with IPStackAPIKey to uniquely identify apiKey
+// during dependency injection.
 func NewIPStack(
 	apiKey IPStackAPIKey,
 	httpRequest fw.HTTPRequest,
