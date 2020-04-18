@@ -1,5 +1,5 @@
 export interface IHTTPService {
-  postJSON(URL: string, body: any): Promise<any>
+  postJSON(URL: string, body: any): Promise<any>;
 }
 
 export class FetchHTTPService implements IHTTPService {
@@ -10,7 +10,6 @@ export class FetchHTTPService implements IHTTPService {
         'Content-type': 'application/json; charset=UTF-8'
       },
       body: JSON.stringify(body)
-    })
-      .then((response) => response.json());
+    }).then(response => response.json());
   }
 }

@@ -1,13 +1,13 @@
-import {Url} from '../entity/Url';
-import {EnvService} from './Env.service';
-import {GraphQlError} from '../graphql/error';
-import {AuthService} from './Auth.service';
-import {CaptchaService, CREATE_SHORT_LINK} from './Captcha.service';
-import {validateLongLinkFormat} from '../validators/LongLink.validator';
-import {validateCustomAliasFormat} from '../validators/CustomAlias.validator';
-import {Err, ErrorService} from './Error.service';
-import {IErr} from '../entity/Err';
-import {GraphQLService, IGraphQLRequestError,} from './GraphQL.service';
+import { Url } from '../entity/Url';
+import { EnvService } from './Env.service';
+import { GraphQlError } from '../graphql/error';
+import { AuthService } from './Auth.service';
+import { CaptchaService, CREATE_SHORT_LINK } from './Captcha.service';
+import { validateLongLinkFormat } from '../validators/LongLink.validator';
+import { validateCustomAliasFormat } from '../validators/CustomAlias.validator';
+import { Err, ErrorService } from './Error.service';
+import { IErr } from '../entity/Err';
+import { GraphQLService, IGraphQLRequestError } from './GraphQL.service';
 
 interface ICreatedUrl {
   alias: string;
@@ -53,7 +53,9 @@ export class UrlService {
     private captchaService: CaptchaService,
     private graphQLService: GraphQLService
   ) {
-    this.graphQLBaseURL = `${this.envService.getVal('GRAPHQL_API_BASE_URL')}/graphql`;
+    this.graphQLBaseURL = `${this.envService.getVal(
+      'GRAPHQL_API_BASE_URL'
+    )}/graphql`;
   }
 
   createShortLink(editingUrl: Url): Promise<Url> {
@@ -133,22 +135,14 @@ export class UrlService {
     let alias = link.alias === '' ? null : link.alias!;
     let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
     return new Promise<Url>( // TODO(issue#599): simplify business logic below to improve readability
-      (
-        resolve: (createdURL: Url) => void,
-        reject: (errCode: Err) => any
-      ) => {
+      (resolve: (createdURL: Url) => void, reject: (errCode: Err) => any) => {
         this.graphQLService
-          .mutate<ICreateURLData>(
-            this.graphQLBaseURL,
-            {
-              mutation: gqlCreateURL,
-              variables: variables,
-            }
-          )
+          .mutate<ICreateURLData>(this.graphQLBaseURL, {
+            mutation: gqlCreateURL,
+            variables: variables
+          })
           .then((res: ICreateURLData) => {
-            const url = this.getUrlFromCreatedUrl(
-              res.authMutation.createURL
-            );
+            const url = this.getUrlFromCreatedUrl(res.authMutation.createURL);
             resolve(url);
           })
           .catch((err: IGraphQLRequestError) => {
@@ -160,10 +154,11 @@ export class UrlService {
               reject(Err.Unknown);
               return;
             }
-            const errCodes = err.graphQLErrors.map((graphQLError: GraphQlError) =>
-              graphQLError.extensions
-                ? graphQLError.extensions.code as Err
-                : Err.Unknown
+            const errCodes = err.graphQLErrors.map(
+              (graphQLError: GraphQlError) =>
+                graphQLError.extensions
+                  ? (graphQLError.extensions.code as Err)
+                  : Err.Unknown
             );
             reject(errCodes[0]);
           });

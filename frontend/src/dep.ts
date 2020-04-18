@@ -15,8 +15,8 @@ import { SearchService } from './service/Search.service';
 import { BrowserExtensionFactory } from './service/extensionService/BrowserExtension.factory';
 import { ChangeLogService } from './service/ChangeLog.service';
 import { ClipboardServiceFactory } from './service/clipboardService/Clipboard.service.factory';
-import {GraphQLService} from './service/GraphQL.service';
-import { FetchHTTPService} from './service/HTTP.service';
+import { GraphQLService } from './service/GraphQL.service';
+import { FetchHTTPService } from './service/HTTP.service';
 
 export function initEnvService(): EnvService {
   return new EnvService();

@@ -1,20 +1,19 @@
-import {IHTTPService} from './HTTP.service';
+import { IHTTPService } from './HTTP.service';
 
 export interface IGraphQLQuery {
-  query: string
-  variables: { [key: string]: any }
+  query: string;
+  variables: { [key: string]: any };
 }
 
 export interface IGraphQLMutation {
-  mutation: string
-  variables: { [key: string]: any }
+  mutation: string;
+  variables: { [key: string]: any };
 }
 
 interface IGraphQLRequest {
-  query: string
-  variables: { [key: string]: any }
+  query: string;
+  variables: { [key: string]: any };
 }
-
 
 interface Extensions {
   code: string;
@@ -27,20 +26,22 @@ export interface IGraphQLError {
 }
 
 export interface IGraphQLRequestError {
-  networkError?: any
-  graphQLErrors?: IGraphQLError[]
+  networkError?: any;
+  graphQLErrors?: IGraphQLError[];
 }
 
 interface IGraphQLResponse<Data> {
-  data: Data
-  errors?: IGraphQLError[]
+  data: Data;
+  errors?: IGraphQLError[];
 }
 
 export class GraphQLService {
-  constructor(private httpService: IHTTPService) {
-  }
+  constructor(private httpService: IHTTPService) {}
 
-  public mutate<Data>(endpoint: string, mutation: IGraphQLMutation): Promise<Data> {
+  public mutate<Data>(
+    endpoint: string,
+    mutation: IGraphQLMutation
+  ): Promise<Data> {
     // TODO(byliuyang): Will build parallelization in the future
     return this._query(endpoint, {
       query: mutation.mutation,
@@ -56,41 +57,46 @@ export class GraphQLService {
     });
   }
 
-  private _query<Data>(endpoint: string, query: IGraphQLRequest): Promise<Data> {
-    return new Promise((
-      resolve: (response: Data) => void,
-      reject: (err: IGraphQLRequestError) => void
-    ) => {
-      this.httpService
-        .postJSON(endpoint, query)
-        .then((res: IGraphQLResponse<Data>) => {
-          if (!res) {
-            reject({
-              graphQLErrors: [],
-            });
-            return;
-          }
+  private _query<Data>(
+    endpoint: string,
+    query: IGraphQLRequest
+  ): Promise<Data> {
+    return new Promise(
+      (
+        resolve: (response: Data) => void,
+        reject: (err: IGraphQLRequestError) => void
+      ) => {
+        this.httpService
+          .postJSON(endpoint, query)
+          .then((res: IGraphQLResponse<Data>) => {
+            if (!res) {
+              reject({
+                graphQLErrors: []
+              });
+              return;
+            }
 
-          if (res.errors) {
-            reject({
-              graphQLErrors: res.errors
-            });
-            return;
-          }
+            if (res.errors) {
+              reject({
+                graphQLErrors: res.errors
+              });
+              return;
+            }
 
-          if (!res.data) {
+            if (!res.data) {
+              reject({
+                graphQLErrors: []
+              });
+              return;
+            }
+            resolve(res.data);
+          })
+          .catch((err: any) => {
             reject({
-              graphQLErrors: [],
+              networkError: err
             });
-            return;
-          }
-          resolve(res.data);
-        })
-        .catch((err: any) => {
-          reject({
-            networkError: err
           });
-        });
-    });
+      }
+    );
   }
 }
