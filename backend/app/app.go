@@ -32,6 +32,8 @@ type ServiceConfig struct {
 	KgsPort              int
 	AuthTokenLifetime    time.Duration
 	DataDogAPIKey        string
+	SegmentAPIKey        string
+	IPStackAPIKey        string
 }
 
 // Start launches the GraphQL & HTTP APIs
@@ -57,7 +59,10 @@ func Start(
 		Hostname: config.KgsHostname,
 		Port:     config.KgsPort,
 	}
+
 	dataDogAPIKey := provider.DataDogAPIKey(config.DataDogAPIKey)
+	segmentAPIKey := provider.SegmentAPIKey(config.SegmentAPIKey)
+	ipStackAPIKey := provider.IPStackAPIKey(config.IPStackAPIKey)
 
 	graphqlAPI, err := dep.InjectGraphQLService(
 		"GraphQL API",
@@ -72,6 +77,8 @@ func Start(
 		kgsRPCConfig,
 		provider.TokenValidDuration(config.AuthTokenLifetime),
 		dataDogAPIKey,
+		segmentAPIKey,
+		ipStackAPIKey,
 	)
 	if err != nil {
 		panic(err)
@@ -99,6 +106,8 @@ func Start(
 		provider.WebFrontendURL(config.WebFrontendURL),
 		provider.TokenValidDuration(config.AuthTokenLifetime),
 		dataDogAPIKey,
+		segmentAPIKey,
+		ipStackAPIKey,
 	)
 	if err != nil {
 		panic(err)

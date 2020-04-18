@@ -1,6 +1,7 @@
 package instrumentation
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/short-d/app/fw"
@@ -9,12 +10,14 @@ import (
 
 // Factory initializes instrumentation code.
 type Factory struct {
-	serverEnv fw.ServerEnv
-	keyGen    keygen.KeyGenerator
-	logger    fw.Logger
-	tracer    fw.Tracer
-	timer     fw.Timer
-	metrics   fw.Metrics
+	serverEnv   fw.ServerEnv
+	keyGen      keygen.KeyGenerator
+	logger      fw.Logger
+	tracer      fw.Tracer
+	timer       fw.Timer
+	metrics     fw.Metrics
+	analytics   fw.Analytics
+	geoLocation fw.GeoLocation
 }
 
 // NewHTTPRequest creates and initializes Instrumentation tied to the given HTTP
@@ -25,17 +28,29 @@ func (f Factory) NewHTTPRequest(req *http.Request) Instrumentation {
 		f.logger.Error(err)
 	}
 
+	clientIP := req.RemoteAddr
+	f.logger.Info(clientIP)
+
+	location, err := f.geoLocation.GetLocation(clientIP)
+	if err != nil {
+		f.logger.Error(err)
+	}
+	f.logger.Info(fmt.Sprintf("%v", location))
+
 	ctx := fw.ExecutionContext{
 		RequestID:      string(requestID),
 		RequestStartAt: f.timer.Now(),
+		Location:       location,
 	}
 
 	return Instrumentation{
-		logger:  f.logger,
-		tracer:  f.tracer,
-		timer:   f.timer,
-		metrics: f.metrics,
-		ctx:     ctx,
+		logger:      f.logger,
+		tracer:      f.tracer,
+		timer:       f.timer,
+		metrics:     f.metrics,
+		analytics:   f.analytics,
+		geoLocation: f.geoLocation,
+		ctx:         ctx,
 	}
 }
 
@@ -46,14 +61,18 @@ func NewFactory(
 	tracer fw.Tracer,
 	timer fw.Timer,
 	metrics fw.Metrics,
+	analytics fw.Analytics,
+	geoLocation fw.GeoLocation,
 	keyGen keygen.KeyGenerator,
 ) Factory {
 	return Factory{
-		serverEnv: serverEnv,
-		logger:    logger,
-		tracer:    tracer,
-		timer:     timer,
-		metrics:   metrics,
-		keyGen:    keyGen,
+		serverEnv:   serverEnv,
+		logger:      logger,
+		tracer:      tracer,
+		timer:       timer,
+		metrics:     metrics,
+		analytics:   analytics,
+		geoLocation: geoLocation,
+		keyGen:      keyGen,
 	}
 }
