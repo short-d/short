@@ -1,13 +1,16 @@
 import { Url } from '../entity/Url';
 import { EnvService } from './Env.service';
-import { GraphQlError } from '../graphql/error';
 import { AuthService } from './Auth.service';
 import { CaptchaService, CREATE_SHORT_LINK } from './Captcha.service';
 import { validateLongLinkFormat } from '../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../validators/CustomAlias.validator';
 import { Err, ErrorService } from './Error.service';
 import { IErr } from '../entity/Err';
-import { GraphQLService, IGraphQLRequestError } from './GraphQL.service';
+import {
+  GraphQLService,
+  IGraphQLError,
+  IGraphQLRequestError
+} from './GraphQL.service';
 
 interface ICreatedUrl {
   alias: string;
@@ -155,7 +158,7 @@ export class UrlService {
               return;
             }
             const errCodes = err.graphQLErrors.map(
-              (graphQLError: GraphQlError) =>
+              (graphQLError: IGraphQLError) =>
                 graphQLError.extensions
                   ? (graphQLError.extensions.code as Err)
                   : Err.Unknown

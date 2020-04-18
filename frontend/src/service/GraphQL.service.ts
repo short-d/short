@@ -15,12 +15,12 @@ interface IGraphQLRequest {
   variables: { [key: string]: any };
 }
 
-interface Extensions {
+interface IExtensions {
   code: string;
 }
 
 export interface IGraphQLError {
-  extensions: Extensions;
+  extensions: IExtensions;
   message: string;
   path: string[];
 }
