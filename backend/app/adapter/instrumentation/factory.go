@@ -76,5 +76,6 @@ func NewFactory(
 		analytics:   analytics,
 		geoLocation: geoLocation,
 		keyGen:      keyGen,
+		network:     network,
 	}
 }
