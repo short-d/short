@@ -7,7 +7,6 @@ package dep
 
 import (
 	"database/sql"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdanalytics"
@@ -17,6 +16,7 @@ import (
 	"github.com/short-d/app/modern/mdhttp"
 	"github.com/short-d/app/modern/mdlogger"
 	"github.com/short-d/app/modern/mdmetrics"
+	"github.com/short-d/app/modern/mdnetwork"
 	"github.com/short-d/app/modern/mdrequest"
 	"github.com/short-d/app/modern/mdrouting"
 	"github.com/short-d/app/modern/mdruntime"
@@ -114,7 +114,8 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	if err != nil {
 		return mdservice.Service{}, err
 	}
-	factory := instrumentation.NewFactory(serverEnv, logger, tracer, timer, dataDog, segment, ipStack, keyGenerator)
+	proxy := mdnetwork.NewProxy()
+	factory := instrumentation.NewFactory(serverEnv, logger, tracer, timer, dataDog, segment, ipStack, keyGenerator, proxy)
 	urlSql := db.NewURLSql(sqlDB)
 	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
@@ -142,7 +143,7 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 
 var authSet = wire.NewSet(provider.NewJwtGo, provider.NewAuthenticator)
 
-var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Logger)), wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)), wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)), wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)), provider.NewDataDogEntryRepo, provider.NewLogger, mdtracer.NewLocal, provider.NewDataDogMetrics, provider.NewSegment, instrumentation.NewFactory)
+var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Logger)), wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)), wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)), wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)), wire.Bind(new(fw.Network), new(mdnetwork.Proxy)), provider.NewDataDogEntryRepo, provider.NewLogger, mdtracer.NewLocal, provider.NewDataDogMetrics, provider.NewSegment, mdnetwork.NewProxy, instrumentation.NewFactory)
 
 var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAccount, github.NewAPI)
 
