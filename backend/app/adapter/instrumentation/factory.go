@@ -18,6 +18,7 @@ type Factory struct {
 	metrics     fw.Metrics
 	analytics   fw.Analytics
 	geoLocation fw.GeoLocation
+	network     fw.Network
 }
 
 // NewHTTPRequest creates and initializes Instrumentation tied to the given HTTP
@@ -28,8 +29,8 @@ func (f Factory) NewHTTPRequest(req *http.Request) Instrumentation {
 		f.logger.Error(err)
 	}
 
-	clientIP := req.RemoteAddr
-	f.logger.Info(clientIP)
+	connection := f.network.FromHTTP(req)
+	clientIP := connection.ClientIP
 
 	location, err := f.geoLocation.GetLocation(clientIP)
 	if err != nil {
@@ -64,6 +65,7 @@ func NewFactory(
 	analytics fw.Analytics,
 	geoLocation fw.GeoLocation,
 	keyGen keygen.KeyGenerator,
+	network fw.Network,
 ) Factory {
 	return Factory{
 		serverEnv:   serverEnv,
