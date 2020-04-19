@@ -10,7 +10,7 @@ require (
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/rubenv/sql-migrate v0.0.0-20200402132117-435005d389bc // indirect
 	github.com/short-d/app v0.0.0-20200419093659-f24ea673cd94
-	github.com/short-d/kgs v0.0.0-20200328191848-d40634dedb45
+	github.com/short-d/kgs v0.0.0-20200419183416-2deb6aa8d7ed
 	github.com/spf13/cobra v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.5.1 // indirect

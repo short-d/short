@@ -15,6 +15,8 @@ import { SearchService } from './service/Search.service';
 import { BrowserExtensionFactory } from './service/extensionService/BrowserExtension.factory';
 import { ChangeLogService } from './service/ChangeLog.service';
 import { ClipboardServiceFactory } from './service/clipboardService/Clipboard.service.factory';
+import { GraphQLService } from './service/GraphQL.service';
+import { FetchHTTPService } from './service/HTTP.service';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -39,11 +41,14 @@ export function initUIFactory(
     routingService
   );
   const errorService = new ErrorService();
+  const httpService = new FetchHTTPService();
+  const graphQLService = new GraphQLService(httpService);
   const urlService = new UrlService(
     authService,
     envService,
     errorService,
-    captchaService
+    captchaService,
+    graphQLService
   );
   const versionService = new VersionService(envService);
   const store = initStore();
