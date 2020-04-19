@@ -5,19 +5,17 @@ package dep
 import (
 	"database/sql"
 
-	"github.com/short-d/app/modern/mdnetwork"
-
-	"github.com/short-d/app/modern/mdanalytics"
-	"github.com/short-d/app/modern/mdgeo"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
+	"github.com/short-d/app/modern/mdanalytics"
 	"github.com/short-d/app/modern/mdcli"
 	"github.com/short-d/app/modern/mddb"
 	"github.com/short-d/app/modern/mdenv"
+	"github.com/short-d/app/modern/mdgeo"
 	"github.com/short-d/app/modern/mdhttp"
 	"github.com/short-d/app/modern/mdlogger"
 	"github.com/short-d/app/modern/mdmetrics"
+	"github.com/short-d/app/modern/mdnetwork"
 	"github.com/short-d/app/modern/mdrequest"
 	"github.com/short-d/app/modern/mdrouting"
 	"github.com/short-d/app/modern/mdruntime"
