@@ -5,7 +5,7 @@ import (
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
 	"github.com/short-d/short/app/adapter/google"
-	"github.com/short-d/short/app/adapter/instrumentation"
+	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/adapter/routing"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/auth"
@@ -17,7 +17,7 @@ type WebFrontendURL string
 
 // NewShortRoutes creates HTTP routes for Short API with WwwRoot to uniquely identify WwwRoot during dependency injection.
 func NewShortRoutes(
-	instrumentationFactory instrumentation.Factory,
+	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL WebFrontendURL,
 	timer fw.Timer,
 	urlRetriever url.Retriever,

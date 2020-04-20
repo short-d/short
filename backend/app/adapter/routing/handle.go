@@ -5,7 +5,7 @@ import (
 	netURL "net/url"
 
 	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/adapter/instrumentation"
+	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/sso"
@@ -14,13 +14,13 @@ import (
 
 // NewOriginalURL translates alias to the original long link.
 func NewOriginalURL(
-	instrumentationFactory instrumentation.Factory,
+	instrumentationFactory request.InstrumentationFactory,
 	urlRetriever url.Retriever,
 	timer fw.Timer,
 	webFrontendURL netURL.URL,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		i := instrumentationFactory.NewHTTPRequest(r)
+		i := instrumentationFactory.NewHTTP(r)
 		i.RedirectingAliasToLongLink(nil)
 
 		alias := params["alias"]

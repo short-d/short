@@ -3,12 +3,11 @@ package routing
 import (
 	netURL "net/url"
 
-	"github.com/short-d/short/app/adapter/instrumentation"
-
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
 	"github.com/short-d/short/app/adapter/google"
+	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/sso"
@@ -24,7 +23,7 @@ type Observability struct {
 
 // NewShort creates HTTP routing table.
 func NewShort(
-	instrumentationFactory instrumentation.Factory,
+	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL string,
 	timer fw.Timer,
 	urlRetriever url.Retriever,
