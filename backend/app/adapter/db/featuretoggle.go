@@ -28,8 +28,6 @@ WHERE "%s"=$1;`,
 		table.FeatureToggle.ColumnToggleID,
 	)
 
-	fmt.Println(query)
-
 	toggle := entity.Toggle{}
 	err := f.db.QueryRow(query, id).Scan(&toggle.ID, &toggle.IsEnabled)
 	return toggle, err
