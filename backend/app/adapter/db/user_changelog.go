@@ -18,6 +18,11 @@ type UserChangeLogSQL struct {
 	db *sql.DB
 }
 
+// IsUserNotFound checks whether the error occur due to user not being present in user_changelog table.
+func (u UserChangeLogSQL) IsUserNotFound(err error) bool {
+	return IsErrRecordNotFound(err)
+}
+
 // GetLastViewedAt retrieves LastViewedAt for a given user.
 func (u UserChangeLogSQL) GetLastViewedAt(user entity.User) (time.Time, error) {
 	statement := fmt.Sprintf(`
@@ -32,6 +37,10 @@ WHERE "%s"=$1;`,
 	row := u.db.QueryRow(statement, user.Email)
 	lastViewedAt := time.Time{}
 	err := row.Scan(&lastViewedAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return lastViewedAt, errRecordNotFound
+	}
+
 	return lastViewedAt.UTC(), err
 }
 
@@ -62,7 +71,7 @@ WHERE %s=$2;
 	}
 
 	if rowsUpdated == 0 {
-		return time.Time{}, errors.New("sql: no rows updated")
+		return time.Time{}, errRecordNotFound
 	}
 
 	return currentTime, nil
