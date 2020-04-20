@@ -13,10 +13,10 @@ interface IGraphQLApiQuery {
 }
 
 interface IGraphQLApiAuthQuery {
-  URLs?: IGraphQLApiUrl[];
+  URLs?: IGraphQLApiURL[];
 }
 
-interface IGraphQLApiUrl {
+interface IGraphQLApiURL {
   alias: string;
   originalURL: string;
 }
@@ -65,7 +65,7 @@ export class GraphQLApiService implements IApiService {
     });
   }
 
-  private getUrlFromGraphQLApiUrl(url: IGraphQLApiUrl): Url {
+  private getUrlFromGraphQLApiUrl(url: IGraphQLApiURL): Url {
     return {
       originalUrl: url.originalURL,
       alias: url.alias
