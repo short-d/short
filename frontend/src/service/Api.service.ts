@@ -73,7 +73,6 @@ export class GraphQLApiService implements IApiService {
   }
 
   private getGraphQLQueryErrorCodes(errors: any): string[] {
-    console.log(errors);
     const { networkError, graphQLErrors } = errors;
     if (networkError) {
       return [Err.NetworkError];
