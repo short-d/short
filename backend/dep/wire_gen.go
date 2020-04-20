@@ -7,6 +7,7 @@ package dep
 
 import (
 	"database/sql"
+
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdanalytics"
@@ -28,8 +29,8 @@ import (
 	"github.com/short-d/short/app/adapter/github"
 	"github.com/short-d/short/app/adapter/google"
 	"github.com/short-d/short/app/adapter/graphql"
-	"github.com/short-d/short/app/adapter/instrumentation"
 	"github.com/short-d/short/app/adapter/kgs"
+	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/requester"
@@ -105,7 +106,6 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	tracer := mdtracer.NewLocal()
 	dataDog := provider.NewDataDogMetrics(dataDogAPIKey, http, timer, serverEnv)
 	segment := provider.NewSegment(segmentAPIKey, timer, logger)
-	ipStack := provider.NewIPStack(ipStackAPIKey, http, logger)
 	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
 		return mdservice.Service{}, err
@@ -115,7 +115,9 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 		return mdservice.Service{}, err
 	}
 	proxy := mdnetwork.NewProxy()
-	factory := instrumentation.NewFactory(serverEnv, logger, tracer, timer, dataDog, segment, ipStack, keyGenerator, proxy)
+	ipStack := provider.NewIPStack(ipStackAPIKey, http, logger)
+	requestClient := request.NewClient(proxy, ipStack)
+	instrumentationFactory := request.NewInstrumentationFactory(serverEnv, logger, tracer, timer, dataDog, segment, keyGenerator, requestClient)
 	urlSql := db.NewURLSql(sqlDB)
 	userURLRelationSQL := db.NewUserURLRelationSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
@@ -133,7 +135,7 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	accountProvider := account.NewProvider(userSQL, timer)
-	v := provider.NewShortRoutes(factory, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service, nil
@@ -143,7 +145,7 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 
 var authSet = wire.NewSet(provider.NewJwtGo, provider.NewAuthenticator)
 
-var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Logger)), wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)), wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)), wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)), wire.Bind(new(fw.Network), new(mdnetwork.Proxy)), provider.NewDataDogEntryRepo, provider.NewLogger, mdtracer.NewLocal, provider.NewDataDogMetrics, provider.NewSegment, mdnetwork.NewProxy, instrumentation.NewFactory)
+var observabilitySet = wire.NewSet(wire.Bind(new(fw.Logger), new(mdlogger.Logger)), wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)), wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)), wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)), wire.Bind(new(fw.Network), new(mdnetwork.Proxy)), provider.NewDataDogEntryRepo, provider.NewLogger, mdtracer.NewLocal, provider.NewDataDogMetrics, provider.NewSegment, mdnetwork.NewProxy, request.NewClient, request.NewInstrumentationFactory)
 
 var githubAPISet = wire.NewSet(provider.NewGithubIdentityProvider, github.NewAccount, github.NewAPI)
 
