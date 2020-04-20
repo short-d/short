@@ -20,7 +20,7 @@ type InstrumentationFactory struct {
 	client    Client
 }
 
-// NewHTTPRequest creates and initializes Instrumentation tied to the given HTTP
+// NewHTTP creates and initializes Instrumentation tied to the given HTTP
 // request.
 func (f InstrumentationFactory) NewHTTP(req *http.Request) instrumentation.Instrumentation {
 	requestID, err := f.keyGen.NewKey()
@@ -49,7 +49,7 @@ func (f InstrumentationFactory) NewHTTP(req *http.Request) instrumentation.Instr
 	)
 }
 
-// NewFactory creates Instrumentation factory.
+// NewInstrumentationFactory creates Instrumentation factory.
 func NewInstrumentationFactory(
 	serverEnv fw.ServerEnv,
 	logger fw.Logger,

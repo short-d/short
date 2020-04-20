@@ -53,6 +53,7 @@ func (i Instrumentation) getUserID(user *entity.User) string {
 	return user.Email
 }
 
+// NewInstrumentation initializes instrumentation code.
 func NewInstrumentation(logger fw.Logger,
 	tracer fw.Tracer,
 	timer fw.Timer,
