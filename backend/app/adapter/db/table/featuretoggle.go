@@ -1,5 +1,6 @@
 package table
 
+// FeatureToggle represents database table columns for 'feature_toggle' table.
 var FeatureToggle = struct {
 	TableName       string
 	ColumnToggleID  string
