@@ -6,7 +6,7 @@ import (
 	"github.com/short-d/app/fw"
 )
 
-// Client retriever user device info.
+// Client retrieves user device info.
 type Client struct {
 	network     fw.Network
 	geoLocation fw.GeoLocation
