@@ -1,7 +1,7 @@
 import { Url } from '../entity/Url';
 import { Err, ErrorService } from './Error.service';
 import { AuthService } from './Auth.service';
-import { ApiService } from './Api.service';
+import { IApiService } from './Api.service';
 
 export interface IPagedShortLinks {
   shortLinks: Url[];
@@ -10,7 +10,7 @@ export interface IPagedShortLinks {
 
 export class ShortLinkService {
   constructor(
-    private apiService: ApiService,
+    private apiService: IApiService,
     private authService: AuthService,
     private errorService: ErrorService
   ) {}
@@ -22,7 +22,9 @@ export class ShortLinkService {
     return new Promise((resolve, reject) => {
       this.apiService
         .invokeGetUserShortLinksApi(offset, pageSize)
-        .then(pagedShortLinks => resolve(pagedShortLinks))
+        .then(URLs => {
+          resolve(this.getPagedShortLinksFromURLs(URLs, offset, pageSize));
+        })
         .catch(errCode => {
           if (errCode === Err.Unauthenticated) {
             reject({ authenticationErr: 'User is not authenticated' });
@@ -32,7 +34,18 @@ export class ShortLinkService {
             getUserShortLinksErr: this.errorService.getErr(errCode)
           });
         });
-      return;
     });
+  }
+
+  private getPagedShortLinksFromURLs(
+    urls: Url[],
+    offset: number,
+    pageSize: number
+  ): IPagedShortLinks {
+    // TODO(issue#673): support pagination for user created Short Links in API.
+    return {
+      shortLinks: urls.slice(offset, offset + pageSize),
+      totalCount: urls.length
+    };
   }
 }

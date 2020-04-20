@@ -1,5 +1,4 @@
 import { IErr } from '../entity/Err';
-import { GraphQlError } from '../graphql/error';
 
 export enum Err {
   ReCaptchaNotReady = 'reCaptchaNotReady',
@@ -67,23 +66,5 @@ export class ErrorService {
       default:
         return unknownErr;
     }
-  }
-
-  getGqlQueryErrorCodes(errors: any): string[] {
-    const { networkError, graphQLErrors } = errors;
-    if (networkError) {
-      return [Err.NetworkError];
-    }
-    if (!graphQLErrors) {
-      return [];
-    }
-    return graphQLErrors.map(this.gqlErrorToCode);
-  }
-
-  private gqlErrorToCode(graphQLError: GraphQlError): string {
-    if (graphQLError.message === 'token expired') {
-      return Err.Unauthenticated;
-    }
-    return Err.Unknown;
   }
 }
