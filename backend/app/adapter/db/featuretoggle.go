@@ -11,10 +11,12 @@ import (
 
 var _ repository.FeatureToggle = (*FeatureToggleSQL)(nil)
 
+// FeatureToggleSQL accesses feature toggle information in feature_toggle table through SQL.
 type FeatureToggleSQL struct {
 	db *sql.DB
 }
 
+// FindToggleByID fetches feature toggle from the database given toggle id.
 func (f FeatureToggleSQL) FindToggleByID(id string) (entity.Toggle, error) {
 	query := fmt.Sprintf(`
 SELECT "%s","%s" 
@@ -33,6 +35,7 @@ WHERE "%s"=$1;`,
 	return toggle, err
 }
 
+// NewFeatureToggleSQL create FeatureToggleSQL repository.
 func NewFeatureToggleSQL(db *sql.DB) FeatureToggleSQL {
 	return FeatureToggleSQL{db: db}
 }
