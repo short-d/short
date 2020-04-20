@@ -5,17 +5,17 @@ package dep
 import (
 	"database/sql"
 
-	"github.com/short-d/app/modern/mdanalytics"
-	"github.com/short-d/app/modern/mdgeo"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
+	"github.com/short-d/app/modern/mdanalytics"
 	"github.com/short-d/app/modern/mdcli"
 	"github.com/short-d/app/modern/mddb"
 	"github.com/short-d/app/modern/mdenv"
+	"github.com/short-d/app/modern/mdgeo"
 	"github.com/short-d/app/modern/mdhttp"
 	"github.com/short-d/app/modern/mdlogger"
 	"github.com/short-d/app/modern/mdmetrics"
+	"github.com/short-d/app/modern/mdnetwork"
 	"github.com/short-d/app/modern/mdrequest"
 	"github.com/short-d/app/modern/mdrouting"
 	"github.com/short-d/app/modern/mdruntime"
@@ -50,12 +50,14 @@ var observabilitySet = wire.NewSet(
 	wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)),
 	wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)),
 	wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)),
+	wire.Bind(new(fw.Network), new(mdnetwork.Proxy)),
 
 	provider.NewDataDogEntryRepo,
 	provider.NewLogger,
 	mdtracer.NewLocal,
 	provider.NewDataDogMetrics,
 	provider.NewSegment,
+	mdnetwork.NewProxy,
 	instrumentation.NewFactory,
 )
 
