@@ -33,7 +33,7 @@ WHERE "%s"=$1;`,
 	lastViewedAt := time.Time{}
 	err := row.Scan(&lastViewedAt)
 	if errors.Is(err, sql.ErrNoRows) {
-		return lastViewedAt, repository.ErrEntryNotFound("user does not exist")
+		return lastViewedAt, repository.ErrEntryNotFound("user not found")
 	}
 
 	return lastViewedAt.UTC(), err
