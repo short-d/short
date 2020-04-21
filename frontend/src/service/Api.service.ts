@@ -4,19 +4,15 @@ import { EnvService } from './Env.service';
 import { GraphQLService, IGraphQLError } from './GraphQL.service';
 import { Url } from '../entity/Url';
 
-export interface IApiService {
-  invokeGetUserShortLinksApi(offset: number, pageSize: number): Promise<Url[]>;
+interface IGraphQLSchemaQuery {
+  authQuery: IGraphQLSchemaAuthQuery;
 }
 
-interface IGraphQLApiQuery {
-  authQuery: IGraphQLApiAuthQuery;
+interface IGraphQLSchemaAuthQuery {
+  URLs?: IGraphQLSchemaURL[];
 }
 
-interface IGraphQLApiAuthQuery {
-  URLs?: IGraphQLApiURL[];
-}
-
-interface IGraphQLApiURL {
+interface IGraphQLSchemaURL {
   alias: string;
   originalURL: string;
 }
@@ -32,7 +28,7 @@ const GET_USER_SHORT_LINKS_QUERY = `
   }
 `;
 
-export class GraphQLApiService implements IApiService {
+export class ApiService {
   private graphQLBaseURL: string;
 
   constructor(
@@ -49,13 +45,13 @@ export class GraphQLApiService implements IApiService {
   invokeGetUserShortLinksApi(offset: number, pageSize: number): Promise<Url[]> {
     return new Promise((resolve, reject) => {
       this.graphQLService
-        .query<IGraphQLApiQuery>(this.graphQLBaseURL, {
+        .query<IGraphQLSchemaQuery>(this.graphQLBaseURL, {
           query: GET_USER_SHORT_LINKS_QUERY,
           variables: { authToken: this.authService.getAuthToken() }
         })
-        .then((res: IGraphQLApiQuery) => {
+        .then((res: IGraphQLSchemaQuery) => {
           const { URLs } = res.authQuery;
-          resolve(URLs!.map(this.getUrlFromGraphQLApiUrl));
+          resolve(URLs!.map(this.getUrlFromGraphQLApiURL));
         })
         .catch(err => {
           const errCodes = this.getGraphQLQueryErrorCodes(err);
@@ -65,7 +61,7 @@ export class GraphQLApiService implements IApiService {
     });
   }
 
-  private getUrlFromGraphQLApiUrl(url: IGraphQLApiURL): Url {
+  private getUrlFromGraphQLApiURL(url: IGraphQLSchemaURL): Url {
     return {
       originalUrl: url.originalURL,
       alias: url.alias
