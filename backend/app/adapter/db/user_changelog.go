@@ -66,7 +66,7 @@ WHERE %s=$2;
 	}
 
 	if rowsUpdated == 0 {
-		return time.Time{}, repository.ErrEntryNotFound("user does not exist")
+		return time.Time{}, repository.ErrEntryNotFound("user not found")
 	}
 
 	return currentTime, nil

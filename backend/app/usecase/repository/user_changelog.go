@@ -6,7 +6,7 @@ import (
 	"github.com/short-d/short/app/entity"
 )
 
-// ErrEntryNotFound represents entry unavailable error
+// ErrEntryNotFound represents no entry found in the repository error
 type ErrEntryNotFound string
 
 func (e ErrEntryNotFound) Error() string {
