@@ -32,6 +32,10 @@ WHERE "%s"=$1;`,
 	row := u.db.QueryRow(statement, user.Email)
 	lastViewedAt := time.Time{}
 	err := row.Scan(&lastViewedAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return lastViewedAt, repository.ErrEntryNotFound("user not found")
+	}
+
 	return lastViewedAt.UTC(), err
 }
 
@@ -62,7 +66,7 @@ WHERE %s=$2;
 	}
 
 	if rowsUpdated == 0 {
-		return time.Time{}, errors.New("sql: no rows updated")
+		return time.Time{}, repository.ErrEntryNotFound("user not found")
 	}
 
 	return currentTime, nil
