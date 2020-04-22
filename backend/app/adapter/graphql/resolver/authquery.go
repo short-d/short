@@ -41,13 +41,13 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 
 // ChangeLog retrieves full ChangeLog from persistent storage
 func (v AuthQuery) ChangeLog() (ChangeLog, error) {
-	user, err := viewer(v.authToken, v.authenticator)
+	_, err := viewer(v.authToken, v.authenticator)
 	if err != nil {
 		return newChangeLog([]entity.Change{}, nil), ErrInvalidAuthToken{}
 	}
 
 	changeLog, err := v.changeLog.GetChangeLog()
-	lastViewedAt := v.changeLog.GetLastViewedAt(user)
+	lastViewedAt := v.changeLog.GetLastViewedAt()
 	return newChangeLog(changeLog, lastViewedAt), err
 }
 
