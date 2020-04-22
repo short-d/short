@@ -1,7 +1,7 @@
 import { Url } from '../entity/Url';
 import { Err, ErrorService } from './Error.service';
 import { AuthService } from './Auth.service';
-import { ApiService } from './Api.service';
+import { ShortGraphQLApiService } from './ShortGraphQLApiService';
 
 export interface IPagedShortLinks {
   shortLinks: Url[];
@@ -10,7 +10,7 @@ export interface IPagedShortLinks {
 
 export class ShortLinkService {
   constructor(
-    private apiService: ApiService,
+    private shortGraphQLApiService: ShortGraphQLApiService,
     private authService: AuthService,
     private errorService: ErrorService
   ) {}
@@ -21,12 +21,12 @@ export class ShortLinkService {
   ): Promise<IPagedShortLinks> {
     return new Promise((resolve, reject) => {
       // TODO(issue#673): support pagination for user created Short Links in API.
-      this.apiService
-        .invokeGetUserShortLinksApi(offset, pageSize)
-        .then(URLs => {
+      this.shortGraphQLApiService
+        .getUserShortLinks(offset, pageSize)
+        .then((URLs: Url[]) => {
           resolve(this.getPagedShortLinks(URLs, offset, pageSize));
         })
-        .catch(errCode => {
+        .catch((errCode: Err) => {
           if (errCode === Err.Unauthenticated) {
             reject({ authenticationErr: 'User is not authenticated' });
             return;
