@@ -149,7 +149,7 @@ func NewInstrumentation(logger fw.Logger,
 		longLinkRetrievalFailedCh <- struct{}{}
 		featureToggleRetrievalSucceedCh <- struct{}{}
 		featureToggleRetrievalFailedCh <- struct{}{}
-		defer close(ctxCh)
+		close(ctxCh)
 	}()
 	return ins
 }
