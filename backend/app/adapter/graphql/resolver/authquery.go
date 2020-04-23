@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/short-d/short/app/adapter/graphql/scalar"
+	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/auth"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/url"
@@ -40,6 +41,11 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 
 // ChangeLog retrieves full ChangeLog from persistent storage
 func (v AuthQuery) ChangeLog() (ChangeLog, error) {
+	_, err := viewer(v.authToken, v.authenticator)
+	if err != nil {
+		return newChangeLog([]entity.Change{}, nil), ErrInvalidAuthToken{}
+	}
+
 	changeLog, err := v.changeLog.GetChangeLog()
 	lastViewedAt := v.changeLog.GetLastViewedAt()
 	return newChangeLog(changeLog, lastViewedAt), err
@@ -49,7 +55,7 @@ func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 func (v AuthQuery) URLs() ([]URL, error) {
 	user, err := viewer(v.authToken, v.authenticator)
 	if err != nil {
-		return []URL{}, err
+		return []URL{}, ErrInvalidAuthToken{}
 	}
 
 	urls, err := v.urlRetriever.GetURLsByUser(user)
