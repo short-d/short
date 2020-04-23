@@ -1,7 +1,7 @@
 import { Url } from '../entity/Url';
 import { Err, ErrorService } from './Error.service';
 import { AuthService } from './Auth.service';
-import { ShortGraphQLApiService } from './ShortGraphQLApiService';
+import { ShortGraphQLApi } from './ShortGraphQL.api';
 
 export interface IPagedShortLinks {
   shortLinks: Url[];
@@ -10,7 +10,7 @@ export interface IPagedShortLinks {
 
 export class ShortLinkService {
   constructor(
-    private shortGraphQLApiService: ShortGraphQLApiService,
+    private shortGraphQLApi: ShortGraphQLApi,
     private authService: AuthService,
     private errorService: ErrorService
   ) {}
@@ -21,7 +21,7 @@ export class ShortLinkService {
   ): Promise<IPagedShortLinks> {
     return new Promise((resolve, reject) => {
       // TODO(issue#673): support pagination for user created Short Links in API.
-      this.shortGraphQLApiService
+      this.shortGraphQLApi
         .getUserShortLinks(offset, pageSize)
         .then((URLs: Url[]) => {
           resolve(this.getPagedShortLinks(URLs, offset, pageSize));
