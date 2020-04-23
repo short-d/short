@@ -97,14 +97,9 @@ func FeatureHandle(
 
 		body, err := json.Marshal(isEnable)
 		if err != nil {
-			logger.Error(err)
 			return
 		}
 
-		_, err = w.Write(body)
-		if err != nil {
-			logger.Error(err)
-			return
-		}
+		w.Write(body)
 	}
 }
