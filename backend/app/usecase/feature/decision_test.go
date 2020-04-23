@@ -58,12 +58,15 @@ func TestDecision_IsFeatureEnable(t *testing.T) {
 			timer := mdtest.NewTimerFake(time.Now())
 			metrics := mdtest.NewMetricsFake()
 			analytics := mdtest.NewAnalyticsFake()
-			ctx := fw.ExecutionContext{}
-			ins := instrumentation.NewInstrumentation(&logger, &tracer, timer, metrics, analytics, ctx)
+			ctxCh := make(chan fw.ExecutionContext)
+			ins := instrumentation.NewInstrumentation(&logger, &tracer, timer, metrics, analytics, ctxCh)
 
-			decision := factory.NewDecision(ins)
-			gotIsEnabled := decision.IsFeatureEnable(testCase.featureID)
-			mdtest.Equal(t, testCase.expectedIsEnabled, gotIsEnabled)
+			go func() {
+				decision := factory.NewDecision(ins)
+				gotIsEnabled := decision.IsFeatureEnable(testCase.featureID)
+				mdtest.Equal(t, testCase.expectedIsEnabled, gotIsEnabled)
+			}()
+			ctxCh <- fw.ExecutionContext{}
 		})
 	}
 }

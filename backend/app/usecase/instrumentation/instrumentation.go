@@ -94,6 +94,15 @@ func (i Instrumentation) MadeFeatureDecision(
 	}()
 }
 
+func (i Instrumentation) Done() {
+	close(i.redirectingAliasToLongLinkCh)
+	close(i.redirectedAliasToLongLinkCh)
+	close(i.longLinkRetrievalSucceedCh)
+	close(i.longLinkRetrievalFailedCh)
+	close(i.featureToggleRetrievalSucceedCh)
+	close(i.featureToggleRetrievalFailedCh)
+}
+
 func (i Instrumentation) getUserID(user *entity.User) string {
 	if user == nil {
 		return i.ctx.RequestID
@@ -109,15 +118,6 @@ func NewInstrumentation(logger fw.Logger,
 	analytics fw.Analytics,
 	ctxCh chan fw.ExecutionContext,
 ) Instrumentation {
-	ins := Instrumentation{
-		logger:    logger,
-		tracer:    tracer,
-		timer:     timer,
-		metrics:   metrics,
-		analytics: analytics,
-		ctxCh:     ctxCh,
-	}
-
 	redirectingAliasToLongLinkCh := make(chan struct{})
 	redirectedAliasToLongLinkCh := make(chan struct{})
 	longLinkRetrievalSucceedCh := make(chan struct{})
@@ -125,18 +125,7 @@ func NewInstrumentation(logger fw.Logger,
 	featureToggleRetrievalSucceedCh := make(chan struct{})
 	featureToggleRetrievalFailedCh := make(chan struct{})
 
-	go func() {
-		ctx := <-ctxCh
-		ins.ctx = ctx
-		redirectingAliasToLongLinkCh <- struct{}{}
-		redirectedAliasToLongLinkCh <- struct{}{}
-		longLinkRetrievalSucceedCh <- struct{}{}
-		longLinkRetrievalFailedCh <- struct{}{}
-		featureToggleRetrievalSucceedCh <- struct{}{}
-		featureToggleRetrievalFailedCh <- struct{}{}
-		defer close(ctxCh)
-	}()
-	return Instrumentation{
+	ins := Instrumentation{
 		logger:                          logger,
 		tracer:                          tracer,
 		timer:                           timer,
@@ -150,4 +139,16 @@ func NewInstrumentation(logger fw.Logger,
 		featureToggleRetrievalSucceedCh: featureToggleRetrievalSucceedCh,
 		featureToggleRetrievalFailedCh:  featureToggleRetrievalFailedCh,
 	}
+	go func() {
+		ctx := <-ctxCh
+		ins.ctx = ctx
+		redirectingAliasToLongLinkCh <- struct{}{}
+		redirectedAliasToLongLinkCh <- struct{}{}
+		longLinkRetrievalSucceedCh <- struct{}{}
+		longLinkRetrievalFailedCh <- struct{}{}
+		featureToggleRetrievalSucceedCh <- struct{}{}
+		featureToggleRetrievalFailedCh <- struct{}{}
+		defer close(ctxCh)
+	}()
+	return ins
 }
