@@ -1,19 +1,19 @@
 import { IFeatureDecisionService } from './FeatureDecision.service';
 
 export class StaticConfigDecisionService implements IFeatureDecisionService {
-  includeViewChangeLogButton(): boolean {
-    return false;
+  includeViewChangeLogButton(): Promise<boolean> {
+    return Promise.resolve(false);
   }
-  includeSearchBar(): boolean {
-    return false;
+  includeSearchBar(): Promise<boolean> {
+    return Promise.resolve(false);
   }
-  includeGithubSignButton(): boolean {
-    return false;
+  includeGithubSignButton(): Promise<boolean> {
+    return Promise.resolve(false);
   }
-  includeGoogleSignButton(): boolean {
-    return true;
+  includeGoogleSignButton(): Promise<boolean> {
+    return Promise.resolve(true);
   }
-  includeFacebookSignButton(): boolean {
-    return true;
+  includeFacebookSignButton(): Promise<boolean> {
+    return Promise.resolve(true);
   }
 }

@@ -1,7 +1,7 @@
 export interface IFeatureDecisionService {
-  includeViewChangeLogButton(): boolean;
-  includeSearchBar(): boolean;
-  includeGithubSignButton(): boolean;
-  includeGoogleSignButton(): boolean;
-  includeFacebookSignButton(): boolean;
+  includeViewChangeLogButton(): Promise<boolean>;
+  includeSearchBar(): Promise<boolean>;
+  includeGithubSignButton(): Promise<boolean>;
+  includeGoogleSignButton(): Promise<boolean>;
+  includeFacebookSignButton(): Promise<boolean>;
 }
