@@ -56,7 +56,7 @@ func (i Instrumentation) FeatureToggleRetrievalSucceed() {
 	}()
 }
 
-// FeatureToggleRetrievalSucceed tracks the failures when retrieving the status
+// FeatureToggleRetrievalFailed tracks the failures when retrieving the status
 // of the feature toggle.
 func (i Instrumentation) FeatureToggleRetrievalFailed(err error) {
 	go func() {
