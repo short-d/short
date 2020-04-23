@@ -55,47 +55,42 @@ export class UIFactory {
   }
 
   public createViewChangeLogButton(props: any): ReactElement {
-    if (!this.featureDecisionService.includeViewChangeLogButton()) {
-      return <div />;
-    }
-    return <ViewChangeLogButton onClick={props.onClick} />;
+    const decision = this.featureDecisionService.includeViewChangeLogButton();
+    const ToggledComponent = withFeatureToggle(ViewChangeLogButton, decision);
+    return <ToggledComponent onClick={props.onClick} />;
   }
 
   public createSearchBar(props: any): ReactElement {
-    if (!this.featureDecisionService.includeSearchBar()) {
-      return <div />;
-    }
-    return <SearchBar {...props} />;
+    const decision = this.featureDecisionService.includeSearchBar();
+    const ToggledComponent = withFeatureToggle(SearchBar, decision);
+    return <ToggledComponent {...props} />;
   }
 
   public createGoogleSignInButton(): ReactElement {
-    if (!this.featureDecisionService.includeGoogleSignButton()) {
-      return <div />;
-    }
+    const decision = this.featureDecisionService.includeGoogleSignButton();
+    const ToggledComponent = withFeatureToggle(GoogleSignInButton, decision);
     return (
-      <GoogleSignInButton
+      <ToggledComponent
         googleSignInLink={this.authService.googleSignInLink()}
       />
     );
   }
 
   public createGithubSignInButton(): ReactElement {
-    if (!this.featureDecisionService.includeGithubSignButton()) {
-      return <div />;
-    }
+    const decision = this.featureDecisionService.includeGithubSignButton();
+    const ToggledComponent = withFeatureToggle(GithubSignInButton, decision);
     return (
-      <GithubSignInButton
+      <ToggledComponent
         githubSignInLink={this.authService.githubSignInLink()}
       />
     );
   }
 
   public createFacebookSignInButton(): ReactElement {
-    if (!this.featureDecisionService.includeFacebookSignButton()) {
-      return <div />;
-    }
+    const decision = this.featureDecisionService.includeFacebookSignButton();
+    const ToggledComponent = withFeatureToggle(FacebookSignInButton, decision);
     return (
-      <FacebookSignInButton
+      <ToggledComponent
         facebookSignInLink={this.authService.facebookSignInLink()}
       />
     );
@@ -104,4 +99,48 @@ export class UIFactory {
   public createApp(): ReactElement {
     return <App uiFactory={this} urlService={this.urlService} />;
   }
+}
+
+function withFeatureToggle(
+  WrappedComponent: React.ComponentType<any>,
+  featureDecision: Promise<boolean>
+) {
+  interface IState {
+    isFeatureEnabled: boolean;
+  }
+
+  return class extends React.Component<any, IState> {
+    private isComponentMounted: boolean;
+
+    constructor(props: any) {
+      super(props);
+      this.state = {
+        isFeatureEnabled: false
+      };
+      this.isComponentMounted = false;
+    }
+
+    componentDidMount(): void {
+      this.isComponentMounted = true;
+
+      featureDecision.then(decision => {
+        if (!this.isComponentMounted) {
+          return;
+        }
+        this.setState({ isFeatureEnabled: decision });
+      });
+    }
+
+    componentWillUnmount(): void {
+      this.isComponentMounted = false;
+    }
+
+    render() {
+      const { isFeatureEnabled } = this.state;
+      if (!isFeatureEnabled) {
+        return <div />;
+      }
+      return <WrappedComponent {...this.props} />;
+    }
+  };
 }
