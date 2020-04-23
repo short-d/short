@@ -16,8 +16,8 @@ import { ChangeLogService } from './service/ChangeLog.service';
 import { ClipboardServiceFactory } from './service/clipboardService/Clipboard.service.factory';
 import { GraphQLService } from './service/GraphQL.service';
 import { FetchHTTPService } from './service/HTTP.service';
-import { FeatureToggleService } from './service/FeatureToggle.service';
 import { ShortHTTPApi } from './service/ShortHTTP.api';
+import { DynamicDecisionService } from './service/feature-decision/DynamicDecision.service';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -43,7 +43,7 @@ export function initUIFactory(
   const errorService = new ErrorService();
   const httpService = new FetchHTTPService();
   const shortHTTPApi = new ShortHTTPApi(httpService, envService);
-  const featureToggleService = new FeatureToggleService(shortHTTPApi);
+  const dynamicDecisionService = new DynamicDecisionService(shortHTTPApi);
 
   const graphQLService = new GraphQLService(httpService);
   const urlService = new UrlService(
@@ -73,7 +73,7 @@ export function initUIFactory(
     searchService,
     changeLogService,
     store,
-    featureToggleService
+    dynamicDecisionService
   );
 }
 

@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { App } from './App';
-import { IFeatureDecisionService } from '../service/FeatureDecision.service';
+import { IFeatureDecisionService } from '../service/feature-decision/FeatureDecision.service';
 import { Home } from './pages/Home';
 import H from 'history';
 import { AuthService } from '../service/Auth.service';

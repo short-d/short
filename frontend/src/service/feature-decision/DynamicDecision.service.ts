@@ -1,7 +1,7 @@
 import { IFeatureDecisionService } from './FeatureDecision.service';
-import { ShortHTTPApi } from './ShortHTTP.api';
+import { ShortHTTPApi } from '../ShortHTTP.api';
 
-export class FeatureToggleService implements IFeatureDecisionService {
+export class DynamicDecisionService implements IFeatureDecisionService {
   constructor(private shortHTTPApi: ShortHTTPApi) {}
 
   includeFacebookSignButton(): Promise<boolean> {
