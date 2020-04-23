@@ -94,6 +94,7 @@ func (i Instrumentation) MadeFeatureDecision(
 	}()
 }
 
+// Done closes all the channels to prevent memory leak.
 func (i Instrumentation) Done() {
 	close(i.redirectingAliasToLongLinkCh)
 	close(i.redirectedAliasToLongLinkCh)
