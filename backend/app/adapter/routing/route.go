@@ -3,6 +3,8 @@ package routing
 import (
 	netURL "net/url"
 
+	"github.com/short-d/short/app/usecase/feature"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
@@ -30,6 +32,7 @@ func NewShort(
 	githubAPI github.API,
 	facebookAPI facebook.API,
 	googleAPI google.API,
+	featureDecisionFactory feature.DecisionFactory,
 	authenticator auth.Authenticator,
 	accountProvider account.Provider,
 ) []fw.Route {
@@ -116,6 +119,11 @@ func NewShort(
 				timer,
 				*frontendURL,
 			),
+		},
+		{
+			Method: "GET",
+			Path:   "/features/:featureID",
+			Handle: FeatureHandle(instrumentationFactory, featureDecisionFactory),
 		},
 	}
 }
