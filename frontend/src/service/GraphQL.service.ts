@@ -67,7 +67,7 @@ export class GraphQLService {
         reject: (err: IGraphQLRequestError) => void
       ) => {
         this.httpService
-          .postJSON(endpoint, query)
+          .postJSON<IGraphQLResponse<Data>>(endpoint, query)
           .then((res: IGraphQLResponse<Data>) => {
             if (!res) {
               reject({
