@@ -6,7 +6,7 @@ import (
 )
 
 // Decision determines whether a feature should be turned on or off under
-// certain situations.
+// certain conditions.
 type Decision struct {
 	instrumentation   instrumentation.Instrumentation
 	featureToggleRepo repository.FeatureToggle
