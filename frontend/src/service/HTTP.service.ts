@@ -1,9 +1,10 @@
 export interface IHTTPService {
-  postJSON(URL: string, body: any): Promise<any>;
+  postJSON<Data>(URL: string, body: any): Promise<Data>;
+  get<Data>(URL: string): Promise<Data>;
 }
 
 export class FetchHTTPService implements IHTTPService {
-  postJSON(url: string, body: any): Promise<any> {
+  postJSON<Data>(url: string, body: any): Promise<Data> {
     return fetch(url, {
       method: 'post',
       headers: {
@@ -11,5 +12,9 @@ export class FetchHTTPService implements IHTTPService {
       },
       body: JSON.stringify(body)
     }).then(response => response.json());
+  }
+
+  get<Data>(url: string): Promise<Data> {
+    return fetch(url, { method: 'get' }).then(response => response.json());
   }
 }
