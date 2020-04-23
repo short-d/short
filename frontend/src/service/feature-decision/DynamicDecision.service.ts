@@ -5,7 +5,7 @@ export class DynamicDecisionService implements IFeatureDecisionService {
   constructor(private shortHTTPApi: ShortHTTPApi) {}
 
   includeFacebookSignButton(): Promise<boolean> {
-    return this.shortHTTPApi.getFeatureToggle('feature-sign-in');
+    return this.shortHTTPApi.getFeatureToggle('facebook-sign-in');
   }
 
   includeGithubSignButton(): Promise<boolean> {
