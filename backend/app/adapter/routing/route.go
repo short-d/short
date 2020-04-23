@@ -3,8 +3,6 @@ package routing
 import (
 	netURL "net/url"
 
-	"github.com/short-d/short/app/usecase/feature"
-
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
@@ -12,6 +10,7 @@ import (
 	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/feature"
 	"github.com/short-d/short/app/usecase/sso"
 	"github.com/short-d/short/app/usecase/url"
 )
