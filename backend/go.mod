@@ -22,6 +22,6 @@ require (
 )
 
 // Uncomment the following line when testing app framework
-replace github.com/short-d/app => ../../app
+// replace github.com/short-d/app => ../../app
 
 // replace github.com/short-d/kgs => ../../kgs
