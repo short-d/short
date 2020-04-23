@@ -33,6 +33,8 @@ import (
 	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/changelog"
+	"github.com/short-d/short/app/usecase/feature"
+	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/url"
@@ -131,11 +133,13 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	googleIdentityProvider := provider.NewGoogleIdentityProvider(http, googleClientID, googleClientSecret, googleRedirectURI)
 	googleAccount := google.NewAccount(http)
 	googleAPI := google.NewAPI(googleIdentityProvider, googleAccount)
+	featureToggleSQL := db.NewFeatureToggleSQL(sqlDB)
+	decisionFactory := feature.NewDecisionFactory(featureToggleSQL)
 	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	accountProvider := account.NewProvider(userSQL, timer)
-	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, authenticator, accountProvider)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, decisionFactory, authenticator, accountProvider)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service, nil
@@ -154,3 +158,5 @@ var facebookAPISet = wire.NewSet(provider.NewFacebookIdentityProvider, facebook.
 var googleAPISet = wire.NewSet(provider.NewGoogleIdentityProvider, google.NewAccount, google.NewAPI)
 
 var keyGenSet = wire.NewSet(wire.Bind(new(service.KeyFetcher), new(kgs.RPC)), provider.NewKgsRPC, provider.NewKeyGenerator)
+
+var featureDecisionSet = wire.NewSet(wire.Bind(new(repository.FeatureToggle), new(db.FeatureToggleSQL)), db.NewFeatureToggleSQL, feature.NewDecisionFactory)

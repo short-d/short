@@ -10,6 +10,7 @@ import (
 	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/feature"
 	"github.com/short-d/short/app/usecase/sso"
 	"github.com/short-d/short/app/usecase/url"
 )
@@ -30,6 +31,7 @@ func NewShort(
 	githubAPI github.API,
 	facebookAPI facebook.API,
 	googleAPI google.API,
+	featureDecisionFactory feature.DecisionFactory,
 	authenticator auth.Authenticator,
 	accountProvider account.Provider,
 ) []fw.Route {
@@ -116,6 +118,11 @@ func NewShort(
 				timer,
 				*frontendURL,
 			),
+		},
+		{
+			Method: "GET",
+			Path:   "/features/:featureID",
+			Handle: FeatureHandle(instrumentationFactory, featureDecisionFactory),
 		},
 	}
 }

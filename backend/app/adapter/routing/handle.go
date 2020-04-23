@@ -1,12 +1,14 @@
 package routing
 
 import (
+	"encoding/json"
 	"net/http"
 	netURL "net/url"
 
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/feature"
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/sso"
 	"github.com/short-d/short/app/usecase/url"
@@ -77,5 +79,26 @@ func NewSSOSignInCallback(
 
 		webFrontendURL = setToken(webFrontendURL, authToken)
 		http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
+	}
+}
+
+// FeatureHandle retrieves the status of feature toggle.
+func FeatureHandle(
+	instrumentationFactory request.InstrumentationFactory,
+	featureDecisionFactory feature.DecisionFactory,
+) fw.Handle {
+	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
+		i := instrumentationFactory.NewHTTP(r)
+		featureID := params["featureID"]
+
+		decision := featureDecisionFactory.NewDecision(i)
+		isEnable := decision.IsFeatureEnable(featureID)
+
+		body, err := json.Marshal(isEnable)
+		if err != nil {
+			return
+		}
+
+		w.Write(body)
 	}
 }
