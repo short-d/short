@@ -1,6 +1,8 @@
 package instrumentation
 
 import (
+	"fmt"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/entity"
 )
@@ -43,6 +45,34 @@ func (i Instrumentation) LongLinkRetrievalFailed(err error) {
 	go func() {
 		i.logger.Error(err)
 		i.metrics.Count("long-link-retrieval-failed", 1, 1, i.ctx)
+	}()
+}
+
+func (i Instrumentation) FeatureToggleRetrievalSucceed() {
+	go func() {
+		i.metrics.Count("feature-toggle-retrieval-succeed", 1, 1, i.ctx)
+	}()
+}
+
+func (i Instrumentation) FeatureToggleRetrievalFailed(err error) {
+	go func() {
+		i.logger.Error(err)
+		i.metrics.Count("feature-toggle-retrieval-failed", 1, 1, i.ctx)
+	}()
+}
+
+func (i Instrumentation) MadeFeatureDecision(
+	featureID string,
+	isEnabled bool,
+) {
+	go func() {
+		userID := i.getUserID(nil)
+		isEnabledStr := fmt.Sprintf("%v", isEnabled)
+		props := map[string]string{
+			"feature-id": featureID,
+			"is-enabled": isEnabledStr,
+		}
+		i.analytics.Track("MadeFeatureDecision", props, userID, i.ctx)
 	}()
 }
 
