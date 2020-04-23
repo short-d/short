@@ -48,12 +48,16 @@ func (i Instrumentation) LongLinkRetrievalFailed(err error) {
 	}()
 }
 
+// FeatureToggleRetrievalSucceed tracks the successes when retrieving the status
+// of the feature toggle.
 func (i Instrumentation) FeatureToggleRetrievalSucceed() {
 	go func() {
 		i.metrics.Count("feature-toggle-retrieval-succeed", 1, 1, i.ctx)
 	}()
 }
 
+// FeatureToggleRetrievalSucceed tracks the failures when retrieving the status
+// of the feature toggle.
 func (i Instrumentation) FeatureToggleRetrievalFailed(err error) {
 	go func() {
 		i.logger.Error(err)
@@ -61,6 +65,7 @@ func (i Instrumentation) FeatureToggleRetrievalFailed(err error) {
 	}()
 }
 
+// MadeFeatureDecision tracks MadeFeatureDecision event.
 func (i Instrumentation) MadeFeatureDecision(
 	featureID string,
 	isEnabled bool,
