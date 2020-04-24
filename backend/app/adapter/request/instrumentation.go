@@ -23,21 +23,26 @@ type InstrumentationFactory struct {
 // NewHTTP creates and initializes Instrumentation tied to the given HTTP
 // request.
 func (f InstrumentationFactory) NewHTTP(req *http.Request) instrumentation.Instrumentation {
-	requestID, err := f.keyGen.NewKey()
-	if err != nil {
-		f.logger.Error(err)
-	}
+	ctxCh := make(chan fw.ExecutionContext)
 
-	location, err := f.client.GetLocation(req)
-	if err != nil {
-		f.logger.Error(err)
-	}
+	go func() {
+		requestID, err := f.keyGen.NewKey()
+		if err != nil {
+			f.logger.Error(err)
+		}
 
-	ctx := fw.ExecutionContext{
-		RequestID:      string(requestID),
-		RequestStartAt: f.timer.Now(),
-		Location:       location,
-	}
+		location, err := f.client.GetLocation(req)
+		if err != nil {
+			f.logger.Error(err)
+		}
+
+		ctx := fw.ExecutionContext{
+			RequestID:      string(requestID),
+			RequestStartAt: f.timer.Now(),
+			Location:       location,
+		}
+		ctxCh <- ctx
+	}()
 
 	return instrumentation.NewInstrumentation(
 		f.logger,
@@ -45,7 +50,7 @@ func (f InstrumentationFactory) NewHTTP(req *http.Request) instrumentation.Instr
 		f.timer,
 		f.metrics,
 		f.analytics,
-		ctx,
+		ctxCh,
 	)
 }
 
