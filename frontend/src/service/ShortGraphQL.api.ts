@@ -21,7 +21,7 @@ interface IShortGraphQLURL {
   originalURL: string;
 }
 
-export class ShortGraphQLApiService {
+export class ShortGraphQLApi {
   private baseURL: string;
 
   constructor(
