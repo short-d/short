@@ -21,6 +21,12 @@ import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
 
 export class UIFactory {
+  private ToggledGoogleSignInButton: any;
+  private ToggledGithubSignInButton: any;
+  private ToggledFacebookSignInButton: any;
+  private ToggledSearchBar: any;
+  private ToggledViewChangeLogButton: any;
+
   constructor(
     private authService: AuthService,
     private clipboardService: IClipboardService,
@@ -33,7 +39,34 @@ export class UIFactory {
     private changeLogService: ChangeLogService,
     private store: Store<IAppState>,
     private featureDecisionService: IFeatureDecisionService
-  ) {}
+  ) {
+    const includeGoogleSignInButton = this.featureDecisionService.includeGoogleSignInButton();
+    this.ToggledGoogleSignInButton = withFeatureToggle(
+      GoogleSignInButton,
+      includeGoogleSignInButton
+    );
+
+    const includeGithubSignInButton = this.featureDecisionService.includeGithubSignInButton();
+    this.ToggledGithubSignInButton = withFeatureToggle(
+      GithubSignInButton,
+      includeGithubSignInButton
+    );
+
+    const includeFacebookSignInButton = this.featureDecisionService.includeFacebookSignInButton();
+    this.ToggledFacebookSignInButton = withFeatureToggle(
+      FacebookSignInButton,
+      includeFacebookSignInButton
+    );
+
+    const includeSearchBar = this.featureDecisionService.includeSearchBar();
+    this.ToggledSearchBar = withFeatureToggle(SearchBar, includeSearchBar);
+
+    const includeViewChangeLogButton = this.featureDecisionService.includeViewChangeLogButton();
+    this.ToggledViewChangeLogButton = withFeatureToggle(
+      ViewChangeLogButton,
+      includeViewChangeLogButton
+    );
+  }
 
   public createHomePage(location: H.Location<any>): ReactElement {
     return (
@@ -55,42 +88,32 @@ export class UIFactory {
   }
 
   public createViewChangeLogButton(props: any): ReactElement {
-    const decision = this.featureDecisionService.includeViewChangeLogButton();
-    const ToggledComponent = withFeatureToggle(ViewChangeLogButton, decision);
-    return <ToggledComponent onClick={props.onClick} />;
+    return <this.ToggledViewChangeLogButton onClick={props.onClick} />;
   }
 
   public createSearchBar(props: any): ReactElement {
-    const decision = this.featureDecisionService.includeSearchBar();
-    const ToggledComponent = withFeatureToggle(SearchBar, decision);
-    return <ToggledComponent {...props} />;
+    return <this.ToggledSearchBar {...props} />;
   }
 
   public createGoogleSignInButton(): ReactElement {
-    const decision = this.featureDecisionService.includeGoogleSignButton();
-    const ToggledComponent = withFeatureToggle(GoogleSignInButton, decision);
     return (
-      <ToggledComponent
+      <this.ToggledGoogleSignInButton
         googleSignInLink={this.authService.googleSignInLink()}
       />
     );
   }
 
   public createGithubSignInButton(): ReactElement {
-    const decision = this.featureDecisionService.includeGithubSignButton();
-    const ToggledComponent = withFeatureToggle(GithubSignInButton, decision);
     return (
-      <ToggledComponent
+      <this.ToggledGithubSignInButton
         githubSignInLink={this.authService.githubSignInLink()}
       />
     );
   }
 
   public createFacebookSignInButton(): ReactElement {
-    const decision = this.featureDecisionService.includeFacebookSignButton();
-    const ToggledComponent = withFeatureToggle(FacebookSignInButton, decision);
     return (
-      <ToggledComponent
+      <this.ToggledFacebookSignInButton
         facebookSignInLink={this.authService.facebookSignInLink()}
       />
     );
