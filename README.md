@@ -177,10 +177,7 @@ Create a new Client ID at
    cp backend/.env.dist backend/.env
    ```
 
-1. Update `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`,
-   `RECAPTCHA_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `FACEBOOK_CLIENT_ID`,
-   `FACEBOOK_CLIENT_SECRET`, `FACEBOOK_REDIRECT_URI`, `JWT_SECRET`,
-    with your own configurations.
+1. Update placeholder values with your own configurations.
 
 1. Launch backend server
 
@@ -306,6 +303,7 @@ func InjectGraphQlService(
   jwtSecret provider.JwtSecret,
   bufferSize provider.KeyGenBufferSize,
   kgsRPCConfig provider.KgsRPCConfig,
+  tokenValidDuration provider.TokenValidDuration,
 ) (mdservice.Service, error) {
   wire.Build(
     wire.Bind(new(fw.GraphQlAPI), new(graphql.Short)),

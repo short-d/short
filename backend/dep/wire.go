@@ -4,16 +4,18 @@ package dep
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
+	"github.com/short-d/app/modern/mdanalytics"
 	"github.com/short-d/app/modern/mdcli"
 	"github.com/short-d/app/modern/mddb"
 	"github.com/short-d/app/modern/mdenv"
+	"github.com/short-d/app/modern/mdgeo"
 	"github.com/short-d/app/modern/mdhttp"
-	"github.com/short-d/app/modern/mdio"
 	"github.com/short-d/app/modern/mdlogger"
+	"github.com/short-d/app/modern/mdmetrics"
+	"github.com/short-d/app/modern/mdnetwork"
 	"github.com/short-d/app/modern/mdrequest"
 	"github.com/short-d/app/modern/mdrouting"
 	"github.com/short-d/app/modern/mdruntime"
@@ -26,8 +28,10 @@ import (
 	"github.com/short-d/short/app/adapter/google"
 	"github.com/short-d/short/app/adapter/graphql"
 	"github.com/short-d/short/app/adapter/kgs"
+	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/changelog"
+	"github.com/short-d/short/app/usecase/feature"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/service"
@@ -36,21 +40,27 @@ import (
 	"github.com/short-d/short/dep/provider"
 )
 
-// TODO(issue#640): replace with value from env variable.
-const oneDay = 24 * time.Hour
-const oneWeek = 7 * oneDay
-
 var authSet = wire.NewSet(
 	provider.NewJwtGo,
 
-	wire.Value(provider.TokenValidDuration(oneWeek)),
 	provider.NewAuthenticator,
 )
 
 var observabilitySet = wire.NewSet(
-	wire.Bind(new(fw.Logger), new(mdlogger.Local)),
-	provider.NewLocalLogger,
+	wire.Bind(new(fw.Logger), new(mdlogger.Logger)),
+	wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)),
+	wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)),
+	wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)),
+	wire.Bind(new(fw.Network), new(mdnetwork.Proxy)),
+
+	provider.NewDataDogEntryRepo,
+	provider.NewLogger,
 	mdtracer.NewLocal,
+	provider.NewDataDogMetrics,
+	provider.NewSegment,
+	mdnetwork.NewProxy,
+	request.NewClient,
+	request.NewInstrumentationFactory,
 )
 
 var githubAPISet = wire.NewSet(
@@ -69,6 +79,18 @@ var googleAPISet = wire.NewSet(
 	provider.NewGoogleIdentityProvider,
 	google.NewAccount,
 	google.NewAPI,
+)
+
+var keyGenSet = wire.NewSet(
+	wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
+	provider.NewKgsRPC,
+	provider.NewKeyGenerator,
+)
+
+var featureDecisionSet = wire.NewSet(
+	wire.Bind(new(repository.FeatureToggle), new(db.FeatureToggleSQL)),
+	db.NewFeatureToggleSQL,
+	feature.NewDecisionFactory,
 )
 
 // InjectCommandFactory creates CommandFactory with configured dependencies.
@@ -110,6 +132,7 @@ func InjectEnvironment() fw.Environment {
 // InjectGraphQLService creates GraphQL service with configured dependencies.
 func InjectGraphQLService(
 	name string,
+	serverEnv fw.ServerEnv,
 	prefix provider.LogPrefix,
 	logLevel fw.LogLevel,
 	sqlDB *sql.DB,
@@ -118,9 +141,12 @@ func InjectGraphQLService(
 	jwtSecret provider.JwtSecret,
 	bufferSize provider.KeyGenBufferSize,
 	kgsRPCConfig provider.KgsRPCConfig,
+	tokenValidDuration provider.TokenValidDuration,
+	dataDogAPIKey provider.DataDogAPIKey,
+	segmentAPIKey provider.SegmentAPIKey,
+	ipStackAPIKey provider.IPStackAPIKey,
 ) (mdservice.Service, error) {
 	wire.Build(
-		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
 		wire.Bind(new(fw.GraphQLAPI), new(graphql.Short)),
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
@@ -129,13 +155,12 @@ func InjectGraphQLService(
 		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
 		wire.Bind(new(repository.ChangeLog), new(db.ChangeLogSQL)),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
-		wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
 		authSet,
+		keyGenSet,
 
-		mdio.NewBuildInStdOut,
 		mdruntime.NewBuildIn,
 		mdservice.New,
 		provider.NewGraphGophers,
@@ -146,13 +171,11 @@ func InjectGraphQLService(
 		db.NewChangeLogSQL,
 		db.NewURLSql,
 		db.NewUserURLRelationSQL,
-		provider.NewKeyGenerator,
 		validator.NewLongLink,
 		validator.NewCustomAlias,
 		changelog.NewPersist,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
-		provider.NewKgsRPC,
 		provider.NewReCaptchaService,
 		requester.NewVerifier,
 		graphql.NewShort,
@@ -163,6 +186,7 @@ func InjectGraphQLService(
 // InjectRoutingService creates routing service with configured dependencies.
 func InjectRoutingService(
 	name string,
+	serverEnv fw.ServerEnv,
 	prefix provider.LogPrefix,
 	logLevel fw.LogLevel,
 	sqlDB *sql.DB,
@@ -175,25 +199,32 @@ func InjectRoutingService(
 	googleClientSecret provider.GoogleClientSecret,
 	googleRedirectURI provider.GoogleRedirectURI,
 	jwtSecret provider.JwtSecret,
+	bufferSize provider.KeyGenBufferSize,
+	kgsRPCConfig provider.KgsRPCConfig,
 	webFrontendURL provider.WebFrontendURL,
-) mdservice.Service {
+	tokenValidDuration provider.TokenValidDuration,
+	dataDogAPIKey provider.DataDogAPIKey,
+	segmentAPIKey provider.SegmentAPIKey,
+	ipStackAPIKey provider.IPStackAPIKey,
+) (mdservice.Service, error) {
 	wire.Build(
-		wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
-		wire.Bind(new(repository.User), new(*(db.UserSQL))),
+		wire.Bind(new(repository.User), new(*db.UserSQL)),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 		wire.Bind(new(fw.GraphQlRequest), new(mdrequest.GraphQL)),
+		wire.Bind(new(fw.GeoLocation), new(mdgeo.IPStack)),
 
 		observabilitySet,
 		authSet,
 		githubAPISet,
 		facebookAPISet,
 		googleAPISet,
+		keyGenSet,
+		featureDecisionSet,
 
-		mdio.NewBuildInStdOut,
 		mdruntime.NewBuildIn,
 		mdservice.New,
 		mdrouting.NewBuiltIn,
@@ -201,6 +232,7 @@ func InjectRoutingService(
 		mdrequest.NewHTTP,
 		mdrequest.NewGraphQL,
 		mdtimer.NewTimer,
+		provider.NewIPStack,
 
 		db.NewUserSQL,
 		db.NewURLSql,
@@ -209,5 +241,5 @@ func InjectRoutingService(
 		account.NewProvider,
 		provider.NewShortRoutes,
 	)
-	return mdservice.Service{}
+	return mdservice.Service{}, nil
 }

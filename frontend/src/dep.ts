@@ -1,6 +1,5 @@
 import { UIFactory } from './component/UIFactory';
 import { CaptchaService } from './service/Captcha.service';
-import { StaticConfigDecisionService } from './service/StaticConfigDecision.service';
 import { AuthService } from './service/Auth.service';
 import { QrCodeService } from './service/QrCode.service';
 import { VersionService } from './service/Version.service';
@@ -15,6 +14,11 @@ import { SearchService } from './service/Search.service';
 import { BrowserExtensionFactory } from './service/extensionService/BrowserExtension.factory';
 import { ChangeLogService } from './service/ChangeLog.service';
 import { ClipboardServiceFactory } from './service/clipboardService/Clipboard.service.factory';
+import { GraphQLService } from './service/GraphQL.service';
+import { FetchHTTPService } from './service/HTTP.service';
+import { ShortHTTPApi } from './service/ShortHTTP.api';
+import { DynamicDecisionService } from './service/feature-decision/DynamicDecision.service';
+import { InMemoryCache } from './service/cache/in-memory.cache';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -30,7 +34,6 @@ export function initUIFactory(
 ): UIFactory {
   const cookieService = new CookieService();
   const qrCodeService = new QrCodeService();
-  const staticConfigDecision = new StaticConfigDecisionService();
 
   const routingService = new RoutingService();
   const authService = new AuthService(
@@ -39,11 +42,21 @@ export function initUIFactory(
     routingService
   );
   const errorService = new ErrorService();
+  const httpService = new FetchHTTPService();
+  const shortHTTPApi = new ShortHTTPApi(httpService, envService);
+  const inMemoryCache = new InMemoryCache();
+  const dynamicDecisionService = new DynamicDecisionService(
+    shortHTTPApi,
+    inMemoryCache
+  );
+
+  const graphQLService = new GraphQLService(httpService);
   const urlService = new UrlService(
     authService,
     envService,
     errorService,
-    captchaService
+    captchaService,
+    graphQLService
   );
   const versionService = new VersionService(envService);
   const store = initStore();
@@ -65,7 +78,7 @@ export function initUIFactory(
     searchService,
     changeLogService,
     store,
-    staticConfigDecision
+    dynamicDecisionService
   );
 }
 

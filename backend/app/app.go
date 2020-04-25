@@ -1,6 +1,8 @@
 package app
 
 import (
+	"time"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/dep"
 	"github.com/short-d/short/dep/provider"
@@ -8,6 +10,7 @@ import (
 
 // ServiceConfig represents require parameters for the backend APIs
 type ServiceConfig struct {
+	ServerEnv            string
 	LogPrefix            string
 	LogLevel             fw.LogLevel
 	MigrationRoot        string
@@ -27,6 +30,10 @@ type ServiceConfig struct {
 	KeyGenBufferSize     int
 	KgsHostname          string
 	KgsPort              int
+	AuthTokenLifetime    time.Duration
+	DataDogAPIKey        string
+	SegmentAPIKey        string
+	IPStackAPIKey        string
 }
 
 // Start launches the GraphQL & HTTP APIs
@@ -46,27 +53,42 @@ func Start(
 		panic(err)
 	}
 
+	serverEnv := fw.ServerEnv(config.ServerEnv)
+	kgsBufferSize := provider.KeyGenBufferSize(config.KeyGenBufferSize)
+	kgsRPCConfig := provider.KgsRPCConfig{
+		Hostname: config.KgsHostname,
+		Port:     config.KgsPort,
+	}
+
+	dataDogAPIKey := provider.DataDogAPIKey(config.DataDogAPIKey)
+	segmentAPIKey := provider.SegmentAPIKey(config.SegmentAPIKey)
+	ipStackAPIKey := provider.IPStackAPIKey(config.IPStackAPIKey)
+
 	graphqlAPI, err := dep.InjectGraphQLService(
 		"GraphQL API",
+		serverEnv,
 		provider.LogPrefix(config.LogPrefix),
 		config.LogLevel,
 		db,
 		"/graphql",
 		provider.ReCaptchaSecret(config.RecaptchaSecret),
 		provider.JwtSecret(config.JwtSecret),
-		provider.KeyGenBufferSize(config.KeyGenBufferSize),
-		provider.KgsRPCConfig{
-			Hostname: config.KgsHostname,
-			Port:     config.KgsPort,
-		},
+		kgsBufferSize,
+		kgsRPCConfig,
+		provider.TokenValidDuration(config.AuthTokenLifetime),
+		dataDogAPIKey,
+		segmentAPIKey,
+		ipStackAPIKey,
 	)
 	if err != nil {
 		panic(err)
 	}
+
 	graphqlAPI.Start(config.GraphQLAPIPort)
 
-	httpAPI := dep.InjectRoutingService(
+	httpAPI, err := dep.InjectRoutingService(
 		"Routing API",
+		serverEnv,
 		provider.LogPrefix(config.LogPrefix),
 		config.LogLevel,
 		db,
@@ -79,7 +101,17 @@ func Start(
 		provider.GoogleClientSecret(config.GoogleClientSecret),
 		provider.GoogleRedirectURI(config.GoogleRedirectURI),
 		provider.JwtSecret(config.JwtSecret),
+		kgsBufferSize,
+		kgsRPCConfig,
 		provider.WebFrontendURL(config.WebFrontendURL),
+		provider.TokenValidDuration(config.AuthTokenLifetime),
+		dataDogAPIKey,
+		segmentAPIKey,
+		ipStackAPIKey,
 	)
+	if err != nil {
+		panic(err)
+	}
+
 	httpAPI.StartAndWait(config.HTTPAPIPort)
 }

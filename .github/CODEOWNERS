@@ -10,12 +10,12 @@
 # precedence.
 
 # Backend
-*.go    @alldroll @byliuyang
+*.go    @alldroll @arberiii @byliuyang
 
 # Frontend
 *.ts    @rohithbalaji123 @byliuyang
 *.tsx   @rohithbalaji123 @byliuyang
-*.js    @byliuyang
-*.html  @byliuyang
-*.scss  @byliuyang
-*.png   @byliuyang
+*.js    @rohithbalaji123 @byliuyang
+*.html  @rohithbalaji123 @byliuyang
+*.scss  @rohithbalaji123 @byliuyang
+*.png   @rohithbalaji123 @byliuyang
