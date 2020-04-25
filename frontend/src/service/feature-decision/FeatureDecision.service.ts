@@ -4,4 +4,5 @@ export interface IFeatureDecisionService {
   includeGithubSignInButton(): Promise<boolean>;
   includeGoogleSignInButton(): Promise<boolean>;
   includeFacebookSignInButton(): Promise<boolean>;
+  includeUserShortLinksSection(): Promise<boolean>;
 }

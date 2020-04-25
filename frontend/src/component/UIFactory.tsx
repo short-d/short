@@ -19,6 +19,8 @@ import { SearchBar } from './ui/SearchBar';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
+import { ShortLinkService } from '../service/ShortLink.service';
+import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
 
 export class UIFactory {
   private ToggledGoogleSignInButton: ComponentType<any>;
@@ -26,6 +28,7 @@ export class UIFactory {
   private ToggledFacebookSignInButton: ComponentType<any>;
   private ToggledSearchBar: ComponentType<any>;
   private ToggledViewChangeLogButton: ComponentType<any>;
+  private ToggledUserShortLinksSection: ComponentType<any>;
 
   constructor(
     private authService: AuthService,
@@ -38,7 +41,8 @@ export class UIFactory {
     private searchService: SearchService,
     private changeLogService: ChangeLogService,
     private store: Store<IAppState>,
-    private featureDecisionService: IFeatureDecisionService
+    private featureDecisionService: IFeatureDecisionService,
+    private shortLinkService: ShortLinkService
   ) {
     const includeGoogleSignInButton = this.featureDecisionService.includeGoogleSignInButton();
     this.ToggledGoogleSignInButton = withFeatureToggle(
@@ -66,6 +70,12 @@ export class UIFactory {
       ViewChangeLogButton,
       includeViewChangeLogButton
     );
+
+    const includeUserShortLinksSection = this.featureDecisionService.includeUserShortLinksSection();
+    this.ToggledUserShortLinksSection = withFeatureToggle(
+      UserShortLinksSection,
+      includeUserShortLinksSection
+    );
   }
 
   public createHomePage(location: H.Location<any>): ReactElement {
@@ -81,6 +91,7 @@ export class UIFactory {
         errorService={this.errorService}
         searchService={this.searchService}
         changeLogService={this.changeLogService}
+        shortLinkService={this.shortLinkService}
         store={this.store}
         location={location}
       />
@@ -117,6 +128,10 @@ export class UIFactory {
         facebookSignInLink={this.authService.facebookSignInLink()}
       />
     );
+  }
+
+  public createUserShortLinksSection(props: any): ReactElement {
+    return <this.ToggledUserShortLinksSection {...props} />;
   }
 
   public createApp(): ReactElement {
