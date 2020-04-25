@@ -28,6 +28,10 @@ export class DynamicDecisionService implements IFeatureDecisionService {
     return this.makeCachedDecision('change-log');
   }
 
+  includePublicListingToggle(): Promise<boolean> {
+    return this.makeCachedDecision('public-listing');
+  }
+
   private makeCachedDecision(featureID: string): Promise<boolean> {
     const decision = this.cacheService.get<boolean>(featureID);
     if (decision) {

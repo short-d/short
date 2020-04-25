@@ -22,7 +22,7 @@
     }
   }
 
-  .public-listing-toggle {
+  .creation-toggle {
     display: flex;
     align-items: center;
     justify-content: left;
@@ -34,7 +34,7 @@
     }
   }
 
-  .create-toggles > div:first-child {
+  .creation-toggles > .creation-toggle:first-child {
     border-top: 2px solid #9e9e9e;
   }
 

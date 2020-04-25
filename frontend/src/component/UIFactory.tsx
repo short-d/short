@@ -16,10 +16,10 @@ import { ErrorService } from '../service/Error.service';
 import { UrlService } from '../service/Url.service';
 import { SearchService } from '../service/Search.service';
 import { SearchBar } from './ui/SearchBar';
-import { Toggle } from './ui/Toggle';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
+import { PublicListingToggle } from './pages/shared/PublicListingToggle';
 
 export class UIFactory {
   constructor(
@@ -98,16 +98,12 @@ export class UIFactory {
   }
 
   public createPublicListingToggle(props: any): ReactElement {
-    if (!this.featureDecisionService.includePublicListingToggle()) {
-      return <React.Fragment />;
-    }
+    const decision = this.featureDecisionService.includePublicListingToggle();
+    const ToggledComponent = withFeatureToggle(PublicListingToggle, decision);
     return (
-      <div className={'public-listing-toggle'}>
-        <Toggle onClick={props.onPublicToggleClick}></Toggle>
-        <span className={'toggle-label'}>
-          Share on <span>public feed</span>
-        </span>
-      </div>
+      <ToggledComponent
+        onToggleClick={props.onPublicToggleClick}
+      />
     );
   }
 
