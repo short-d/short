@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/short-d/short/app/adapter/db/table"
 	"github.com/short-d/short/app/entity"
@@ -38,6 +39,7 @@ WHERE "%s"=$1;`,
 	return true, nil
 }
 
+// TODO change to CreateURL
 // Create inserts a new URL into url table.
 func (u *URLSql) Create(url entity.URL) error {
 	statement := fmt.Sprintf(`
@@ -59,6 +61,44 @@ VALUES ($1, $2, $3, $4, $5);`,
 		url.UpdatedAt,
 	)
 	return err
+}
+
+// UpdateURL updates a URL that exists within the URL table and returns the newly updated URL if there is no error found while
+// committing the update.
+func (u *URLSql) UpdateURL(key string, newAlias string, newOriginalURL string, expireAt *time.Time) (entity.URL, error) {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1, "%s"=$2, "%s"=$3
+WHERE "%s"=$4;`,
+		table.URL.TableName,
+		table.URL.ColumnAlias,
+		table.URL.ColumnOriginalURL,
+		table.URL.ColumnExpireAt,
+		key,
+	)
+
+	row := u.db.QueryRow(
+		statement,
+		newAlias,
+		newOriginalURL,
+		*expireAt,
+		key,
+	)
+
+	url := entity.URL{}
+	err := row.Scan(
+		&url.Alias,
+		&url.OriginalURL,
+		&url.ExpireAt,
+		&url.CreatedAt,
+		&url.UpdatedAt,
+	)
+
+	if err != nil {
+		return entity.URL{}, err
+	}
+
+	return url, nil
 }
 
 // GetByAlias finds an URL in url table given alias.

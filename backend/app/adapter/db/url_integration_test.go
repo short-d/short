@@ -175,6 +175,7 @@ func TestURLSql_GetByAlias(t *testing.T) {
 	}
 }
 
+// TODO change to TestURLSql_CreateURL
 func TestURLSql_Create(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
@@ -236,6 +237,123 @@ func TestURLSql_Create(t *testing.T) {
 						return
 					}
 					mdtest.Equal(t, nil, err)
+				},
+			)
+		})
+	}
+}
+
+func TestURLSql_UpdateURL(t *testing.T) {
+	createdAt := mustParseTime(t, "2017-05-01T08:02:16-07:00")
+	now := time.Now()
+
+	testCases := []struct {
+		name           string
+		key            string
+		newAlias       string
+		newOriginalURL string
+		expireAt       *time.Time
+		tableRows      []urlTableRow
+		hasErr         bool
+		expectedURL    entity.URL
+	}{
+		{
+			name: "alias not found",
+			key:  "does_not_exist",
+			tableRows: []urlTableRow{
+				urlTableRow{
+					alias:     "220uFicCJj",
+					longLink:  "https://www.google.com",
+					createdAt: &createdAt,
+				},
+			},
+			hasErr:      true,
+			expectedURL: entity.URL{},
+		},
+		{
+			name: "alias already exists",
+			key:  "220uFicCja",
+			tableRows: []urlTableRow{
+				urlTableRow{
+					alias:     "220uFicCJj",
+					longLink:  "https://www.google.com",
+					createdAt: &createdAt,
+				},
+				urlTableRow{
+					alias:     "efpIZ4OS",
+					longLink:  "https://gmail.com",
+					createdAt: &createdAt,
+				},
+			},
+			hasErr:      true,
+			expectedURL: entity.URL{},
+		},
+		{
+			name:     "valid new alias",
+			key:      "220uFicCJj",
+			newAlias: "GxtKXM9V",
+			tableRows: []urlTableRow{
+				urlTableRow{
+					alias:     "220uFicCJj",
+					longLink:  "https://www.google.com",
+					createdAt: &createdAt,
+				},
+			},
+			hasErr: false,
+			expectedURL: entity.URL{
+				Alias:       "GxtKXM9V",
+				OriginalURL: "https://www.google.com",
+				UpdatedAt:   &now,
+			},
+		},
+		{
+			name:           "valid new long link",
+			key:            "220uFicCJj",
+			newOriginalURL: "https://www.facebook.com",
+			tableRows: []urlTableRow{
+				urlTableRow{
+					alias:     "220uFicCJj",
+					longLink:  "https://www.google.com",
+					createdAt: &createdAt,
+				},
+			},
+			hasErr: false,
+			expectedURL: entity.URL{
+				Alias:       "220uFicCJj",
+				OriginalURL: "https://www.facebook.com",
+				UpdatedAt:   &now,
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertURLTableRows(t, sqlDB, testCase.tableRows)
+					expectedURL := testCase.expectedURL
+
+					urlRepo := db.NewURLSql(sqlDB)
+					url, err := urlRepo.UpdateURL(
+						testCase.key,
+						testCase.newAlias,
+						testCase.newOriginalURL,
+						testCase.expireAt,
+					)
+
+					if testCase.hasErr {
+						mdtest.NotEqual(t, nil, err)
+						return
+					}
+					mdtest.Equal(t, nil, err)
+					mdtest.Equal(t, expectedURL.Alias, url.Alias)
+					mdtest.Equal(t, expectedURL.OriginalURL, url.OriginalURL)
+					mdtest.NotEqual(t, expectedURL.ExpireAt, url.ExpireAt)
+					mdtest.NotEqual(t, expectedURL.UpdatedAt, url.UpdatedAt)
 				},
 			)
 		})
