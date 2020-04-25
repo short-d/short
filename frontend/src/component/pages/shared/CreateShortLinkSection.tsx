@@ -6,9 +6,10 @@ import { Button } from '../../ui/Button';
 import { ShortLinkUsage } from './ShortLinkUsage';
 import { Section } from '../../ui/Section';
 import { Url } from '../../../entity/Url';
-import { Toggle } from '../../ui/Toggle';
+import { UIFactory } from '../../UIFactory';
 
 interface Props {
+  uiFactory: UIFactory;
   longLinkText?: string;
   alias?: string;
   shortLink?: string;
@@ -61,11 +62,10 @@ export class CreateShortLinkSection extends Component<Props> {
           </div>
         </div>
         <div className={'input-error'}>{this.props.inputErr}</div>
-        <div className={'public-listing-toggle'}>
-          <Toggle onClick={this.props.onPublicToggleClick}></Toggle>
-          <span className={'toggle-label'}>
-            Share on <a>public feed</a>
-          </span>
+        <div className={'create-toggles'}>
+          {this.props.uiFactory.createPublicListingToggle({
+            onPublicToggleClick: this.props.onPublicToggleClick
+          })}
         </div>
         {this.props.createdUrl && (
           <div className={'short-link-usage-wrapper'}>

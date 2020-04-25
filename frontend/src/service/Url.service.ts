@@ -198,12 +198,13 @@ export class UrlService {
     link: Url,
     isPublic: boolean = false
   ) {
+    let linkAlias = link.alias === '' ? null : link.alias!;
     return {
       captchaResponse: captchaResponse,
       authToken: this.authService.getAuthToken(),
       urlInput: {
         originalURL: link.originalUrl,
-        customAlias: link.alias === '' ? null : link.alias!
+        customAlias: linkAlias
       },
       isPublic
     };

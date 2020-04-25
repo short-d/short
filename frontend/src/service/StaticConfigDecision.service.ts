@@ -16,4 +16,7 @@ export class StaticConfigDecisionService implements IFeatureDecisionService {
   includeFacebookSignButton(): boolean {
     return true;
   }
+  includePublicListingToggle(): boolean {
+    return true;
+  }
 }

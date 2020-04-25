@@ -16,6 +16,7 @@ import { ErrorService } from '../service/Error.service';
 import { UrlService } from '../service/Url.service';
 import { SearchService } from '../service/Search.service';
 import { SearchBar } from './ui/SearchBar';
+import { Toggle } from './ui/Toggle';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
@@ -98,6 +99,20 @@ export class UIFactory {
       <FacebookSignInButton
         facebookSignInLink={this.authService.facebookSignInLink()}
       />
+    );
+  }
+
+  public createPublicListingToggle(props: any): ReactElement {
+    if (!this.featureDecisionService.includePublicListingToggle()) {
+      return <React.Fragment />;
+    }
+    return (
+      <div className={'public-listing-toggle'}>
+        <Toggle onClick={props.onPublicToggleClick}></Toggle>
+        <span className={'toggle-label'}>
+          Share on <span>public feed</span>
+        </span>
+      </div>
     );
   }
 

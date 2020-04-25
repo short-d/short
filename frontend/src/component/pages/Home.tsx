@@ -284,6 +284,7 @@ export class Home extends Component<Props, State> {
         />
         <div className={'main'}>
           <CreateShortLinkSection
+            uiFactory={this.props.uiFactory}
             ref={this.createShortLinkSection}
             longLinkText={this.state.longLink}
             alias={this.state.alias}
