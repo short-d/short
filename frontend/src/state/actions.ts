@@ -12,6 +12,8 @@ export const RAISE_INPUT_ERROR = 'RAISE_INPUT_ERROR';
 export const RAISE_CREATE_SHORT_LINK_ERROR = 'RAISE_CREATE_SHORT_LINK_ERROR';
 export const UPDATE_CREATED_URL = 'UPDATE_CREATED_URL';
 export const CLEAR_ERROR = 'CLEAR_ERROR';
+export const RAISE_GET_USER_SHORT_LINKS_ERROR =
+  'RAISE_GET_USER_SHORT_LINKS_ERROR';
 
 export const updateLongLink = (longLink: string): IPayloadAction => ({
   type: UPDATE_LONG_LINK,
@@ -30,6 +32,11 @@ export const raiseInputError = (inputError: string | null): IPayloadAction => ({
 
 export const raiseCreateShortLinkError = (err: IErr): IPayloadAction => ({
   type: RAISE_CREATE_SHORT_LINK_ERROR,
+  payload: err
+});
+
+export const raiseGetUserShortLinksError = (err: IErr): IPayloadAction => ({
+  type: RAISE_GET_USER_SHORT_LINKS_ERROR,
   payload: err
 });
 

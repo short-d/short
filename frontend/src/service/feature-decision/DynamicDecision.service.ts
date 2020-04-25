@@ -24,6 +24,10 @@ export class DynamicDecisionService implements IFeatureDecisionService {
     return this.makeDecision('change-log');
   }
 
+  includeUserShortLinksSection(): Promise<boolean> {
+    return this.makeDecision('user-short-links-section');
+  }
+
   private makeDecision(featureID: string): Promise<boolean> {
     return this.shortHTTPApi.getFeatureToggle(featureID);
   }
