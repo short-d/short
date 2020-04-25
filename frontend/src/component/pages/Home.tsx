@@ -233,11 +233,13 @@ export class Home extends Component<Props, State> {
       .createShortLink(editingUrl)
       .then((createdUrl: Url) => {
         this.props.store.dispatch(updateCreatedUrl(createdUrl));
+
         const shortLink = this.props.urlService.aliasToFrontendLink(
           createdUrl.alias!
         );
         this.copyShortenedLink(shortLink);
-        this.refreshCurrentPagedShortLinks();
+
+        this.refreshUserShortLinks();
       })
       .catch(({ authenticationErr, createShortLinkErr }) => {
         if (authenticationErr) {
@@ -272,30 +274,40 @@ export class Home extends Component<Props, State> {
     }
   };
 
-  refreshCurrentPagedShortLinks = () => {
+  private refreshUserShortLinks = () => {
     if (!this.state.currentPagedShortLinks) {
       return;
     }
     const { offset, pageSize } = this.state.currentPagedShortLinks;
-    this.handleUserShortLinksPageChange(offset, pageSize);
+    this.updateCurrentPagedShortLinks(offset, pageSize);
   };
 
-  handleUserShortLinksPageChange = (offset: number, pageSize: number) => {
+  private updateCurrentPagedShortLinks = (offset: number, pageSize: number) => {
     this.props.shortLinkService
       .getUserCreatedShortLinks(offset, pageSize)
       .then((pagedShortLinks: IPagedShortLinks) => {
         this.setState({ currentPagedShortLinks: pagedShortLinks });
       })
       .catch(({ authenticationErr, getUserShortLinksErr }) => {
-        this.setState({ currentPagedShortLinks: undefined });
+        this.clearUserShortLinks();
+
         if (authenticationErr) {
           this.requestSignIn();
           return;
         }
+
         this.props.store.dispatch(
           raiseGetUserShortLinksError(getUserShortLinksErr)
         );
       });
+  };
+
+  private clearUserShortLinks = () => {
+    this.setState({ currentPagedShortLinks: undefined });
+  };
+
+  handleOnShortLinkPageLoad = (offset: number, pageSize: number) => {
+    this.updateCurrentPagedShortLinks(offset, pageSize);
   };
 
   render = () => {
@@ -326,7 +338,7 @@ export class Home extends Component<Props, State> {
           />
           {this.state.isUserSignedIn &&
             this.props.uiFactory.createUserShortLinksSection({
-              onPageLoad: this.handleUserShortLinksPageChange,
+              onPageLoad: this.handleOnShortLinkPageLoad,
               pagedShortLinks: this.state.currentPagedShortLinks
             })}
         </div>
