@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ComponentType, ReactElement } from 'react';
 import { App } from './App';
 import { IFeatureDecisionService } from '../service/feature-decision/FeatureDecision.service';
 import { Home } from './pages/Home';
@@ -21,11 +21,11 @@ import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
 
 export class UIFactory {
-  private ToggledGoogleSignInButton: any;
-  private ToggledGithubSignInButton: any;
-  private ToggledFacebookSignInButton: any;
-  private ToggledSearchBar: any;
-  private ToggledViewChangeLogButton: any;
+  private ToggledGoogleSignInButton: ComponentType<any>;
+  private ToggledGithubSignInButton: ComponentType<any>;
+  private ToggledFacebookSignInButton: ComponentType<any>;
+  private ToggledSearchBar: ComponentType<any>;
+  private ToggledViewChangeLogButton: ComponentType<any>;
 
   constructor(
     private authService: AuthService,
@@ -127,7 +127,7 @@ export class UIFactory {
 function withFeatureToggle(
   WrappedComponent: React.ComponentType<any>,
   featureDecision: Promise<boolean>
-) {
+): React.ComponentType<any> {
   interface IState {
     isFeatureEnabled: boolean;
   }
