@@ -62,7 +62,12 @@ export class UserShortLinksSection extends Component<IProps> {
 
   private renderLongLink = (longLink: string) => {
     return (
-      <a href={longLink} target="_blank" rel="noopener noreferrer">
+      <a
+        className={'long-link'}
+        href={longLink}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         {longLink}
       </a>
     );
