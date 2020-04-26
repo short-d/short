@@ -74,7 +74,10 @@ export class UIFactory {
     );
 
     const includePublicListingToggle = this.featureDecisionService.includePublicListingToggle();
-    this.ToggledPublicListingToggle = withFeatureToggle(PublicListingToggle, includePublicListingToggle);
+    this.ToggledPublicListingToggle = withFeatureToggle(
+      PublicListingToggle,
+      includePublicListingToggle
+    );
 
     const includeUserShortLinksSection = this.featureDecisionService.includeUserShortLinksSection();
     this.ToggledUserShortLinksSection = withFeatureToggle(

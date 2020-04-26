@@ -64,7 +64,7 @@ export class CreateShortLinkSection extends Component<Props> {
         <div className={'input-error'}>{this.props.inputErr}</div>
         <div className={'creation-toggles'}>
           {this.props.uiFactory.createPublicListingToggle({
-            onPublicToggleClick: this.props.onPublicToggleClick
+            onToggleClick: this.props.onPublicToggleClick
           })}
         </div>
         {this.props.createdUrl && (
