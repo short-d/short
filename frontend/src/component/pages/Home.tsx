@@ -338,6 +338,7 @@ export class Home extends Component<Props, State> {
             inputErr={this.state.inputErr}
             createdUrl={this.state.createdUrl}
             qrCodeUrl={this.state.qrCodeUrl}
+            isShortLinkPublic={this.state.isShortLinkPublic}
             onLongLinkTextFieldBlur={this.handleLongLinkTextFieldBlur}
             onLongLinkTextFieldChange={this.handleLongLinkChange}
             onShortLinkTextFieldBlur={this.handleCustomAliasTextFieldBlur}
