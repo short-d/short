@@ -39,8 +39,8 @@ WHERE "%s"=$1;`,
 	return true, nil
 }
 
-// TODO change to CreateURL
 // Create inserts a new URL into url table.
+// TODO change to CreateURL
 func (u *URLSql) Create(url entity.URL) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
