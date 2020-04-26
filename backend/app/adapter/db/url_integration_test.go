@@ -175,7 +175,7 @@ func TestURLSql_GetByAlias(t *testing.T) {
 	}
 }
 
-// TODO change to TestURLSql_CreateURL
+// TODO(issue#698): change to TestURLSql_CreateURL
 func TestURLSql_Create(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 

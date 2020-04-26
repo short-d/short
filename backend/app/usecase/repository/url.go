@@ -10,7 +10,7 @@ import (
 type URL interface {
 	IsAliasExist(alias string) (bool, error)
 	GetByAlias(alias string) (entity.URL, error)
-	// TODO change to CreateURL
+	// TODO(issue#698): change to CreateURL
 	Create(url entity.URL) error
 	UpdateURL(key string, newAlias string, newOrignalURL string, expiresAt *time.Time) (entity.URL, error)
 	GetByAliases(aliases []string) ([]entity.URL, error)
