@@ -1,0 +1,13 @@
+@import '../../styles/dimension';
+
+.UserShortLinksSection {
+  width: $content-width;
+  margin-left: auto;
+  margin-right: auto;
+
+  .page-control-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+}
