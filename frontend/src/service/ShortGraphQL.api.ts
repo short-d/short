@@ -1,5 +1,5 @@
 import { AuthService } from './Auth.service';
-import { Err, ErrorService } from './Error.service';
+import { Err } from './Error.service';
 import { EnvService } from './Env.service';
 import {
   GraphQLService,
@@ -26,7 +26,6 @@ export class ShortGraphQLApi {
 
   constructor(
     private authService: AuthService,
-    private errorService: ErrorService,
     private envService: EnvService,
     private graphQLService: GraphQLService
   ) {

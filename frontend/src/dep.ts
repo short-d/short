@@ -18,7 +18,8 @@ import { GraphQLService } from './service/GraphQL.service';
 import { FetchHTTPService } from './service/HTTP.service';
 import { ShortHTTPApi } from './service/ShortHTTP.api';
 import { DynamicDecisionService } from './service/feature-decision/DynamicDecision.service';
-import { InMemoryCache } from './service/cache/in-memory.cache';
+import { ShortLinkService } from './service/ShortLink.service';
+import { ShortGraphQLApi } from './service/ShortGraphQL.api';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -44,11 +45,7 @@ export function initUIFactory(
   const errorService = new ErrorService();
   const httpService = new FetchHTTPService();
   const shortHTTPApi = new ShortHTTPApi(httpService, envService);
-  const inMemoryCache = new InMemoryCache();
-  const dynamicDecisionService = new DynamicDecisionService(
-    shortHTTPApi,
-    inMemoryCache
-  );
+  const dynamicDecisionService = new DynamicDecisionService(shortHTTPApi);
 
   const graphQLService = new GraphQLService(httpService);
   const urlService = new UrlService(
@@ -66,6 +63,15 @@ export function initUIFactory(
     envService
   );
   const clipboardService = new ClipboardServiceFactory().makeClipboardService();
+  const shortGraphQLApiService = new ShortGraphQLApi(
+    authService,
+    envService,
+    graphQLService
+  );
+  const shortLinkService = new ShortLinkService(
+    shortGraphQLApiService,
+    errorService
+  );
 
   return new UIFactory(
     authService,
@@ -78,7 +84,8 @@ export function initUIFactory(
     searchService,
     changeLogService,
     store,
-    dynamicDecisionService
+    dynamicDecisionService,
+    shortLinkService
   );
 }
 
