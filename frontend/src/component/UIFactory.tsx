@@ -19,12 +19,9 @@ import { SearchBar } from './ui/SearchBar';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
-<<<<<<< HEAD
 import { PublicListingToggle } from './pages/shared/PublicListingToggle';
-=======
 import { ShortLinkService } from '../service/ShortLink.service';
 import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
->>>>>>> master
 
 export class UIFactory {
   private ToggledGoogleSignInButton: ComponentType<any>;
