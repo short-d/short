@@ -22,22 +22,6 @@
     }
   }
 
-  .creation-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    padding-top: 16px;
-    padding-left: 16px;
-
-    .toggle-label {
-      margin-left: 16px;
-    }
-  }
-
-  .creation-toggles > .creation-toggle:first-child {
-    border-top: 2px solid $color-divider;
-  }
-
   .user-short-links-section {
     margin-top: 20px;
   }
