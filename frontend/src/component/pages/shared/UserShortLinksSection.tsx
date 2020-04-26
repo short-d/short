@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-
-import { Section } from '../../ui/Section';
 import { PageControl } from '../../ui/PageControl';
 import { Table } from '../../ui/Table';
 import { Url } from '../../../entity/Url';
 import { IPagedShortLinks } from '../../../service/ShortLink.service';
+import './UserShortLinksSection.scss';
+import { Section } from '../../ui/Section';
 
 interface IProps {
   pagedShortLinks?: IPagedShortLinks;
@@ -33,16 +33,18 @@ export class UserShortLinksSection extends Component<IProps> {
     }
 
     return (
-      <div>
-        <Section title={'Created Short Links'}>
+      <div className={'UserShortLinksSection'}>
+        <Section title={'Favorites'}>
           <Table
-            headers={['Long URL', 'Alias']}
+            headers={['Long Link', 'Alias']}
             rows={this.createTableRows()}
           />
-          <PageControl
-            totalPages={this.calculateTotalPages()}
-            onPageChanged={this.onPageChanged}
-          />
+          <div className={'page-control-wrapper'}>
+            <PageControl
+              totalPages={this.calculateTotalPages()}
+              onPageChanged={this.onPageChanged}
+            />
+          </div>
         </Section>
       </div>
     );
@@ -59,7 +61,11 @@ export class UserShortLinksSection extends Component<IProps> {
   };
 
   private renderLongLink = (longLink: string) => {
-    return longLink;
+    return (
+      <a href={longLink} target="_blank" rel="noopener noreferrer">
+        {longLink}
+      </a>
+    );
   };
 
   private renderAlias = (alias: string) => {

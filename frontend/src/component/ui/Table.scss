@@ -9,16 +9,51 @@
   @include round-corner;
 
   .table {
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0 4px;
     width: 100%;
+    text-align: left;
 
-    th {
-      background-color: $color-table-header-background;
+    thead {
+      th {
+        padding: 10px 20px;
+        font-size: 14px;
+        color: #424242;
+        font-weight: $font-weight-semi-bold;
+      }
+
+      text-transform: uppercase;
     }
 
-    .table-cell {
-      padding: 5px;
-      text-align: left;
+    tbody {
+      tr {
+        td {
+          &:first-child {
+            @include round-corner;
+          }
+
+          &:last-child {
+            @include round-corner;
+          }
+
+          a {
+            text-decoration: none;
+            font-weight: $font-weight-semi-bold;
+            color: $color-dark-gray;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+
+          background-color: white;
+          padding: 12px 20px;
+          font-size: 14px;
+        }
+
+        &:not(:first-child) {
+          margin-top: 10px;
+        }
+      }
     }
   }
 }

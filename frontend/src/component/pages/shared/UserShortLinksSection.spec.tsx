@@ -18,15 +18,17 @@ describe('UserShortLinksSection component', () => {
       <UserShortLinksSection onPageLoad={jest.fn} />
     );
 
-    expect(container.textContent).not.toContain('Created Short Links');
-    expect(container.textContent).not.toContain('Long URL');
+    expect(container.textContent).not.toContain('Favorites');
+    expect(container.textContent).not.toContain('Long Link');
     expect(container.textContent).not.toContain('Alias');
   });
 
   test('should render nothing when there is 0 total pages', () => {
     const pagedShortLinks: IPagedShortLinks = {
       shortLinks: [],
-      totalCount: 0
+      totalCount: 0,
+      offset: 0,
+      pageSize: 0
     };
 
     const { container } = render(
@@ -36,15 +38,17 @@ describe('UserShortLinksSection component', () => {
       />
     );
 
-    expect(container.textContent).not.toContain('Created Short Links');
-    expect(container.textContent).not.toContain('Long URL');
+    expect(container.textContent).not.toContain('Favorites');
+    expect(container.textContent).not.toContain('Long Link');
     expect(container.textContent).not.toContain('Alias');
   });
 
   test('should render correctly when given at least 1 page', () => {
     const pagedShortLinks: IPagedShortLinks = {
       shortLinks: [],
-      totalCount: 1
+      totalCount: 1,
+      offset: 0,
+      pageSize: 0
     };
 
     const { container } = render(
@@ -54,8 +58,8 @@ describe('UserShortLinksSection component', () => {
       />
     );
 
-    expect(container.textContent).toContain('Created Short Links');
-    expect(container.textContent).toContain('Long URL');
+    expect(container.textContent).toContain('Favorites');
+    expect(container.textContent).toContain('Long Link');
     expect(container.textContent).toContain('Alias');
   });
 
@@ -66,7 +70,9 @@ describe('UserShortLinksSection component', () => {
         { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
         { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
       ],
-      totalCount: 12
+      totalCount: 12,
+      offset: 0,
+      pageSize: 0
     };
 
     const { container } = render(
@@ -76,8 +82,8 @@ describe('UserShortLinksSection component', () => {
       />
     );
 
-    expect(container.textContent).toContain('Created Short Links');
-    expect(container.textContent).toContain('Long URL');
+    expect(container.textContent).toContain('Favorites');
+    expect(container.textContent).toContain('Long Link');
     expect(container.textContent).toContain('Alias');
 
     for (let urlIdx = 0; urlIdx < pagedShortLinks.shortLinks.length; urlIdx++) {
@@ -94,7 +100,9 @@ describe('UserShortLinksSection component', () => {
         { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
         { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
       ],
-      totalCount: 3
+      totalCount: 3,
+      offset: 0,
+      pageSize: 0
     };
     const pageSize = 5;
 
@@ -119,7 +127,9 @@ describe('UserShortLinksSection component', () => {
         { originalUrl: 'https://longurl.com/4', alias: 'alias4' },
         { originalUrl: 'https://longurl.com/5', alias: 'alias5' }
       ],
-      totalCount: 5
+      totalCount: 5,
+      offset: 0,
+      pageSize: 0
     };
 
     const { container } = render(
@@ -156,7 +166,9 @@ describe('UserShortLinksSection component', () => {
         { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
         { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
       ],
-      totalCount: 12
+      totalCount: 12,
+      offset: 0,
+      pageSize: 0
     };
 
     let rerender: any;
@@ -213,7 +225,9 @@ describe('UserShortLinksSection component', () => {
             pageSize={pageSize}
             pagedShortLinks={{
               shortLinks: shortLinks.slice(offset, pageSize),
-              totalCount: shortLinks.length
+              totalCount: shortLinks.length,
+              offset: 0,
+              pageSize: 0
             }}
           />
         );
@@ -226,7 +240,9 @@ describe('UserShortLinksSection component', () => {
         pageSize={pageSize}
         pagedShortLinks={{
           shortLinks: shortLinks.slice(0, pageSize),
-          totalCount: shortLinks.length
+          totalCount: shortLinks.length,
+          offset: 0,
+          pageSize: 0
         }}
       />
     );
