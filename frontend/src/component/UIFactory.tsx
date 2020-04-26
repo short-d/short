@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ComponentType, ReactElement } from 'react';
 import { App } from './App';
 import { IFeatureDecisionService } from '../service/feature-decision/FeatureDecision.service';
 import { Home } from './pages/Home';
@@ -19,8 +19,17 @@ import { SearchBar } from './ui/SearchBar';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
+import { ShortLinkService } from '../service/ShortLink.service';
+import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
 
 export class UIFactory {
+  private ToggledGoogleSignInButton: ComponentType<any>;
+  private ToggledGithubSignInButton: ComponentType<any>;
+  private ToggledFacebookSignInButton: ComponentType<any>;
+  private ToggledSearchBar: ComponentType<any>;
+  private ToggledViewChangeLogButton: ComponentType<any>;
+  private ToggledUserShortLinksSection: ComponentType<any>;
+
   constructor(
     private authService: AuthService,
     private clipboardService: IClipboardService,
@@ -32,8 +41,42 @@ export class UIFactory {
     private searchService: SearchService,
     private changeLogService: ChangeLogService,
     private store: Store<IAppState>,
-    private featureDecisionService: IFeatureDecisionService
-  ) {}
+    private featureDecisionService: IFeatureDecisionService,
+    private shortLinkService: ShortLinkService
+  ) {
+    const includeGoogleSignInButton = this.featureDecisionService.includeGoogleSignInButton();
+    this.ToggledGoogleSignInButton = withFeatureToggle(
+      GoogleSignInButton,
+      includeGoogleSignInButton
+    );
+
+    const includeGithubSignInButton = this.featureDecisionService.includeGithubSignInButton();
+    this.ToggledGithubSignInButton = withFeatureToggle(
+      GithubSignInButton,
+      includeGithubSignInButton
+    );
+
+    const includeFacebookSignInButton = this.featureDecisionService.includeFacebookSignInButton();
+    this.ToggledFacebookSignInButton = withFeatureToggle(
+      FacebookSignInButton,
+      includeFacebookSignInButton
+    );
+
+    const includeSearchBar = this.featureDecisionService.includeSearchBar();
+    this.ToggledSearchBar = withFeatureToggle(SearchBar, includeSearchBar);
+
+    const includeViewChangeLogButton = this.featureDecisionService.includeViewChangeLogButton();
+    this.ToggledViewChangeLogButton = withFeatureToggle(
+      ViewChangeLogButton,
+      includeViewChangeLogButton
+    );
+
+    const includeUserShortLinksSection = this.featureDecisionService.includeUserShortLinksSection();
+    this.ToggledUserShortLinksSection = withFeatureToggle(
+      UserShortLinksSection,
+      includeUserShortLinksSection
+    );
+  }
 
   public createHomePage(location: H.Location<any>): ReactElement {
     return (
@@ -48,6 +91,7 @@ export class UIFactory {
         errorService={this.errorService}
         searchService={this.searchService}
         changeLogService={this.changeLogService}
+        shortLinkService={this.shortLinkService}
         store={this.store}
         location={location}
       />
@@ -55,45 +99,39 @@ export class UIFactory {
   }
 
   public createViewChangeLogButton(props: any): ReactElement {
-    const decision = this.featureDecisionService.includeViewChangeLogButton();
-    const ToggledComponent = withFeatureToggle(ViewChangeLogButton, decision);
-    return <ToggledComponent onClick={props.onClick} />;
+    return <this.ToggledViewChangeLogButton onClick={props.onClick} />;
   }
 
   public createSearchBar(props: any): ReactElement {
-    const decision = this.featureDecisionService.includeSearchBar();
-    const ToggledComponent = withFeatureToggle(SearchBar, decision);
-    return <ToggledComponent {...props} />;
+    return <this.ToggledSearchBar {...props} />;
   }
 
   public createGoogleSignInButton(): ReactElement {
-    const decision = this.featureDecisionService.includeGoogleSignButton();
-    const ToggledComponent = withFeatureToggle(GoogleSignInButton, decision);
     return (
-      <ToggledComponent
+      <this.ToggledGoogleSignInButton
         googleSignInLink={this.authService.googleSignInLink()}
       />
     );
   }
 
   public createGithubSignInButton(): ReactElement {
-    const decision = this.featureDecisionService.includeGithubSignButton();
-    const ToggledComponent = withFeatureToggle(GithubSignInButton, decision);
     return (
-      <ToggledComponent
+      <this.ToggledGithubSignInButton
         githubSignInLink={this.authService.githubSignInLink()}
       />
     );
   }
 
   public createFacebookSignInButton(): ReactElement {
-    const decision = this.featureDecisionService.includeFacebookSignButton();
-    const ToggledComponent = withFeatureToggle(FacebookSignInButton, decision);
     return (
-      <ToggledComponent
+      <this.ToggledFacebookSignInButton
         facebookSignInLink={this.authService.facebookSignInLink()}
       />
     );
+  }
+
+  public createUserShortLinksSection(props: any): ReactElement {
+    return <this.ToggledUserShortLinksSection {...props} />;
   }
 
   public createApp(): ReactElement {
@@ -104,7 +142,7 @@ export class UIFactory {
 function withFeatureToggle(
   WrappedComponent: React.ComponentType<any>,
   featureDecision: Promise<boolean>
-) {
+): React.ComponentType<any> {
   interface IState {
     isFeatureEnabled: boolean;
   }

@@ -1,17 +1,17 @@
 import { Url } from '../entity/Url';
 import { Err, ErrorService } from './Error.service';
-import { AuthService } from './Auth.service';
 import { ShortGraphQLApi } from './ShortGraphQL.api';
 
 export interface IPagedShortLinks {
   shortLinks: Url[];
+  offset: number;
+  pageSize: number;
   totalCount: number;
 }
 
 export class ShortLinkService {
   constructor(
     private shortGraphQLApi: ShortGraphQLApi,
-    private authService: AuthService,
     private errorService: ErrorService
   ) {}
 
@@ -45,6 +45,8 @@ export class ShortLinkService {
   ): IPagedShortLinks {
     return {
       shortLinks: urls.slice(offset, offset + pageSize),
+      offset: offset,
+      pageSize: pageSize,
       totalCount: urls.length
     };
   }
