@@ -1,12 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component, ReactChild } from 'react';
 import { Toggle } from '../../ui/Toggle';
 
 interface IProps {
-  toggleLabel: string;
+    toggleLabel: ReactChild;
   onToggleClick?: (enabled: boolean) => void;
 }
 
-export class PublicListingToggle extends Component<IProps> {
+export class PreferenceToggle extends Component<IProps> {
+  private renderLabel() {
+    return (
+      <>
+      {this.props.toggleLabel}
+      </>
+    );
+  }
+
   render() {
     return (
       <div className={'creation-toggle'}>
@@ -15,7 +23,7 @@ export class PublicListingToggle extends Component<IProps> {
           onClick={this.props.onToggleClick}
         ></Toggle>
         <span className={'toggle-label'}>
-          Share on <span>public feed</span>
+          {this.renderLabel()}
         </span>
       </div>
     );
