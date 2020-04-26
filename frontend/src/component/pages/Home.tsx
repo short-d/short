@@ -20,8 +20,8 @@ import { Store } from 'redux';
 import {
   clearError,
   raiseCreateShortLinkError,
-  raiseInputError,
   raiseGetUserShortLinksError,
+  raiseInputError,
   updateAlias,
   updateCreatedUrl,
   updateLongLink
@@ -336,11 +336,14 @@ export class Home extends Component<Props, State> {
             onShortLinkTextFieldChange={this.handleAliasChange}
             onCreateShortLinkButtonClick={this.handleCreateShortLinkClick}
           />
-          {this.state.isUserSignedIn &&
-            this.props.uiFactory.createUserShortLinksSection({
-              onPageLoad: this.handleOnShortLinkPageLoad,
-              pagedShortLinks: this.state.currentPagedShortLinks
-            })}
+          {this.state.isUserSignedIn && (
+            <div className={'user-short-links-section'}>
+              {this.props.uiFactory.createUserShortLinksSection({
+                onPageLoad: this.handleOnShortLinkPageLoad,
+                pagedShortLinks: this.state.currentPagedShortLinks
+              })}
+            </div>
+          )}
         </div>
         <Footer
           uiFactory={this.props.uiFactory}
