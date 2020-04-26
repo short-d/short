@@ -19,7 +19,7 @@ import { SearchBar } from './ui/SearchBar';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
-import { PreferenceToggle } from "./pages/shared/PreferenceToggle";
+import { PreferenceToggle } from './pages/shared/PreferenceToggle';
 import { ShortLinkService } from '../service/ShortLink.service';
 import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
 
@@ -139,10 +139,14 @@ export class UIFactory {
   }
 
   public createPublicListingToggle(props: any): ReactElement {
-    let ToggleLabel = (<span>Share on <span>public feed</span></span>);
-    return <this.ToggledPublicListingToggle
-      toggleLabel={ToggleLabel}
-      {...props} />;
+    let ToggleLabel = (
+      <span>
+        Share on <span>public feed</span>
+      </span>
+    );
+    return (
+      <this.ToggledPublicListingToggle toggleLabel={ToggleLabel} {...props} />
+    );
   }
 
   public createUserShortLinksSection(props: any): ReactElement {

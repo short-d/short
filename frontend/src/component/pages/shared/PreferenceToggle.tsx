@@ -2,17 +2,13 @@ import React, { Component, ReactChild } from 'react';
 import { Toggle } from '../../ui/Toggle';
 
 interface IProps {
-    toggleLabel: ReactChild;
+  toggleLabel: ReactChild;
   onToggleClick?: (enabled: boolean) => void;
 }
 
 export class PreferenceToggle extends Component<IProps> {
   private renderLabel() {
-    return (
-      <>
-      {this.props.toggleLabel}
-      </>
-    );
+    return <>{this.props.toggleLabel}</>;
   }
 
   render() {
@@ -22,9 +18,7 @@ export class PreferenceToggle extends Component<IProps> {
           defaultIsEnabled={false}
           onClick={this.props.onToggleClick}
         ></Toggle>
-        <span className={'toggle-label'}>
-          {this.renderLabel()}
-        </span>
+        <span className={'toggle-label'}>{this.renderLabel()}</span>
       </div>
     );
   }
