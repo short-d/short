@@ -81,7 +81,7 @@ WHERE "%s"=$4;`,
 		statement,
 		newAlias,
 		newOriginalURL,
-		*expireAt,
+		expireAt,
 		key,
 	)
 
