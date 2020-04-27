@@ -3,8 +3,10 @@ package resolver
 import (
 	"time"
 
+	"github.com/short-d/short/app/usecase/authenticator"
+
 	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/auth"
+
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/url"
 )
@@ -13,7 +15,7 @@ import (
 // on the identify of the user
 type AuthMutation struct {
 	authToken     *string
-	authenticator auth.Authenticator
+	authenticator authenticator.Authenticator
 	changeLog     changelog.ChangeLog
 	urlCreator    url.Creator
 }
@@ -82,7 +84,7 @@ func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
 
 func newAuthMutation(
 	authToken *string,
-	authenticator auth.Authenticator,
+	authenticator authenticator.Authenticator,
 	changeLog changelog.ChangeLog,
 	urlCreator url.Creator,
 ) AuthMutation {

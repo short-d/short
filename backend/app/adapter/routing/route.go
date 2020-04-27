@@ -9,7 +9,8 @@ import (
 	"github.com/short-d/short/app/adapter/google"
 	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/authenticator"
+
 	"github.com/short-d/short/app/usecase/feature"
 	"github.com/short-d/short/app/usecase/sso"
 	"github.com/short-d/short/app/usecase/url"
@@ -32,7 +33,7 @@ func NewShort(
 	facebookAPI facebook.API,
 	googleAPI google.API,
 	featureDecisionFactory feature.DecisionFactory,
-	authenticator auth.Authenticator,
+	authenticator authenticator.Authenticator,
 	accountProvider account.Provider,
 ) []fw.Route {
 	githubSignIn := sso.NewSingleSignOn(

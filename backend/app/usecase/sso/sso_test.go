@@ -10,7 +10,8 @@ import (
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/authenticator"
+
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/service"
 )
@@ -66,7 +67,7 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 			accountProvider := account.NewProvider(&fakeUserRepo, fakeTimer)
 
 			now := time.Now()
-			authenticator := auth.NewAuthenticatorFake(now, time.Minute)
+			authenticator := authenticator.NewAuthenticatorFake(now, time.Minute)
 
 			singleSignOn := NewSingleSignOn(identityProvider, profileService, accountProvider, authenticator)
 			gotAuthToken, err := singleSignOn.SignIn(testCase.authorizationCode)

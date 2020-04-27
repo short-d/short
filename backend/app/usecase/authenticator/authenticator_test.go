@@ -1,6 +1,6 @@
 // +build !integration all
 
-package auth
+package authenticator
 
 import (
 	"testing"
