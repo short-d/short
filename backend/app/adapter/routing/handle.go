@@ -50,12 +50,12 @@ func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL)
 // NewSSOSignIn redirects user to the sign in page.
 func NewSSOSignIn(
 	identityProvider service.IdentityProvider,
-	authenticator authenticator.Authenticator,
+	auth authenticator.Authenticator,
 	webFrontendURL string,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		token := getToken(params)
-		if authenticator.IsSignedIn(token) {
+		if auth.IsSignedIn(token) {
 			http.Redirect(w, r, webFrontendURL, http.StatusSeeOther)
 			return
 		}

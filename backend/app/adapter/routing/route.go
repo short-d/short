@@ -33,26 +33,26 @@ func NewShort(
 	facebookAPI facebook.API,
 	googleAPI google.API,
 	featureDecisionFactory feature.DecisionFactory,
-	authenticator authenticator.Authenticator,
+	auth authenticator.Authenticator,
 	accountProvider account.Provider,
 ) []fw.Route {
 	githubSignIn := sso.NewSingleSignOn(
 		githubAPI.IdentityProvider,
 		githubAPI.Account,
 		accountProvider,
-		authenticator,
+		auth,
 	)
 	facebookSignIn := sso.NewSingleSignOn(
 		facebookAPI.IdentityProvider,
 		facebookAPI.Account,
 		accountProvider,
-		authenticator,
+		auth,
 	)
 	googleSignIn := sso.NewSingleSignOn(
 		googleAPI.IdentityProvider,
 		googleAPI.Account,
 		accountProvider,
-		authenticator,
+		auth,
 	)
 	frontendURL, err := netURL.Parse(webFrontendURL)
 	if err != nil {
@@ -64,7 +64,7 @@ func NewShort(
 			Path:   "/oauth/github/sign-in",
 			Handle: NewSSOSignIn(
 				githubAPI.IdentityProvider,
-				authenticator,
+				auth,
 				webFrontendURL,
 			),
 		},
@@ -81,7 +81,7 @@ func NewShort(
 			Path:   "/oauth/facebook/sign-in",
 			Handle: NewSSOSignIn(
 				facebookAPI.IdentityProvider,
-				authenticator,
+				auth,
 				webFrontendURL,
 			),
 		},
@@ -98,7 +98,7 @@ func NewShort(
 			Path:   "/oauth/google/sign-in",
 			Handle: NewSSOSignIn(
 				googleAPI.IdentityProvider,
-				authenticator,
+				auth,
 				webFrontendURL,
 			),
 		},

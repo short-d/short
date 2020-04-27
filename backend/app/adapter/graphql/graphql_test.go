@@ -42,7 +42,7 @@ func TestGraphQlAPI(t *testing.T) {
 
 	s := service.NewReCaptchaFake(service.VerifyResponse{})
 	verifier := requester.NewVerifier(s)
-	authenticator := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
+	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 
 	logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 	tracer := mdtest.NewTracerFake()
@@ -50,6 +50,6 @@ func TestGraphQlAPI(t *testing.T) {
 	timerFake := mdtest.NewTimerFake(now)
 	changeLogRepo := db.NewChangeLogSQL(sqlDB)
 	changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
-	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, changeLog, verifier, authenticator)
+	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, changeLog, verifier, auth)
 	mdtest.Equal(t, true, mdtest.IsGraphQlAPIValid(graphqlAPI))
 }

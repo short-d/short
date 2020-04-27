@@ -103,12 +103,12 @@ func TestAuthQuery_URL(t *testing.T) {
 
 			tokenizer := mdtest.NewCryptoTokenizerFake()
 			timer := mdtest.NewTimerFake(time.Now())
-			authenticator := authenticator.NewAuthenticator(tokenizer, timer, time.Hour)
+			auth := authenticator.NewAuthenticator(tokenizer, timer, time.Hour)
 
-			authToken, err := authenticator.GenerateToken(testCase.user)
+			authToken, err := auth.GenerateToken(testCase.user)
 			mdtest.Equal(t, nil, err)
 
-			query := newAuthQuery(&authToken, authenticator, changeLog, retrieverFake)
+			query := newAuthQuery(&authToken, auth, changeLog, retrieverFake)
 
 			urlArgs := &URLArgs{
 				Alias:       testCase.alias,
