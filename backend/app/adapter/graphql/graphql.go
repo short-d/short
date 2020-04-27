@@ -1,14 +1,12 @@
 package graphql
 
 import (
+	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/graphql/resolver"
-
 	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/url"
-
-	"github.com/short-d/app/fw"
 )
 
 var _ fw.GraphQLAPI = (*Short)(nil)

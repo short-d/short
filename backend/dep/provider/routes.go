@@ -9,7 +9,6 @@ import (
 	"github.com/short-d/short/app/adapter/routing"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/authenticator"
-
 	"github.com/short-d/short/app/usecase/feature"
 	"github.com/short-d/short/app/usecase/url"
 )

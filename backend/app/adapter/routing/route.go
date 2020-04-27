@@ -10,7 +10,6 @@ import (
 	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/authenticator"
-
 	"github.com/short-d/short/app/usecase/feature"
 	"github.com/short-d/short/app/usecase/sso"
 	"github.com/short-d/short/app/usecase/url"

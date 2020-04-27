@@ -11,7 +11,6 @@ import (
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/authenticator"
-
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/service"
 )
