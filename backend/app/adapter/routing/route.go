@@ -31,7 +31,7 @@ func NewShort(
 	githubAPI github.API,
 	facebookAPI facebook.API,
 	googleAPI google.API,
-	featureDecisionFactory feature.DecisionFactory,
+	featureDecisionMakerFactory feature.DecisionMakerFactory,
 	auth authenticator.Authenticator,
 	accountProvider account.Provider,
 ) []fw.Route {
@@ -122,7 +122,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/features/:featureID",
-			Handle: FeatureHandle(instrumentationFactory, featureDecisionFactory),
+			Handle: FeatureHandle(instrumentationFactory, featureDecisionMakerFactory),
 		},
 	}
 }
