@@ -356,8 +356,8 @@ func TestURLSql_UpdateURL(t *testing.T) {
 					mdtest.Equal(t, nil, err)
 					mdtest.Equal(t, expectedURL.Alias, url.Alias)
 					mdtest.Equal(t, expectedURL.OriginalURL, url.OriginalURL)
-					mdtest.NotEqual(t, expectedURL.ExpireAt, url.ExpireAt)
-					mdtest.NotEqual(t, expectedURL.UpdatedAt, url.UpdatedAt)
+					mdtest.Equal(t, expectedURL.ExpireAt, url.ExpireAt)
+					mdtest.Equal(t, expectedURL.UpdatedAt, url.UpdatedAt)
 				},
 			)
 		})
