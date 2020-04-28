@@ -269,7 +269,7 @@ func TestURLSql_UpdateURL(t *testing.T) {
 			expectedURL: entity.URL{},
 		},
 		{
-			name:     "alias already exists",
+			name:     "alias is taken",
 			oldAlias: "220uFicCja",
 			tableRows: []urlTableRow{
 				urlTableRow{
@@ -305,28 +305,6 @@ func TestURLSql_UpdateURL(t *testing.T) {
 			expectedURL: entity.URL{
 				Alias:       "GxtKXM9V",
 				OriginalURL: "https://www.google.com",
-				UpdatedAt:   &now,
-			},
-		},
-		{
-			name:     "valid new long link",
-			oldAlias: "220uFicCJj",
-			newURL: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "https://www.facebook.com",
-				UpdatedAt:   &now,
-			},
-			tableRows: []urlTableRow{
-				urlTableRow{
-					alias:     "220uFicCJj",
-					longLink:  "https://www.google.com",
-					createdAt: &createdAt,
-				},
-			},
-			hasErr: false,
-			expectedURL: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "https://www.facebook.com",
 				UpdatedAt:   &now,
 			},
 		},
