@@ -16,6 +16,9 @@ type Client struct {
 func (c Client) GetLocation(request *http.Request) (fw.Location, error) {
 	connection := c.network.FromHTTP(request)
 	clientIP := connection.ClientIP
+	if clientIP == "" {
+		return fw.Location{}, nil
+	}
 	return c.geoLocation.GetLocation(clientIP)
 }
 
