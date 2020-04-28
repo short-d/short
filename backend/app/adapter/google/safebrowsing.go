@@ -3,9 +3,10 @@ package google
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/risk"
-	"net/http"
 )
 
 var _ risk.URLBlackList = (*SafeBrowsing)(nil)
@@ -20,8 +21,8 @@ type SafeBrowsing struct {
 func (s SafeBrowsing) IsURLExist(url string) (bool, error) {
 	api := s.auth(safeBrowsingLookupAPI)
 	body := lookupAPIRequest{
-		ThreatInfo:threatInfo{
-			ThreatTypes:   []threatType{
+		ThreatInfo: threatInfo{
+			ThreatTypes: []threatType{
 				malWare,
 				socialEngineering,
 				potentiallyHarmfulApp,
@@ -31,7 +32,7 @@ func (s SafeBrowsing) IsURLExist(url string) (bool, error) {
 				allPlatforms,
 			},
 			ThreatEntries: []threat{
-				{URL:url},
+				{URL: url},
 			},
 		},
 	}
@@ -41,7 +42,7 @@ func (s SafeBrowsing) IsURLExist(url string) (bool, error) {
 		return false, err
 	}
 
-	headers := map[string]string {
+	headers := map[string]string{
 		"Content-Type": "application/json",
 	}
 
@@ -69,9 +70,9 @@ type lookupAPIRequest struct {
 }
 
 type threatInfo struct {
-	ThreatTypes   []threatType `json:"threatTypes"`
+	ThreatTypes   []threatType   `json:"threatTypes"`
 	PlatformTypes []platformType `json:"platformTypes"`
-	ThreatEntries []threat `json:"threatEntries"`
+	ThreatEntries []threat       `json:"threatEntries"`
 }
 
 type lookupAPIResponse struct {
@@ -79,11 +80,11 @@ type lookupAPIResponse struct {
 }
 
 type match struct {
-	ThreatType threatType `json:"threatType"`
-	PlatformType platformType `json:"platformType"`
-	Threat threat `json:"threat"`
-	CacheDuration string `json:"cacheDuration"`
-	ThreatEntryType string `json:"threatEntryType"`
+	ThreatType      threatType   `json:"threatType"`
+	PlatformType    platformType `json:"platformType"`
+	Threat          threat       `json:"threat"`
+	CacheDuration   string       `json:"cacheDuration"`
+	ThreatEntryType string       `json:"threatEntryType"`
 }
 
 type threatType string

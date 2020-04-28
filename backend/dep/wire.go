@@ -4,6 +4,7 @@ package dep
 
 import (
 	"database/sql"
+
 	"github.com/short-d/short/app/usecase/risk"
 
 	"github.com/google/wire"

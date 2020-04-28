@@ -31,6 +31,6 @@ type GoogleAPIKey string
 func NewSafeBrowsing(
 	apiKey GoogleAPIKey,
 	httpRequest fw.HTTPRequest,
-	) google.SafeBrowsing {
+) google.SafeBrowsing {
 	return google.NewSafeBrowsing(string(apiKey), httpRequest)
 }

@@ -10,7 +10,7 @@ const (
 	ErrCodeRequesterNotHuman          = "requesterNotHuman"
 	ErrCodeInvalidLongLink            = "invalidLongLink"
 	ErrCodeInvalidCustomAlias         = "invalidCustomAlias"
-	ErrCodeMaliciousContent            = "maliciousContent"
+	ErrCodeMaliciousContent           = "maliciousContent"
 	ErrCodeInvalidAuthToken           = "invalidAuthToken"
 )
 
@@ -142,7 +142,7 @@ var _ GraphQlError = (*ErrMaliciousContent)(nil)
 // handle the error.
 func (e ErrMaliciousContent) Extensions() map[string]interface{} {
 	return map[string]interface{}{
-		"code": ErrCodeMaliciousContent,
+		"code":    ErrCodeMaliciousContent,
 		"content": string(e),
 	}
 }

@@ -13,5 +13,5 @@ func (r Detector) IsURLMalicious(url string) bool {
 }
 
 func NewDetector(urlBlackList URLBlackList) Detector {
-	return Detector{urlBlackList:urlBlackList}
+	return Detector{urlBlackList: urlBlackList}
 }
