@@ -18,7 +18,7 @@ type SafeBrowsing struct {
 	httpRequest fw.HTTPRequest
 }
 
-func (s SafeBrowsing) IsURLExist(url string) (bool, error) {
+func (s SafeBrowsing) IsBlacklisted(url string) (bool, error) {
 	api := s.auth(safeBrowsingLookupAPI)
 	body := lookupAPIRequest{
 		ThreatInfo: threatInfo{

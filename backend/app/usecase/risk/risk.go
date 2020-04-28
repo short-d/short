@@ -5,7 +5,7 @@ type Detector struct {
 }
 
 func (r Detector) IsURLMalicious(url string) bool {
-	isExist, err := r.urlBlackList.IsURLExist(url)
+	isExist, err := r.urlBlackList.IsBlacklisted(url)
 	if err != nil {
 		return false
 	}
