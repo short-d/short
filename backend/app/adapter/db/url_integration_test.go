@@ -248,18 +248,16 @@ func TestURLSql_UpdateURL(t *testing.T) {
 	now := time.Now()
 
 	testCases := []struct {
-		name           string
-		key            string
-		newAlias       string
-		newOriginalURL string
-		expireAt       *time.Time
-		tableRows      []urlTableRow
-		hasErr         bool
-		expectedURL    entity.URL
+		name        string
+		oldAlias    string
+		newURL      entity.URL
+		tableRows   []urlTableRow
+		hasErr      bool
+		expectedURL entity.URL
 	}{
 		{
-			name: "alias not found",
-			key:  "does_not_exist",
+			name:     "alias not found",
+			oldAlias: "does_not_exist",
 			tableRows: []urlTableRow{
 				urlTableRow{
 					alias:     "220uFicCJj",
@@ -271,8 +269,8 @@ func TestURLSql_UpdateURL(t *testing.T) {
 			expectedURL: entity.URL{},
 		},
 		{
-			name: "alias already exists",
-			key:  "220uFicCja",
+			name:     "alias already exists",
+			oldAlias: "220uFicCja",
 			tableRows: []urlTableRow{
 				urlTableRow{
 					alias:     "220uFicCJj",
@@ -290,8 +288,12 @@ func TestURLSql_UpdateURL(t *testing.T) {
 		},
 		{
 			name:     "valid new alias",
-			key:      "220uFicCJj",
-			newAlias: "GxtKXM9V",
+			oldAlias: "220uFicCJj",
+			newURL: entity.URL{
+				Alias:       "GxtKXM9V",
+				OriginalURL: "https://www.google.com",
+				UpdatedAt:   &now,
+			},
 			tableRows: []urlTableRow{
 				urlTableRow{
 					alias:     "220uFicCJj",
@@ -307,9 +309,13 @@ func TestURLSql_UpdateURL(t *testing.T) {
 			},
 		},
 		{
-			name:           "valid new long link",
-			key:            "220uFicCJj",
-			newOriginalURL: "https://www.facebook.com",
+			name:     "valid new long link",
+			oldAlias: "220uFicCJj",
+			newURL: entity.URL{
+				Alias:       "220uFicCJj",
+				OriginalURL: "https://www.facebook.com",
+				UpdatedAt:   &now,
+			},
 			tableRows: []urlTableRow{
 				urlTableRow{
 					alias:     "220uFicCJj",
@@ -339,10 +345,8 @@ func TestURLSql_UpdateURL(t *testing.T) {
 
 					urlRepo := db.NewURLSql(sqlDB)
 					url, err := urlRepo.UpdateURL(
-						testCase.key,
-						testCase.newAlias,
-						testCase.newOriginalURL,
-						testCase.expireAt,
+						testCase.oldAlias,
+						testCase.newURL,
 					)
 
 					if testCase.hasErr {

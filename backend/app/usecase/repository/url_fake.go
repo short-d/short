@@ -66,13 +66,8 @@ func (u URLFake) GetByAliases(aliases []string) ([]entity.URL, error) {
 
 // UpdateURL updates a URL that exists within the URL table and returns the newly updated URL if there is no error found while
 // committing the update.
-func (u URLFake) UpdateURL(
-	key string,
-	newAlias string,
-	newOriginalURL string,
-	expireAt *time.Time,
-) (entity.URL, error) {
-	prevURL, ok := u.urls[key]
+func (u URLFake) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
+	prevURL, ok := u.urls[oldAlias]
 	if !ok {
 		return entity.URL{}, errors.New("URL to update not found")
 	}
@@ -80,15 +75,14 @@ func (u URLFake) UpdateURL(
 	now := time.Now().UTC()
 	createdBy := prevURL.CreatedBy
 	createdAt := prevURL.CreatedAt
-	newURL := entity.URL{
-		Alias:       newAlias,
-		OriginalURL: newOriginalURL,
-		ExpireAt:    expireAt,
+	return entity.URL{
+		Alias:       newURL.Alias,
+		OriginalURL: newURL.OriginalURL,
+		ExpireAt:    newURL.ExpireAt,
 		CreatedBy:   createdBy,
 		CreatedAt:   createdAt,
 		UpdatedAt:   &now,
-	}
-	return newURL, nil
+	}, nil
 }
 
 // NewURLFake creates in memory URL repository

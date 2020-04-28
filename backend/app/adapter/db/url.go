@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/short-d/short/app/adapter/db/table"
 	"github.com/short-d/short/app/entity"
@@ -65,7 +64,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 
 // UpdateURL updates a URL that exists within the URL table and returns the newly updated URL if there is no error found while
 // committing the update.
-func (u *URLSql) UpdateURL(key string, newAlias string, newOriginalURL string, expireAt *time.Time) (entity.URL, error) {
+func (u *URLSql) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3
@@ -74,15 +73,15 @@ WHERE "%s"=$4;`,
 		table.URL.ColumnAlias,
 		table.URL.ColumnOriginalURL,
 		table.URL.ColumnExpireAt,
-		key,
+		oldAlias,
 	)
 
 	row := u.db.QueryRow(
 		statement,
-		newAlias,
-		newOriginalURL,
-		expireAt,
-		key,
+		newURL.Alias,
+		newURL.OriginalURL,
+		newURL.ExpireAt,
+		oldAlias,
 	)
 
 	url := entity.URL{}
