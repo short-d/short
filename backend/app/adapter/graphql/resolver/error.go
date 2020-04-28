@@ -10,6 +10,7 @@ const (
 	ErrCodeRequesterNotHuman          = "requesterNotHuman"
 	ErrCodeInvalidLongLink            = "invalidLongLink"
 	ErrCodeInvalidCustomAlias         = "invalidCustomAlias"
+	ErrCodeMaliciousContent            = "maliciousContent"
 	ErrCodeInvalidAuthToken           = "invalidAuthToken"
 )
 
@@ -130,4 +131,23 @@ func (e ErrInvalidAuthToken) Extensions() map[string]interface{} {
 // Error retrieves the human readable error message.
 func (e ErrInvalidAuthToken) Error() string {
 	return "auth token is invalid"
+}
+
+// ErrMaliciousContent signifies the input contains malicious content.
+type ErrMaliciousContent string
+
+var _ GraphQlError = (*ErrMaliciousContent)(nil)
+
+// Extensions keeps structured error metadata so that the clients can reliably
+// handle the error.
+func (e ErrMaliciousContent) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code": ErrCodeMaliciousContent,
+		"content": string(e),
+	}
+}
+
+// Error retrieves the human readable error message.
+func (e ErrMaliciousContent) Error() string {
+	return "contains malicious content"
 }

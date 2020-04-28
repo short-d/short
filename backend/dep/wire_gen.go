@@ -36,6 +36,7 @@ import (
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/risk"
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
@@ -64,7 +65,7 @@ func InjectEnvironment() fw.Environment {
 	return goDotEnv
 }
 
-func InjectGraphQLService(name string, serverEnv fw.ServerEnv, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey) (mdservice.Service, error) {
+func InjectGraphQLService(name string, serverEnv fw.ServerEnv, prefix provider.LogPrefix, logLevel fw.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQlPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey, googleAPIKey provider.GoogleAPIKey) (mdservice.Service, error) {
 	timer := mdtimer.NewTimer()
 	buildIn := mdruntime.NewBuildIn()
 	stdOut := mdio.NewBuildInStdOut()
@@ -86,7 +87,9 @@ func InjectGraphQLService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	}
 	longLink := validator.NewLongLink()
 	customAlias := validator.NewCustomAlias()
-	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias, timer)
+	safeBrowsing := provider.NewSafeBrowsing(googleAPIKey, http)
+	detector := risk.NewDetector(safeBrowsing)
+	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias, timer, detector)
 	changeLogSQL := db.NewChangeLogSQL(sqlDB)
 	persist := changelog.NewPersist(keyGenerator, timer, changeLogSQL)
 	reCaptcha := provider.NewReCaptchaService(http, secret)

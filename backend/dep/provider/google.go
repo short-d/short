@@ -25,3 +25,12 @@ func NewGoogleIdentityProvider(
 ) google.IdentityProvider {
 	return google.NewIdentityProvider(req, string(clientID), string(clientSecret), string(redirectURI))
 }
+
+type GoogleAPIKey string
+
+func NewSafeBrowsing(
+	apiKey GoogleAPIKey,
+	httpRequest fw.HTTPRequest,
+	) google.SafeBrowsing {
+	return google.NewSafeBrowsing(string(apiKey), httpRequest)
+}
