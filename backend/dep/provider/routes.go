@@ -25,7 +25,7 @@ func NewShortRoutes(
 	githubAPI github.API,
 	facebookAPI facebook.API,
 	googleAPI google.API,
-	featureDecisionFactory feature.DecisionFactory,
+	featureDecisionMakerFactory feature.DecisionMakerFactory,
 	authenticator authenticator.Authenticator,
 	accountProvider account.Provider,
 ) []fw.Route {
@@ -37,7 +37,7 @@ func NewShortRoutes(
 		githubAPI,
 		facebookAPI,
 		googleAPI,
-		featureDecisionFactory,
+		featureDecisionMakerFactory,
 		authenticator,
 		accountProvider,
 	)

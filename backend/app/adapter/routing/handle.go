@@ -85,13 +85,13 @@ func NewSSOSignInCallback(
 // FeatureHandle retrieves the status of feature toggle.
 func FeatureHandle(
 	instrumentationFactory request.InstrumentationFactory,
-	featureDecisionFactory feature.DecisionFactory,
+	featureDecisionMakerFactory feature.DecisionMakerFactory,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
 		i := instrumentationFactory.NewHTTP(r)
 		featureID := params["featureID"]
 
-		decision := featureDecisionFactory.NewDecision(i)
+		decision := featureDecisionMakerFactory.NewDecision(i)
 		isEnable := decision.IsFeatureEnable(featureID)
 
 		body, err := json.Marshal(isEnable)
