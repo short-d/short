@@ -13,6 +13,7 @@ import (
 	"github.com/short-d/app/modern/mdenv"
 	"github.com/short-d/app/modern/mdgeo"
 	"github.com/short-d/app/modern/mdhttp"
+	"github.com/short-d/app/modern/mdio"
 	"github.com/short-d/app/modern/mdlogger"
 	"github.com/short-d/app/modern/mdmetrics"
 	"github.com/short-d/app/modern/mdnetwork"
@@ -42,18 +43,18 @@ import (
 
 var authSet = wire.NewSet(
 	provider.NewJwtGo,
-
 	provider.NewAuthenticator,
 )
 
 var observabilitySet = wire.NewSet(
+	wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
 	wire.Bind(new(fw.Logger), new(mdlogger.Logger)),
-	wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)),
 	wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)),
 	wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)),
 	wire.Bind(new(fw.Network), new(mdnetwork.Proxy)),
 
-	provider.NewDataDogEntryRepo,
+	mdio.NewBuildInStdOut,
+	provider.NewEntryRepositorySwitch,
 	provider.NewLogger,
 	mdtracer.NewLocal,
 	provider.NewDataDogMetrics,
