@@ -34,7 +34,6 @@ import (
 	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/changelog"
-	"github.com/short-d/short/app/usecase/feature"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/service"
@@ -137,12 +136,12 @@ func InjectRoutingService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	googleAccount := google.NewAccount(http)
 	googleAPI := google.NewAPI(googleIdentityProvider, googleAccount)
 	featureToggleSQL := db.NewFeatureToggleSQL(sqlDB)
-	decisionFactory := feature.NewDecisionFactory(featureToggleSQL)
+	decisionMakerFactory := provider.NewFeatureDecisionMakerFactorySwitch(serverEnv, featureToggleSQL)
 	cryptoTokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(cryptoTokenizer, timer, tokenValidDuration)
 	userSQL := db.NewUserSQL(sqlDB)
 	accountProvider := account.NewProvider(userSQL, timer)
-	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, decisionFactory, authenticator, accountProvider)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, timer, retrieverPersist, api, facebookAPI, googleAPI, decisionMakerFactory, authenticator, accountProvider)
 	server := mdrouting.NewBuiltIn(logger, tracer, v)
 	service := mdservice.New(name, server, logger)
 	return service, nil
@@ -162,4 +161,4 @@ var googleAPISet = wire.NewSet(provider.NewGoogleIdentityProvider, google.NewAcc
 
 var keyGenSet = wire.NewSet(wire.Bind(new(service.KeyFetcher), new(kgs.RPC)), provider.NewKgsRPC, provider.NewKeyGenerator)
 
-var featureDecisionSet = wire.NewSet(wire.Bind(new(repository.FeatureToggle), new(db.FeatureToggleSQL)), db.NewFeatureToggleSQL, feature.NewDecisionFactory)
+var featureDecisionSet = wire.NewSet(wire.Bind(new(repository.FeatureToggle), new(db.FeatureToggleSQL)), db.NewFeatureToggleSQL, provider.NewFeatureDecisionMakerFactorySwitch)
