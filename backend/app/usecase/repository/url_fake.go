@@ -64,8 +64,7 @@ func (u URLFake) GetByAliases(aliases []string) ([]entity.URL, error) {
 	return urls, nil
 }
 
-// UpdateURL updates a URL that exists within the URL table and returns the newly updated URL if there is no error found while
-// committing the update.
+// UpdateURL updates an existing URL with new properties.
 func (u URLFake) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
 	prevURL, ok := u.urls[oldAlias]
 	if !ok {
