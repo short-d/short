@@ -6,6 +6,8 @@ import (
 	"github.com/short-d/short/env"
 )
 
+// NewEntryRepositorySwitch swaps between different entry repository
+// implementations based on server environment.
 func NewEntryRepositorySwitch(
 	serverEnv fw.ServerEnv,
 	stdOut fw.StdOut,
