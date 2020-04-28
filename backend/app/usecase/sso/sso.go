@@ -5,7 +5,7 @@ import (
 
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/service"
 )
 
@@ -15,7 +15,7 @@ type SingleSignOn struct {
 	identityProvider  service.IdentityProvider
 	ssoAccountService service.SSOAccount
 	accountProvider   account.Provider
-	authenticator     auth.Authenticator
+	authenticator     authenticator.Authenticator
 }
 
 // SignIn generates access token for a user using authorization code obtained
@@ -67,7 +67,7 @@ func NewSingleSignOn(
 	identityProvider service.IdentityProvider,
 	ssoAccountService service.SSOAccount,
 	accountProvider account.Provider,
-	authenticator auth.Authenticator,
+	authenticator authenticator.Authenticator,
 ) SingleSignOn {
 	return SingleSignOn{
 		identityProvider:  identityProvider,

@@ -9,7 +9,7 @@ import (
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
@@ -19,11 +19,11 @@ import (
 
 func TestQuery_AuthQuery(t *testing.T) {
 	now := time.Now()
-	authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
+	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 	user := entity.User{
 		Email: "alpha@example.com",
 	}
-	authToken, err := authenticator.GenerateToken(user)
+	authToken, err := auth.GenerateToken(user)
 	mdtest.Equal(t, nil, err)
 	randomToken := "random_token"
 
@@ -62,7 +62,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 
 			fakeURLRepo := repository.NewURLFake(map[string]entity.URL{})
 			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
-			authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
+			auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 			logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 			tracer := mdtest.NewTracerFake()
@@ -75,7 +75,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 			changeLogRepo := db.NewChangeLogSQL(sqlDB)
 			changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
 
-			query := newQuery(&logger, &tracer, authenticator, changeLog, retrieverFake)
+			query := newQuery(&logger, &tracer, auth, changeLog, retrieverFake)
 
 			mdtest.Equal(t, nil, err)
 			authQueryArgs := AuthQueryArgs{AuthToken: testCase.authToken}

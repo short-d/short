@@ -11,7 +11,7 @@ import (
 	"github.com/short-d/short/app/usecase/repository"
 )
 
-func TestDecision_IsFeatureEnable(t *testing.T) {
+func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 	testCases := []struct {
 		name              string
 		toggles           map[string]entity.Toggle
@@ -51,7 +51,6 @@ func TestDecision_IsFeatureEnable(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			featureRepo := repository.NewFeatureToggleFake(testCase.toggles)
-			factory := NewDecisionFactory(featureRepo)
 
 			logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 			tracer := mdtest.NewTracerFake()
@@ -64,6 +63,7 @@ func TestDecision_IsFeatureEnable(t *testing.T) {
 			}()
 
 			ins := instrumentation.NewInstrumentation(&logger, &tracer, timer, metrics, analytics, ctxCh)
+			factory := NewDynamicDecisionMakerFactory(featureRepo)
 			decision := factory.NewDecision(ins)
 			gotIsEnabled := decision.IsFeatureEnable(testCase.featureID)
 			mdtest.Equal(t, testCase.expectedIsEnabled, gotIsEnabled)

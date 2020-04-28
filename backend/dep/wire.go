@@ -13,6 +13,7 @@ import (
 	"github.com/short-d/app/modern/mdenv"
 	"github.com/short-d/app/modern/mdgeo"
 	"github.com/short-d/app/modern/mdhttp"
+	"github.com/short-d/app/modern/mdio"
 	"github.com/short-d/app/modern/mdlogger"
 	"github.com/short-d/app/modern/mdmetrics"
 	"github.com/short-d/app/modern/mdnetwork"
@@ -31,7 +32,6 @@ import (
 	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/changelog"
-	"github.com/short-d/short/app/usecase/feature"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/service"
@@ -42,18 +42,18 @@ import (
 
 var authSet = wire.NewSet(
 	provider.NewJwtGo,
-
 	provider.NewAuthenticator,
 )
 
 var observabilitySet = wire.NewSet(
+	wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
 	wire.Bind(new(fw.Logger), new(mdlogger.Logger)),
-	wire.Bind(new(mdlogger.EntryRepository), new(mdlogger.DataDogEntryRepo)),
 	wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)),
 	wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)),
 	wire.Bind(new(fw.Network), new(mdnetwork.Proxy)),
 
-	provider.NewDataDogEntryRepo,
+	mdio.NewBuildInStdOut,
+	provider.NewEntryRepositorySwitch,
 	provider.NewLogger,
 	mdtracer.NewLocal,
 	provider.NewDataDogMetrics,
@@ -90,7 +90,7 @@ var keyGenSet = wire.NewSet(
 var featureDecisionSet = wire.NewSet(
 	wire.Bind(new(repository.FeatureToggle), new(db.FeatureToggleSQL)),
 	db.NewFeatureToggleSQL,
-	feature.NewDecisionFactory,
+	provider.NewFeatureDecisionMakerFactorySwitch,
 )
 
 // InjectCommandFactory creates CommandFactory with configured dependencies.

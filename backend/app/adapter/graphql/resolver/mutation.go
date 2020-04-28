@@ -2,7 +2,7 @@ package resolver
 
 import (
 	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/url"
@@ -14,7 +14,7 @@ type Mutation struct {
 	tracer            fw.Tracer
 	urlCreator        url.Creator
 	requesterVerifier requester.Verifier
-	authenticator     auth.Authenticator
+	authenticator     authenticator.Authenticator
 	changeLog         changelog.ChangeLog
 }
 
@@ -46,7 +46,7 @@ func newMutation(
 	changeLog changelog.ChangeLog,
 	urlCreator url.Creator,
 	requesterVerifier requester.Verifier,
-	authenticator auth.Authenticator,
+	authenticator authenticator.Authenticator,
 ) Mutation {
 	return Mutation{
 		logger:            logger,

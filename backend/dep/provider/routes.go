@@ -8,7 +8,7 @@ import (
 	"github.com/short-d/short/app/adapter/request"
 	"github.com/short-d/short/app/adapter/routing"
 	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/feature"
 	"github.com/short-d/short/app/usecase/url"
 )
@@ -25,8 +25,8 @@ func NewShortRoutes(
 	githubAPI github.API,
 	facebookAPI facebook.API,
 	googleAPI google.API,
-	featureDecisionFactory feature.DecisionFactory,
-	authenticator auth.Authenticator,
+	featureDecisionMakerFactory feature.DecisionMakerFactory,
+	authenticator authenticator.Authenticator,
 	accountProvider account.Provider,
 ) []fw.Route {
 	return routing.NewShort(
@@ -37,7 +37,7 @@ func NewShortRoutes(
 		githubAPI,
 		facebookAPI,
 		googleAPI,
-		featureDecisionFactory,
+		featureDecisionMakerFactory,
 		authenticator,
 		accountProvider,
 	)
