@@ -6,12 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/short/app/usecase/auth"
-
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/db"
 	"github.com/short-d/short/app/adapter/graphql/scalar"
 	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
@@ -104,12 +103,12 @@ func TestAuthQuery_URL(t *testing.T) {
 
 			tokenizer := mdtest.NewCryptoTokenizerFake()
 			timer := mdtest.NewTimerFake(time.Now())
-			authenticator := auth.NewAuthenticator(tokenizer, timer, time.Hour)
+			auth := authenticator.NewAuthenticator(tokenizer, timer, time.Hour)
 
-			authToken, err := authenticator.GenerateToken(testCase.user)
+			authToken, err := auth.GenerateToken(testCase.user)
 			mdtest.Equal(t, nil, err)
 
-			query := newAuthQuery(&authToken, authenticator, changeLog, retrieverFake)
+			query := newAuthQuery(&authToken, auth, changeLog, retrieverFake)
 
 			urlArgs := &URLArgs{
 				Alias:       testCase.alias,
