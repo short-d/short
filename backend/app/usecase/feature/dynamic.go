@@ -1,7 +1,6 @@
 package feature
 
 import (
-	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/instrumentation"
 	"github.com/short-d/short/app/usecase/repository"
 )
@@ -32,7 +31,6 @@ var _ DecisionMakerFactory = (*DynamicDecisionMakerFactory)(nil)
 
 // DynamicDecisionMakerFactory creates feature decision maker.
 type DynamicDecisionMakerFactory struct {
-	serverEnv         fw.ServerEnv
 	featureToggleRepo repository.FeatureToggle
 }
 

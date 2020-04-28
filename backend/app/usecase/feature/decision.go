@@ -2,7 +2,7 @@ package feature
 
 import "github.com/short-d/short/app/usecase/instrumentation"
 
-// Decision determines whether a feature should be turned on or off under
+// DecisionMaker determines whether a feature should be turned on or off under
 // certain conditions.
 type DecisionMaker interface {
 	IsFeatureEnable(featureID string) bool

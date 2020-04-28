@@ -6,7 +6,7 @@ import (
 
 var _ DecisionMaker = (*StaticDecisionMaker)(nil)
 
-// StaticDecision makes feature decisions based on hardcoded values.
+// StaticDecisionMaker makes feature decisions based on hardcoded values.
 type StaticDecisionMaker struct {
 	instrumentation instrumentation.Instrumentation
 	decisions       map[string]bool
@@ -21,7 +21,7 @@ func (s StaticDecisionMaker) IsFeatureEnable(featureID string) bool {
 
 var _ DecisionMakerFactory = (*StaticDecisionMakerFactory)(nil)
 
-// StaticDecisionFactory creates static feature decision maker.
+// StaticDecisionMakerFactory creates static feature decision maker.
 type StaticDecisionMakerFactory struct {
 }
 
