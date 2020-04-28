@@ -62,8 +62,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
-// UpdateURL updates a URL that exists within the URL table and returns the newly updated URL if there is no error found while
-// committing the update.
+// UpdateURL updates a URL that exists within the url table.
 func (u *URLSql) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
