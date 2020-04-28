@@ -68,7 +68,7 @@ func (u URLFake) GetByAliases(aliases []string) ([]entity.URL, error) {
 func (u URLFake) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
 	prevURL, ok := u.urls[oldAlias]
 	if !ok {
-		return entity.URL{}, errors.New("URL to update not found")
+		return entity.URL{}, errors.New("alias not found")
 	}
 
 	now := time.Now().UTC()
