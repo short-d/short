@@ -8,7 +8,7 @@ import (
 
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/db"
-	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/requester"
@@ -41,7 +41,7 @@ func TestGraphQlAPI(t *testing.T) {
 
 	s := service.NewReCaptchaFake(service.VerifyResponse{})
 	verifier := requester.NewVerifier(s)
-	authenticator := auth.NewAuthenticatorFake(time.Now(), time.Hour)
+	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 
 	logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
 	tracer := mdtest.NewTracerFake()
@@ -49,6 +49,6 @@ func TestGraphQlAPI(t *testing.T) {
 	timerFake := mdtest.NewTimerFake(now)
 	changeLogRepo := db.NewChangeLogSQL(sqlDB)
 	changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
-	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, changeLog, verifier, authenticator)
+	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, changeLog, verifier, auth)
 	mdtest.Equal(t, true, mdtest.IsGraphQlAPIValid(graphqlAPI))
 }

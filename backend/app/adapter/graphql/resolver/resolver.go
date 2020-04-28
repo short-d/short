@@ -2,7 +2,7 @@ package resolver
 
 import (
 	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/usecase/auth"
+	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/requester"
 	"github.com/short-d/short/app/usecase/url"
@@ -22,7 +22,7 @@ func NewResolver(
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
 	requesterVerifier requester.Verifier,
-	authenticator auth.Authenticator,
+	authenticator authenticator.Authenticator,
 ) Resolver {
 	return Resolver{
 		Query: newQuery(logger, tracer, authenticator, changeLog, urlRetriever),

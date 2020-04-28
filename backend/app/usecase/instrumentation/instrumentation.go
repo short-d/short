@@ -145,13 +145,13 @@ func NewInstrumentation(logger fw.Logger,
 	}
 	go func() {
 		ctx := <-ctxCh
-		redirectingAliasToLongLinkCh <- ctx
-		redirectedAliasToLongLinkCh <- ctx
-		longLinkRetrievalSucceedCh <- ctx
-		longLinkRetrievalFailedCh <- ctx
-		featureToggleRetrievalSucceedCh <- ctx
-		featureToggleRetrievalFailedCh <- ctx
-		madeFeatureDecisionCh <- ctx
+		go func() { redirectingAliasToLongLinkCh <- ctx }()
+		go func() { redirectedAliasToLongLinkCh <- ctx }()
+		go func() { longLinkRetrievalSucceedCh <- ctx }()
+		go func() { longLinkRetrievalFailedCh <- ctx }()
+		go func() { featureToggleRetrievalSucceedCh <- ctx }()
+		go func() { featureToggleRetrievalFailedCh <- ctx }()
+		go func() { madeFeatureDecisionCh <- ctx }()
 		close(ctxCh)
 	}()
 	return *ins
