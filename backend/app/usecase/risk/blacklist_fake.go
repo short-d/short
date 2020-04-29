@@ -13,7 +13,7 @@ func (b BlackListFake) HasURL(url string) (bool, error) {
 	return found, nil
 }
 
-// NewBlackListFake initializes a BlackListFake instance.
+// NewBlackListFake initializes an in-memory blacklist.
 func NewBlackListFake(blacklist map[string]bool) BlackListFake {
 	return BlackListFake{
 		blacklist,
