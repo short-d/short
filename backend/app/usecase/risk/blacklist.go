@@ -1,6 +1,6 @@
 package risk
 
-// URLBlackList is the interface that wraps the IsBlacklisted method.
-type URLBlackList interface {
-	IsBlacklisted(url string) (bool, error)
+// BlackList checks whether an item is acceptable
+type BlackList interface {
+	HasURL(url string) (bool, error)
 }

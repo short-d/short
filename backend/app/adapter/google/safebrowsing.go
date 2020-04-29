@@ -10,7 +10,7 @@ import (
 	"github.com/short-d/short/app/usecase/risk"
 )
 
-var _ risk.URLBlackList = (*SafeBrowsing)(nil)
+var _ risk.BlackList = (*SafeBrowsing)(nil)
 
 const safeBrowsingLookupAPI = "https://safebrowsing.googleapis.com/v4/threatMatches:find"
 
@@ -76,7 +76,7 @@ type SafeBrowsing struct {
 	httpRequest fw.HTTPRequest
 }
 
-func (s SafeBrowsing) IsBlacklisted(url string) (bool, error) {
+func (s SafeBrowsing) HasURL(url string) (bool, error) {
 	api := s.auth(safeBrowsingLookupAPI)
 	body := lookupAPIRequest{
 		ThreatInfo: threatInfo{
