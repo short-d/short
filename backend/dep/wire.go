@@ -5,8 +5,6 @@ package dep
 import (
 	"database/sql"
 
-	"github.com/short-d/short/app/usecase/risk"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw"
 	"github.com/short-d/app/modern/mdanalytics"
@@ -36,6 +34,7 @@ import (
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/risk"
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"

@@ -1,17 +1,17 @@
 package risk
 
 type Detector struct {
-	urlBlackList BlackList
+	blacklist BlackList
 }
 
 func (r Detector) IsURLMalicious(url string) bool {
-	isExist, err := r.urlBlackList.HasURL(url)
+	hasURL, err := r.blacklist.HasURL(url)
 	if err != nil {
 		return false
 	}
-	return isExist
+	return hasURL
 }
 
-func NewDetector(urlBlackList BlackList) Detector {
-	return Detector{urlBlackList: urlBlackList}
+func NewDetector(blacklist BlackList) Detector {
+	return Detector{blacklist: blacklist}
 }

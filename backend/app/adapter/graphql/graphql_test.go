@@ -20,7 +20,8 @@ import (
 
 func TestGraphQlAPI(t *testing.T) {
 	now := time.Now()
-	blacklist := risk.NewBlackListFake()
+	blockedURLs := map[string]bool{}
+	blacklist := risk.NewBlackListFake(blockedURLs)
 	sqlDB, _, err := mdtest.NewSQLStub()
 	mdtest.Equal(t, nil, err)
 	defer sqlDB.Close()
