@@ -175,6 +175,7 @@ func TestURLSql_GetByAlias(t *testing.T) {
 	}
 }
 
+// TODO(issue#698): change to TestURLSql_CreateURL
 func TestURLSql_Create(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
@@ -236,6 +237,105 @@ func TestURLSql_Create(t *testing.T) {
 						return
 					}
 					mdtest.Equal(t, nil, err)
+				},
+			)
+		})
+	}
+}
+
+func TestURLSql_UpdateURL(t *testing.T) {
+	createdAt := mustParseTime(t, "2017-05-01T08:02:16-07:00")
+	now := time.Now()
+
+	testCases := []struct {
+		name        string
+		oldAlias    string
+		newURL      entity.URL
+		tableRows   []urlTableRow
+		hasErr      bool
+		expectedURL entity.URL
+	}{
+		{
+			name:     "alias not found",
+			oldAlias: "does_not_exist",
+			tableRows: []urlTableRow{
+				urlTableRow{
+					alias:     "220uFicCJj",
+					longLink:  "https://www.google.com",
+					createdAt: &createdAt,
+				},
+			},
+			hasErr:      true,
+			expectedURL: entity.URL{},
+		},
+		{
+			name:     "alias is taken",
+			oldAlias: "220uFicCja",
+			tableRows: []urlTableRow{
+				urlTableRow{
+					alias:     "220uFicCJj",
+					longLink:  "https://www.google.com",
+					createdAt: &createdAt,
+				},
+				urlTableRow{
+					alias:     "efpIZ4OS",
+					longLink:  "https://gmail.com",
+					createdAt: &createdAt,
+				},
+			},
+			hasErr:      true,
+			expectedURL: entity.URL{},
+		},
+		{
+			name:     "valid new alias",
+			oldAlias: "220uFicCJj",
+			newURL: entity.URL{
+				Alias:       "GxtKXM9V",
+				OriginalURL: "https://www.google.com",
+				UpdatedAt:   &now,
+			},
+			tableRows: []urlTableRow{
+				urlTableRow{
+					alias:     "220uFicCJj",
+					longLink:  "https://www.google.com",
+					createdAt: &createdAt,
+				},
+			},
+			hasErr: false,
+			expectedURL: entity.URL{
+				Alias:       "GxtKXM9V",
+				OriginalURL: "https://www.google.com",
+				UpdatedAt:   &now,
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			mdtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertURLTableRows(t, sqlDB, testCase.tableRows)
+					expectedURL := testCase.expectedURL
+
+					urlRepo := db.NewURLSql(sqlDB)
+					url, err := urlRepo.UpdateURL(
+						testCase.oldAlias,
+						testCase.newURL,
+					)
+
+					if testCase.hasErr {
+						mdtest.NotEqual(t, nil, err)
+						return
+					}
+					mdtest.Equal(t, nil, err)
+					mdtest.Equal(t, expectedURL.Alias, url.Alias)
+					mdtest.Equal(t, expectedURL.OriginalURL, url.OriginalURL)
+					mdtest.Equal(t, expectedURL.ExpireAt, url.ExpireAt)
+					mdtest.Equal(t, expectedURL.UpdatedAt, url.UpdatedAt)
 				},
 			)
 		})

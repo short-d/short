@@ -43,6 +43,7 @@ func main() {
 		DataDogAPIKey        string        `env:"DATA_DOG_API_KEY" default:""`
 		SegmentAPIKey        string        `env:"SEGMENT_API_KEY" default:""`
 		IPStackAPIKey        string        `env:"IP_STACK_API_KEY" default:""`
+		GoogleAPIKey         string        `env:"GOOGLE_API_KEY" default:""`
 	}{}
 
 	err := envConfig.ParseConfigFromEnv(&config)
@@ -86,6 +87,7 @@ func main() {
 		DataDogAPIKey:        config.DataDogAPIKey,
 		SegmentAPIKey:        config.SegmentAPIKey,
 		IPStackAPIKey:        config.IPStackAPIKey,
+		GoogleAPIKey:         config.GoogleAPIKey,
 	}
 
 	rootCmd := cmd.NewRootCmd(

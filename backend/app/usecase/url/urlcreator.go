@@ -1,9 +1,11 @@
 package url
 
 import (
+	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/app/usecase/risk"
 	"github.com/short-d/short/app/usecase/validator"
 )
 
@@ -30,6 +32,13 @@ func (e ErrInvalidCustomAlias) Error() string {
 	return string(e)
 }
 
+// ErrMaliciousLongLink represents malicious long link error
+type ErrMaliciousLongLink string
+
+func (e ErrMaliciousLongLink) Error() string {
+	return string(e)
+}
+
 // Creator represents a URL alias creator
 type Creator interface {
 	CreateURL(url entity.URL, alias *string, user entity.User, isPublic bool) (entity.URL, error)
@@ -43,6 +52,8 @@ type CreatorPersist struct {
 	keyGen              keygen.KeyGenerator
 	longLinkValidator   validator.LongLink
 	aliasValidator      validator.CustomAlias
+	timer               fw.Timer
+	riskDetector        risk.Detector
 }
 
 // CreateURL persists a new url with a given or auto generated alias in the repository.
@@ -51,6 +62,10 @@ func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user enti
 	longLink := url.OriginalURL
 	if !c.longLinkValidator.IsValid(&longLink) {
 		return entity.URL{}, ErrInvalidLongLink(longLink)
+	}
+
+	if c.riskDetector.IsURLMalicious(longLink) {
+		return entity.URL{}, ErrMaliciousLongLink(longLink)
 	}
 
 	if customAlias == nil {
@@ -84,6 +99,9 @@ func (c CreatorPersist) createURLWithCustomAlias(url entity.URL, alias string, u
 		return entity.URL{}, ErrAliasExist("url alias already exist")
 	}
 
+	now := c.timer.Now().UTC()
+	url.CreatedAt = &now
+
 	err = c.urlRepo.Create(url)
 	if err != nil {
 		return entity.URL{}, err
@@ -100,6 +118,8 @@ func NewCreatorPersist(
 	keyGen keygen.KeyGenerator,
 	longLinkValidator validator.LongLink,
 	aliasValidator validator.CustomAlias,
+	timer fw.Timer,
+	riskDetector risk.Detector,
 ) CreatorPersist {
 	return CreatorPersist{
 		urlRepo:             urlRepo,
@@ -107,5 +127,7 @@ func NewCreatorPersist(
 		keyGen:              keyGen,
 		longLinkValidator:   longLinkValidator,
 		aliasValidator:      aliasValidator,
+		timer:               timer,
+		riskDetector:        riskDetector,
 	}
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/risk"
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
@@ -19,6 +20,8 @@ import (
 
 func TestGraphQlAPI(t *testing.T) {
 	now := time.Now()
+	blockedURLs := map[string]bool{}
+	blacklist := risk.NewBlackListFake(blockedURLs)
 	sqlDB, _, err := mdtest.NewSQLStub()
 	mdtest.Equal(t, nil, err)
 	defer sqlDB.Close()
@@ -31,12 +34,17 @@ func TestGraphQlAPI(t *testing.T) {
 	mdtest.Equal(t, nil, err)
 	longLinkValidator := validator.NewLongLink()
 	customAliasValidator := validator.NewCustomAlias()
+	timer := mdtest.NewTimerFake(time.Now())
+	riskDetector := risk.NewDetector(blacklist)
+
 	creator := url.NewCreatorPersist(
 		urlRepo,
 		urlRelationRepo,
 		keyGen,
 		longLinkValidator,
 		customAliasValidator,
+		timer,
+		riskDetector,
 	)
 
 	s := service.NewReCaptchaFake(service.VerifyResponse{})

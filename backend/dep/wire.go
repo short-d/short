@@ -34,6 +34,7 @@ import (
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/requester"
+	"github.com/short-d/short/app/usecase/risk"
 	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/url"
 	"github.com/short-d/short/app/usecase/validator"
@@ -145,6 +146,7 @@ func InjectGraphQLService(
 	dataDogAPIKey provider.DataDogAPIKey,
 	segmentAPIKey provider.SegmentAPIKey,
 	ipStackAPIKey provider.IPStackAPIKey,
+	googleAPIKey provider.GoogleAPIKey,
 ) (mdservice.Service, error) {
 	wire.Build(
 		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
@@ -155,6 +157,7 @@ func InjectGraphQLService(
 		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
 		wire.Bind(new(repository.ChangeLog), new(db.ChangeLogSQL)),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
+		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
@@ -167,6 +170,8 @@ func InjectGraphQLService(
 		mdhttp.NewClient,
 		mdrequest.NewHTTP,
 		mdtimer.NewTimer,
+		provider.NewSafeBrowsing,
+		risk.NewDetector,
 
 		db.NewChangeLogSQL,
 		db.NewURLSql,
