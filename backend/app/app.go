@@ -34,6 +34,7 @@ type ServiceConfig struct {
 	DataDogAPIKey        string
 	SegmentAPIKey        string
 	IPStackAPIKey        string
+	GoogleAPIKey         string
 }
 
 // Start launches the GraphQL & HTTP APIs
@@ -63,6 +64,7 @@ func Start(
 	dataDogAPIKey := provider.DataDogAPIKey(config.DataDogAPIKey)
 	segmentAPIKey := provider.SegmentAPIKey(config.SegmentAPIKey)
 	ipStackAPIKey := provider.IPStackAPIKey(config.IPStackAPIKey)
+	googleAPIKey := provider.GoogleAPIKey(config.GoogleAPIKey)
 
 	graphqlAPI, err := dep.InjectGraphQLService(
 		"GraphQL API",
@@ -79,6 +81,7 @@ func Start(
 		dataDogAPIKey,
 		segmentAPIKey,
 		ipStackAPIKey,
+		googleAPIKey,
 	)
 	if err != nil {
 		panic(err)
