@@ -86,7 +86,7 @@ func (c CreatorPersist) createURLWithCustomAlias(url entity.URL, alias string, u
 		return entity.URL{}, ErrAliasExist("url alias already exist")
 	}
 
-	now := c.timer.Now()
+	now := c.timer.Now().UTC()
 	url.CreatedAt = &now
 
 	err = c.urlRepo.Create(url)

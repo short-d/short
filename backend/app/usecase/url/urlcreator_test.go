@@ -19,6 +19,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now()
+	utc := now.UTC()
 
 	alias := "220uFicCJj"
 	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
@@ -87,6 +88,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				Alias:       "220uFicCJj",
 				OriginalURL: "https://www.google.com",
 				ExpireAt:    &now,
+				CreatedAt:   &utc,
 			},
 		},
 		{
@@ -111,6 +113,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			expectedURL: entity.URL{
 				Alias:       "test",
 				OriginalURL: "https://www.google.com",
+				CreatedAt:   &utc,
 			},
 		},
 		{
@@ -148,6 +151,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			mdtest.Equal(t, nil, err)
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
+			timer := mdtest.NewTimerFake(now)
 
 			creator := NewCreatorPersist(
 				&urlRepo,
@@ -155,6 +159,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				keyGen,
 				longLinkValidator,
 				aliasValidator,
+				timer,
 			)
 
 			_, err = urlRepo.GetByAlias(testCase.url.Alias)
