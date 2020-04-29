@@ -71,14 +71,13 @@ type match struct {
 	ThreatEntryType threatEntryType `json:"threatEntryType"`
 }
 
-// SafeBrowsing represents Googles SafeBrowsing service.
+// SafeBrowsing represents Googles SafeBrowsing APIs.
 type SafeBrowsing struct {
 	apiKey      string
 	httpRequest fw.HTTPRequest
 }
 
-// HasURL checks if a given URL was identified by the SafeBrowsing
-// service.
+// HasURL checks whether a given URL is blacklisted by Google.
 func (s SafeBrowsing) HasURL(url string) (bool, error) {
 	api := s.auth(safeBrowsingLookupAPI)
 	body := lookupAPIRequest{
@@ -119,7 +118,7 @@ func (s SafeBrowsing) auth(baseURL string) string {
 	return fmt.Sprintf("%s/?key=%s", baseURL, s.apiKey)
 }
 
-// NewSafeBrowsing initializes Google's SafeBrowsing service.
+// NewSafeBrowsing initializes Google's SafeBrowsing API client.
 func NewSafeBrowsing(apiKey string, req fw.HTTPRequest) SafeBrowsing {
 	return SafeBrowsing{
 		apiKey:      apiKey,

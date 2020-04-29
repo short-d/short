@@ -1,13 +1,11 @@
 package risk
 
-// Detector uses a blacklist to determine if a URL
-// is considered safe and allowed.
+// Detector determines whether the given items are malicious.
 type Detector struct {
 	blacklist BlackList
 }
 
-// IsURLMalicious verifies if the blacklist contains
-// the given url string
+// IsURLMalicious checks whether the given URL is malicious.
 func (r Detector) IsURLMalicious(url string) bool {
 	hasURL, err := r.blacklist.HasURL(url)
 	if err != nil {

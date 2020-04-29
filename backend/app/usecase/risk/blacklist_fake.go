@@ -2,12 +2,12 @@ package risk
 
 var _ BlackList = (*BlackListFake)(nil)
 
-// BlackListFake implements a BlackList that can be used for testing.
+// BlackListFake is a immemory implementation of a BlackList used for testing.
 type BlackListFake struct {
 	blacklist map[string]bool
 }
 
-// HasURL checks if a given url is found within the blacklist.
+// HasURL checks whether a given url exists in the blacklist.
 func (b BlackListFake) HasURL(url string) (bool, error) {
 	_, found := b.blacklist[url]
 	return found, nil
