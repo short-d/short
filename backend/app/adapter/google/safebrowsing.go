@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"path"
 
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/risk"
@@ -89,7 +90,7 @@ func (s SafeBrowsing) IsBlacklisted(url string) (bool, error) {
 				allPlatforms,
 			},
 			ThreatEntries: []threat{
-				{URL: url},
+				{URL: path.Clean(url)},
 			},
 		},
 	}
