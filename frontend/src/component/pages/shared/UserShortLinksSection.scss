@@ -14,4 +14,12 @@
   .long-link {
     word-break: break-all;
   }
+
+  .table-cell.long {
+    width: 70%;
+  }
+  
+  .table-cell.alias {
+    width: 30%;
+  }
 }

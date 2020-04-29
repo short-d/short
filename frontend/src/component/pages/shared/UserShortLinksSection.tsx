@@ -38,6 +38,7 @@ export class UserShortLinksSection extends Component<IProps> {
           <Table
             headers={['Long Link', 'Alias']}
             rows={this.createTableRows()}
+            colNames={["long", 'alias']}
           />
           <div className={'page-control-wrapper'}>
             <PageControl
