@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/short/app/usecase/risk"
 	"github.com/short-d/short/app/usecase/service"
 
 	"github.com/short-d/app/mdtest"
@@ -141,6 +142,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
+			blacklist := risk.NewBlackListFake()
 			urlRepo := repository.NewURLFake(testCase.urls)
 			userURLRepo := repository.NewUserURLRepoFake(
 				testCase.relationUsers,
@@ -152,6 +154,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
 			timer := mdtest.NewTimerFake(now)
+			riskDetector := risk.NewDetector(blacklist)
 
 			creator := NewCreatorPersist(
 				&urlRepo,
@@ -160,6 +163,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				longLinkValidator,
 				aliasValidator,
 				timer,
+				riskDetector,
 			)
 
 			_, err = urlRepo.GetByAlias(testCase.url.Alias)
