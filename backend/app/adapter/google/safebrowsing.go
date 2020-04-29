@@ -13,6 +13,63 @@ var _ risk.URLBlackList = (*SafeBrowsing)(nil)
 
 const safeBrowsingLookupAPI = "https://safebrowsing.googleapis.com/v4/threatMatches:find"
 
+type threatType string
+
+const (
+	unknown               threatType = "THREAT_TYPE_UNSPECIFIED"
+	malware               threatType = "MALWARE"
+	socialEngineering     threatType = "SOCIAL_ENGINEERING"
+	potentiallyHarmfulApp threatType = "POTENTIALLY_HARMFUL_APPLICATION"
+	unwantedSoftware      threatType = "UNWANTED_SOFTWARE"
+)
+
+type platformType string
+
+const (
+	allPlatforms platformType = "ALL_PLATFORMS"
+	anyPlatform  platformType = "ANY_PLATFORM"
+	window       platformType = "WINDOWS"
+	linux        platformType = "LINUX"
+	osx          platformType = "OSX"
+	chrome       platformType = "CHROME"
+	ios          platformType = "IOS"
+	android      platformType = "Android"
+)
+
+type threatEntryType string
+
+const (
+	unspecified  threatEntryType = "THREAT_ENTRY_TYPE_UNSPECIFIED"
+	maliciousURL threatEntryType = "URL"
+	executable   threatEntryType = "EXECUTABLE"
+)
+
+type threat struct {
+	URL string `json:"url"`
+}
+
+type lookupAPIRequest struct {
+	ThreatInfo threatInfo `json:"threatInfo"`
+}
+
+type threatInfo struct {
+	ThreatTypes   []threatType   `json:"threatTypes"`
+	PlatformTypes []platformType `json:"platformTypes"`
+	ThreatEntries []threat       `json:"threatEntries"`
+}
+
+type lookupAPIResponse struct {
+	Matches []match `json:"matches"`
+}
+
+type match struct {
+	ThreatType      threatType      `json:"threatType"`
+	PlatformType    platformType    `json:"platformType"`
+	Threat          threat          `json:"threat"`
+	CacheDuration   string          `json:"cacheDuration"`
+	ThreatEntryType threatEntryType `json:"threatEntryType"`
+}
+
 type SafeBrowsing struct {
 	apiKey      string
 	httpRequest fw.HTTPRequest
@@ -23,7 +80,7 @@ func (s SafeBrowsing) IsBlacklisted(url string) (bool, error) {
 	body := lookupAPIRequest{
 		ThreatInfo: threatInfo{
 			ThreatTypes: []threatType{
-				malWare,
+				malware,
 				socialEngineering,
 				potentiallyHarmfulApp,
 				unwantedSoftware,
@@ -63,52 +120,4 @@ func NewSafeBrowsing(apiKey string, req fw.HTTPRequest) SafeBrowsing {
 		apiKey:      apiKey,
 		httpRequest: req,
 	}
-}
-
-type lookupAPIRequest struct {
-	ThreatInfo threatInfo `json:"threatInfo"`
-}
-
-type threatInfo struct {
-	ThreatTypes   []threatType   `json:"threatTypes"`
-	PlatformTypes []platformType `json:"platformTypes"`
-	ThreatEntries []threat       `json:"threatEntries"`
-}
-
-type lookupAPIResponse struct {
-	Matches []match `json:"matches"`
-}
-
-type match struct {
-	ThreatType      threatType   `json:"threatType"`
-	PlatformType    platformType `json:"platformType"`
-	Threat          threat       `json:"threat"`
-	CacheDuration   string       `json:"cacheDuration"`
-	ThreatEntryType string       `json:"threatEntryType"`
-}
-
-type threatType string
-
-const (
-	malWare               threatType = "MALWARE"
-	socialEngineering     threatType = "SOCIAL_ENGINEERING"
-	potentiallyHarmfulApp threatType = "POTENTIALLY_HARMFUL_APPLICATION"
-	unwantedSoftware      threatType = "UNWANTED_SOFTWARE"
-)
-
-type platformType string
-
-const (
-	allPlatforms platformType = "ALL_PLATFORMS"
-	anyPlatform  platformType = "ANY_PLATFORM"
-	window       platformType = "WINDOWS"
-	linux        platformType = "LINUX"
-	osx          platformType = "OSX"
-	chrome       platformType = "CHROME"
-	ios          platformType = "IOS"
-	android      platformType = "Android"
-)
-
-type threat struct {
-	URL string `json:"url"`
 }
