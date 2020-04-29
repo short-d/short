@@ -129,4 +129,16 @@ describe('Table component', () => {
       }
     }
   });
+
+  test('should maintain consistent cell width if cell data exceeds width of cell', () => {
+    fail("Not implemented");
+  });
+
+  test('should have no class name defined for cells if colClassName not specified', () => {
+    fail("Not implemented");
+  });
+
+  test('should have colClassNames set to the appropriate columns', () => {
+    fail("Not implemented");
+  });
 });
