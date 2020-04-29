@@ -3,6 +3,7 @@ import { IErr } from '../entity/Err';
 export enum Err {
   ReCaptchaNotReady = 'reCaptchaNotReady',
   InvalidReCaptchaSiteKey = 'invalidReCaptchaSiteKey',
+  MaliciousContent = 'maliciousContent',
   AliasAlreadyExist = 'aliasAlreadyExist',
   UserNotHuman = 'requesterNotHuman',
   Unauthenticated = 'invalidAuthToken',
@@ -34,6 +35,14 @@ const aliasNotAvailableErr = {
                 `
 };
 
+const maliciousContentErr = {
+  name: 'Malicious Content Detected',
+  description: `
+                The input you provided contains malicious content. Please remove
+                them and try again.
+                `
+};
+
 const userNotHumanErr = {
   name: 'User not human',
   description: `
@@ -62,6 +71,8 @@ export class ErrorService {
         return networkErr;
       case Err.InvalidReCaptchaSiteKey:
         return invalidReCaptchaSiteKeyErr;
+      case Err.MaliciousContent:
+        return maliciousContentErr;
       case Err.Unknown:
       default:
         return unknownErr;
