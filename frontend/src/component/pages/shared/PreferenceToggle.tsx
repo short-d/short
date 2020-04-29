@@ -7,7 +7,13 @@ interface IProps {
   onToggleClick?: (enabled: boolean) => void;
 }
 
+const DEFAULT_PROPS = {
+  defaultIsEnabled: false
+};
+
 export class PreferenceToggle extends Component<IProps> {
+  static defaultProps: Partial<IProps> = DEFAULT_PROPS;
+
   private renderLabel() {
     return <>{this.props.toggleLabel}</>;
   }

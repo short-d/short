@@ -12,7 +12,13 @@ interface State {
   enabled: boolean;
 }
 
+const DEFAULT_PROPS = {
+  defaultIsEnabled: false
+};
+
 export class Toggle extends Component<Props, State> {
+  static defaultProps: Partial<Props> = DEFAULT_PROPS;
+
   constructor(props: Props) {
     super(props);
     this.state = {
