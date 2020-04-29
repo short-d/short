@@ -44,6 +44,7 @@ func (u UserURLRelationSQL) FindAliasesByUser(user entity.User) ([]string, error
 
 	var aliases []string
 	rows, err := u.db.Query(statement, user.Email)
+	// TODO(issue#711): errors should be checked before using defer
 	defer rows.Close()
 	if err != nil {
 		return aliases, nil
