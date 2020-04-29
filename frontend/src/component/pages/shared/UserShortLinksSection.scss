@@ -11,15 +11,18 @@
     margin-top: 20px;
   }
 
-  .long-link, .alias {
+  .long-link,
+  .alias {
     word-break: break-all;
   }
 
-  td.cell-long, th.cell-long {
+  td.cell-long,
+  th.cell-long {
     width: 70%;
   }
-  
-  td.cell-alias, th.cell-alias {
+
+  td.cell-alias,
+  th.cell-alias {
     width: 30%;
   }
 }
