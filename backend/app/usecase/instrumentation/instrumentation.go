@@ -25,20 +25,29 @@ type Instrumentation struct {
 }
 
 // RedirectingAliasToLongLink tracks RedirectingAliasToLongLink event.
-func (i Instrumentation) RedirectingAliasToLongLink(user *entity.User) {
+func (i Instrumentation) RedirectingAliasToLongLink(alias string) {
 	go func() {
 		ctx := <-i.redirectingAliasToLongLinkCh
-		userID := i.getUserID(user, ctx)
-		i.analytics.Track("RedirectingAliasToLongLink", map[string]string{}, userID, ctx)
+		userID := i.getUserID(nil, ctx)
+		props := map[string]string{
+			"request-id": ctx.RequestID,
+			"alias":      alias,
+		}
+		i.analytics.Track("RedirectingAliasToLongLink", props, userID, ctx)
 	}()
 }
 
 // RedirectedAliasToLongLink tracks RedirectedAliasToLongLink event.
-func (i Instrumentation) RedirectedAliasToLongLink(user *entity.User) {
+func (i Instrumentation) RedirectedAliasToLongLink(url entity.URL) {
 	go func() {
 		ctx := <-i.redirectedAliasToLongLinkCh
-		userID := i.getUserID(user, ctx)
-		i.analytics.Track("RedirectedAliasToLongLink", map[string]string{}, userID, ctx)
+		userID := i.getUserID(nil, ctx)
+		props := map[string]string{
+			"request-id": ctx.RequestID,
+			"alias":      url.Alias,
+			"long-link":  url.OriginalURL,
+		}
+		i.analytics.Track("RedirectedAliasToLongLink", props, userID, ctx)
 	}()
 }
 
@@ -88,6 +97,7 @@ func (i Instrumentation) MadeFeatureDecision(
 		userID := i.getUserID(nil, ctx)
 		isEnabledStr := fmt.Sprintf("%v", isEnabled)
 		props := map[string]string{
+			"request-id": ctx.RequestID,
 			"feature-id": featureID,
 			"is-enabled": isEnabledStr,
 		}
@@ -107,7 +117,7 @@ func (i Instrumentation) Done() {
 
 func (i Instrumentation) getUserID(user *entity.User, ctx fw.ExecutionContext) string {
 	if user == nil {
-		return ctx.RequestID
+		return "anonymous"
 	}
 	return user.Email
 }
