@@ -6,11 +6,11 @@ import classNames from 'classnames';
 interface IProps {
   headers?: ReactChild[];
   rows?: ReactChild[][];
-  colNames?: string[];
+  colClassNames?: string[];
 }
 
 export class Table extends Component<IProps> {
-  private createHeaders(headers: ReactChild[] | undefined, colNames: string[] | undefined) {
+  private createHeaders(headers: ReactChild[] | undefined, colClassNames: string[] | undefined) {
     if (!headers || headers.length === 0) {
       return null;
     }
@@ -18,7 +18,7 @@ export class Table extends Component<IProps> {
       <tr key={`header`}>
         {headers.map((cell: ReactChild, cellIndex: number) => {
           return (
-            <th key={`cell-${cellIndex}`} className={!colNames ? "table-cell" : classNames("table-cell", colNames[cellIndex])}>
+            <th key={`cell-${cellIndex}`} className={colClassNames?.[cellIndex]}>
               {cell}
             </th>
           );
@@ -27,19 +27,19 @@ export class Table extends Component<IProps> {
     );
   }
 
-  private createBody(rows: ReactChild[][] | undefined, colNames: string[] | undefined) {
+  private createBody(rows: ReactChild[][] | undefined, colClassNames: string[] | undefined) {
     if (!rows || rows.length === 0) {
       return null;
     }
     return rows.map((row: ReactChild[], rowIndex: number) => {
-      return <tr key={`row-${rowIndex}`}>{this.createBodyRow(row, colNames)}</tr>;
+      return <tr key={`row-${rowIndex}`}>{this.createBodyRow(row, colClassNames)}</tr>;
     });
   }
 
-  private createBodyRow(row: ReactChild[], colNames: string[] | undefined) {
+  private createBodyRow(row: ReactChild[], colClassNames: string[] | undefined) {
     return row.map((cell: ReactChild, cellIndex: number) => {
       return (
-        <td key={`cell-${cellIndex}`} className={!colNames ? "table-cell" : classNames("table-cell", colNames[cellIndex])}>
+        <td key={`cell-${cellIndex}`} className={colClassNames?.[cellIndex]}>
           {cell}
         </td>
       );
@@ -47,13 +47,13 @@ export class Table extends Component<IProps> {
   }
 
   render() {
-    const { headers, rows, colNames } = this.props;
+    const { headers, rows, colClassNames } = this.props;
 
     return (
       <div className="table-container">
         <table className="table">
-          <thead>{this.createHeaders(headers, colNames)}</thead>
-          <tbody>{this.createBody(rows, colNames)}</tbody>
+          <thead>{this.createHeaders(headers, colClassNames)}</thead>
+          <tbody>{this.createBody(rows, colClassNames)}</tbody>
         </table>
       </div>
     );
