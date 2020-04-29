@@ -4,17 +4,17 @@ import (
 	"time"
 
 	"github.com/short-d/app/fw"
+	"github.com/short-d/app/modern/mdenvconfig"
 	"github.com/short-d/short/app"
 	"github.com/short-d/short/cmd"
 	"github.com/short-d/short/dep"
-	"github.com/short-d/short/envconfig"
 )
 
 func main() {
 	env := dep.InjectEnvironment()
 	env.AutoLoadDotEnvFile()
 
-	envConfig := envconfig.NewEnvConfig(env)
+	envConfig := mdenvconfig.NewEnvConfig(env)
 
 	config := struct {
 		ServerEnv            string        `env:"ENV" default:"testing"`
