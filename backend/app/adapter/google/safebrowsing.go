@@ -3,11 +3,9 @@ package google
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"path"
-
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/risk"
+	"net/http"
 )
 
 var _ risk.BlackList = (*SafeBrowsing)(nil)
@@ -92,7 +90,7 @@ func (s SafeBrowsing) HasURL(url string) (bool, error) {
 				allPlatforms,
 			},
 			ThreatEntries: []threat{
-				{URL: path.Clean(url)},
+				{URL: url},
 			},
 		},
 	}
