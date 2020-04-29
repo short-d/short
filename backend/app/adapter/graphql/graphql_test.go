@@ -31,12 +31,15 @@ func TestGraphQlAPI(t *testing.T) {
 	mdtest.Equal(t, nil, err)
 	longLinkValidator := validator.NewLongLink()
 	customAliasValidator := validator.NewCustomAlias()
+	timer := mdtest.NewTimerFake(time.Now())
+
 	creator := url.NewCreatorPersist(
 		urlRepo,
 		urlRelationRepo,
 		keyGen,
 		longLinkValidator,
 		customAliasValidator,
+		timer,
 	)
 
 	s := service.NewReCaptchaFake(service.VerifyResponse{})

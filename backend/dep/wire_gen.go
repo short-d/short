@@ -86,7 +86,7 @@ func InjectGraphQLService(name string, serverEnv fw.ServerEnv, prefix provider.L
 	}
 	longLink := validator.NewLongLink()
 	customAlias := validator.NewCustomAlias()
-	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias)
+	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias, timer)
 	changeLogSQL := db.NewChangeLogSQL(sqlDB)
 	persist := changelog.NewPersist(keyGenerator, timer, changeLogSQL)
 	reCaptcha := provider.NewReCaptchaService(http, secret)

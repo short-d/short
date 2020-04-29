@@ -1,6 +1,7 @@
 package url
 
 import (
+	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
@@ -43,6 +44,7 @@ type CreatorPersist struct {
 	keyGen              keygen.KeyGenerator
 	longLinkValidator   validator.LongLink
 	aliasValidator      validator.CustomAlias
+	timer               fw.Timer
 }
 
 // CreateURL persists a new url with a given or auto generated alias in the repository.
@@ -84,6 +86,9 @@ func (c CreatorPersist) createURLWithCustomAlias(url entity.URL, alias string, u
 		return entity.URL{}, ErrAliasExist("url alias already exist")
 	}
 
+	now := c.timer.Now().UTC()
+	url.CreatedAt = &now
+
 	err = c.urlRepo.Create(url)
 	if err != nil {
 		return entity.URL{}, err
@@ -100,6 +105,7 @@ func NewCreatorPersist(
 	keyGen keygen.KeyGenerator,
 	longLinkValidator validator.LongLink,
 	aliasValidator validator.CustomAlias,
+	timer fw.Timer,
 ) CreatorPersist {
 	return CreatorPersist{
 		urlRepo:             urlRepo,
@@ -107,5 +113,6 @@ func NewCreatorPersist(
 		keyGen:              keyGen,
 		longLinkValidator:   longLinkValidator,
 		aliasValidator:      aliasValidator,
+		timer:               timer,
 	}
 }
