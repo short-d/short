@@ -25,3 +25,15 @@ func NewGoogleIdentityProvider(
 ) google.IdentityProvider {
 	return google.NewIdentityProvider(req, string(clientID), string(clientSecret), string(redirectURI))
 }
+
+// GoogleAPIKey represents the credential for Google APIs.
+type GoogleAPIKey string
+
+// NewSafeBrowsing creates new SafeBrowsing with GoogleAPIKey to uniquely
+// identify apiKey during dependency injection.
+func NewSafeBrowsing(
+	apiKey GoogleAPIKey,
+	httpRequest fw.HTTPRequest,
+) google.SafeBrowsing {
+	return google.NewSafeBrowsing(string(apiKey), httpRequest)
+}

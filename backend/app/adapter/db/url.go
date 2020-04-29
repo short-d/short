@@ -39,6 +39,7 @@ WHERE "%s"=$1;`,
 }
 
 // Create inserts a new URL into url table.
+// TODO(issue#698): change to CreateURL
 func (u *URLSql) Create(url entity.URL) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
@@ -59,6 +60,36 @@ VALUES ($1, $2, $3, $4, $5);`,
 		url.UpdatedAt,
 	)
 	return err
+}
+
+// UpdateURL updates a URL that exists within the url table.
+func (u *URLSql) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1, "%s"=$2, "%s"=$3, "%s"=$4
+WHERE "%s"=$5;`,
+		table.URL.TableName,
+		table.URL.ColumnAlias,
+		table.URL.ColumnOriginalURL,
+		table.URL.ColumnExpireAt,
+		table.URL.ColumnUpdatedAt,
+		oldAlias,
+	)
+
+	_, err := u.db.Exec(
+		statement,
+		newURL.Alias,
+		newURL.OriginalURL,
+		newURL.ExpireAt,
+		newURL.UpdatedAt,
+		oldAlias,
+	)
+
+	if err != nil {
+		return entity.URL{}, err
+	}
+
+	return newURL, nil
 }
 
 // GetByAlias finds an URL in url table given alias.

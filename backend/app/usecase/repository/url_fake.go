@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"time"
 
 	"github.com/short-d/short/app/entity"
 )
@@ -61,6 +62,26 @@ func (u URLFake) GetByAliases(aliases []string) ([]entity.URL, error) {
 		urls = append(urls, url)
 	}
 	return urls, nil
+}
+
+// UpdateURL updates an existing URL with new properties.
+func (u URLFake) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
+	prevURL, ok := u.urls[oldAlias]
+	if !ok {
+		return entity.URL{}, errors.New("alias not found")
+	}
+
+	now := time.Now().UTC()
+	createdBy := prevURL.CreatedBy
+	createdAt := prevURL.CreatedAt
+	return entity.URL{
+		Alias:       newURL.Alias,
+		OriginalURL: newURL.OriginalURL,
+		ExpireAt:    newURL.ExpireAt,
+		CreatedBy:   createdBy,
+		CreatedAt:   createdAt,
+		UpdatedAt:   &now,
+	}, nil
 }
 
 // NewURLFake creates in memory URL repository

@@ -9,7 +9,7 @@ require (
 	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9 // indirect
 	github.com/lib/pq v1.4.0 // indirect
 	github.com/rubenv/sql-migrate v0.0.0-20200402132117-435005d389bc // indirect
-	github.com/short-d/app v0.0.0-20200423005558-e97661653ae0
+	github.com/short-d/app v0.0.0-20200429205048-418e38446e9f
 	github.com/short-d/kgs v0.0.0-20200419183416-2deb6aa8d7ed
 	github.com/spf13/cobra v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
