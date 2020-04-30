@@ -21,6 +21,7 @@ import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
 import { ShortLinkService } from '../service/ShortLink.service';
 import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
+import { AnalyticsService } from '../service/Analytics.service';
 
 export class UIFactory {
   private ToggledGoogleSignInButton: ComponentType<any>;
@@ -42,7 +43,8 @@ export class UIFactory {
     private changeLogService: ChangeLogService,
     private store: Store<IAppState>,
     private featureDecisionService: IFeatureDecisionService,
-    private shortLinkService: ShortLinkService
+    private shortLinkService: ShortLinkService,
+    private analyticsService: AnalyticsService
   ) {
     const includeGoogleSignInButton = this.featureDecisionService.includeGoogleSignInButton();
     this.ToggledGoogleSignInButton = withFeatureToggle(
@@ -92,6 +94,7 @@ export class UIFactory {
         searchService={this.searchService}
         changeLogService={this.changeLogService}
         shortLinkService={this.shortLinkService}
+        analyticsService={this.analyticsService}
         store={this.store}
         location={location}
       />

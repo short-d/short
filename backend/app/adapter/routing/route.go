@@ -8,6 +8,7 @@ import (
 	"github.com/short-d/short/app/adapter/github"
 	"github.com/short-d/short/app/adapter/google"
 	"github.com/short-d/short/app/adapter/request"
+	"github.com/short-d/short/app/adapter/routing/analytics"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/feature"
@@ -123,6 +124,11 @@ func NewShort(
 			Method: "GET",
 			Path:   "/features/:featureID",
 			Handle: FeatureHandle(instrumentationFactory, featureDecisionMakerFactory),
+		},
+		{
+			Method: "GET",
+			Path:   "/analytics/track/:event",
+			Handle: analytics.TrackHandle(instrumentationFactory),
 		},
 	}
 }

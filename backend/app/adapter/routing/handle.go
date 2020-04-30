@@ -89,7 +89,7 @@ func FeatureHandle(
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		i := instrumentationFactory.NewHTTP(r)
+		i := instrumentationFactory.NewRequest()
 		featureID := params["featureID"]
 
 		decision := featureDecisionMakerFactory.NewDecision(i)

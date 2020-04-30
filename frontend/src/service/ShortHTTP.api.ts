@@ -15,4 +15,9 @@ export class ShortHTTPApi {
     const url = `${this.baseURL}/features/${featureID}`;
     return this.httpService.get<boolean>(url);
   }
+
+  trackEvent(event: string): Promise<void> {
+    const url = `${this.baseURL}/analytics/track/${event}`;
+    return this.httpService.get<void>(url);
+  }
 }
