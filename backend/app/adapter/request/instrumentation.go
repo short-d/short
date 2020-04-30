@@ -54,6 +54,33 @@ func (f InstrumentationFactory) NewHTTP(req *http.Request) instrumentation.Instr
 	)
 }
 
+// NewRequest creates and initializes Instrumentation for a given user request.
+func (f InstrumentationFactory) NewRequest() instrumentation.Instrumentation {
+	ctxCh := make(chan fw.ExecutionContext)
+
+	go func() {
+		requestID, err := f.keyGen.NewKey()
+		if err != nil {
+			f.logger.Error(err)
+		}
+
+		ctx := fw.ExecutionContext{
+			RequestID:      string(requestID),
+			RequestStartAt: f.timer.Now(),
+		}
+		ctxCh <- ctx
+	}()
+
+	return instrumentation.NewInstrumentation(
+		f.logger,
+		f.tracer,
+		f.timer,
+		f.metrics,
+		f.analytics,
+		ctxCh,
+	)
+}
+
 // NewInstrumentationFactory creates Instrumentation factory.
 func NewInstrumentationFactory(
 	serverEnv fw.ServerEnv,
