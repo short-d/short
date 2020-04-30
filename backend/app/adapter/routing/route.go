@@ -3,6 +3,8 @@ package routing
 import (
 	netURL "net/url"
 
+	"github.com/short-d/short/app/adapter/routing/analytics"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
@@ -123,6 +125,11 @@ func NewShort(
 			Method: "GET",
 			Path:   "/features/:featureID",
 			Handle: FeatureHandle(instrumentationFactory, featureDecisionMakerFactory),
+		},
+		{
+			Method: "GET",
+			Path:   "/analytics/track/:event",
+			Handle: analytics.TrackHandle(instrumentationFactory),
 		},
 	}
 }
