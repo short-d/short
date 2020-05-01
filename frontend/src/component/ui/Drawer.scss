@@ -1,0 +1,14 @@
+@import '../styles/color';
+@import '../styles/easing';
+
+$drawer-width: 240px;
+
+.drawer {
+  width: $drawer-width;
+  margin-left: -$drawer-width;
+  transition: margin-left 300ms $ease-in-out-quart;
+
+  &.open {
+    margin-left: 0;
+  }
+}
