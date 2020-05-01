@@ -1,7 +1,6 @@
 import React, { Component, ReactChild } from 'react';
 
 import './Table.scss';
-import classNames from 'classnames';
 
 interface IProps {
   headers?: ReactChild[];

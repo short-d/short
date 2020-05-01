@@ -130,15 +130,54 @@ describe('Table component', () => {
     }
   });
 
-  test('should maintain consistent cell width if cell data exceeds width of cell', () => {
-    fail("Not implemented");
-  });
-
   test('should have no class name defined for cells if colClassName not specified', () => {
-    fail("Not implemented");
+    const sampleHeaders = ['Header1', 'Header2'];
+    const sampleRows = [
+      ['data1', 'data2'],
+      ['data3', 'data4']
+    ];
+    const tableRef = React.createRef<Table>();
+    const { container } = render(
+      <Table ref={tableRef} headers={sampleHeaders} rows={sampleRows} />
+    );
+
+    const tableHeaders = container.querySelectorAll('thead > tr > th');
+    for (let column = 0; column < sampleHeaders.length; column++) {
+      expect(tableHeaders[column].className).toEqual('');
+    }
+
+    const tableRows = container.querySelectorAll('tbody > tr');
+    for (let row = 0; row < sampleRows.length; row++) {
+      const curRowData = tableRows[row].querySelectorAll('td');
+      for (let column = 0; column < sampleRows[row].length; column++) {
+        expect(curRowData[column].className).toEqual('');
+      }
+    }
   });
 
   test('should have colClassNames set to the appropriate columns', () => {
-    fail("Not implemented");
+    const sampleClassNames = ['className1', 'className2'];
+    const sampleHeaders = ['Header1', 'Header2'];
+    const sampleRows = [
+      ['data1', 'data2'],
+      ['data3', 'data4']
+    ];
+    const tableRef = React.createRef<Table>();
+    const { container } = render(
+      <Table ref={tableRef} headers={sampleHeaders} rows={sampleRows} colClassNames={sampleClassNames} />
+    );
+
+    const tableHeaders = container.querySelectorAll('thead > tr > th');
+    for (let column = 0; column < sampleHeaders.length; column++) {
+      expect(tableHeaders[column].className).toEqual(sampleClassNames[column]);
+    }
+
+    const tableRows = container.querySelectorAll('tbody > tr');
+    for (let row = 0; row < sampleRows.length; row++) {
+      const curRowData = tableRows[row].querySelectorAll('td');
+      for (let column = 0; column < sampleRows[row].length; column++) {
+        expect(curRowData[column].className).toEqual(sampleClassNames[column]);
+      }
+    }
   });
 });
