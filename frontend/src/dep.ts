@@ -20,6 +20,7 @@ import { ShortHTTPApi } from './service/ShortHTTP.api';
 import { DynamicDecisionService } from './service/feature-decision/DynamicDecision.service';
 import { ShortLinkService } from './service/ShortLink.service';
 import { ShortGraphQLApi } from './service/ShortGraphQL.api';
+import { AnalyticsService } from './service/Analytics.service';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -72,6 +73,7 @@ export function initUIFactory(
     shortGraphQLApiService,
     errorService
   );
+  const analyticsService = new AnalyticsService(shortHTTPApi);
 
   return new UIFactory(
     authService,
@@ -85,7 +87,8 @@ export function initUIFactory(
     changeLogService,
     store,
     dynamicDecisionService,
-    shortLinkService
+    shortLinkService,
+    analyticsService
   );
 }
 

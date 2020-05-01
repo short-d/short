@@ -40,6 +40,7 @@ import {
   IPagedShortLinks,
   ShortLinkService
 } from '../../service/ShortLink.service';
+import { AnalyticsService } from '../../service/Analytics.service';
 
 interface Props {
   uiFactory: UIFactory;
@@ -53,6 +54,7 @@ interface Props {
   errorService: ErrorService;
   changeLogService: ChangeLogService;
   shortLinkService: ShortLinkService;
+  analyticsService: AnalyticsService;
   store: Store<IAppState>;
   location: Location;
 }
@@ -87,6 +89,7 @@ export class Home extends Component<Props, State> {
   }
 
   async componentDidMount() {
+    this.props.analyticsService.track('homePageLoad');
     this.setPromoDisplayStatus();
 
     this.props.authService.cacheAuthToken(this.props.location.search);
