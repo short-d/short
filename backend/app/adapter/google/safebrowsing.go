@@ -3,9 +3,10 @@ package google
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/short-d/app/fw"
 	"github.com/short-d/short/app/usecase/risk"
-	"net/http"
 )
 
 var _ risk.BlackList = (*SafeBrowsing)(nil)

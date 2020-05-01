@@ -259,7 +259,7 @@ func TestURLSql_UpdateURL(t *testing.T) {
 			name:     "alias not found",
 			oldAlias: "does_not_exist",
 			tableRows: []urlTableRow{
-				urlTableRow{
+				{
 					alias:     "220uFicCJj",
 					longLink:  "https://www.google.com",
 					createdAt: &createdAt,
@@ -272,12 +272,12 @@ func TestURLSql_UpdateURL(t *testing.T) {
 			name:     "alias is taken",
 			oldAlias: "220uFicCja",
 			tableRows: []urlTableRow{
-				urlTableRow{
+				{
 					alias:     "220uFicCJj",
 					longLink:  "https://www.google.com",
 					createdAt: &createdAt,
 				},
-				urlTableRow{
+				{
 					alias:     "efpIZ4OS",
 					longLink:  "https://gmail.com",
 					createdAt: &createdAt,
@@ -295,7 +295,7 @@ func TestURLSql_UpdateURL(t *testing.T) {
 				UpdatedAt:   &now,
 			},
 			tableRows: []urlTableRow{
-				urlTableRow{
+				{
 					alias:     "220uFicCJj",
 					longLink:  "https://www.google.com",
 					createdAt: &createdAt,

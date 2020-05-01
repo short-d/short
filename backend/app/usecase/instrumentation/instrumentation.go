@@ -22,6 +22,7 @@ type Instrumentation struct {
 	featureToggleRetrievalSucceedCh chan fw.ExecutionContext
 	featureToggleRetrievalFailedCh  chan fw.ExecutionContext
 	madeFeatureDecisionCh           chan fw.ExecutionContext
+	trackCh                         chan fw.ExecutionContext
 }
 
 // RedirectingAliasToLongLink tracks RedirectingAliasToLongLink event.
@@ -105,6 +106,16 @@ func (i Instrumentation) MadeFeatureDecision(
 	}()
 }
 
+// Track records events happened in the system.
+func (i Instrumentation) Track(event string) {
+	go func() {
+		ctx := <-i.trackCh
+		userID := i.getUserID(nil, ctx)
+		props := map[string]string{}
+		i.analytics.Track(event, props, userID, ctx)
+	}()
+}
+
 // Done closes all the channels to prevent memory leak.
 func (i Instrumentation) Done() {
 	close(i.redirectingAliasToLongLinkCh)
@@ -137,6 +148,7 @@ func NewInstrumentation(logger fw.Logger,
 	featureToggleRetrievalSucceedCh := make(chan fw.ExecutionContext)
 	featureToggleRetrievalFailedCh := make(chan fw.ExecutionContext)
 	madeFeatureDecisionCh := make(chan fw.ExecutionContext)
+	trackCh := make(chan fw.ExecutionContext)
 
 	ins := &Instrumentation{
 		logger:                          logger,
@@ -152,6 +164,7 @@ func NewInstrumentation(logger fw.Logger,
 		featureToggleRetrievalSucceedCh: featureToggleRetrievalSucceedCh,
 		featureToggleRetrievalFailedCh:  featureToggleRetrievalFailedCh,
 		madeFeatureDecisionCh:           madeFeatureDecisionCh,
+		trackCh:                         trackCh,
 	}
 	go func() {
 		ctx := <-ctxCh
@@ -162,6 +175,7 @@ func NewInstrumentation(logger fw.Logger,
 		go func() { featureToggleRetrievalSucceedCh <- ctx }()
 		go func() { featureToggleRetrievalFailedCh <- ctx }()
 		go func() { madeFeatureDecisionCh <- ctx }()
+		go func() { trackCh <- ctx }()
 		close(ctxCh)
 	}()
 	return *ins
