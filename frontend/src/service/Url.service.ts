@@ -187,13 +187,13 @@ export class UrlService {
     link: Url,
     isPublic: boolean = false
   ) {
-    let linkAlias = link.alias === '' ? null : link.alias!;
+    let alias = link.alias === '' ? null : link.alias!;
     return {
       captchaResponse: captchaResponse,
       authToken: this.authService.getAuthToken(),
       urlInput: {
         originalURL: link.originalUrl,
-        customAlias: linkAlias
+        customAlias: alias
       },
       isPublic
     };

@@ -14,18 +14,14 @@ const DEFAULT_PROPS = {
 export class PreferenceToggle extends Component<IProps> {
   static defaultProps: Partial<IProps> = DEFAULT_PROPS;
 
-  private renderLabel() {
-    return <>{this.props.toggleLabel}</>;
-  }
-
   render() {
     return (
-      <div className={'creation-toggle'}>
+      <div className={'preference-toggle'}>
         <Toggle
           defaultIsEnabled={this.props.defaultIsEnabled}
           onClick={this.props.onToggleClick}
         ></Toggle>
-        <span className={'toggle-label'}>{this.renderLabel()}</span>
+        <span className={'toggle-label'}>{this.props.toggleLabel}</span>
       </div>
     );
   }

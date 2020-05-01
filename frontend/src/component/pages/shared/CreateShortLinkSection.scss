@@ -14,7 +14,7 @@
   margin: 10px;
 }
 
-.creation-toggle {
+.preference-toggle {
   display: flex;
   align-items: center;
   justify-content: left;
@@ -26,6 +26,6 @@
   }
 }
 
-.creation-toggles > .creation-toggle:first-child {
+.preference-toggles > .preference-toggle:first-child {
   border-top: 2px solid $color-divider;
 }
