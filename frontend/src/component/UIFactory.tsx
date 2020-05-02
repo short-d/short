@@ -1,7 +1,7 @@
 import React, { ComponentType, ReactElement } from 'react';
 import { App } from './App';
 import { IFeatureDecisionService } from '../service/feature-decision/FeatureDecision.service';
-import { Home } from './pages/Home';
+import { HomePage } from './pages/HomePage';
 import H from 'history';
 import { AuthService } from '../service/Auth.service';
 import { IBrowserExtensionService } from '../service/extensionService/BrowserExtension.service';
@@ -90,7 +90,7 @@ export class UIFactory {
 
   public createHomePage(location: H.Location<any>): ReactElement {
     return (
-      <Home
+      <HomePage
         uiFactory={this}
         authService={this.authService}
         clipboardService={this.clipboardService}
