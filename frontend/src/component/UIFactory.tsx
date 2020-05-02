@@ -142,9 +142,7 @@ export class UIFactory {
   }
 
   public createPublicListingToggle(props: any): ReactElement {
-    return (
-      <this.ToggledPublicListingToggle {...props} />
-    );
+    return <this.ToggledPublicListingToggle {...props} />;
   }
 
   public createUserShortLinksSection(props: any): ReactElement {

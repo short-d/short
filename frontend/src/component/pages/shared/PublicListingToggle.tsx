@@ -23,7 +23,10 @@ export class PublicListingToggle extends Component<IProps> {
           onClick={this.props.onToggleClick}
         ></Toggle>
         <div className={'toggle-label'}>
-          Share on <a href="/public" target="_blank">public feed</a>
+          Share on{' '}
+          <a href="/public" target="_blank">
+            public feed
+          </a>
         </div>
       </div>
     );

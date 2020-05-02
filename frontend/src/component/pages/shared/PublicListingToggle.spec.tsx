@@ -17,11 +17,13 @@ describe('PublicListingToggle component', () => {
       <PublicListingToggle onToggleClick={jest.fn} />
     );
 
-    expect(container.textContent).toContain("Share on public feed");
+    expect(container.textContent).toContain('Share on public feed');
   });
 
   test('should render a toggle', () => {
-    const { container } = render(<PublicListingToggle onToggleClick={jest.fn} />);
+    const { container } = render(
+      <PublicListingToggle onToggleClick={jest.fn} />
+    );
 
     expect(container.querySelector('.toggle')).not.toBeNull();
   });
