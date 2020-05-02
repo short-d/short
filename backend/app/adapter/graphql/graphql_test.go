@@ -56,7 +56,7 @@ func TestGraphQlAPI(t *testing.T) {
 
 	timerFake := mdtest.NewTimerFake(now)
 	changeLogRepo := db.NewChangeLogSQL(sqlDB)
-	changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
+	changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo, nil)
 	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, changeLog, verifier, auth)
 	mdtest.Equal(t, true, mdtest.IsGraphQlAPIValid(graphqlAPI))
 }

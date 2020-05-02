@@ -73,7 +73,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 
 			timerFake := mdtest.NewTimerFake(now)
 			changeLogRepo := db.NewChangeLogSQL(sqlDB)
-			changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
+			changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo, nil)
 
 			query := newQuery(&logger, &tracer, auth, changeLog, retrieverFake)
 

@@ -145,6 +145,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				keyGen,
 				fakeTimer,
 				&changeLogRepo,
+				nil,
 			)
 
 			newChange, err := persist.CreateChange(testCase.change.Title, testCase.change.SummaryMarkdown)
@@ -212,6 +213,7 @@ func TestPersist_GetChangeLog(t *testing.T) {
 				keyGen,
 				fakeTimer,
 				&changeLogRepo,
+				nil,
 			)
 
 			changeLog, err := persist.GetChangeLog()

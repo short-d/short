@@ -99,7 +99,7 @@ func TestAuthQuery_URL(t *testing.T) {
 
 			timerFake := mdtest.NewTimerFake(now)
 			changeLogRepo := db.NewChangeLogSQL(sqlDB)
-			changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
+			changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo, nil)
 
 			tokenizer := mdtest.NewCryptoTokenizerFake()
 			timer := mdtest.NewTimerFake(time.Now())
