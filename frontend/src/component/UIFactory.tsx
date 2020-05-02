@@ -19,6 +19,7 @@ import { SearchBar } from './ui/SearchBar';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
+import { PublicListingToggle } from './pages/shared/PublicListingToggle';
 import { ShortLinkService } from '../service/ShortLink.service';
 import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
 import { AnalyticsService } from '../service/Analytics.service';
@@ -29,6 +30,7 @@ export class UIFactory {
   private ToggledFacebookSignInButton: ComponentType<any>;
   private ToggledSearchBar: ComponentType<any>;
   private ToggledViewChangeLogButton: ComponentType<any>;
+  private ToggledPublicListingToggle: ComponentType<any>;
   private ToggledUserShortLinksSection: ComponentType<any>;
 
   constructor(
@@ -71,6 +73,12 @@ export class UIFactory {
     this.ToggledViewChangeLogButton = withFeatureToggle(
       ViewChangeLogButton,
       includeViewChangeLogButton
+    );
+
+    const includePublicListingToggle = this.featureDecisionService.includePublicListingToggle();
+    this.ToggledPublicListingToggle = withFeatureToggle(
+      PublicListingToggle,
+      includePublicListingToggle
     );
 
     const includeUserShortLinksSection = this.featureDecisionService.includeUserShortLinksSection();
@@ -131,6 +139,10 @@ export class UIFactory {
         facebookSignInLink={this.authService.facebookSignInLink()}
       />
     );
+  }
+
+  public createPublicListingToggle(props: any): ReactElement {
+    return <this.ToggledPublicListingToggle {...props} />;
   }
 
   public createUserShortLinksSection(props: any): ReactElement {

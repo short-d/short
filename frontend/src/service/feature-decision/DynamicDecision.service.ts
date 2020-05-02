@@ -24,6 +24,10 @@ export class DynamicDecisionService implements IFeatureDecisionService {
     return this.makeDecision('change-log');
   }
 
+  includePublicListingToggle(): Promise<boolean> {
+    return this.makeDecision('public-listing');
+  }
+
   includeUserShortLinksSection(): Promise<boolean> {
     return this.makeDecision('user-short-links-section');
   }

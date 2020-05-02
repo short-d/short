@@ -1,6 +1,7 @@
 @import '../styles/corner';
 @import '../styles/color';
 @import '../styles/font';
+@import '../styles/layouts';
 
 $toggle-width: 100px / 1.5;
 $toggle-height: 50px / 1.5;
@@ -12,7 +13,6 @@ $toggle-shrink-size: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 50%;
 
   .background {
     display: inline-block;
@@ -28,17 +28,18 @@ $toggle-shrink-size: 4px;
     background-color: $color-primary;
   }
 
-  .button {
+  .knob {
     background-color: white;
     width: $toggle-height - $toggle-shrink-size;
     height: $toggle-height - $toggle-shrink-size;
     margin-left: $toggle-shrink-size / 2;
+    margin-right: $toggle-width - $toggle-height + $toggle-shrink-size / 2;
     margin-top: $toggle-shrink-size / 2;
     border-radius: $toggle-radius;
     transition: margin-left 0.5s;
   }
 
-  .button.active {
+  .knob.active {
     margin-left: $toggle-width - $toggle-height + $toggle-shrink-size / 2;
   }
 }
