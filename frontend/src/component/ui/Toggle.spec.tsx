@@ -11,6 +11,10 @@ describe('Toggle component', () => {
         fail("Not implemented");
     });
 
+    test('should render an active toggle when enabled by default', () => {
+        fail("Not implemented");
+    });
+
     test('should switch from disabled to enabled when clicked', () => {
         const toggleRef = React.createRef<Toggle>();
         const { container } = render(<Toggle ref={toggleRef} defaultIsEnabled={false} />);
@@ -21,6 +25,10 @@ describe('Toggle component', () => {
     });
 
     test('should trigger onClick callback when toggle clicked', () => {
+        fail("Not implemented");
+    });
+
+    test('should not crash if toggled without onClick callback', () => {
         fail("Not implemented");
     });
 });
