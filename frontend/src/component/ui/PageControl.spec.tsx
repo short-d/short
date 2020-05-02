@@ -7,7 +7,7 @@ describe('PageControl component', () => {
     render(<PageControl totalPages={0} />);
   });
 
-  test('should should render nothing when there is no page', () => {
+  test('should render nothing when there is no page', () => {
     const { container } = render(<PageControl totalPages={0} />);
 
     expect(container.textContent).not.toContain('Previous');

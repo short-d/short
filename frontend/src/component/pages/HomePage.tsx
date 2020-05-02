@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Home.scss';
+import './HomePage.scss';
 
 import { Header } from './shared/Header';
 import { Url } from '../../entity/Url';
@@ -75,7 +75,7 @@ interface State {
   currentPagedShortLinks?: IPagedShortLinks;
 }
 
-export class Home extends Component<Props, State> {
+export class HomePage extends Component<Props, State> {
   errModal = React.createRef<Modal>();
   signInModal = React.createRef<SignInModal>();
   createShortLinkSection = React.createRef<CreateShortLinkSection>();
