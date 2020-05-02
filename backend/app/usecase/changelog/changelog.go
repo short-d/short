@@ -15,7 +15,7 @@ var _ ChangeLog = (*Persist)(nil)
 type ChangeLog interface {
 	CreateChange(title string, summaryMarkdown *string) (entity.Change, error)
 	GetChangeLog() ([]entity.Change, error)
-	GetLastViewedAt() *time.Time
+	GetLastViewedAt(user entity.User) *time.Time
 }
 
 // Persist retrieves change log from and saves changes to persistent data store.
@@ -48,9 +48,8 @@ func (p Persist) GetChangeLog() ([]entity.Change, error) {
 }
 
 // GetLastViewedAt retrieves the last time the user viewed the change log
-// TODO(issue#613): fetch the last time the user viewed the change log from persistent storage.
-func (p Persist) GetLastViewedAt() *time.Time {
-	lastViewedAt, err := p.userChangeLogRepo.GetLastViewedAt(entity.User{})
+func (p Persist) GetLastViewedAt(user entity.User) *time.Time {
+	lastViewedAt, err := p.userChangeLogRepo.GetLastViewedAt(user)
 	if err == nil {
 		return &lastViewedAt
 	}
@@ -58,7 +57,7 @@ func (p Persist) GetLastViewedAt() *time.Time {
 	switch err.(type) {
 	case repository.ErrEntryNotFound:
 		now := p.timer.Now()
-		err := p.userChangeLogRepo.CreateRelation(entity.User{}, now)
+		err := p.userChangeLogRepo.CreateRelation(user, now)
 		if err != nil {
 			return nil
 		}
