@@ -51,6 +51,10 @@ func (p Persist) GetChangeLog() ([]entity.Change, error) {
 // TODO(issue#613): fetch the last time the user viewed the change log from persistent storage.
 func (p Persist) GetLastViewedAt() *time.Time {
 	lastViewedAt, err := p.userChangeLogRepo.GetLastViewedAt(entity.User{})
+	if err == nil {
+		return &lastViewedAt
+	}
+
 	switch err.(type) {
 	case repository.ErrEntryNotFound:
 		now := p.timer.Now()
@@ -60,7 +64,8 @@ func (p Persist) GetLastViewedAt() *time.Time {
 		}
 		return &now
 	}
-	return &lastViewedAt
+
+	return nil
 }
 
 // NewPersist creates Persist
