@@ -156,6 +156,7 @@ func InjectGraphQLService(
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
 		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
 		wire.Bind(new(repository.ChangeLog), new(db.ChangeLogSQL)),
+		wire.Bind(new(repository.UserChangeLog), new(db.UserChangeLogSQL)),
 		wire.Bind(new(repository.URL), new(*db.URLSql)),
 		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
 		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
@@ -174,6 +175,7 @@ func InjectGraphQLService(
 		risk.NewDetector,
 
 		db.NewChangeLogSQL,
+		db.NewUserChangeLogSQL,
 		db.NewURLSql,
 		db.NewUserURLRelationSQL,
 		validator.NewLongLink,

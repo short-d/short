@@ -151,12 +151,12 @@ func NewInstrumentation(logger fw.Logger,
 	trackCh := make(chan fw.ExecutionContext)
 
 	ins := &Instrumentation{
-		logger:                          logger,
-		tracer:                          tracer,
-		timer:                           timer,
-		metrics:                         metrics,
-		analytics:                       analytics,
-		ctxCh:                           ctxCh,
+		logger:    logger,
+		tracer:    tracer,
+		timer:     timer,
+		metrics:   metrics,
+		analytics: analytics,
+		ctxCh:     ctxCh,
 		redirectingAliasToLongLinkCh:    redirectingAliasToLongLinkCh,
 		redirectedAliasToLongLinkCh:     redirectedAliasToLongLinkCh,
 		longLinkRetrievalSucceedCh:      longLinkRetrievalSucceedCh,
