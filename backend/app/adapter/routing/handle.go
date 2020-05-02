@@ -22,10 +22,11 @@ func NewOriginalURL(
 	webFrontendURL netURL.URL,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		i := instrumentationFactory.NewHTTP(r)
-		i.RedirectingAliasToLongLink(nil)
-
 		alias := params["alias"]
+
+		i := instrumentationFactory.NewHTTP(r)
+		i.RedirectingAliasToLongLink(alias)
+
 		now := timer.Now()
 		u, err := urlRetriever.GetURL(alias, &now)
 		if err != nil {
@@ -37,7 +38,7 @@ func NewOriginalURL(
 
 		originURL := u.OriginalURL
 		http.Redirect(w, r, originURL, http.StatusSeeOther)
-		i.RedirectedAliasToLongLink(nil)
+		i.RedirectedAliasToLongLink(u)
 	}
 }
 
@@ -88,7 +89,7 @@ func FeatureHandle(
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
 ) fw.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params fw.Params) {
-		i := instrumentationFactory.NewHTTP(r)
+		i := instrumentationFactory.NewRequest()
 		featureID := params["featureID"]
 
 		decision := featureDecisionMakerFactory.NewDecision(i)

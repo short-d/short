@@ -4,17 +4,17 @@ import (
 	"time"
 
 	"github.com/short-d/app/fw"
+	"github.com/short-d/app/modern/mdenvconfig"
 	"github.com/short-d/short/app"
 	"github.com/short-d/short/cmd"
 	"github.com/short-d/short/dep"
-	"github.com/short-d/short/envconfig"
 )
 
 func main() {
 	env := dep.InjectEnvironment()
 	env.AutoLoadDotEnvFile()
 
-	envConfig := envconfig.NewEnvConfig(env)
+	envConfig := mdenvconfig.NewEnvConfig(env)
 
 	config := struct {
 		ServerEnv            string        `env:"ENV" default:"testing"`
@@ -43,6 +43,7 @@ func main() {
 		DataDogAPIKey        string        `env:"DATA_DOG_API_KEY" default:""`
 		SegmentAPIKey        string        `env:"SEGMENT_API_KEY" default:""`
 		IPStackAPIKey        string        `env:"IP_STACK_API_KEY" default:""`
+		GoogleAPIKey         string        `env:"GOOGLE_API_KEY" default:""`
 	}{}
 
 	err := envConfig.ParseConfigFromEnv(&config)
@@ -86,6 +87,7 @@ func main() {
 		DataDogAPIKey:        config.DataDogAPIKey,
 		SegmentAPIKey:        config.SegmentAPIKey,
 		IPStackAPIKey:        config.IPStackAPIKey,
+		GoogleAPIKey:         config.GoogleAPIKey,
 	}
 
 	rootCmd := cmd.NewRootCmd(

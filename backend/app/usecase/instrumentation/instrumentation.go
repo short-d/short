@@ -22,23 +22,33 @@ type Instrumentation struct {
 	featureToggleRetrievalSucceedCh chan fw.ExecutionContext
 	featureToggleRetrievalFailedCh  chan fw.ExecutionContext
 	madeFeatureDecisionCh           chan fw.ExecutionContext
+	trackCh                         chan fw.ExecutionContext
 }
 
 // RedirectingAliasToLongLink tracks RedirectingAliasToLongLink event.
-func (i Instrumentation) RedirectingAliasToLongLink(user *entity.User) {
+func (i Instrumentation) RedirectingAliasToLongLink(alias string) {
 	go func() {
 		ctx := <-i.redirectingAliasToLongLinkCh
-		userID := i.getUserID(user, ctx)
-		i.analytics.Track("RedirectingAliasToLongLink", map[string]string{}, userID, ctx)
+		userID := i.getUserID(nil, ctx)
+		props := map[string]string{
+			"request-id": ctx.RequestID,
+			"alias":      alias,
+		}
+		i.analytics.Track("RedirectingAliasToLongLink", props, userID, ctx)
 	}()
 }
 
 // RedirectedAliasToLongLink tracks RedirectedAliasToLongLink event.
-func (i Instrumentation) RedirectedAliasToLongLink(user *entity.User) {
+func (i Instrumentation) RedirectedAliasToLongLink(url entity.URL) {
 	go func() {
 		ctx := <-i.redirectedAliasToLongLinkCh
-		userID := i.getUserID(user, ctx)
-		i.analytics.Track("RedirectedAliasToLongLink", map[string]string{}, userID, ctx)
+		userID := i.getUserID(nil, ctx)
+		props := map[string]string{
+			"request-id": ctx.RequestID,
+			"alias":      url.Alias,
+			"long-link":  url.OriginalURL,
+		}
+		i.analytics.Track("RedirectedAliasToLongLink", props, userID, ctx)
 	}()
 }
 
@@ -88,10 +98,21 @@ func (i Instrumentation) MadeFeatureDecision(
 		userID := i.getUserID(nil, ctx)
 		isEnabledStr := fmt.Sprintf("%v", isEnabled)
 		props := map[string]string{
+			"request-id": ctx.RequestID,
 			"feature-id": featureID,
 			"is-enabled": isEnabledStr,
 		}
 		i.analytics.Track("MadeFeatureDecision", props, userID, ctx)
+	}()
+}
+
+// Track records events happened in the system.
+func (i Instrumentation) Track(event string) {
+	go func() {
+		ctx := <-i.trackCh
+		userID := i.getUserID(nil, ctx)
+		props := map[string]string{}
+		i.analytics.Track(event, props, userID, ctx)
 	}()
 }
 
@@ -107,7 +128,7 @@ func (i Instrumentation) Done() {
 
 func (i Instrumentation) getUserID(user *entity.User, ctx fw.ExecutionContext) string {
 	if user == nil {
-		return ctx.RequestID
+		return "anonymous"
 	}
 	return user.Email
 }
@@ -127,6 +148,7 @@ func NewInstrumentation(logger fw.Logger,
 	featureToggleRetrievalSucceedCh := make(chan fw.ExecutionContext)
 	featureToggleRetrievalFailedCh := make(chan fw.ExecutionContext)
 	madeFeatureDecisionCh := make(chan fw.ExecutionContext)
+	trackCh := make(chan fw.ExecutionContext)
 
 	ins := &Instrumentation{
 		logger:                          logger,
@@ -142,6 +164,7 @@ func NewInstrumentation(logger fw.Logger,
 		featureToggleRetrievalSucceedCh: featureToggleRetrievalSucceedCh,
 		featureToggleRetrievalFailedCh:  featureToggleRetrievalFailedCh,
 		madeFeatureDecisionCh:           madeFeatureDecisionCh,
+		trackCh:                         trackCh,
 	}
 	go func() {
 		ctx := <-ctxCh
@@ -152,6 +175,7 @@ func NewInstrumentation(logger fw.Logger,
 		go func() { featureToggleRetrievalSucceedCh <- ctx }()
 		go func() { featureToggleRetrievalFailedCh <- ctx }()
 		go func() { madeFeatureDecisionCh <- ctx }()
+		go func() { trackCh <- ctx }()
 		close(ctxCh)
 	}()
 	return *ins
