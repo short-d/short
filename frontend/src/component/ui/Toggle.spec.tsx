@@ -3,70 +3,76 @@ import { render } from '@testing-library/react';
 import { Toggle } from './Toggle';
 
 describe('Toggle component', () => {
-    test('should render without crash', () => {
-        render(<Toggle />);
-    });
+  test('should render without crash', () => {
+    render(<Toggle />);
+  });
 
-    test('should render an inactive toggle when disabled by default', () => {
-        const { container } = render(<Toggle defaultIsEnabled={false} />);
+  test('should render an inactive toggle when disabled by default', () => {
+    const { container } = render(<Toggle defaultIsEnabled={false} />);
 
-        expect(container.querySelector(".background")).toBeTruthy();
-        expect(container.querySelector(".knob")).toBeTruthy();
-        expect(container.querySelector(".background.active")).toBeNull();
-        expect(container.querySelector(".knob.active")).toBeNull();
-    });
+    expect(container.querySelector('.background')).toBeTruthy();
+    expect(container.querySelector('.knob')).toBeTruthy();
+    expect(container.querySelector('.background.active')).toBeNull();
+    expect(container.querySelector('.knob.active')).toBeNull();
+  });
 
-    test('should render an active toggle when enabled by default', () => {
-        const { container } = render(<Toggle defaultIsEnabled={true} />);
+  test('should render an active toggle when enabled by default', () => {
+    const { container } = render(<Toggle defaultIsEnabled={true} />);
 
-        expect(container.querySelector(".background.active")).toBeTruthy();
-        expect(container.querySelector(".knob.active")).toBeTruthy();
-    });
+    expect(container.querySelector('.background.active')).toBeTruthy();
+    expect(container.querySelector('.knob.active')).toBeTruthy();
+  });
 
-    test('should toggle from disabled to enabled', () => {
-        const toggleRef = React.createRef<Toggle>();
-        const { container } = render(<Toggle ref={toggleRef} defaultIsEnabled={false} />);
+  test('should toggle from disabled to enabled', () => {
+    const toggleRef = React.createRef<Toggle>();
+    const { container } = render(
+      <Toggle ref={toggleRef} defaultIsEnabled={false} />
+    );
 
-        toggleRef.current?.handleClick();
-        expect(container.querySelector(".background.active")).toBeTruthy();
-        expect(container.querySelector(".knob.active")).toBeTruthy();
-    });
+    toggleRef.current?.handleClick();
+    expect(container.querySelector('.background.active')).toBeTruthy();
+    expect(container.querySelector('.knob.active')).toBeTruthy();
+  });
 
-    test('should toggle from enabled to disabled', () => {
-        const toggleRef = React.createRef<Toggle>();
-        const { container } = render(<Toggle ref={toggleRef} defaultIsEnabled={true} />);
+  test('should toggle from enabled to disabled', () => {
+    const toggleRef = React.createRef<Toggle>();
+    const { container } = render(
+      <Toggle ref={toggleRef} defaultIsEnabled={true} />
+    );
 
-        toggleRef.current?.handleClick();
-        expect(container.querySelector(".background")).toBeTruthy();
-        expect(container.querySelector(".knob")).toBeTruthy();
-        expect(container.querySelector(".background.active")).toBeNull();
-        expect(container.querySelector(".knob.active")).toBeNull();
-    });
+    toggleRef.current?.handleClick();
+    expect(container.querySelector('.background')).toBeTruthy();
+    expect(container.querySelector('.knob')).toBeTruthy();
+    expect(container.querySelector('.background.active')).toBeNull();
+    expect(container.querySelector('.knob.active')).toBeNull();
+  });
 
-    test('should trigger onClick callback when toggle clicked', () => {
-        const onClick = jest.fn();
+  test('should trigger onClick callback when toggle clicked', () => {
+    const onClick = jest.fn();
 
-        const toggleRef = React.createRef<Toggle>();
-        render(<Toggle ref={toggleRef} onClick={onClick} />);
+    const toggleRef = React.createRef<Toggle>();
+    render(<Toggle ref={toggleRef} onClick={onClick} />);
 
-        toggleRef.current?.handleClick();
-        expect(onClick).toBeCalled();
-    });
+    toggleRef.current?.handleClick();
+    expect(onClick).toBeCalled();
+  });
 
-    test('should contain the new enabled state of the toggle when clicked', () => {
-        const onClick = jest.fn();
+  test('should contain the new enabled state of the toggle when clicked', () => {
+    const onClick = jest.fn();
 
-        const toggleRef = React.createRef<Toggle>();
-        render(<Toggle ref={toggleRef} onClick={onClick} defaultIsEnabled={true} />);
+    const toggleRef = React.createRef<Toggle>();
+    render(
+      <Toggle ref={toggleRef} onClick={onClick} defaultIsEnabled={true} />
+    );
 
-        toggleRef.current?.handleClick();
-        expect(onClick).toHaveBeenCalledWith(false);
-    });
+    toggleRef.current?.handleClick();
+    expect(onClick).toHaveBeenCalledWith(false);
+  });
 
-    test('should not crash if toggled without onClick callback', () => {
-        const toggleRef = React.createRef<Toggle>();
-        render(<Toggle ref={toggleRef} />);
+  test('should not crash if toggled without onClick callback', () => {
+    const toggleRef = React.createRef<Toggle>();
+    render(<Toggle ref={toggleRef} />);
 
-        toggleRef.current?.handleClick();
-    });
+    toggleRef.current?.handleClick();
+  });
 });
