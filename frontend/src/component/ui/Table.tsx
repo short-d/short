@@ -9,7 +9,10 @@ interface IProps {
 }
 
 export class Table extends Component<IProps> {
-  private createHeaders(headers: ReactChild[] | undefined, colClassNames: string[] | undefined) {
+  private createHeaders(
+    headers: ReactChild[] | undefined,
+    colClassNames: string[] | undefined
+  ) {
     if (!headers || headers.length === 0) {
       return null;
     }
@@ -17,7 +20,10 @@ export class Table extends Component<IProps> {
       <tr key={`header`}>
         {headers.map((cell: ReactChild, cellIndex: number) => {
           return (
-            <th key={`cell-${cellIndex}`} className={colClassNames?.[cellIndex]}>
+            <th
+              key={`cell-${cellIndex}`}
+              className={colClassNames?.[cellIndex]}
+            >
               {cell}
             </th>
           );
@@ -26,16 +32,26 @@ export class Table extends Component<IProps> {
     );
   }
 
-  private createBody(rows: ReactChild[][] | undefined, colClassNames: string[] | undefined) {
+  private createBody(
+    rows: ReactChild[][] | undefined,
+    colClassNames: string[] | undefined
+  ) {
     if (!rows || rows.length === 0) {
       return null;
     }
     return rows.map((row: ReactChild[], rowIndex: number) => {
-      return <tr key={`row-${rowIndex}`}>{this.createBodyRow(row, colClassNames)}</tr>;
+      return (
+        <tr key={`row-${rowIndex}`}>
+          {this.createBodyRow(row, colClassNames)}
+        </tr>
+      );
     });
   }
 
-  private createBodyRow(row: ReactChild[], colClassNames: string[] | undefined) {
+  private createBodyRow(
+    row: ReactChild[],
+    colClassNames: string[] | undefined
+  ) {
     return row.map((cell: ReactChild, cellIndex: number) => {
       return (
         <td key={`cell-${cellIndex}`} className={colClassNames?.[cellIndex]}>

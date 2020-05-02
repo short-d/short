@@ -164,7 +164,12 @@ describe('Table component', () => {
     ];
     const tableRef = React.createRef<Table>();
     const { container } = render(
-      <Table ref={tableRef} headers={sampleHeaders} rows={sampleRows} colClassNames={sampleClassNames} />
+      <Table
+        ref={tableRef}
+        headers={sampleHeaders}
+        rows={sampleRows}
+        colClassNames={sampleClassNames}
+      />
     );
 
     const tableHeaders = container.querySelectorAll('thead > tr > th');
