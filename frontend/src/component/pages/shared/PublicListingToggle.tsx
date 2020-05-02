@@ -11,7 +11,7 @@ const DEFAULT_PROPS = {
   defaultIsEnabled: false
 };
 
-export class PreferenceToggle extends Component<IProps> {
+export class PublicListingToggle extends Component<IProps> {
   static defaultProps: Partial<IProps> = DEFAULT_PROPS;
 
   render() {
@@ -21,7 +21,9 @@ export class PreferenceToggle extends Component<IProps> {
           defaultIsEnabled={this.props.defaultIsEnabled}
           onClick={this.props.onToggleClick}
         ></Toggle>
-        <span className={'toggle-label'}>{this.props.toggleLabel}</span>
+        <span className={'toggle-label'}>
+          Share on <span>public feed</span>
+        </span>
       </div>
     );
   }
