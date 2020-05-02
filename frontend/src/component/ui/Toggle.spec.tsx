@@ -8,27 +8,65 @@ describe('Toggle component', () => {
     });
 
     test('should render an inactive toggle when disabled by default', () => {
-        fail("Not implemented");
+        const { container } = render(<Toggle defaultIsEnabled={false} />);
+
+        expect(container.querySelector(".background")).toBeTruthy();
+        expect(container.querySelector(".knob")).toBeTruthy();
+        expect(container.querySelector(".background.active")).toBeNull();
+        expect(container.querySelector(".knob.active")).toBeNull();
     });
 
     test('should render an active toggle when enabled by default', () => {
-        fail("Not implemented");
+        const { container } = render(<Toggle defaultIsEnabled={true} />);
+
+        expect(container.querySelector(".background.active")).toBeTruthy();
+        expect(container.querySelector(".knob.active")).toBeTruthy();
     });
 
-    test('should switch from disabled to enabled when clicked', () => {
+    test('should toggle from disabled to enabled', () => {
         const toggleRef = React.createRef<Toggle>();
         const { container } = render(<Toggle ref={toggleRef} defaultIsEnabled={false} />);
 
         toggleRef.current?.handleClick();
-        expect(container.querySelector(".background.active")).not.toBeNull();
-        expect(container.querySelector(".knob.active")).not.toBeNull();
+        expect(container.querySelector(".background.active")).toBeTruthy();
+        expect(container.querySelector(".knob.active")).toBeTruthy();
+    });
+
+    test('should toggle from enabled to disabled', () => {
+        const toggleRef = React.createRef<Toggle>();
+        const { container } = render(<Toggle ref={toggleRef} defaultIsEnabled={true} />);
+
+        toggleRef.current?.handleClick();
+        expect(container.querySelector(".background")).toBeTruthy();
+        expect(container.querySelector(".knob")).toBeTruthy();
+        expect(container.querySelector(".background.active")).toBeNull();
+        expect(container.querySelector(".knob.active")).toBeNull();
     });
 
     test('should trigger onClick callback when toggle clicked', () => {
-        fail("Not implemented");
+        const onClick = jest.fn();
+
+        const toggleRef = React.createRef<Toggle>();
+        render(<Toggle ref={toggleRef} onClick={onClick} />);
+
+        toggleRef.current?.handleClick();
+        expect(onClick).toBeCalled();
+    });
+
+    test('should contain the new enabled state of the toggle when clicked', () => {
+        const onClick = jest.fn();
+
+        const toggleRef = React.createRef<Toggle>();
+        render(<Toggle ref={toggleRef} onClick={onClick} defaultIsEnabled={true} />);
+
+        toggleRef.current?.handleClick();
+        expect(onClick).toHaveBeenCalledWith(false);
     });
 
     test('should not crash if toggled without onClick callback', () => {
-        fail("Not implemented");
+        const toggleRef = React.createRef<Toggle>();
+        render(<Toggle ref={toggleRef} />);
+
+        toggleRef.current?.handleClick();
     });
 });
