@@ -14,18 +14,6 @@
   margin: 10px;
 }
 
-.preference-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  padding-top: 16px;
-  padding-left: 16px;
-
-  .toggle-label {
-    margin-left: 16px;
-  }
-}
-
 .preference-toggles > .preference-toggle:first-child {
   border-top: 2px solid $color-divider;
 }

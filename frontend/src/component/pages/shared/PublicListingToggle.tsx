@@ -1,5 +1,6 @@
 import React, { Component, ReactChild } from 'react';
 import { Toggle } from '../../ui/Toggle';
+import './PublicListingToggle.scss';
 
 interface IProps {
   toggleLabel: ReactChild;
@@ -21,9 +22,9 @@ export class PublicListingToggle extends Component<IProps> {
           defaultIsEnabled={this.props.defaultIsEnabled}
           onClick={this.props.onToggleClick}
         ></Toggle>
-        <span className={'toggle-label'}>
-          Share on <span>public feed</span>
-        </span>
+        <div className={'toggle-label'}>
+          Share on <a href="/public" target="_blank">public feed</a>
+        </div>
       </div>
     );
   }
