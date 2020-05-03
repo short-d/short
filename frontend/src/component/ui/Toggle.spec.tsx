@@ -33,6 +33,7 @@ describe('Toggle component', () => {
     expect(container.querySelector('.knob')).toBeTruthy();
     expect(container.querySelector('.background.active')).toBeNull();
     expect(container.querySelector('.knob.active')).toBeNull();
+
     toggleRef.current?.handleClick();
     expect(container.querySelector('.background.active')).toBeTruthy();
     expect(container.querySelector('.knob.active')).toBeTruthy();
@@ -46,6 +47,7 @@ describe('Toggle component', () => {
 
     expect(container.querySelector('.background.active')).toBeTruthy();
     expect(container.querySelector('.knob.active')).toBeTruthy();
+
     toggleRef.current?.handleClick();
     expect(container.querySelector('.background.active')).toBeNull();
     expect(container.querySelector('.knob.active')).toBeNull();
@@ -64,7 +66,7 @@ describe('Toggle component', () => {
     expect(onClick).toBeCalled();
   });
 
-  test('should contain the new enabled state of the toggle when clicked', () => {
+  test('should receive new toggle state when clicked', () => {
     const onClick = jest.fn();
 
     const toggleRef = React.createRef<Toggle>();
