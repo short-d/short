@@ -382,7 +382,7 @@ export class HomePage extends Component<Props, State> {
             <div className={'err'}>
               <div className={'close-icon'}>
                 <Icon
-                  defaultIconID={IconID.Close}
+                  iconID={IconID.Close}
                   onClick={this.handleOnErrModalCloseClick}
                 />
               </div>

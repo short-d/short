@@ -91,7 +91,7 @@ export class SearchBar extends Component<Props, State> {
             onBlur={this.hideAutoCompleteBox}
           />
           <div className={'search-icon'}>
-            <Icon defaultIconID={IconID.Search} />
+            <Icon iconID={IconID.Search} />
           </div>
         </div>
         {this.createAutoCompleteBox()}

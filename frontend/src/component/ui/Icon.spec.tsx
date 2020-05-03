@@ -2,27 +2,23 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { Icon, IconID } from './Icon';
 
-describe('Navigation component', () => {
+describe('Icon component', () => {
   test('should render without crash', () => {
-    render(<Icon defaultIconID={IconID.Close} />);
+    render(<Icon iconID={IconID.Close} />);
   });
 
   test('should render the icon correctly', () => {
     const iconRef = React.createRef<Icon>();
-    const { container } = render(
-      <Icon ref={iconRef} defaultIconID={IconID.Search} />
-    );
+    const { container } = render(<Icon ref={iconRef} iconID={IconID.Search} />);
 
     const expectedSVG = render(iconRef.current!.renderSVG(IconID.Search));
-    expect(container.querySelector('.icon')!.innerHTML).toContain(
-      expectedSVG.container.innerHTML
-    );
+    expect(container.querySelector('.icon-search')).toBeTruthy();
   });
 
   test('should call click handler when clicked on icon', () => {
     const onClickHandler = jest.fn();
     const { container } = render(
-      <Icon defaultIconID={IconID.Close} onClick={onClickHandler} />
+      <Icon iconID={IconID.Close} onClick={onClickHandler} />
     );
 
     const icon = container.querySelector('.icon');
@@ -33,21 +29,12 @@ describe('Navigation component', () => {
     expect(onClickHandler).toHaveBeenCalled();
   });
 
-  test('should change icon when icon setter is triggered', () => {
-    const iconRef = React.createRef<Icon>();
-    const { container } = render(
-      <Icon ref={iconRef} defaultIconID={IconID.Search} />
-    );
+  test('should not crash when clicked without onClick callback', () => {
+    const { container } = render(<Icon iconID={IconID.Close} />);
 
-    const SVGBeforeChange = render(iconRef.current!.renderSVG(IconID.Search));
-    expect(container.querySelector('.icon')!.innerHTML).toContain(
-      SVGBeforeChange.container.innerHTML
-    );
+    const icon = container.querySelector('.icon');
 
-    iconRef.current!.setIcon(IconID.Close);
-    const SVGAfterChange = render(iconRef.current!.renderSVG(IconID.Close));
-    expect(container.querySelector('.icon')!.innerHTML).toContain(
-      SVGAfterChange.container.innerHTML
-    );
+    expect(icon).toBeTruthy();
+    fireEvent.click(icon!);
   });
 });
