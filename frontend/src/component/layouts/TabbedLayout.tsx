@@ -19,12 +19,10 @@ interface IState {
 
 export class TabbedLayout extends Component<IProps, IState> {
   private drawerRef = React.createRef<Drawer>();
-  private tabs: Tab[];
 
   constructor(props: IProps) {
     super(props);
 
-    this.tabs = this.props.tabs;
     this.state = { currentTabIdx: 0 };
   }
 
@@ -70,13 +68,14 @@ export class TabbedLayout extends Component<IProps, IState> {
 
   private renderCurrentTab = () => {
     const { currentTabIdx } = this.state;
+    const { tabs } = this.props;
     if (currentTabIdx < 0) {
       return;
     }
-    if (currentTabIdx >= this.props.tabs.length) {
+    if (currentTabIdx >= tabs.length) {
       return;
     }
 
-    return <div className={'tab'}> {this.tabs[currentTabIdx].content} </div>;
+    return <div className={'tab'}> {tabs[currentTabIdx].content} </div>;
   };
 }

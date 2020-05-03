@@ -20,14 +20,8 @@ describe('TabbedLayout component', () => {
 
   test('should render all headers correctly', () => {
     const tabs: Tab[] = [
-      {
-        header: 'header 1',
-        content: 'content 1'
-      },
-      {
-        header: 'header 2',
-        content: 'content 2'
-      }
+      { header: 'header 1', content: 'content 1' },
+      { header: 'header 2', content: 'content 2' }
     ];
 
     const { container } = render(<TabbedLayout tabs={tabs} />);
