@@ -2,6 +2,7 @@ package role
 
 import "github.com/short-d/short/app/usecase/authorizer/permission"
 
+// Role represents a groupings of permissions
 type Role int
 
 const (
@@ -18,7 +19,7 @@ const (
 	Admin
 )
 
-var Permissions = map[Role][]permission.Permission{
+var permissions = map[Role][]permission.Permission{
 	Basic: {},
 	ShortLinkViewer: {
 		permission.ViewShortLink,
@@ -62,4 +63,27 @@ var Permissions = map[Role][]permission.Permission{
 
 		permission.ViewDashboards,
 	},
+}
+
+// GetPermissions returns the list of allowed permissions
+func (r Role) GetPermissions() []permission.Permission {
+	if list, ok := permissions[r]; ok {
+		return list
+	}
+
+	return []permission.Permission{}
+}
+
+// IsAllowed tells if the given role grants access to a permission
+func (r Role) IsAllowed(permission permission.Permission) bool {
+	isAllowed := false
+
+	for _, value := range r.GetPermissions() {
+		if value == permission {
+			isAllowed = true
+			break
+		}
+	}
+
+	return isAllowed
 }
