@@ -29,6 +29,10 @@ describe('Toggle component', () => {
       <Toggle ref={toggleRef} defaultIsEnabled={false} />
     );
 
+    expect(container.querySelector('.background')).toBeTruthy();
+    expect(container.querySelector('.knob')).toBeTruthy();
+    expect(container.querySelector('.background.active')).toBeNull();
+    expect(container.querySelector('.knob.active')).toBeNull();
     toggleRef.current?.handleClick();
     expect(container.querySelector('.background.active')).toBeTruthy();
     expect(container.querySelector('.knob.active')).toBeTruthy();
@@ -40,11 +44,13 @@ describe('Toggle component', () => {
       <Toggle ref={toggleRef} defaultIsEnabled={true} />
     );
 
+    expect(container.querySelector('.background.active')).toBeTruthy();
+    expect(container.querySelector('.knob.active')).toBeTruthy();
     toggleRef.current?.handleClick();
-    expect(container.querySelector('.background')).toBeTruthy();
-    expect(container.querySelector('.knob')).toBeTruthy();
     expect(container.querySelector('.background.active')).toBeNull();
     expect(container.querySelector('.knob.active')).toBeNull();
+    expect(container.querySelector('.background')).toBeTruthy();
+    expect(container.querySelector('.knob')).toBeTruthy();
   });
 
   test('should trigger onClick callback when toggle clicked', () => {
