@@ -28,17 +28,6 @@ export class TabbedLayout extends Component<IProps, IState> {
     this.state = { currentTabIdx: 0 };
   }
 
-  render() {
-    return (
-      <div className={'tab-layout'}>
-        <div className={'tab-headers'}>
-          <Drawer ref={this.drawerRef}>{this.renderDrawer()}</Drawer>
-        </div>
-        <div className={'tab-content'}>{this.renderTab()}</div>
-      </div>
-    );
-  }
-
   showHeaders = () => {
     if (!this.drawerRef || !this.drawerRef.current) {
       return;
@@ -53,14 +42,25 @@ export class TabbedLayout extends Component<IProps, IState> {
     this.drawerRef.current.close();
   };
 
-  private renderDrawer = () => {
+  render() {
+    return (
+      <div className={'tab-layout'}>
+        <div className={'tab-headers'}>{this.renderHeaders()}</div>
+        <div className={'tab-content'}>{this.renderCurrentTab()}</div>
+      </div>
+    );
+  }
+
+  private renderHeaders = () => {
     const { tabs } = this.props;
     const headers = tabs.map(tab => tab.header);
     return (
-      <Navigation
-        menuItems={headers}
-        onMenuItemSelected={this.handleHeaderSelected}
-      />
+      <Drawer ref={this.drawerRef}>
+        <Navigation
+          menuItems={headers}
+          onMenuItemSelected={this.handleHeaderSelected}
+        />
+      </Drawer>
     );
   };
 
@@ -68,8 +68,15 @@ export class TabbedLayout extends Component<IProps, IState> {
     this.setState({ currentTabIdx: selectItemIdx });
   };
 
-  private renderTab = () => {
+  private renderCurrentTab = () => {
     const { currentTabIdx } = this.state;
+    if (currentTabIdx < 0) {
+      return;
+    }
+    if (currentTabIdx >= this.props.tabs.length) {
+      return;
+    }
+
     return <div className={'tab'}> {this.tabs[currentTabIdx].content} </div>;
   };
 }
