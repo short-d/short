@@ -63,10 +63,7 @@ describe('Navigation component', () => {
   test('should select clicked menu item', () => {
     const menuItemContents = ['item1', 'item2', 'item3'];
     const { container } = render(
-      <Navigation
-        menuItems={menuItemContents}
-        onMenuItemSelected={jest.fn()}
-      />
+      <Navigation menuItems={menuItemContents} onMenuItemSelected={jest.fn()} />
     );
 
     const menuItems = container.querySelectorAll('.menu > li');

@@ -4,22 +4,25 @@ import './Toggle.scss';
 import classNames from 'classnames';
 
 interface Props {
+  defaultIsEnabled: boolean;
   onClick?: (enabled: boolean) => void;
 }
 
 interface State {
   enabled: boolean;
-  buttonClassName: string;
-  backgroundClassName: string;
 }
 
+const DEFAULT_PROPS = {
+  defaultIsEnabled: false
+};
+
 export class Toggle extends Component<Props, State> {
+  static defaultProps: Partial<Props> = DEFAULT_PROPS;
+
   constructor(props: Props) {
     super(props);
     this.state = {
-      enabled: false,
-      buttonClassName: classNames('button'),
-      backgroundClassName: classNames('background')
+      enabled: props.defaultIsEnabled
     };
   }
 
@@ -34,30 +37,27 @@ export class Toggle extends Component<Props, State> {
           return;
         }
         this.props.onClick(enabled);
-        if (enabled) {
-          this.setState({
-            buttonClassName: classNames('button', 'active'),
-            backgroundClassName: classNames('background', 'active')
-          });
-          return;
-        }
-        this.setState({
-          buttonClassName: classNames('button'),
-          backgroundClassName: classNames('background')
-        });
       }
     );
   };
 
   render() {
+    const { enabled } = this.state;
     return (
       <div className={'toggle'}>
-        {this.props.children}
         <div
-          className={this.state.backgroundClassName}
+          className={classNames({
+            background: true,
+            active: enabled
+          })}
           onClick={this.handleClick}
         >
-          <div className={this.state.buttonClassName}></div>
+          <div
+            className={classNames({
+              knob: true,
+              active: enabled
+            })}
+          />
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Home.scss';
+import './HomePage.scss';
 
 import { Header } from './shared/Header';
 import { Url } from '../../entity/Url';
@@ -41,6 +41,7 @@ import {
   ShortLinkService
 } from '../../service/ShortLink.service';
 import { AnalyticsService } from '../../service/Analytics.service';
+import { Icon, IconID } from '../ui/Icon';
 
 interface Props {
   uiFactory: UIFactory;
@@ -69,12 +70,13 @@ interface State {
   qrCodeUrl?: string;
   err?: IErr;
   inputErr?: string;
+  isShortLinkPublic?: boolean;
   autoCompleteSuggestions?: Array<Url>;
   changeLog?: Array<Update>;
   currentPagedShortLinks?: IPagedShortLinks;
 }
 
-export class Home extends Component<Props, State> {
+export class HomePage extends Component<Props, State> {
   errModal = React.createRef<Modal>();
   signInModal = React.createRef<SignInModal>();
   createShortLinkSection = React.createRef<CreateShortLinkSection>();
@@ -190,7 +192,7 @@ export class Home extends Component<Props, State> {
     this.requestSignIn();
   };
 
-  handlerLongLinkChange = (newLongLink: string) => {
+  handleLongLinkChange = (newLongLink: string) => {
     this.props.store.dispatch(updateLongLink(newLongLink));
   };
 
@@ -206,13 +208,13 @@ export class Home extends Component<Props, State> {
     this.props.store.dispatch(clearError());
   };
 
-  handlerLongLinkTextFieldBlur = () => {
+  handleLongLinkTextFieldBlur = () => {
     let longLink = this.props.store.getState().editingUrl.originalUrl;
     let err = validateLongLinkFormat(longLink);
     this.props.store.dispatch(raiseInputError(err));
   };
 
-  handlerCustomAliasTextFieldBlur = () => {
+  handleCustomAliasTextFieldBlur = () => {
     const alias = this.props.store.getState().editingUrl.alias;
     const err = validateCustomAliasFormat(alias);
     this.props.store.dispatch(raiseInputError(err));
@@ -233,7 +235,7 @@ export class Home extends Component<Props, State> {
   handleCreateShortLinkClick = () => {
     const editingUrl = this.props.store.getState().editingUrl;
     this.props.urlService
-      .createShortLink(editingUrl)
+      .createShortLink(editingUrl, this.state.isShortLinkPublic)
       .then((createdUrl: Url) => {
         this.props.store.dispatch(updateCreatedUrl(createdUrl));
 
@@ -253,6 +255,12 @@ export class Home extends Component<Props, State> {
           raiseCreateShortLinkError(createShortLinkErr)
         );
       });
+  };
+
+  handlePublicToggleClick = (enabled: boolean) => {
+    this.setState({
+      isShortLinkPublic: enabled
+    });
   };
 
   getLongLinkFromQueryParams(): string {
@@ -326,6 +334,7 @@ export class Home extends Component<Props, State> {
         />
         <div className={'main'}>
           <CreateShortLinkSection
+            uiFactory={this.props.uiFactory}
             ref={this.createShortLinkSection}
             longLinkText={this.state.longLink}
             alias={this.state.alias}
@@ -333,10 +342,12 @@ export class Home extends Component<Props, State> {
             inputErr={this.state.inputErr}
             createdUrl={this.state.createdUrl}
             qrCodeUrl={this.state.qrCodeUrl}
-            onLongLinkTextFieldBlur={this.handlerLongLinkTextFieldBlur}
-            onLongLinkTextFieldChange={this.handlerLongLinkChange}
-            onShortLinkTextFieldBlur={this.handlerCustomAliasTextFieldBlur}
+            isShortLinkPublic={this.state.isShortLinkPublic}
+            onLongLinkTextFieldBlur={this.handleLongLinkTextFieldBlur}
+            onLongLinkTextFieldChange={this.handleLongLinkChange}
+            onShortLinkTextFieldBlur={this.handleCustomAliasTextFieldBlur}
             onShortLinkTextFieldChange={this.handleAliasChange}
+            onPublicToggleClick={this.handlePublicToggleClick}
             onCreateShortLinkButtonClick={this.handleCreateShortLinkClick}
           />
           {this.state.isUserSignedIn && (
@@ -369,13 +380,12 @@ export class Home extends Component<Props, State> {
         >
           {this.state.err && (
             <div className={'err'}>
-              <i
-                className={'material-icons close'}
-                title={'close'}
-                onClick={this.handleOnErrModalCloseClick}
-              >
-                close
-              </i>
+              <div className={'close-icon'}>
+                <Icon
+                  defaultIconID={IconID.Close}
+                  onClick={this.handleOnErrModalCloseClick}
+                />
+              </div>
               <div className={'title'}>{this.state.err.name}</div>
               <div className={'description'}>{this.state.err.description}</div>
             </div>

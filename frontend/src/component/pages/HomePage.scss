@@ -2,7 +2,6 @@
 @import '../styles/dimension';
 @import '../styles/color';
 @import '../styles/corner';
-@import '../styles/icon';
 @import '../styles/layouts';
 
 .home {
@@ -84,14 +83,12 @@
       line-height: 1.5;
     }
 
-    .close {
-      color: white;
-      height: 24px;
+    .close-icon {
+      fill: white;
       opacity: 0.6;
       position: fixed;
       right: 10px;
       top: 10px;
-      width: 24px;
 
       &:hover {
         cursor: pointer;
