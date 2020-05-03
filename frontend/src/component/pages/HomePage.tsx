@@ -41,6 +41,7 @@ import {
   ShortLinkService
 } from '../../service/ShortLink.service';
 import { AnalyticsService } from '../../service/Analytics.service';
+import { Icon, IconID } from '../ui/Icon';
 
 interface Props {
   uiFactory: UIFactory;
@@ -379,13 +380,12 @@ export class HomePage extends Component<Props, State> {
         >
           {this.state.err && (
             <div className={'err'}>
-              <i
-                className={'material-icons close'}
-                title={'close'}
-                onClick={this.handleOnErrModalCloseClick}
-              >
-                close
-              </i>
+              <div className={'close-icon'}>
+                <Icon
+                  defaultIconID={IconID.Close}
+                  onClick={this.handleOnErrModalCloseClick}
+                />
+              </div>
               <div className={'title'}>{this.state.err.name}</div>
               <div className={'description'}>{this.state.err.description}</div>
             </div>
