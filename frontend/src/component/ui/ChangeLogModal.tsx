@@ -80,7 +80,7 @@ export class ChangeLogModal extends Component<Props, State> {
           <div className={'modal-header'}>
             Since You've Been Gone
             <span className={'close-button'}>
-              <Icon iconID={IconID.Close} onClick={this.close} />
+              <Icon defaultIconID={IconID.Close} onClick={this.close} />
             </span>
           </div>
           {this.createChangeLog()}
