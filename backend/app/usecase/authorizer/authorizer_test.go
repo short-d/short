@@ -2,6 +2,6 @@ package authorizer
 
 import "testing"
 
-func TestAuthorizer_CanCreateChange(t *testing.T) {
+func TestAuthorizer_HasAccess(t *testing.T) {
 
 }
