@@ -53,6 +53,7 @@ describe('Toggle component', () => {
     const toggleRef = React.createRef<Toggle>();
     render(<Toggle ref={toggleRef} onClick={onClick} />);
 
+    expect(onClick).not.toBeCalled();
     toggleRef.current?.handleClick();
     expect(onClick).toBeCalled();
   });
@@ -66,7 +67,7 @@ describe('Toggle component', () => {
     );
 
     toggleRef.current?.handleClick();
-    expect(onClick).toHaveBeenCalledWith(false);
+    expect(onClick).toHaveBeenLastCalledWith(false);
   });
 
   test('should not crash if toggled without onClick callback', () => {
