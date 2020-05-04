@@ -10,24 +10,26 @@ type Authorizer struct {
 	userRoleRepo repository.UserRole
 }
 
-// HasAccess tells if a user has a right to the given permission
-func (a Authorizer) HasAccess(user entity.User, permission permission.Permission) (bool, error) {
+// CanCreateChange tells if a user has a right to create a change
+func (a Authorizer) CanCreateChange(user entity.User) (bool, error) {
+	return a.hasPermission(user, permission.CreateChange)
+}
+
+// hasPermission tells if a user has a right to the given permission
+func (a Authorizer) hasPermission(user entity.User, permission permission.Permission) (bool, error) {
 	roles, err := a.userRoleRepo.GetUserRoles(user)
 
 	if err != nil {
 		return false, err
 	}
 
-	hasAccess := false
-
 	for _, role := range roles {
 		if role.IsAllowed(permission) {
-			hasAccess = true
-			break
+			return true, nil
 		}
 	}
 
-	return hasAccess, nil
+	return false, nil
 }
 
 func NewAuthorizer(userRoleRepo repository.UserRole) Authorizer {
