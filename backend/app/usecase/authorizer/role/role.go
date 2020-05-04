@@ -65,25 +65,13 @@ var permissions = map[Role][]permission.Permission{
 	},
 }
 
-// GetPermissions returns the list of allowed permissions
-func (r Role) GetPermissions() []permission.Permission {
-	if list, ok := permissions[r]; ok {
-		return list
-	}
-
-	return []permission.Permission{}
-}
-
 // IsAllowed tells if the given role grants access to a permission
 func (r Role) IsAllowed(permission permission.Permission) bool {
-	isAllowed := false
-
-	for _, value := range r.GetPermissions() {
+	for _, value := range permissions[r] {
 		if value == permission {
-			isAllowed = true
-			break
+			return true
 		}
 	}
 
-	return isAllowed
+	return false
 }
