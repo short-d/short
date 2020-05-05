@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/short-d/app/fw"
-	"github.com/short-d/app/modern/mdlogger"
+	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/runtime"
+	"github.com/short-d/app/fw/timer"
 )
 
 // LogPrefix represents the prefix of a log message.
@@ -14,10 +15,10 @@ type LogPrefix string
 // during dependency injection.
 func NewLogger(
 	prefix LogPrefix,
-	level fw.LogLevel,
-	timer fw.Timer,
-	programRuntime fw.ProgramRuntime,
-	entryRepo mdlogger.EntryRepository,
-) mdlogger.Logger {
-	return mdlogger.NewLogger(string(prefix), level, timer, programRuntime, entryRepo)
+	level logger.LogLevel,
+	timer timer.Timer,
+	programRuntime runtime.Program,
+	entryRepo logger.EntryRepository,
+) logger.Logger {
+	return logger.NewLogger(string(prefix), level, timer, programRuntime, entryRepo)
 }

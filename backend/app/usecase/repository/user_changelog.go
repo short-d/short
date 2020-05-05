@@ -3,7 +3,7 @@ package repository
 import (
 	"time"
 
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 // ErrEntryNotFound represents no entry found in the repository error

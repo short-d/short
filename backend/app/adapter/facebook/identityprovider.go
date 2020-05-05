@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/webreq"
+	"github.com/short-d/short/backend/app/usecase/external"
 )
 
 // More info here: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
@@ -17,13 +17,13 @@ const (
 	fbResponseType     = "code"
 )
 
-var _ service.IdentityProvider = (*IdentityProvider)(nil)
+var _ external.IdentityProvider = (*IdentityProvider)(nil)
 
 // IdentityProvider represents Facebook OAuth service.
 type IdentityProvider struct {
 	clientID     string
 	clientSecret string
-	http         fw.HTTPRequest
+	httpRequest  webreq.HTTP
 	redirectURI  string
 }
 
@@ -85,7 +85,7 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessTo
 	}
 
 	apiRes := fbAccessTokenResponse{}
-	err = g.http.JSON(http.MethodPost, u.String(), headers, body.Encode(), &apiRes)
+	err = g.httpRequest.JSON(http.MethodPost, u.String(), headers, body.Encode(), &apiRes)
 
 	if err != nil {
 		return "", err
@@ -96,7 +96,7 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessTo
 
 // NewIdentityProvider initializes Facebook OAuth service.
 func NewIdentityProvider(
-	http fw.HTTPRequest,
+	httpRequest webreq.HTTP,
 	clientID string,
 	clientSecret string,
 	redirectURI string,
@@ -104,7 +104,7 @@ func NewIdentityProvider(
 	return IdentityProvider{
 		clientID:     clientID,
 		clientSecret: clientSecret,
-		http:         http,
+		httpRequest:  httpRequest,
 		redirectURI:  redirectURI,
 	}
 }
