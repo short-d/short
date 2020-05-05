@@ -24,6 +24,7 @@ func (r Service) Verify(captchaResponse string) (external.VerifyResponse, error)
 	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
+	// TODO(issue#739): Change ReCaptcha API body to a map.
 	body := fmt.Sprintf("secret=%s&response=%s", r.secret, captchaResponse)
 	apiRes := external.VerifyResponse{}
 	err := r.http.JSON(http.MethodPost, verifyAPI, headers, body, &apiRes)

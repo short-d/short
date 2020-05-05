@@ -121,7 +121,7 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	proxy := network.NewProxy()
 	ipStack := provider.NewIPStack(ipStackAPIKey, http, loggerLogger)
 	requestClient := request.NewClient(proxy, ipStack)
-	instrumentationFactory := request.NewInstrumentationFactory(runtime2, loggerLogger, system, dataDog, segment, keyGenerator, requestClient)
+	instrumentationFactory := request.NewInstrumentationFactory(loggerLogger, system, dataDog, segment, keyGenerator, requestClient)
 	urlSql := sqldb.NewURLSql(sqlDB)
 	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)

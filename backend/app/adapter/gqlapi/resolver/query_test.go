@@ -6,10 +6,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/app/fw/timer"
-
-	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/changelog"

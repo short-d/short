@@ -141,10 +141,10 @@ func TestPersist_CreateChange(t *testing.T) {
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 
-			fakeTimer := timer.NewStub(now)
+			tm := timer.NewStub(now)
 			persist := NewPersist(
 				keyGen,
-				fakeTimer,
+				tm,
 				&changeLogRepo,
 			)
 

@@ -7,10 +7,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/short-d/app/fw/logger"
-
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/db/dbtest"
+	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/short/app/adapter/sqldb"
 	"github.com/short-d/short/app/adapter/sqldb/table"
 	"github.com/short-d/short/app/entity"
@@ -136,7 +135,6 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 					assert.Equal(t, nil, err)
 
 					githubSSORepo := sqldb.NewGithubSSOSql(sqlDB, lg)
-
 					err = githubSSORepo.CreateMapping(testCase.ssoUser, testCase.shortUser)
 					assert.Equal(t, nil, err)
 

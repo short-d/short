@@ -5,18 +5,15 @@ import (
 
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/ctx"
-	"github.com/short-d/app/fw/env"
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/app/fw/metrics"
 	"github.com/short-d/app/fw/timer"
-
 	"github.com/short-d/short/app/usecase/instrumentation"
 	"github.com/short-d/short/app/usecase/keygen"
 )
 
 // InstrumentationFactory initializes instrumentation code.
 type InstrumentationFactory struct {
-	runtime   env.Runtime
 	keyGen    keygen.KeyGenerator
 	logger    logger.Logger
 	timer     timer.Timer
@@ -86,7 +83,6 @@ func (f InstrumentationFactory) NewRequest() instrumentation.Instrumentation {
 
 // NewInstrumentationFactory creates Instrumentation factory.
 func NewInstrumentationFactory(
-	runtime env.Runtime,
 	logger logger.Logger,
 	timer timer.Timer,
 	metrics metrics.Metrics,
@@ -95,7 +91,6 @@ func NewInstrumentationFactory(
 	client Client,
 ) InstrumentationFactory {
 	return InstrumentationFactory{
-		runtime:   runtime,
 		logger:    logger,
 		timer:     timer,
 		metrics:   metrics,

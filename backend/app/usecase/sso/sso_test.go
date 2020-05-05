@@ -7,9 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/fw/timer"
-
 	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/authenticator"
@@ -64,8 +63,8 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 			identityProvider := external.NewIdentityProviderFake("http://localhost/sign-in", "")
 			profileService := external.NewSSOAccountFake(testCase.ssoUser)
 			fakeUserRepo := repository.NewUserFake(testCase.users)
-			stubTimer := timer.NewStub(time.Now())
-			accountProvider := account.NewProvider(&fakeUserRepo, stubTimer)
+			tm := timer.NewStub(time.Now())
+			accountProvider := account.NewProvider(&fakeUserRepo, tm)
 
 			now := time.Now()
 			auth := authenticator.NewAuthenticatorFake(now, time.Minute)

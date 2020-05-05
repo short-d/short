@@ -6,9 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/fw/timer"
-
 	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/repository"
 )
@@ -46,8 +45,8 @@ func TestProvider_IsAccountExist(t *testing.T) {
 			t.Parallel()
 
 			fakeUserRepo := repository.NewUserFake(testCase.users)
-			stuTimer := timer.NewStub(now)
-			accountProvider := NewProvider(&fakeUserRepo, stuTimer)
+			tm := timer.NewStub(now)
+			accountProvider := NewProvider(&fakeUserRepo, tm)
 			gotIsExist, err := accountProvider.IsAccountExist(testCase.userEmail)
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedIsExist, gotIsExist)
@@ -91,8 +90,8 @@ func TestProvider_CreateAccount(t *testing.T) {
 			t.Parallel()
 
 			fakeUserRepo := repository.NewUserFake(testCase.users)
-			stuTimer := timer.NewStub(now)
-			accountProvider := NewProvider(&fakeUserRepo, stuTimer)
+			tm := timer.NewStub(now)
+			accountProvider := NewProvider(&fakeUserRepo, tm)
 			err := accountProvider.CreateAccount(testCase.email, testCase.userName)
 			if testCase.expectedHasErr {
 				assert.NotEqual(t, nil, err)

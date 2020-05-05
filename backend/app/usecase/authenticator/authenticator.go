@@ -6,7 +6,6 @@ import (
 
 	"github.com/short-d/app/fw/crypto"
 	"github.com/short-d/app/fw/timer"
-
 	"github.com/short-d/short/app/entity"
 )
 

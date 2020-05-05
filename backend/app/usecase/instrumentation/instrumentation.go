@@ -32,7 +32,7 @@ type Instrumentation struct {
 func (i Instrumentation) RedirectingAliasToLongLink(alias string) {
 	go func() {
 		c := <-i.redirectingAliasToLongLinkCh
-		userID := i.getUserID(nil, c)
+		userID := i.getUserID(nil)
 		props := map[string]string{
 			"request-id": c.RequestID,
 			"alias":      alias,
@@ -45,7 +45,7 @@ func (i Instrumentation) RedirectingAliasToLongLink(alias string) {
 func (i Instrumentation) RedirectedAliasToLongLink(url entity.URL) {
 	go func() {
 		c := <-i.redirectedAliasToLongLinkCh
-		userID := i.getUserID(nil, c)
+		userID := i.getUserID(nil)
 		props := map[string]string{
 			"request-id": c.RequestID,
 			"alias":      url.Alias,
@@ -98,7 +98,7 @@ func (i Instrumentation) MadeFeatureDecision(
 ) {
 	go func() {
 		c := <-i.madeFeatureDecisionCh
-		userID := i.getUserID(nil, c)
+		userID := i.getUserID(nil)
 		isEnabledStr := fmt.Sprintf("%v", isEnabled)
 		props := map[string]string{
 			"request-id": c.RequestID,
@@ -113,7 +113,7 @@ func (i Instrumentation) MadeFeatureDecision(
 func (i Instrumentation) Track(event string) {
 	go func() {
 		c := <-i.trackCh
-		userID := i.getUserID(nil, c)
+		userID := i.getUserID(nil)
 		props := map[string]string{}
 		i.analytics.Track(event, props, userID, c)
 	}()
@@ -129,7 +129,7 @@ func (i Instrumentation) Done() {
 	close(i.featureToggleRetrievalFailedCh)
 }
 
-func (i Instrumentation) getUserID(user *entity.User, c ctx.ExecutionContext) string {
+func (i Instrumentation) getUserID(user *entity.User) string {
 	if user == nil {
 		return "anonymous"
 	}

@@ -10,9 +10,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/short-d/app/fw/webreq"
-
 	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/webreq"
 )
 
 func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
