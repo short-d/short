@@ -3,27 +3,29 @@ package request
 import (
 	"net/http"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/usecase/instrumentation"
-	"github.com/short-d/short/app/usecase/keygen"
+	"github.com/short-d/app/fw/analytics"
+	"github.com/short-d/app/fw/ctx"
+	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/metrics"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/usecase/instrumentation"
+	"github.com/short-d/short/backend/app/usecase/keygen"
 )
 
 // InstrumentationFactory initializes instrumentation code.
 type InstrumentationFactory struct {
-	serverEnv fw.ServerEnv
 	keyGen    keygen.KeyGenerator
-	logger    fw.Logger
-	tracer    fw.Tracer
-	timer     fw.Timer
-	metrics   fw.Metrics
-	analytics fw.Analytics
+	logger    logger.Logger
+	timer     timer.Timer
+	metrics   metrics.Metrics
+	analytics analytics.Analytics
 	client    Client
 }
 
 // NewHTTP creates and initializes Instrumentation tied to the given HTTP
 // request.
 func (f InstrumentationFactory) NewHTTP(req *http.Request) instrumentation.Instrumentation {
-	ctxCh := make(chan fw.ExecutionContext)
+	ctxCh := make(chan ctx.ExecutionContext)
 
 	go func() {
 		requestID, err := f.keyGen.NewKey()
@@ -36,17 +38,16 @@ func (f InstrumentationFactory) NewHTTP(req *http.Request) instrumentation.Instr
 			f.logger.Error(err)
 		}
 
-		ctx := fw.ExecutionContext{
+		c := ctx.ExecutionContext{
 			RequestID:      string(requestID),
 			RequestStartAt: f.timer.Now(),
 			Location:       location,
 		}
-		ctxCh <- ctx
+		ctxCh <- c
 	}()
 
 	return instrumentation.NewInstrumentation(
 		f.logger,
-		f.tracer,
 		f.timer,
 		f.metrics,
 		f.analytics,
@@ -56,7 +57,7 @@ func (f InstrumentationFactory) NewHTTP(req *http.Request) instrumentation.Instr
 
 // NewRequest creates and initializes Instrumentation for a given user request.
 func (f InstrumentationFactory) NewRequest() instrumentation.Instrumentation {
-	ctxCh := make(chan fw.ExecutionContext)
+	ctxCh := make(chan ctx.ExecutionContext)
 
 	go func() {
 		requestID, err := f.keyGen.NewKey()
@@ -64,16 +65,15 @@ func (f InstrumentationFactory) NewRequest() instrumentation.Instrumentation {
 			f.logger.Error(err)
 		}
 
-		ctx := fw.ExecutionContext{
+		c := ctx.ExecutionContext{
 			RequestID:      string(requestID),
 			RequestStartAt: f.timer.Now(),
 		}
-		ctxCh <- ctx
+		ctxCh <- c
 	}()
 
 	return instrumentation.NewInstrumentation(
 		f.logger,
-		f.tracer,
 		f.timer,
 		f.metrics,
 		f.analytics,
@@ -83,19 +83,15 @@ func (f InstrumentationFactory) NewRequest() instrumentation.Instrumentation {
 
 // NewInstrumentationFactory creates Instrumentation factory.
 func NewInstrumentationFactory(
-	serverEnv fw.ServerEnv,
-	logger fw.Logger,
-	tracer fw.Tracer,
-	timer fw.Timer,
-	metrics fw.Metrics,
-	analytics fw.Analytics,
+	logger logger.Logger,
+	timer timer.Timer,
+	metrics metrics.Metrics,
+	analytics analytics.Analytics,
 	keyGen keygen.KeyGenerator,
 	client Client,
 ) InstrumentationFactory {
 	return InstrumentationFactory{
-		serverEnv: serverEnv,
 		logger:    logger,
-		tracer:    tracer,
 		timer:     timer,
 		metrics:   metrics,
 		analytics: analytics,

@@ -1,19 +1,18 @@
 package provider
 
 import (
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/usecase/feature"
-	"github.com/short-d/short/app/usecase/repository"
-	"github.com/short-d/short/env"
+	"github.com/short-d/app/fw/env"
+	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 // NewFeatureDecisionMakerFactorySwitch creates FeatureDecisionFactory based on
 // server environment.
 func NewFeatureDecisionMakerFactorySwitch(
-	serverEnv fw.ServerEnv,
+	deployment env.Deployment,
 	toggleRepo repository.FeatureToggle,
 ) feature.DecisionMakerFactory {
-	if serverEnv == env.Development {
+	if deployment.IsDevelopment() {
 		return feature.NewStaticDecisionMakerFactory()
 	}
 	return feature.NewDynamicDecisionMakerFactory(toggleRepo)

@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/short-d/short/app/entity"
+import "github.com/short-d/short/backend/app/entity"
 
 // UserURLRelation accesses User-URL relationship from storage, such as database.
 type UserURLRelation interface {
