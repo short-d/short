@@ -1,6 +1,6 @@
 package provider
 
-import "github.com/short-d/short/app/adapter/kgs"
+import "github.com/short-d/short/backend/app/adapter/kgs"
 
 // KgsRPCConfig includes hostname and port for key generation service API
 type KgsRPCConfig struct {

@@ -1,8 +1,9 @@
 package provider
 
 import (
-	"github.com/short-d/app/fw"
-	"github.com/short-d/app/modern/mdgeo"
+	"github.com/short-d/app/fw/geo"
+	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/webreq"
 )
 
 // IPStackAPIKey represents credential for IP Stack APIs.
@@ -12,8 +13,8 @@ type IPStackAPIKey string
 // during dependency injection.
 func NewIPStack(
 	apiKey IPStackAPIKey,
-	httpRequest fw.HTTPRequest,
-	logger fw.Logger,
-) mdgeo.IPStack {
-	return mdgeo.NewIPStack(string(apiKey), httpRequest, logger)
+	httpRequest webreq.HTTP,
+	logger logger.Logger,
+) geo.IPStack {
+	return geo.NewIPStack(string(apiKey), httpRequest, logger)
 }

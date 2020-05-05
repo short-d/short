@@ -1,8 +1,8 @@
 package provider
 
 import (
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/adapter/google"
+	"github.com/short-d/app/fw/webreq"
+	"github.com/short-d/short/backend/app/adapter/google"
 )
 
 // GoogleClientID represents client ID used for Google OAuth.
@@ -18,7 +18,7 @@ type GoogleRedirectURI string
 // GoogleClientID and GoogleClientSecret to uniquely identify clientID and
 // clientSecret during dependency injection.
 func NewGoogleIdentityProvider(
-	req fw.HTTPRequest,
+	req webreq.HTTP,
 	clientID GoogleClientID,
 	clientSecret GoogleClientSecret,
 	redirectURI GoogleRedirectURI,
@@ -33,7 +33,7 @@ type GoogleAPIKey string
 // identify apiKey during dependency injection.
 func NewSafeBrowsing(
 	apiKey GoogleAPIKey,
-	httpRequest fw.HTTPRequest,
+	httpRequest webreq.HTTP,
 ) google.SafeBrowsing {
 	return google.NewSafeBrowsing(string(apiKey), httpRequest)
 }

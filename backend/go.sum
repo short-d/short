@@ -330,6 +330,12 @@ github.com/short-d/app v0.0.0-20200118110133-668ef4ee1b79 h1:jpX8Xyf6racPSwBfk7/
 github.com/short-d/app v0.0.0-20200118110133-668ef4ee1b79/go.mod h1:KmB7e1AnY+JhyC3Cm6hb7+Oik/x/WOC+zSrDtYp26pg=
 github.com/short-d/app v0.0.0-20200429205048-418e38446e9f h1:6OkRsWi5eJAZmEgA+SJ73EkJ8pnFycEqwwvFNr6aT1g=
 github.com/short-d/app v0.0.0-20200429205048-418e38446e9f/go.mod h1:ecZzHExNiYc/miIlEaucs9WZRarGxJAGSZfgRNGsn98=
+github.com/short-d/app v0.0.0-20200504191832-69ba8764b664 h1:jGw1v/5XPspsg7MXv5op2kpxCMtUfDTE+4WmQ+j0zJc=
+github.com/short-d/app v0.0.0-20200504191832-69ba8764b664/go.mod h1:ecZzHExNiYc/miIlEaucs9WZRarGxJAGSZfgRNGsn98=
+github.com/short-d/app v0.0.0-20200505002405-1f2d4c0a2c85 h1:krST6labiGGu+TgasUDQiRDqDoUinDIHPw2o07+NOP0=
+github.com/short-d/app v0.0.0-20200505002405-1f2d4c0a2c85/go.mod h1:ecZzHExNiYc/miIlEaucs9WZRarGxJAGSZfgRNGsn98=
+github.com/short-d/app v0.0.0-20200505070402-e85f4ca85824 h1:QDealMusrgJGvhVtdz458eDENCQATC1npBd++zwcdNs=
+github.com/short-d/app v0.0.0-20200505070402-e85f4ca85824/go.mod h1:ecZzHExNiYc/miIlEaucs9WZRarGxJAGSZfgRNGsn98=
 github.com/short-d/eventbus v0.0.0-20200105092235-2dfc4be1f9ee h1:LNafZ4caEAcTlgGe9zJ18njsyR+uogkE5+dzZ5LeeAI=
 github.com/short-d/eventbus v0.0.0-20200105092235-2dfc4be1f9ee/go.mod h1:S3Nww0QNubrzHbWTpfzAg8YQLwXuM9GH2cGshOU6GJQ=
 github.com/short-d/kgs v0.0.0-20200419183416-2deb6aa8d7ed h1:goDxEfMeotHFO2J8cg5JDA5aoGULS6Ov9xr2SaGjb7c=
