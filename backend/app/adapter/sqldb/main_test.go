@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/short-d/app/fw/assert"
-
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/app/fw/envconfig"
 	"github.com/short-d/short/dep"
@@ -17,7 +16,7 @@ var dbConnector db.Connector
 var dbMigrationTool db.MigrationTool
 
 var dbConfig db.Config
-var dbMigrationRoot string
+var dbMigrationRoot = "./migration"
 
 func TestMain(m *testing.M) {
 	env := dep.InjectEnv()
@@ -31,10 +30,7 @@ func TestMain(m *testing.M) {
 		DBUser        string `env:"DB_USER" default:"postgres"`
 		DBPassword    string `env:"DB_PASSWORD" default:"password"`
 		DBName        string `env:"DB_NAME" default:"short"`
-		MigrationRoot string `env:"MIGRATION_ROOT" default:""`
 	}{}
-
-	dbMigrationRoot = config.MigrationRoot
 
 	err := envConfig.ParseConfigFromEnv(&config)
 	if err != nil {

@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/short-d/app/fw/assert"
-
 	"github.com/short-d/app/fw/db/dbtest"
 	"github.com/short-d/short/app/adapter/sqldb"
 	"github.com/short-d/short/app/adapter/sqldb/table"
