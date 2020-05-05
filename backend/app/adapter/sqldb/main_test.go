@@ -25,11 +25,11 @@ func TestMain(m *testing.M) {
 	envConfig := envconfig.NewEnvConfig(env)
 
 	config := struct {
-		DBHost        string `env:"DB_HOST" default:"localhost"`
-		DBPort        int    `env:"DB_PORT" default:"5432"`
-		DBUser        string `env:"DB_USER" default:"postgres"`
-		DBPassword    string `env:"DB_PASSWORD" default:"password"`
-		DBName        string `env:"DB_NAME" default:"short"`
+		DBHost     string `env:"DB_HOST" default:"localhost"`
+		DBPort     int    `env:"DB_PORT" default:"5432"`
+		DBUser     string `env:"DB_USER" default:"postgres"`
+		DBPassword string `env:"DB_PASSWORD" default:"password"`
+		DBName     string `env:"DB_NAME" default:"short"`
 	}{}
 
 	err := envConfig.ParseConfigFromEnv(&config)

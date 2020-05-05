@@ -147,6 +147,7 @@ func InjectGraphQLService(
 	wire.Build(
 		wire.Bind(new(timer.Timer), new(timer.System)),
 		wire.Bind(new(graphql.API), new(gqlapi.Short)),
+		wire.Bind(new(graphql.Handler), new(graphql.GraphGopherHandler)),
 
 		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
 		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserURLRelationSQL)),
@@ -163,7 +164,7 @@ func InjectGraphQLService(
 
 		env.NewDeployment,
 		provider.NewGraphQLService,
-		provider.NewGraphGopherHandler,
+		graphql.NewGraphGopherHandler,
 		webreq.NewHTTPClient,
 		webreq.NewHTTP,
 		timer.NewSystem,

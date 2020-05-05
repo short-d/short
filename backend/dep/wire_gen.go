@@ -94,8 +94,8 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
 	short := gqlapi.NewShort(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
-	handler := provider.NewGraphGopherHandler(short)
-	graphQL := provider.NewGraphQLService(graphqlPath, handler, loggerLogger)
+	graphGopherHandler := graphql.NewGraphGopherHandler(short)
+	graphQL := provider.NewGraphQLService(graphqlPath, graphGopherHandler, loggerLogger)
 	return graphQL, nil
 }
 

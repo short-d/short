@@ -6,11 +6,7 @@ import (
 	"github.com/short-d/app/fw/service"
 )
 
-func NewGraphGopherHandler(g graphql.API) graphql.Handler {
-	return graphql.NewGraphGopherHandler(g)
-}
-
-// GraphQlPath represents the path for GraphQL APIs.
+// GraphQLPath represents the path for GraphQL APIs.
 type GraphQLPath string
 
 // NewGraphQLService creates GraphQL service with GraphQlPath to uniquely

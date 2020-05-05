@@ -4,13 +4,13 @@ var _ OAuth = (*OAuthFake)(nil)
 
 // OAuthFake represents in memory implementation of an external oauth provider.
 type OAuthFake struct {
-	authUrl     string
+	authURL     string
 	accessToken string
 }
 
 // GetAuthorizationURL retrieves authorization url of the oauth provider.
 func (O OAuthFake) GetAuthorizationURL() string {
-	return O.authUrl
+	return O.authURL
 }
 
 // RequestAccessToken obtains access token of an user given scoped
@@ -20,9 +20,9 @@ func (O OAuthFake) RequestAccessToken(authorizationCode string) (accessToken str
 }
 
 // NewOAuthFake creates fake OAuth provider.
-func NewOAuthFake(authUrl string, accessToken string) OAuthFake {
+func NewOAuthFake(authURL string, accessToken string) OAuthFake {
 	return OAuthFake{
-		authUrl:     authUrl,
+		authURL:     authURL,
 		accessToken: accessToken,
 	}
 }
