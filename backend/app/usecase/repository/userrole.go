@@ -7,4 +7,6 @@ import (
 
 type UserRole interface {
 	GetUserRoles(user entity.User) ([]role.Role, error)
+	AddRole(user entity.User, role role.Role) error
+	DeleteRole(user entity.User, role role.Role) error
 }
