@@ -2,7 +2,7 @@ package provider
 
 import (
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/short/app/adapter/facebook"
+	"github.com/short-d/short/backend/app/adapter/facebook"
 )
 
 // FacebookClientID represents client ID used for Facebook OAuth.

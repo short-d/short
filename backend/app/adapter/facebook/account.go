@@ -5,8 +5,8 @@ import (
 	"net/url"
 
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/external"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/external"
 )
 
 const facebookAPI = "https://graph.facebook.com/me"

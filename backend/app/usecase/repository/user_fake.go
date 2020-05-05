@@ -3,7 +3,7 @@ package repository
 import (
 	"errors"
 
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 var _ User = (*UserFake)(nil)

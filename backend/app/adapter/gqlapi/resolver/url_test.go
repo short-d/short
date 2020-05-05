@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/short-d/app/fw/assert"
-	"github.com/short-d/short/app/adapter/gqlapi/scalar"
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 func TestURL_Alias(t *testing.T) {

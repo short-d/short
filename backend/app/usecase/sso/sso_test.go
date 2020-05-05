@@ -9,11 +9,11 @@ import (
 
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/timer"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/authenticator"
-	"github.com/short-d/short/app/usecase/external"
-	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/account"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 func TestSingleSignOn_SignIn(t *testing.T) {

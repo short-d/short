@@ -2,8 +2,8 @@ package provider
 
 import (
 	"github.com/short-d/app/fw/env"
-	"github.com/short-d/short/app/usecase/feature"
-	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 // NewFeatureDecisionMakerFactorySwitch creates FeatureDecisionFactory based on

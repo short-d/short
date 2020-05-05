@@ -5,16 +5,16 @@ import (
 
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/timer"
-	"github.com/short-d/short/app/adapter/facebook"
-	"github.com/short-d/short/app/adapter/github"
-	"github.com/short-d/short/app/adapter/google"
-	"github.com/short-d/short/app/adapter/request"
-	"github.com/short-d/short/app/adapter/routing/analytics"
-	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/authenticator"
-	"github.com/short-d/short/app/usecase/feature"
-	"github.com/short-d/short/app/usecase/sso"
-	"github.com/short-d/short/app/usecase/url"
+	"github.com/short-d/short/backend/app/adapter/facebook"
+	"github.com/short-d/short/backend/app/adapter/github"
+	"github.com/short-d/short/backend/app/adapter/google"
+	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/adapter/routing/analytics"
+	"github.com/short-d/short/backend/app/usecase/account"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/sso"
+	"github.com/short-d/short/backend/app/usecase/url"
 )
 
 // NewShort creates HTTP routing table.

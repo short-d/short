@@ -7,12 +7,12 @@ import (
 
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/timer"
-	"github.com/short-d/short/app/adapter/request"
-	"github.com/short-d/short/app/usecase/authenticator"
-	"github.com/short-d/short/app/usecase/external"
-	"github.com/short-d/short/app/usecase/feature"
-	"github.com/short-d/short/app/usecase/sso"
-	"github.com/short-d/short/app/usecase/url"
+	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/sso"
+	"github.com/short-d/short/backend/app/usecase/url"
 )
 
 // NewOriginalURL translates alias to the original long link.

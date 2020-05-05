@@ -2,7 +2,7 @@ package payload
 
 import (
 	"github.com/short-d/app/fw/crypto"
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 // Payload represents a message with encoded metadata.

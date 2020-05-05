@@ -3,7 +3,7 @@ package keygen
 import (
 	"errors"
 
-	"github.com/short-d/short/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/external"
 )
 
 type bufferEntry struct {

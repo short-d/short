@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/short-d/kgs/app/adapter/rpc/proto"
-	"github.com/short-d/short/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/external"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )

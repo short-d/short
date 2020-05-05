@@ -2,10 +2,10 @@ package resolver
 
 import (
 	"github.com/short-d/app/fw/logger"
-	"github.com/short-d/short/app/usecase/authenticator"
-	"github.com/short-d/short/app/usecase/changelog"
-	"github.com/short-d/short/app/usecase/requester"
-	"github.com/short-d/short/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/changelog"
+	"github.com/short-d/short/backend/app/usecase/requester"
+	"github.com/short-d/short/backend/app/usecase/url"
 )
 
 // Mutation represents GraphQL mutation resolver

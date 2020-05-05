@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/short/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/risk"
 )
 
 var _ risk.BlackList = (*SafeBrowsing)(nil)

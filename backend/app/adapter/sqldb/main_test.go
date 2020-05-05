@@ -9,7 +9,7 @@ import (
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/app/fw/envconfig"
-	"github.com/short-d/short/dep"
+	"github.com/short-d/short/backend/dep"
 )
 
 var dbConnector db.Connector

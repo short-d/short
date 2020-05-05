@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/short-d/short/app/adapter/sqldb/table"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/backend/app/adapter/sqldb/table"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 var _ repository.UserChangeLog = (*UserChangeLogSQL)(nil)

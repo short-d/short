@@ -2,7 +2,7 @@ package provider
 
 import (
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/short/app/adapter/google"
+	"github.com/short-d/short/backend/app/adapter/google"
 )
 
 // GoogleClientID represents client ID used for Google OAuth.

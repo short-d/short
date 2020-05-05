@@ -3,8 +3,8 @@ package resolver
 import (
 	"errors"
 
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
 )
 
 func viewer(authToken *string, auth authenticator.Authenticator) (entity.User, error) {

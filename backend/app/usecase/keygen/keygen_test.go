@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/short-d/app/fw/assert"
-	"github.com/short-d/short/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/external"
 )
 
 func TestNewRemote(t *testing.T) {

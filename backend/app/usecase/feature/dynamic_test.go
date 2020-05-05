@@ -10,9 +10,9 @@ import (
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/app/fw/metrics"
 	"github.com/short-d/app/fw/timer"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/instrumentation"
-	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/instrumentation"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {

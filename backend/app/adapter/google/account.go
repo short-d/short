@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/external"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/external"
 )
 
 const userInfoAPI = "https://openidconnect.googleapis.com/v1/userinfo"

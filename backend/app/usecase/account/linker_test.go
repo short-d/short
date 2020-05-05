@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/short-d/app/fw/assert"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/external"
-	"github.com/short-d/short/app/usecase/keygen"
-	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/keygen"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 func TestLinker_IsAccountLinked(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/short-d/app/fw/cli"
 	"github.com/short-d/app/fw/db"
-	"github.com/short-d/short/app"
+	"github.com/short-d/short/backend/app"
 )
 
 // NewRootCmd creates the base command.

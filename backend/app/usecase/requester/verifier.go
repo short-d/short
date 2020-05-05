@@ -1,6 +1,6 @@
 package requester
 
-import "github.com/short-d/short/app/usecase/external"
+import "github.com/short-d/short/backend/app/usecase/external"
 
 // Verifier verifies in coming network to prevents cyber attacks.
 type Verifier struct {

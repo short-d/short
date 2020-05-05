@@ -1,6 +1,6 @@
 package external
 
-import "github.com/short-d/short/app/entity"
+import "github.com/short-d/short/backend/app/entity"
 
 var _ SSOAccount = (*SSOAccountFake)(nil)
 

@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/short-d/app/fw/timer"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/keygen"
-	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/keygen"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 var _ ChangeLog = (*Persist)(nil)

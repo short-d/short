@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/short-d/app/fw/crypto"
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 const emailKey = "email"

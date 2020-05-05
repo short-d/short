@@ -9,7 +9,7 @@ import (
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/crypto"
 	"github.com/short-d/app/fw/timer"
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 func TestAuthenticator_GenerateToken(t *testing.T) {

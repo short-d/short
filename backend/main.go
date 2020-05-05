@@ -6,9 +6,9 @@ import (
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/app/fw/envconfig"
 	"github.com/short-d/app/fw/logger"
-	"github.com/short-d/short/app"
-	"github.com/short-d/short/cmd"
-	"github.com/short-d/short/dep"
+	"github.com/short-d/short/backend/app"
+	"github.com/short-d/short/backend/cmd"
+	"github.com/short-d/short/backend/dep"
 )
 
 func main() {
