@@ -6,8 +6,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/fw/timer"
+
 	"github.com/short-d/app/fw/assert"
-	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/external"
 	"github.com/short-d/short/app/usecase/keygen"
@@ -154,7 +155,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			assert.Equal(t, nil, err)
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
-			timer := mdtest.NewTimerFake(now)
+			stubTimer := timer.NewStub(now)
 			riskDetector := risk.NewDetector(blacklist)
 
 			creator := NewCreatorPersist(
@@ -163,7 +164,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				keyGen,
 				longLinkValidator,
 				aliasValidator,
-				timer,
+				stubTimer,
 				riskDetector,
 			)
 

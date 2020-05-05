@@ -8,11 +8,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/fw/db/dbtest"
-	"github.com/short-d/short/app/adapter/sqldb/table"
+	"github.com/short-d/app/fw/assert"
 
-	"github.com/bmizerany/assert"
+	"github.com/short-d/app/fw/db/dbtest"
 	"github.com/short-d/short/app/adapter/sqldb"
+	"github.com/short-d/short/app/adapter/sqldb/table"
 	"github.com/short-d/short/app/entity"
 )
 

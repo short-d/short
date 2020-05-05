@@ -6,7 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bmizerany/assert"
+	"github.com/short-d/app/fw/assert"
+
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/app/fw/envconfig"
 	"github.com/short-d/short/dep"
@@ -19,8 +20,9 @@ var dbConfig db.Config
 var dbMigrationRoot string
 
 func TestMain(m *testing.M) {
-	env := dep.InjectEnvironment()
+	env := dep.InjectEnv()
 	env.AutoLoadDotEnvFile()
+
 	envConfig := envconfig.NewEnvConfig(env)
 
 	config := struct {
@@ -32,9 +34,19 @@ func TestMain(m *testing.M) {
 		MigrationRoot string `env:"MIGRATION_ROOT" default:""`
 	}{}
 
+	dbMigrationRoot = config.MigrationRoot
+
 	err := envConfig.ParseConfigFromEnv(&config)
 	if err != nil {
 		panic(err)
+	}
+
+	dbConfig = db.Config{
+		Host:     config.DBHost,
+		Port:     config.DBPort,
+		User:     config.DBUser,
+		Password: config.DBPassword,
+		DbName:   config.DBName,
 	}
 
 	dbConnector = dep.InjectDBConnector()

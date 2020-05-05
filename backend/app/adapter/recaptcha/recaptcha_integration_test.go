@@ -9,8 +9,9 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/short-d/app/fw/webreq"
+
 	"github.com/short-d/app/fw/assert"
-	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/usecase/external"
 )
 
@@ -50,7 +51,7 @@ func TestReCaptcha_Verify(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			httpRequest := mdtest.NewHTTPRequestFake(func(req *http.Request) (response *http.Response, e error) {
+			httpRequest := webreq.NewHTTPFake(func(req *http.Request) (response *http.Response, e error) {
 				assert.Equal(t, "https://www.google.com/recaptcha/api/siteverify", req.URL.String())
 				assert.Equal(t, "POST", req.Method)
 				assert.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))

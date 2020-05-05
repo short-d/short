@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/short-d/app/fw/logger"
+
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/db/dbtest"
-	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/adapter/sqldb"
 	"github.com/short-d/short/app/adapter/sqldb/table"
 	"github.com/short-d/short/app/entity"
@@ -60,8 +61,11 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertGithubSSOTableRows(t, sqlDB, testCase.tableRows)
 
-					logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
-					githubSSORepo := sqldb.NewGithubSSOSql(sqlDB, &logger)
+					entryRepo := logger.NewEntryRepoFake()
+					lg, err := logger.NewFake(logger.LogOff, &entryRepo)
+					assert.Equal(t, nil, err)
+
+					githubSSORepo := sqldb.NewGithubSSOSql(sqlDB, lg)
 					gotIsExist, err := githubSSORepo.IsSSOUserExist(testCase.ssoUser)
 
 					assert.Equal(t, nil, err)
@@ -127,10 +131,14 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertGithubSSOTableRows(t, sqlDB, testCase.tableRows)
 
-					logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
-					githubSSORepo := sqldb.NewGithubSSOSql(sqlDB, &logger)
+					entryRepo := logger.NewEntryRepoFake()
+					lg, err := logger.NewFake(logger.LogOff, &entryRepo)
+					assert.Equal(t, nil, err)
 
-					err := githubSSORepo.CreateMapping(testCase.ssoUser, testCase.shortUser)
+					githubSSORepo := sqldb.NewGithubSSOSql(sqlDB, lg)
+
+					err = githubSSORepo.CreateMapping(testCase.ssoUser, testCase.shortUser)
+					assert.Equal(t, nil, err)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)

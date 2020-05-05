@@ -1,21 +1,20 @@
-package payloadtest
+package payload
 
 import (
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/crypto"
 	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/authenticator/payload"
 )
 
-var _ payload.Payload = (*Stub)(nil)
+var _ Payload = (*Stub)(nil)
 
 // Stub represents a payload with preset data.
 type Stub struct {
-	TokenPayload fw.TokenPayload
+	TokenPayload crypto.TokenPayload
 	User         entity.User
 }
 
 // GetTokenPayload generates token payload based on preset data.
-func (s Stub) GetTokenPayload() fw.TokenPayload {
+func (s Stub) GetTokenPayload() crypto.TokenPayload {
 	return s.TokenPayload
 }
 

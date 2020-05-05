@@ -13,7 +13,6 @@ import (
 
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/app/mdtest"
 )
 
 func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
@@ -41,7 +40,7 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 
 	expectedScope := []string{"public_profile", "email"}
 	actualScope := strings.Split(parsedUrl.Query().Get("scope"), ",")
-	mdtest.SameElements(t, expectedScope, actualScope)
+	assert.SameElements(t, expectedScope, actualScope)
 }
 
 func TestIdentityProvider_RequestAccessToken(t *testing.T) {
@@ -126,7 +125,7 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			httpRequest := mdtest.NewHTTPRequestFake(
+			httpRequest := webreq.NewHTTPFake(
 				func(req *http.Request) (response *http.Response, e error) {
 					assert.Equal(t, "https", req.URL.Scheme)
 					assert.Equal(t, "graph.facebook.com", req.URL.Host)

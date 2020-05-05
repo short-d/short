@@ -6,10 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/fw/timer"
-	"github.com/short-d/app/mdtest"
-
 	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/external"
 	"github.com/short-d/short/app/usecase/keygen"
@@ -210,10 +208,10 @@ func TestPersist_GetChangeLog(t *testing.T) {
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 
-			fakeTimer := mdtest.NewTimerFake(now)
+			tm := timer.NewStub(now)
 			persist := NewPersist(
 				keyGen,
-				fakeTimer,
+				tm,
 				&changeLogRepo,
 			)
 

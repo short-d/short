@@ -6,17 +6,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/crypto"
+	"github.com/short-d/app/fw/timer"
+
 	"github.com/short-d/app/fw/assert"
-	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 )
 
 func TestAuthenticator_GenerateToken(t *testing.T) {
-	tokenizer := mdtest.NewCryptoTokenizerFake()
+	tokenizer := crypto.NewTokenizerFake()
 	expIssuedAt := time.Now()
-	timer := mdtest.NewTimerFake(expIssuedAt)
-	authenticator := NewAuthenticator(tokenizer, timer, 2*time.Millisecond)
+	tm := timer.NewStub(expIssuedAt)
+	authenticator := NewAuthenticator(tokenizer, tm, 2*time.Millisecond)
 
 	expUser := entity.User{
 		Email: "test@s.time4hacks.com",
@@ -41,7 +42,7 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 		expIssuedAt        time.Time
 		tokenValidDuration time.Duration
 		currentTime        time.Time
-		tokenPayload       fw.TokenPayload
+		tokenPayload       crypto.TokenPayload
 		expIsSignIn        bool
 	}{
 		{
@@ -109,9 +110,9 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			tokenizer := mdtest.NewCryptoTokenizerFake()
-			timer := mdtest.NewTimerFake(testCase.currentTime)
-			authenticator := NewAuthenticator(tokenizer, timer, testCase.tokenValidDuration)
+			tokenizer := crypto.NewTokenizerFake()
+			tm := timer.NewStub(testCase.currentTime)
+			authenticator := NewAuthenticator(tokenizer, tm, testCase.tokenValidDuration)
 
 			token, err := tokenizer.Encode(testCase.tokenPayload)
 			assert.Equal(t, nil, err)
@@ -129,7 +130,7 @@ func TestAuthenticator_GetUser(t *testing.T) {
 		expIssuedAt        time.Time
 		tokenValidDuration time.Duration
 		currentTime        time.Time
-		tokenPayload       fw.TokenPayload
+		tokenPayload       crypto.TokenPayload
 		hasErr             bool
 		expUser            entity.User
 	}{
@@ -206,9 +207,9 @@ func TestAuthenticator_GetUser(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			tokenizer := mdtest.NewCryptoTokenizerFake()
-			timer := mdtest.NewTimerFake(testCase.currentTime)
-			authenticator := NewAuthenticator(tokenizer, timer, testCase.tokenValidDuration)
+			tokenizer := crypto.NewTokenizerFake()
+			tm := timer.NewStub(testCase.currentTime)
+			authenticator := NewAuthenticator(tokenizer, tm, testCase.tokenValidDuration)
 
 			token, err := tokenizer.Encode(testCase.tokenPayload)
 			assert.Equal(t, nil, err)

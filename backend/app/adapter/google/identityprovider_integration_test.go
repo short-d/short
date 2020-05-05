@@ -10,13 +10,14 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/short-d/app/fw/webreq"
+
 	"github.com/short-d/app/fw/assert"
-	"github.com/short-d/app/mdtest"
 )
 
 func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	t.Parallel()
-	httpRequest := mdtest.NewHTTPRequestFake(
+	httpRequest := webreq.NewHTTPFake(
 		func(req *http.Request) (response *http.Response, e error) {
 			return nil, nil
 		})
@@ -120,7 +121,7 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			httpRequest := mdtest.NewHTTPRequestFake(
+			httpRequest := webreq.NewHTTPFake(
 				func(req *http.Request) (response *http.Response, e error) {
 					assert.Equal(t, "https", req.URL.Scheme)
 					assert.Equal(t, "www.googleapis.com", req.URL.Host)

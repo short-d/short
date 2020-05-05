@@ -7,8 +7,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/fw/timer"
+
 	"github.com/short-d/app/fw/assert"
-	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/account"
 	"github.com/short-d/short/app/usecase/authenticator"
@@ -63,13 +64,13 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 			identityProvider := external.NewIdentityProviderFake("http://localhost/sign-in", "")
 			profileService := external.NewSSOAccountFake(testCase.ssoUser)
 			fakeUserRepo := repository.NewUserFake(testCase.users)
-			fakeTimer := mdtest.NewTimerFake(time.Now())
-			accountProvider := account.NewProvider(&fakeUserRepo, fakeTimer)
+			stubTimer := timer.NewStub(time.Now())
+			accountProvider := account.NewProvider(&fakeUserRepo, stubTimer)
 
 			now := time.Now()
-			authenticator := authenticator.NewAuthenticatorFake(now, time.Minute)
+			auth := authenticator.NewAuthenticatorFake(now, time.Minute)
 
-			singleSignOn := NewSingleSignOn(identityProvider, profileService, accountProvider, authenticator)
+			singleSignOn := NewSingleSignOn(identityProvider, profileService, accountProvider, auth)
 			gotAuthToken, err := singleSignOn.SignIn(testCase.authorizationCode)
 			if testCase.hasErr {
 				assert.NotEqual(t, nil, err)

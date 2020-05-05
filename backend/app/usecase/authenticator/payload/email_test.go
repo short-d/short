@@ -43,7 +43,7 @@ func TestEmailFactory_FromUser(t *testing.T) {
 				return
 			}
 			assert.Equal(t, nil, err)
-			tokenPayload := map[string]string(emailPayload.GetTokenPayload())
+			tokenPayload := emailPayload.GetTokenPayload()
 
 			assert.Equal(t, testCase.expectedEmail, tokenPayload["email"])
 		})

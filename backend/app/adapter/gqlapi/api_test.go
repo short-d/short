@@ -6,9 +6,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/fw/graphql"
+	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/repository"
+
 	"github.com/short-d/app/fw/assert"
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/adapter/sqldb"
 	"github.com/short-d/short/app/usecase/authenticator"
 	"github.com/short-d/short/app/usecase/changelog"
 	"github.com/short-d/short/app/usecase/external"
@@ -23,28 +27,26 @@ func TestGraphQlAPI(t *testing.T) {
 	now := time.Now()
 	blockedURLs := map[string]bool{}
 	blacklist := risk.NewBlackListFake(blockedURLs)
-	sqlDB, _, err := mdtest.NewSQLStub()
-	assert.Equal(t, nil, err)
-	defer sqlDB.Close()
 
-	urlRepo := sqldb.NewURLSql(sqlDB)
-	urlRelationRepo := sqldb.NewUserURLRelationSQL(sqlDB)
-	retriever := url.NewRetrieverPersist(urlRepo, urlRelationRepo)
+	urlRepo := repository.NewURLFake(map[string]entity.URL{})
+	urlRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.URL{})
+	retriever := url.NewRetrieverPersist(&urlRepo, &urlRelationRepo)
 	keyFetcher := external.NewKeyFetcherFake([]external.Key{})
 	keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 	assert.Equal(t, nil, err)
+
 	longLinkValidator := validator.NewLongLink()
 	customAliasValidator := validator.NewCustomAlias()
-	timer := mdtest.NewTimerFake(time.Now())
+	tm := timer.NewStub(now)
 	riskDetector := risk.NewDetector(blacklist)
 
 	creator := url.NewCreatorPersist(
-		urlRepo,
-		urlRelationRepo,
+		&urlRepo,
+		&urlRelationRepo,
 		keyGen,
 		longLinkValidator,
 		customAliasValidator,
-		timer,
+		tm,
 		riskDetector,
 	)
 
@@ -52,12 +54,12 @@ func TestGraphQlAPI(t *testing.T) {
 	verifier := requester.NewVerifier(s)
 	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 
-	logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
-	tracer := mdtest.NewTracerFake()
+	entryRepo := logger.NewEntryRepoFake()
+	lg, err := logger.NewFake(logger.LogOff, &entryRepo)
+	assert.Equal(t, nil, err)
 
-	timerFake := mdtest.NewTimerFake(now)
-	changeLogRepo := sqldb.NewChangeLogSQL(sqlDB)
-	changeLog := changelog.NewPersist(keyGen, timerFake, changeLogRepo)
-	graphqlAPI := NewShort(&logger, &tracer, retriever, creator, changeLog, verifier, auth)
-	assert.Equal(t, true, mdtest.IsGraphQlAPIValid(graphqlAPI))
+	changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
+	changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo)
+	graphqlAPI := NewShort(lg, retriever, creator, changeLog, verifier, auth)
+	assert.Equal(t, true, graphql.IsGraphQlAPIValid(graphqlAPI))
 }
