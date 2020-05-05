@@ -5,11 +5,11 @@ package account
 import (
 	"testing"
 
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/keygen"
-	"github.com/short-d/short/app/usecase/repository"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/keygen"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 func TestLinker_IsAccountLinked(t *testing.T) {
@@ -67,21 +67,21 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			keyFetcher := service.NewKeyFetcherFake([]service.Key{})
+			keyFetcher := external.NewKeyFetcherFake([]external.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 			userRepo := repository.NewUserFake(testCase.users)
 			accountMappingRepo, err :=
 				repository.NewAccountMappingFake(
 					testCase.mappingSSOUsers,
 					testCase.mappingUsers,
 				)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
 			linker := NewLinker(keyGen, &userRepo, &accountMappingRepo)
 			isLinked, err := linker.IsAccountLinked(testCase.ssoUser)
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedIsLinked, isLinked)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedIsLinked, isLinked)
 		})
 	}
 }
@@ -162,26 +162,26 @@ func TestLinker_LinkAccount(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			keyFetcher := service.NewKeyFetcherFake([]service.Key{"key", "key2"})
+			keyFetcher := external.NewKeyFetcherFake([]external.Key{"key", "key2"})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 			fakeUserRepo := repository.NewUserFake(testCase.users)
 			accountMappingRepo, err :=
 				repository.NewAccountMappingFake(
 					testCase.mappingSSOUsers,
 					testCase.mappingUsers,
 				)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
 			linker := NewLinker(keyGen, &fakeUserRepo, &accountMappingRepo)
 			err = linker.CreateAndLinkAccount(testCase.ssoUser)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
 			gotIsRelationExist := accountMappingRepo.IsRelationExist(testCase.ssoUser, testCase.user)
-			mdtest.Equal(t, testCase.expectedIDExist, gotIsRelationExist)
+			assert.Equal(t, testCase.expectedIDExist, gotIsRelationExist)
 
 			gotIsIDExist := fakeUserRepo.IsUserIDExist(testCase.user.ID)
-			mdtest.Equal(t, testCase.expectedIDExist, gotIsIDExist)
+			assert.Equal(t, testCase.expectedIDExist, gotIsIDExist)
 		})
 	}
 }

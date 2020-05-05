@@ -1,21 +1,23 @@
 package provider
 
 import (
-	"github.com/short-d/app/fw"
-	"github.com/short-d/app/modern/mdlogger"
-	"github.com/short-d/short/env"
+	"github.com/short-d/app/fw/env"
+	"github.com/short-d/app/fw/io"
+	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/webreq"
 )
 
 // NewEntryRepositorySwitch swaps between different entry repository
 // implementations based on server environment.
 func NewEntryRepositorySwitch(
-	serverEnv fw.ServerEnv,
-	stdOut fw.StdOut,
+	runtime env.Runtime,
+	deployment env.Deployment,
+	stdOut io.StdOut,
 	dataDogAPIKey DataDogAPIKey,
-	httpRequest fw.HTTPRequest,
-) mdlogger.EntryRepository {
-	if serverEnv == env.Development {
-		return mdlogger.NewLocal(stdOut)
+	httpRequest webreq.HTTP,
+) logger.EntryRepository {
+	if deployment.IsDevelopment() {
+		return logger.NewLocal(stdOut)
 	}
-	return NewDataDogEntryRepo(dataDogAPIKey, httpRequest, serverEnv)
+	return NewDataDogEntryRepo(dataDogAPIKey, httpRequest, runtime)
 }

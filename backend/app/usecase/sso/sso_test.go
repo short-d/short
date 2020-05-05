@@ -7,12 +7,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/authenticator"
-	"github.com/short-d/short/app/usecase/repository"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/account"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 func TestSingleSignOn_SignIn(t *testing.T) {
@@ -59,19 +60,19 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			identityProvider := service.NewIdentityProviderFake("http://localhost/sign-in", "")
-			profileService := service.NewSSOAccountFake(testCase.ssoUser)
+			identityProvider := external.NewIdentityProviderFake("http://localhost/sign-in", "")
+			profileService := external.NewSSOAccountFake(testCase.ssoUser)
 			fakeUserRepo := repository.NewUserFake(testCase.users)
-			fakeTimer := mdtest.NewTimerFake(time.Now())
-			accountProvider := account.NewProvider(&fakeUserRepo, fakeTimer)
+			tm := timer.NewStub(time.Now())
+			accountProvider := account.NewProvider(&fakeUserRepo, tm)
 
 			now := time.Now()
-			authenticator := authenticator.NewAuthenticatorFake(now, time.Minute)
+			auth := authenticator.NewAuthenticatorFake(now, time.Minute)
 
-			singleSignOn := NewSingleSignOn(identityProvider, profileService, accountProvider, authenticator)
+			singleSignOn := NewSingleSignOn(identityProvider, profileService, accountProvider, auth)
 			gotAuthToken, err := singleSignOn.SignIn(testCase.authorizationCode)
 			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
 
@@ -81,10 +82,10 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 			}
 
 			buf, err := json.Marshal(values)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
 			expAuthToken := string(buf)
-			mdtest.Equal(t, expAuthToken, gotAuthToken)
+			assert.Equal(t, expAuthToken, gotAuthToken)
 		})
 	}
 }

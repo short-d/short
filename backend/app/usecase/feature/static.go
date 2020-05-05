@@ -1,7 +1,7 @@
 package feature
 
 import (
-	"github.com/short-d/short/app/usecase/instrumentation"
+	"github.com/short-d/short/backend/app/usecase/instrumentation"
 )
 
 var _ DecisionMaker = (*StaticDecisionMaker)(nil)

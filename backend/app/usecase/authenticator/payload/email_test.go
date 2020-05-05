@@ -3,9 +3,9 @@ package payload
 import (
 	"testing"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/crypto"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 func TestEmailFactory_FromUser(t *testing.T) {
@@ -39,12 +39,13 @@ func TestEmailFactory_FromUser(t *testing.T) {
 			emailPayloadFactory := NewEmailFactory()
 			emailPayload, err := emailPayloadFactory.FromUser(testCase.user)
 			if testCase.expectedHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 			tokenPayload := emailPayload.GetTokenPayload()
-			mdtest.Equal(t, testCase.expectedEmail, tokenPayload["email"])
+
+			assert.Equal(t, testCase.expectedEmail, tokenPayload["email"])
 		})
 	}
 }
@@ -52,13 +53,13 @@ func TestEmailFactory_FromUser(t *testing.T) {
 func TestEmailFactory_FromTokenPayload(t *testing.T) {
 	testCases := []struct {
 		name           string
-		tokenPayload   fw.TokenPayload
+		tokenPayload   crypto.TokenPayload
 		expectedHasErr bool
 		expectedEmail  string
 	}{
 		{
 			name: "user has email",
-			tokenPayload: fw.TokenPayload{
+			tokenPayload: crypto.TokenPayload{
 				"id":    "alpha",
 				"email": "alpha@example.com",
 			},
@@ -67,7 +68,7 @@ func TestEmailFactory_FromTokenPayload(t *testing.T) {
 		},
 		{
 			name: "user email not found",
-			tokenPayload: fw.TokenPayload{
+			tokenPayload: crypto.TokenPayload{
 				"id": "alpha",
 			},
 			expectedHasErr: true,
@@ -80,12 +81,12 @@ func TestEmailFactory_FromTokenPayload(t *testing.T) {
 			emailPayloadFactory := NewEmailFactory()
 			emailPayload, err := emailPayloadFactory.FromTokenPayload(testCase.tokenPayload)
 			if testCase.expectedHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 			gotUser := emailPayload.GetUser()
-			mdtest.Equal(t, testCase.expectedEmail, gotUser.Email)
+			assert.Equal(t, testCase.expectedEmail, gotUser.Email)
 		})
 	}
 }

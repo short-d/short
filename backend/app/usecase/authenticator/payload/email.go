@@ -3,8 +3,8 @@ package payload
 import (
 	"errors"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/app/fw/crypto"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 const emailKey = "email"
@@ -18,7 +18,7 @@ type Email struct {
 
 // GetTokenPayload retrieves the token payload representation of the email
 // payload.
-func (e Email) GetTokenPayload() fw.TokenPayload {
+func (e Email) GetTokenPayload() crypto.TokenPayload {
 	return map[string]interface{}{
 		emailKey: e.user.Email,
 	}
@@ -36,7 +36,7 @@ type EmailFactory struct {
 }
 
 // FromTokenPayload parses token payload into email payload.
-func (e EmailFactory) FromTokenPayload(tokenPayload fw.TokenPayload) (Payload, error) {
+func (e EmailFactory) FromTokenPayload(tokenPayload crypto.TokenPayload) (Payload, error) {
 	JSONEmail := tokenPayload[emailKey]
 	email, ok := JSONEmail.(string)
 	if !ok {
