@@ -1,9 +1,11 @@
 package provider
 
 import (
-	"github.com/short-d/app/fw"
-	"github.com/short-d/app/modern/mdlogger"
-	"github.com/short-d/app/modern/mdmetrics"
+	"github.com/short-d/app/fw/env"
+	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/metrics"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/app/fw/webreq"
 )
 
 // DataDogAPIKey represents credential for DataDog APIs.
@@ -13,19 +15,19 @@ type DataDogAPIKey string
 // identify apiKey during dependency injection.
 func NewDataDogEntryRepo(
 	apiKey DataDogAPIKey,
-	httpRequest fw.HTTPRequest,
-	env fw.ServerEnv,
-) mdlogger.DataDogEntryRepo {
-	return mdlogger.NewDataDogEntryRepo(string(apiKey), httpRequest, env)
+	httpRequest webreq.HTTP,
+	runtime env.Runtime,
+) logger.DataDogEntryRepo {
+	return logger.NewDataDogEntryRepo(string(apiKey), httpRequest, runtime)
 }
 
 // NewDataDogMetrics creates new DataDog Metrics with DataDogAPIKey to uniquely
 // identify apiKey during dependency injection.
 func NewDataDogMetrics(
 	apiKey DataDogAPIKey,
-	httpRequest fw.HTTPRequest,
-	timer fw.Timer,
-	env fw.ServerEnv,
-) mdmetrics.DataDog {
-	return mdmetrics.NewDataDog(string(apiKey), httpRequest, timer, env)
+	httpRequest webreq.HTTP,
+	timer timer.Timer,
+	runtime env.Runtime,
+) metrics.DataDog {
+	return metrics.NewDataDog(string(apiKey), httpRequest, timer, runtime)
 }

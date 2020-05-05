@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/webreq"
 	"github.com/short-d/short/app/usecase/risk"
 )
 
@@ -73,7 +73,7 @@ type match struct {
 // SafeBrowsing represents Googles SafeBrowsing APIs.
 type SafeBrowsing struct {
 	apiKey      string
-	httpRequest fw.HTTPRequest
+	httpRequest webreq.HTTP
 }
 
 // HasURL checks whether a given URL is blacklisted by Google.
@@ -118,7 +118,7 @@ func (s SafeBrowsing) auth(baseURL string) string {
 }
 
 // NewSafeBrowsing initializes Google's SafeBrowsing API client.
-func NewSafeBrowsing(apiKey string, req fw.HTTPRequest) SafeBrowsing {
+func NewSafeBrowsing(apiKey string, req webreq.HTTP) SafeBrowsing {
 	return SafeBrowsing{
 		apiKey:      apiKey,
 		httpRequest: req,

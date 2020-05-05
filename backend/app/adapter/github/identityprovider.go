@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/webreq"
+	"github.com/short-d/short/app/usecase/external"
 )
 
 const (
@@ -22,13 +22,13 @@ type accessTokenResponse struct {
 	TokenType   string `json:"token_type"`
 }
 
-var _ service.IdentityProvider = (*IdentityProvider)(nil)
+var _ external.IdentityProvider = (*IdentityProvider)(nil)
 
 // IdentityProvider represents Github OAuth service.
 type IdentityProvider struct {
 	clientID     string
 	clientSecret string
-	http         fw.HTTPRequest
+	http         webreq.HTTP
 }
 
 // GetAuthorizationURL retrieves the URL of Github sign in page.
@@ -62,7 +62,7 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessTo
 }
 
 // NewIdentityProvider initializes Github OAuth service.
-func NewIdentityProvider(http fw.HTTPRequest, clientID string, clientSecret string) IdentityProvider {
+func NewIdentityProvider(http webreq.HTTP, clientID string, clientSecret string) IdentityProvider {
 	return IdentityProvider{
 		clientID:     clientID,
 		clientSecret: clientSecret,

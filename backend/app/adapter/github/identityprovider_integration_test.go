@@ -10,12 +10,14 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/webreq"
 	"github.com/short-d/app/mdtest"
 )
 
 func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	t.Parallel()
-	httpRequest := mdtest.NewHTTPRequestFake(
+	httpRequest := webreq.NewHTTPFake(
 		func(req *http.Request) (response *http.Response, e error) {
 			return nil, nil
 		})
@@ -26,12 +28,12 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	urlResponse := identityProvider.GetAuthorizationURL()
 
 	parsedUrl, err := url.Parse(urlResponse)
-	mdtest.Equal(t, nil, err)
-	mdtest.Equal(t, "https", parsedUrl.Scheme)
-	mdtest.Equal(t, "github.com", parsedUrl.Host)
-	mdtest.Equal(t, "/login/oauth/authorize", parsedUrl.Path)
-	mdtest.Equal(t, clientID, parsedUrl.Query().Get("client_id"))
-	mdtest.Equal(t, "read:user", parsedUrl.Query().Get("scope"))
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "https", parsedUrl.Scheme)
+	assert.Equal(t, "github.com", parsedUrl.Host)
+	assert.Equal(t, "/login/oauth/authorize", parsedUrl.Path)
+	assert.Equal(t, clientID, parsedUrl.Query().Get("client_id"))
+	assert.Equal(t, "read:user", parsedUrl.Query().Get("scope"))
 }
 
 func TestIdentityProvider_RequestAccessToken(t *testing.T) {
@@ -102,12 +104,12 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 			t.Parallel()
 			httpRequest := mdtest.NewHTTPRequestFake(
 				func(req *http.Request) (response *http.Response, e error) {
-					mdtest.Equal(t, "https", req.URL.Scheme)
-					mdtest.Equal(t, "github.com", req.URL.Host)
-					mdtest.Equal(t, "/login/oauth/access_token", req.URL.Path)
-					mdtest.Equal(t, "POST", req.Method)
-					mdtest.Equal(t, "application/json", req.Header.Get("Accept"))
-					mdtest.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
+					assert.Equal(t, "https", req.URL.Scheme)
+					assert.Equal(t, "github.com", req.URL.Host)
+					assert.Equal(t, "/login/oauth/access_token", req.URL.Path)
+					assert.Equal(t, "POST", req.Method)
+					assert.Equal(t, "application/json", req.Header.Get("Accept"))
+					assert.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
 
 					return testCase.httpResponse, testCase.httpErr
 				})
@@ -116,11 +118,11 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 			actualAccessToken, err := identityProvider.RequestAccessToken(testCase.authorizationCode)
 
 			if testCase.expectHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedAccessToken, actualAccessToken)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedAccessToken, actualAccessToken)
 		})
 	}
 }

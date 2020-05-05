@@ -3,18 +3,18 @@ package github
 import (
 	"fmt"
 
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/graphql"
 	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/short/app/usecase/external"
 )
 
 const githubAPI = "https://api.github.com/graphql"
 
-var _ service.SSOAccount = (*Account)(nil)
+var _ external.SSOAccount = (*Account)(nil)
 
 // Account accesses user's account data through Github API v4.
 type Account struct {
-	graphql fw.GraphQlRequest
+	gqlClient graphql.Client
 }
 
 // GetSingleSignOnUser retrieves user's email and name from Github.
@@ -28,7 +28,7 @@ func (a Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 	}
 
 	var profileResponse response
-	query := fw.GraphQlQuery{
+	query := graphql.Query{
 		Query: `
 query {
 	viewer {
@@ -53,16 +53,16 @@ query {
 	}, nil
 }
 
-func (a Account) sendGraphQlRequest(accessToken string, query fw.GraphQlQuery, response interface{}) error {
+func (a Account) sendGraphQlRequest(accessToken string, query graphql.Query, response interface{}) error {
 	headers := map[string]string{
 		"Authorization": fmt.Sprintf("bearer %s", accessToken),
 	}
-	return a.graphql.Query(query, headers, &response)
+	return a.gqlClient.Query(query, headers, &response)
 }
 
 // NewAccount initializes Github account API client.
-func NewAccount(graphql fw.GraphQlRequest) Account {
+func NewAccount(gqlClientFactory graphql.ClientFactory) Account {
 	return Account{
-		graphql: graphql.RootUrl(githubAPI),
+		gqlClient: gqlClientFactory.NewClient(githubAPI),
 	}
 }

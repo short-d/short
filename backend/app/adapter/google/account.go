@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/webreq"
 	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/short/app/usecase/external"
 )
 
 const userInfoAPI = "https://openidconnect.googleapis.com/v1/userinfo"
 
-var _ service.SSOAccount = (*Account)(nil)
+var _ external.SSOAccount = (*Account)(nil)
 
 // Account accesses user's account data through Google API.
 type Account struct {
-	http fw.HTTPRequest
+	http webreq.HTTP
 }
 
 // GetSingleSignOnUser retrieves user's email and name from Google API.
@@ -45,7 +45,7 @@ func (a Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 }
 
 // NewAccount initializes Google account API client.
-func NewAccount(http fw.HTTPRequest) Account {
+func NewAccount(http webreq.HTTP) Account {
 	return Account{
 		http: http,
 	}

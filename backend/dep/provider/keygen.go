@@ -1,8 +1,8 @@
 package provider
 
 import (
+	"github.com/short-d/short/app/usecase/external"
 	"github.com/short-d/short/app/usecase/keygen"
-	"github.com/short-d/short/app/usecase/service"
 )
 
 // KeyGenBufferSize specifies the size of the local cache for fetched keys
@@ -12,7 +12,7 @@ type KeyGenBufferSize int
 // bufferSize
 func NewKeyGenerator(
 	bufferSize KeyGenBufferSize,
-	keyFetcher service.KeyFetcher,
+	keyFetcher external.KeyFetcher,
 ) (keygen.KeyGenerator, error) {
 	return keygen.NewKeyGenerator(int(bufferSize), keyFetcher)
 }

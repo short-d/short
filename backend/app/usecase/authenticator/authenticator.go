@@ -4,14 +4,16 @@ import (
 	"errors"
 	"time"
 
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/crypto"
+	"github.com/short-d/app/fw/timer"
+
 	"github.com/short-d/short/app/entity"
 )
 
 // Authenticator securely authenticates an user's identity.
 type Authenticator struct {
-	tokenizer          fw.CryptoTokenizer
-	timer              fw.Timer
+	tokenizer          crypto.Tokenizer
+	timer              timer.Timer
 	tokenValidDuration time.Duration
 }
 
@@ -76,8 +78,8 @@ func (a Authenticator) GenerateToken(user entity.User) (string, error) {
 
 // NewAuthenticator initializes authenticator with custom token valid duration
 func NewAuthenticator(
-	tokenizer fw.CryptoTokenizer,
-	timer fw.Timer,
+	tokenizer crypto.Tokenizer,
+	timer timer.Timer,
 	tokenValidDuration time.Duration,
 ) Authenticator {
 	return Authenticator{

@@ -3,7 +3,8 @@ package routing
 import (
 	netURL "net/url"
 
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/router"
+	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
 	"github.com/short-d/short/app/adapter/google"
@@ -16,18 +17,11 @@ import (
 	"github.com/short-d/short/app/usecase/url"
 )
 
-// Observability represents a set of metrics data producers which improve the observability of the
-// system, such as logger and tracer.
-type Observability struct {
-	Logger fw.Logger
-	Tracer fw.Tracer
-}
-
 // NewShort creates HTTP routing table.
 func NewShort(
 	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL string,
-	timer fw.Timer,
+	timer timer.Timer,
 	urlRetriever url.Retriever,
 	githubAPI github.API,
 	facebookAPI facebook.API,
@@ -35,7 +29,7 @@ func NewShort(
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
 	auth authenticator.Authenticator,
 	accountProvider account.Provider,
-) []fw.Route {
+) []router.Route {
 	githubSignIn := sso.NewSingleSignOn(
 		githubAPI.IdentityProvider,
 		githubAPI.Account,
@@ -58,7 +52,7 @@ func NewShort(
 	if err != nil {
 		panic(err)
 	}
-	return []fw.Route{
+	return []router.Route{
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",

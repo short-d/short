@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/mdtest"
+	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/repository"
 )
@@ -94,11 +94,11 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 			url, err := retriever.GetURL(testCase.alias, testCase.expiringAt)
 
 			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURL, url)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedURL, url)
 		})
 	}
 }
@@ -243,12 +243,12 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 
 			urls, err := retriever.GetURLsByUser(testCase.user)
 			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
 
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURLs, urls)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedURLs, urls)
 		})
 	}
 }

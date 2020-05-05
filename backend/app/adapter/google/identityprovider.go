@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/webreq"
+	"github.com/short-d/short/app/usecase/external"
 )
 
 const (
@@ -14,7 +14,7 @@ const (
 	accessTokenAPI   = "https://www.googleapis.com/oauth2/v4/token"
 )
 
-var _ service.IdentityProvider = (*IdentityProvider)(nil)
+var _ external.IdentityProvider = (*IdentityProvider)(nil)
 
 type scope = string
 
@@ -27,7 +27,7 @@ const (
 type IdentityProvider struct {
 	clientID     string
 	clientSecret string
-	httpRequest  fw.HTTPRequest
+	httpRequest  webreq.HTTP
 	redirectURI  string
 }
 
@@ -101,7 +101,7 @@ type accessTokenResponse struct {
 }
 
 // NewIdentityProvider initializes Google OAuth service.
-func NewIdentityProvider(http fw.HTTPRequest, clientID string, clientSecret string, redirectURI string) IdentityProvider {
+func NewIdentityProvider(http webreq.HTTP, clientID string, clientSecret string, redirectURI string) IdentityProvider {
 	return IdentityProvider{
 		clientID:     clientID,
 		clientSecret: clientSecret,

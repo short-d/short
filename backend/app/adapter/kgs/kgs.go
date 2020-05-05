@@ -6,12 +6,12 @@ import (
 	"fmt"
 
 	"github.com/short-d/kgs/app/adapter/rpc/proto"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/short/app/usecase/external"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 
-var _ service.KeyFetcher = (*RPC)(nil)
+var _ external.KeyFetcher = (*RPC)(nil)
 
 // RPC represents remote procedure calls which interact with key generation
 // service.
@@ -20,7 +20,7 @@ type RPC struct {
 }
 
 // FetchKeys retrieves keys in batch from key generation service.
-func (k RPC) FetchKeys(maxCount int) ([]service.Key, error) {
+func (k RPC) FetchKeys(maxCount int) ([]external.Key, error) {
 	req := proto.AllocateKeysRequest{
 		MaxKeyCount: uint32(maxCount),
 	}
@@ -31,9 +31,9 @@ func (k RPC) FetchKeys(maxCount int) ([]service.Key, error) {
 		return nil, err
 	}
 
-	keys := make([]service.Key, 0)
+	keys := make([]external.Key, 0)
 	for _, key := range res.Keys {
-		keys = append(keys, service.Key(key))
+		keys = append(keys, external.Key(key))
 	}
 	return keys, nil
 }

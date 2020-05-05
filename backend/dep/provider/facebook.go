@@ -1,7 +1,7 @@
 package provider
 
 import (
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/webreq"
 	"github.com/short-d/short/app/adapter/facebook"
 )
 
@@ -18,7 +18,7 @@ type FacebookRedirectURI string
 // FacebookClientID and FacebookClientSecret to uniquely identify clientID and
 // clientSecret during dependency injection.
 func NewFacebookIdentityProvider(
-	req fw.HTTPRequest,
+	req webreq.HTTP,
 	clientID FacebookClientID,
 	clientSecret FacebookClientSecret,
 	redirectURI FacebookRedirectURI,

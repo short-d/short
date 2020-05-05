@@ -6,12 +6,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/app/usecase/external"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
 	"github.com/short-d/short/app/usecase/risk"
-	"github.com/short-d/short/app/usecase/service"
 	"github.com/short-d/short/app/usecase/validator"
 )
 
@@ -28,7 +29,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		name          string
 		urls          urlMap
 		alias         *string
-		availableKeys []service.Key
+		availableKeys []external.Key
 		user          entity.User
 		url           entity.URL
 		relationUsers []entity.User
@@ -99,7 +100,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			availableKeys: []service.Key{
+			availableKeys: []external.Key{
 				"test",
 			},
 			alias: nil,
@@ -124,7 +125,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			availableKeys: []service.Key{},
+			availableKeys: []external.Key{},
 			alias:         nil,
 			user: entity.User{
 				Email: "alpha@example.com",
@@ -148,9 +149,9 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				testCase.relationUsers,
 				testCase.relationURLs,
 			)
-			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
+			keyFetcher := external.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
 			timer := mdtest.NewTimerFake(now)
@@ -167,31 +168,31 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			)
 
 			_, err = urlRepo.GetByAlias(testCase.url.Alias)
-			mdtest.NotEqual(t, nil, err)
+			assert.NotEqual(t, nil, err)
 
 			isExist := userURLRepo.IsRelationExist(testCase.user, testCase.url)
-			mdtest.Equal(t, false, isExist)
+			assert.Equal(t, false, isExist)
 
 			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 
 				_, err = urlRepo.GetByAlias(testCase.expectedURL.Alias)
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 
 				isExist := userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
-				mdtest.Equal(t, false, isExist)
+				assert.Equal(t, false, isExist)
 				return
 			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURL, url)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedURL, url)
 
 			savedURL, err := urlRepo.GetByAlias(testCase.expectedURL.Alias)
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURL, savedURL)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedURL, savedURL)
 
 			isExist = userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
-			mdtest.Equal(t, true, isExist)
+			assert.Equal(t, true, isExist)
 		})
 	}
 }

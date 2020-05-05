@@ -3,21 +3,22 @@ package main
 import (
 	"time"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/app/modern/mdenvconfig"
+	"github.com/short-d/app/fw/db"
+	"github.com/short-d/app/fw/envconfig"
+	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/short/app"
 	"github.com/short-d/short/cmd"
 	"github.com/short-d/short/dep"
 )
 
 func main() {
-	env := dep.InjectEnvironment()
+	env := dep.InjectEnv()
 	env.AutoLoadDotEnvFile()
 
-	envConfig := mdenvconfig.NewEnvConfig(env)
+	envConfig := envconfig.NewEnvConfig(env)
 
 	config := struct {
-		ServerEnv            string        `env:"ENV" default:"testing"`
+		Runtime              string        `env:"ENV" default:"development"`
 		DBHost               string        `env:"DB_HOST" default:"localhost"`
 		DBPort               int           `env:"DB_PORT" default:"5432"`
 		DBUser               string        `env:"DB_USER" default:"postgres"`
@@ -55,7 +56,7 @@ func main() {
 	dbConnector := dep.InjectDBConnector()
 	dbMigrationTool := dep.InjectDBMigrationTool()
 
-	dbConfig := fw.DBConfig{
+	dbConfig := db.Config{
 		Host:     config.DBHost,
 		Port:     config.DBPort,
 		User:     config.DBUser,
@@ -64,9 +65,9 @@ func main() {
 	}
 
 	serviceConfig := app.ServiceConfig{
+		Runtime:              config.Runtime,
 		LogPrefix:            "Short",
-		ServerEnv:            config.ServerEnv,
-		LogLevel:             fw.LogTrace,
+		LogLevel:             logger.LogInfo,
 		RecaptchaSecret:      config.ReCaptchaSecret,
 		GithubClientID:       config.GithubClientID,
 		GithubClientSecret:   config.GithubClientSecret,

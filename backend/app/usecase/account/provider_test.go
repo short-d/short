@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/repository"
@@ -47,8 +48,8 @@ func TestProvider_IsAccountExist(t *testing.T) {
 			fakeTimer := mdtest.NewTimerFake(now)
 			accountProvider := NewProvider(&fakeUserRepo, fakeTimer)
 			gotIsExist, err := accountProvider.IsAccountExist(testCase.userEmail)
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedIsExist, gotIsExist)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedIsExist, gotIsExist)
 		})
 	}
 }
@@ -93,13 +94,13 @@ func TestProvider_CreateAccount(t *testing.T) {
 			accountProvider := NewProvider(&fakeUserRepo, fakeTimer)
 			err := accountProvider.CreateAccount(testCase.email, testCase.userName)
 			if testCase.expectedHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				isEmailExist, err := fakeUserRepo.IsEmailExist(testCase.email)
-				mdtest.Equal(t, nil, err)
-				mdtest.Equal(t, true, isEmailExist)
+				assert.Equal(t, nil, err)
+				assert.Equal(t, true, isEmailExist)
 				return
 			}
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 		})
 	}
 }

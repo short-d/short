@@ -1,7 +1,8 @@
 package provider
 
 import (
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/router"
+	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/app/adapter/facebook"
 	"github.com/short-d/short/app/adapter/github"
 	"github.com/short-d/short/app/adapter/google"
@@ -20,7 +21,7 @@ type WebFrontendURL string
 func NewShortRoutes(
 	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL WebFrontendURL,
-	timer fw.Timer,
+	timer timer.Timer,
 	urlRetriever url.Retriever,
 	githubAPI github.API,
 	facebookAPI facebook.API,
@@ -28,7 +29,7 @@ func NewShortRoutes(
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
 	authenticator authenticator.Authenticator,
 	accountProvider account.Provider,
-) []fw.Route {
+) []router.Route {
 	return routing.NewShort(
 		instrumentationFactory,
 		string(webFrontendURL),

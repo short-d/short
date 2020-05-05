@@ -4,8 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/app/mdtest"
+	"github.com/short-d/app/fw/analytics"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/ctx"
+	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/metrics"
+	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/instrumentation"
 	"github.com/short-d/short/app/usecase/repository"
@@ -52,21 +56,23 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			featureRepo := repository.NewFeatureToggleFake(testCase.toggles)
 
-			logger := mdtest.NewLoggerFake(mdtest.FakeLoggerArgs{})
-			tracer := mdtest.NewTracerFake()
-			timer := mdtest.NewTimerFake(time.Now())
-			metrics := mdtest.NewMetricsFake()
-			analytics := mdtest.NewAnalyticsFake()
-			ctxCh := make(chan fw.ExecutionContext)
+			entryRepo := logger.NewEntryRepoFake()
+			lg, err := logger.NewFake(logger.LogOff, &entryRepo)
+			assert.Equal(t, nil, err)
+
+			tm := timer.NewStub(time.Now())
+			mt := metrics.NewFake()
+			ana := analytics.NewFake()
+			ctxCh := make(chan ctx.ExecutionContext)
 			go func() {
-				ctxCh <- fw.ExecutionContext{}
+				ctxCh <- ctx.ExecutionContext{}
 			}()
 
-			ins := instrumentation.NewInstrumentation(&logger, &tracer, timer, metrics, analytics, ctxCh)
+			ins := instrumentation.NewInstrumentation(lg, tm, mt, ana, ctxCh)
 			factory := NewDynamicDecisionMakerFactory(featureRepo)
 			decision := factory.NewDecision(ins)
 			gotIsEnabled := decision.IsFeatureEnable(testCase.featureID)
-			mdtest.Equal(t, testCase.expectedIsEnabled, gotIsEnabled)
+			assert.Equal(t, testCase.expectedIsEnabled, gotIsEnabled)
 		})
 	}
 }

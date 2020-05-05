@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/mdtest"
 	"github.com/short-d/short/app/entity"
 )
@@ -21,15 +22,15 @@ func TestAuthenticator_GenerateToken(t *testing.T) {
 		Email: "test@s.time4hacks.com",
 	}
 	token, err := authenticator.GenerateToken(expUser)
-	mdtest.Equal(t, nil, err)
+	assert.Equal(t, nil, err)
 
 	tokenPayload, err := tokenizer.Decode(token)
-	mdtest.Equal(t, nil, err)
+	assert.Equal(t, nil, err)
 
-	mdtest.Equal(t, expUser.Email, tokenPayload["email"])
+	assert.Equal(t, expUser.Email, tokenPayload["email"])
 
 	expIssuedAtStr := expIssuedAt.Format(time.RFC3339Nano)
-	mdtest.Equal(t, expIssuedAtStr, tokenPayload["issued_at"])
+	assert.Equal(t, expIssuedAtStr, tokenPayload["issued_at"])
 }
 
 func TestAuthenticator_IsSignedIn(t *testing.T) {
@@ -113,9 +114,9 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 			authenticator := NewAuthenticator(tokenizer, timer, testCase.tokenValidDuration)
 
 			token, err := tokenizer.Encode(testCase.tokenPayload)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 			gotIsSignIn := authenticator.IsSignedIn(token)
-			mdtest.Equal(t, testCase.expIsSignIn, gotIsSignIn)
+			assert.Equal(t, testCase.expIsSignIn, gotIsSignIn)
 		})
 	}
 }
@@ -210,13 +211,13 @@ func TestAuthenticator_GetUser(t *testing.T) {
 			authenticator := NewAuthenticator(tokenizer, timer, testCase.tokenValidDuration)
 
 			token, err := tokenizer.Encode(testCase.tokenPayload)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 			gotUser, err := authenticator.GetUser(token)
 			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, testCase.expUser, gotUser)
+			assert.Equal(t, testCase.expUser, gotUser)
 		})
 	}
 }

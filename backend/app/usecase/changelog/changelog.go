@@ -3,7 +3,7 @@ package changelog
 import (
 	"time"
 
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/app/entity"
 	"github.com/short-d/short/app/usecase/keygen"
 	"github.com/short-d/short/app/usecase/repository"
@@ -21,7 +21,7 @@ type ChangeLog interface {
 // Persist retrieves change log from and saves changes to persistent data store.
 type Persist struct {
 	keyGen        keygen.KeyGenerator
-	timer         fw.Timer
+	timer         timer.Timer
 	changeLogRepo repository.ChangeLog
 }
 
@@ -56,7 +56,7 @@ func (p Persist) GetLastViewedAt() *time.Time {
 // NewPersist creates Persist
 func NewPersist(
 	keyGen keygen.KeyGenerator,
-	timer fw.Timer,
+	timer timer.Timer,
 	changeLog repository.ChangeLog,
 ) Persist {
 	return Persist{
