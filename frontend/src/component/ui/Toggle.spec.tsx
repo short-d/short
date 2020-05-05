@@ -86,7 +86,7 @@ describe('Toggle component', () => {
 
     const toggle = container.querySelector('.background');
     expect(toggle).toBeTruthy();
-    
+
     fireEvent.click(toggle!);
   });
 });
