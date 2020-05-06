@@ -68,7 +68,7 @@ func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user enti
 		return entity.URL{}, ErrMaliciousLongLink(longLink)
 	}
 
-	if customAlias == nil || *customAlias == "" {
+	if !c.isAliasProvided(customAlias) {
 		return c.createURLWithAutoAlias(url, user)
 	}
 
@@ -76,6 +76,10 @@ func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user enti
 		return entity.URL{}, ErrInvalidCustomAlias(*customAlias)
 	}
 	return c.createURLWithCustomAlias(url, *customAlias, user)
+}
+
+func (c CreatorPersist) isAliasProvided(customAlias *string) bool {
+	return customAlias != nil && *customAlias != ""
 }
 
 func (c CreatorPersist) createURLWithAutoAlias(url entity.URL, user entity.User) (entity.URL, error) {
