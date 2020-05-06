@@ -4,9 +4,9 @@ package table
 var UserRole = struct {
 	TableName    string
 	ColumnUserID string
-	ColumnRoles  string
+	ColumnRole   string
 }{
 	TableName:    "user_role",
 	ColumnUserID: "user_id",
-	ColumnRoles:  "roles",
+	ColumnRole:   "role",
 }

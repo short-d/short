@@ -1,9 +1,9 @@
 package authorizer
 
 import (
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/authorizer/permission"
-	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authorizer/permission"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 type Authorizer struct {
@@ -17,14 +17,14 @@ func (a Authorizer) CanCreateChange(user entity.User) (bool, error) {
 
 // hasPermission tells if a user has a right to the given permission
 func (a Authorizer) hasPermission(user entity.User, permission permission.Permission) (bool, error) {
-	roles, err := a.userRoleRepo.GetUserRoles(user)
+	roles, err := a.userRoleRepo.GetRoles(user)
 
 	if err != nil {
 		return false, err
 	}
 
 	for _, role := range roles {
-		if role.IsAllowed(permission) {
+		if role.HasPermission(permission) {
 			return true, nil
 		}
 	}

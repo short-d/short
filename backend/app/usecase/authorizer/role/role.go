@@ -1,22 +1,22 @@
 package role
 
-import "github.com/short-d/short/app/usecase/authorizer/permission"
+import "github.com/short-d/short/backend/app/usecase/authorizer/permission"
 
 // Role represents a groupings of permissions
-type Role int
+type Role string
 
 const (
-	Basic Role = iota
+	Basic Role = "basic"
 
-	SecuritySpecialist
+	SecuritySpecialist Role = "security_specialist"
 
-	ShortLinkViewer
-	ShortLinkEditor
+	ShortLinkViewer Role = "short_link_viewer"
+	ShortLinkEditor Role = "short_link_editor"
 
-	ChangeLogViewer
-	ChangeLogEditor
+	ChangeLogViewer Role = "change_log_viewer"
+	ChangeLogEditor Role = "change_log_editor"
 
-	Admin
+	Admin Role = "admin"
 )
 
 var permissions = map[Role][]permission.Permission{
@@ -65,8 +65,8 @@ var permissions = map[Role][]permission.Permission{
 	},
 }
 
-// IsAllowed tells if the given role grants access to a permission
-func (r Role) IsAllowed(permission permission.Permission) bool {
+// HasPermission tells if the given role grants access to a permission
+func (r Role) HasPermission(permission permission.Permission) bool {
 	for _, value := range permissions[r] {
 		if value == permission {
 			return true
