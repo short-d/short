@@ -30,10 +30,6 @@ WHERE "%s"=$1;
 	roles := []role.Role{}
 	rows, err := u.db.Query(statement, user.ID)
 
-	if err == sql.ErrNoRows {
-		return roles, nil
-	}
-
 	if err != nil {
 		return nil, err
 	}
