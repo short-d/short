@@ -137,10 +137,58 @@ describe('PageControl component', () => {
   });
 
   test('should fallback to last page if changing to page greater than total number of pages', () => {
-    fail('Not implemented');
+    let currentPageIdx = 0;
+    const handlePageChanged = (pageIdx: number) => {
+      currentPageIdx = pageIdx;
+    };
+
+    const { container, rerender } = render(
+      <PageControl totalPages={10} onPageChanged={handlePageChanged} />
+    );
+
+    const pageNumbers = container.querySelectorAll('.page-number');
+    fireEvent.click(pageNumbers[7]);
+    expect(currentPageIdx).toBe(7);
+
+    fireEvent.click(pageNumbers[8]);
+    expect(currentPageIdx).toBe(8);
+
+    rerender(
+      <PageControl totalPages={5} onPageChanged={handlePageChanged} />
+    );
+
+    const prevButton = container.querySelector('.previous');
+    expect(prevButton).toBeTruthy();
+    expect(prevButton!.textContent).toContain('Previous');
+    fireEvent.click(prevButton!);
+    expect(currentPageIdx).toBe(3);
   });
 
   test('should go to correct page after total number of pages changes', () => {
-    fail('Not implemented');
+    let currentPageIdx = 0;
+    const handlePageChanged = (pageIdx: number) => {
+      currentPageIdx = pageIdx;
+    };
+
+    const { container, rerender } = render(
+      <PageControl totalPages={5} onPageChanged={handlePageChanged} />
+    );
+
+    const pageNumbers = container.querySelectorAll('.page-number');
+    fireEvent.click(pageNumbers[4]);
+    expect(currentPageIdx).toBe(4);
+
+    fireEvent.click(pageNumbers[3]);
+    expect(currentPageIdx).toBe(3);
+
+    rerender(
+      <PageControl totalPages={10} onPageChanged={handlePageChanged} />
+    );
+
+    const prevButton = container.querySelector('.previous');
+    expect(prevButton).toBeTruthy();
+    expect(prevButton!.textContent).toContain('Previous');
+    fireEvent.click(prevButton!);
+    expect(currentPageIdx).toBe(2);
   });
 });
