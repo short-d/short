@@ -2,11 +2,9 @@ package routing
 
 import (
 	"net/url"
-
-	"github.com/short-d/app/fw"
 )
 
-func getToken(params fw.Params) string {
+func getToken(params map[string]string) string {
 	return params["token"]
 }
 

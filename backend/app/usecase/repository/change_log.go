@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 // ChangeLog accesses changelog from storage, such as database.

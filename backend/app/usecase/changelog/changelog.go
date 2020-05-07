@@ -3,10 +3,10 @@ package changelog
 import (
 	"time"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/keygen"
-	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/keygen"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 var _ ChangeLog = (*Persist)(nil)
@@ -70,7 +70,7 @@ func (p Persist) GetLastViewedAt(user entity.User) *time.Time {
 // NewPersist creates Persist
 func NewPersist(
 	keyGen keygen.KeyGenerator,
-	timer fw.Timer,
+	timer timer.Timer,
 	changeLog repository.ChangeLog,
 	userChangeLog repository.UserChangeLog,
 ) Persist {

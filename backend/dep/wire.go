@@ -6,39 +6,36 @@ import (
 	"database/sql"
 
 	"github.com/google/wire"
-	"github.com/short-d/app/fw"
-	"github.com/short-d/app/modern/mdanalytics"
-	"github.com/short-d/app/modern/mdcli"
-	"github.com/short-d/app/modern/mddb"
-	"github.com/short-d/app/modern/mdenv"
-	"github.com/short-d/app/modern/mdgeo"
-	"github.com/short-d/app/modern/mdhttp"
-	"github.com/short-d/app/modern/mdio"
-	"github.com/short-d/app/modern/mdlogger"
-	"github.com/short-d/app/modern/mdmetrics"
-	"github.com/short-d/app/modern/mdnetwork"
-	"github.com/short-d/app/modern/mdrequest"
-	"github.com/short-d/app/modern/mdrouting"
-	"github.com/short-d/app/modern/mdruntime"
-	"github.com/short-d/app/modern/mdservice"
-	"github.com/short-d/app/modern/mdtimer"
-	"github.com/short-d/app/modern/mdtracer"
-	"github.com/short-d/short/app/adapter/db"
-	"github.com/short-d/short/app/adapter/facebook"
-	"github.com/short-d/short/app/adapter/github"
-	"github.com/short-d/short/app/adapter/google"
-	"github.com/short-d/short/app/adapter/graphql"
-	"github.com/short-d/short/app/adapter/kgs"
-	"github.com/short-d/short/app/adapter/request"
-	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/changelog"
-	"github.com/short-d/short/app/usecase/repository"
-	"github.com/short-d/short/app/usecase/requester"
-	"github.com/short-d/short/app/usecase/risk"
-	"github.com/short-d/short/app/usecase/service"
-	"github.com/short-d/short/app/usecase/url"
-	"github.com/short-d/short/app/usecase/validator"
-	"github.com/short-d/short/dep/provider"
+	"github.com/short-d/app/fw/analytics"
+	"github.com/short-d/app/fw/cli"
+	"github.com/short-d/app/fw/db"
+	"github.com/short-d/app/fw/env"
+	"github.com/short-d/app/fw/geo"
+	"github.com/short-d/app/fw/graphql"
+	"github.com/short-d/app/fw/io"
+	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/metrics"
+	"github.com/short-d/app/fw/network"
+	"github.com/short-d/app/fw/runtime"
+	"github.com/short-d/app/fw/service"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/app/fw/webreq"
+	"github.com/short-d/short/backend/app/adapter/facebook"
+	"github.com/short-d/short/backend/app/adapter/github"
+	"github.com/short-d/short/backend/app/adapter/google"
+	"github.com/short-d/short/backend/app/adapter/gqlapi"
+	"github.com/short-d/short/backend/app/adapter/kgs"
+	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/adapter/sqldb"
+	"github.com/short-d/short/backend/app/usecase/account"
+	"github.com/short-d/short/backend/app/usecase/changelog"
+	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/repository"
+	"github.com/short-d/short/backend/app/usecase/requester"
+	"github.com/short-d/short/backend/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/validator"
+	"github.com/short-d/short/backend/dep/provider"
 )
 
 var authSet = wire.NewSet(
@@ -47,19 +44,19 @@ var authSet = wire.NewSet(
 )
 
 var observabilitySet = wire.NewSet(
-	wire.Bind(new(fw.StdOut), new(mdio.StdOut)),
-	wire.Bind(new(fw.Logger), new(mdlogger.Logger)),
-	wire.Bind(new(fw.Metrics), new(mdmetrics.DataDog)),
-	wire.Bind(new(fw.Analytics), new(mdanalytics.Segment)),
-	wire.Bind(new(fw.Network), new(mdnetwork.Proxy)),
+	wire.Bind(new(io.Output), new(io.StdOut)),
+	wire.Bind(new(runtime.Runtime), new(runtime.Program)),
+	wire.Bind(new(metrics.Metrics), new(metrics.DataDog)),
+	wire.Bind(new(analytics.Analytics), new(analytics.Segment)),
+	wire.Bind(new(network.Network), new(network.Proxy)),
 
-	mdio.NewBuildInStdOut,
+	io.NewStdOut,
 	provider.NewEntryRepositorySwitch,
 	provider.NewLogger,
-	mdtracer.NewLocal,
+	runtime.NewProgram,
 	provider.NewDataDogMetrics,
 	provider.NewSegment,
-	mdnetwork.NewProxy,
+	network.NewProxy,
 	request.NewClient,
 	request.NewInstrumentationFactory,
 )
@@ -83,61 +80,60 @@ var googleAPISet = wire.NewSet(
 )
 
 var keyGenSet = wire.NewSet(
-	wire.Bind(new(service.KeyFetcher), new(kgs.RPC)),
+	wire.Bind(new(external.KeyFetcher), new(kgs.RPC)),
 	provider.NewKgsRPC,
 	provider.NewKeyGenerator,
 )
 
 var featureDecisionSet = wire.NewSet(
-	wire.Bind(new(repository.FeatureToggle), new(db.FeatureToggleSQL)),
-	db.NewFeatureToggleSQL,
+	wire.Bind(new(repository.FeatureToggle), new(sqldb.FeatureToggleSQL)),
+	sqldb.NewFeatureToggleSQL,
 	provider.NewFeatureDecisionMakerFactorySwitch,
 )
 
 // InjectCommandFactory creates CommandFactory with configured dependencies.
-func InjectCommandFactory() fw.CommandFactory {
+func InjectCommandFactory() cli.CommandFactory {
 	wire.Build(
-		wire.Bind(new(fw.CommandFactory), new(mdcli.CobraFactory)),
-		mdcli.NewCobraFactory,
+		wire.Bind(new(cli.CommandFactory), new(cli.CobraFactory)),
+		cli.NewCobraFactory,
 	)
-	return mdcli.CobraFactory{}
+	return cli.CobraFactory{}
 }
 
 // InjectDBConnector creates DBConnector with configured dependencies.
-func InjectDBConnector() fw.DBConnector {
+func InjectDBConnector() db.Connector {
 	wire.Build(
-		wire.Bind(new(fw.DBConnector), new(mddb.PostgresConnector)),
-		mddb.NewPostgresConnector,
+		wire.Bind(new(db.Connector), new(db.PostgresConnector)),
+		db.NewPostgresConnector,
 	)
-	return mddb.PostgresConnector{}
+	return db.PostgresConnector{}
 }
 
 // InjectDBMigrationTool creates DBMigrationTool with configured dependencies.
-func InjectDBMigrationTool() fw.DBMigrationTool {
+func InjectDBMigrationTool() db.MigrationTool {
 	wire.Build(
-		wire.Bind(new(fw.DBMigrationTool), new(mddb.PostgresMigrationTool)),
-		mddb.NewPostgresMigrationTool,
+		wire.Bind(new(db.MigrationTool), new(db.PostgresMigrationTool)),
+		db.NewPostgresMigrationTool,
 	)
-	return mddb.PostgresMigrationTool{}
+	return db.PostgresMigrationTool{}
 }
 
-// InjectEnvironment creates Environment with configured dependencies.
-func InjectEnvironment() fw.Environment {
+// InjectEnv creates Environment with configured dependencies.
+func InjectEnv() env.Env {
 	wire.Build(
-		wire.Bind(new(fw.Environment), new(mdenv.GoDotEnv)),
-		mdenv.NewGoDotEnv,
+		wire.Bind(new(env.Env), new(env.GoDotEnv)),
+		env.NewGoDotEnv,
 	)
-	return mdenv.GoDotEnv{}
+	return env.GoDotEnv{}
 }
 
 // InjectGraphQLService creates GraphQL service with configured dependencies.
 func InjectGraphQLService(
-	name string,
-	serverEnv fw.ServerEnv,
+	runtime env.Runtime,
 	prefix provider.LogPrefix,
-	logLevel fw.LogLevel,
+	logLevel logger.LogLevel,
 	sqlDB *sql.DB,
-	graphqlPath provider.GraphQlPath,
+	graphqlPath provider.GraphQLPath,
 	secret provider.ReCaptchaSecret,
 	jwtSecret provider.JwtSecret,
 	bufferSize provider.KeyGenBufferSize,
@@ -147,55 +143,57 @@ func InjectGraphQLService(
 	segmentAPIKey provider.SegmentAPIKey,
 	ipStackAPIKey provider.IPStackAPIKey,
 	googleAPIKey provider.GoogleAPIKey,
-) (mdservice.Service, error) {
+) (service.GraphQL, error) {
 	wire.Build(
-		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
-		wire.Bind(new(fw.GraphQLAPI), new(graphql.Short)),
+		wire.Bind(new(timer.Timer), new(timer.System)),
+		wire.Bind(new(graphql.API), new(gqlapi.Short)),
+		wire.Bind(new(graphql.Handler), new(graphql.GraphGopherHandler)),
+
+		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
+		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserURLRelationSQL)),
+		wire.Bind(new(repository.ChangeLog), new(sqldb.ChangeLogSQL)),
+		wire.Bind(new(repository.UserChangeLog), new(sqldb.UserChangeLogSQL)),
+		wire.Bind(new(repository.URL), new(*sqldb.URLSql)),
+
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
-		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
-		wire.Bind(new(repository.ChangeLog), new(db.ChangeLogSQL)),
-		wire.Bind(new(repository.UserChangeLog), new(db.UserChangeLogSQL)),
-		wire.Bind(new(repository.URL), new(*db.URLSql)),
-		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
-		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
 
 		observabilitySet,
 		authSet,
 		keyGenSet,
 
-		mdruntime.NewBuildIn,
-		mdservice.New,
-		provider.NewGraphGophers,
-		mdhttp.NewClient,
-		mdrequest.NewHTTP,
-		mdtimer.NewTimer,
+		env.NewDeployment,
+		provider.NewGraphQLService,
+		graphql.NewGraphGopherHandler,
+		webreq.NewHTTPClient,
+		webreq.NewHTTP,
+		timer.NewSystem,
+
+		gqlapi.NewShort,
 		provider.NewSafeBrowsing,
 		risk.NewDetector,
+		provider.NewReCaptchaService,
+		sqldb.NewChangeLogSQL,
+		sqldb.NewUserChangeLogSQL,
+		sqldb.NewURLSql,
+		sqldb.NewUserURLRelationSQL,
 
-		db.NewChangeLogSQL,
-		db.NewUserChangeLogSQL,
-		db.NewURLSql,
-		db.NewUserURLRelationSQL,
 		validator.NewLongLink,
 		validator.NewCustomAlias,
 		changelog.NewPersist,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
-		provider.NewReCaptchaService,
 		requester.NewVerifier,
-		graphql.NewShort,
 	)
-	return mdservice.Service{}, nil
+	return service.GraphQL{}, nil
 }
 
 // InjectRoutingService creates routing service with configured dependencies.
 func InjectRoutingService(
-	name string,
-	serverEnv fw.ServerEnv,
+	runtime env.Runtime,
 	prefix provider.LogPrefix,
-	logLevel fw.LogLevel,
+	logLevel logger.LogLevel,
 	sqlDB *sql.DB,
 	githubClientID provider.GithubClientID,
 	githubClientSecret provider.GithubClientSecret,
@@ -213,16 +211,15 @@ func InjectRoutingService(
 	dataDogAPIKey provider.DataDogAPIKey,
 	segmentAPIKey provider.SegmentAPIKey,
 	ipStackAPIKey provider.IPStackAPIKey,
-) (mdservice.Service, error) {
+) (service.Routing, error) {
 	wire.Build(
-		wire.Bind(new(fw.ProgramRuntime), new(mdruntime.BuildIn)),
+		wire.Bind(new(timer.Timer), new(timer.System)),
+		wire.Bind(new(geo.Geo), new(geo.IPStack)),
+
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repository.UserURLRelation), new(db.UserURLRelationSQL)),
-		wire.Bind(new(repository.User), new(*db.UserSQL)),
-		wire.Bind(new(repository.URL), new(*db.URLSql)),
-		wire.Bind(new(fw.HTTPRequest), new(mdrequest.HTTP)),
-		wire.Bind(new(fw.GraphQlRequest), new(mdrequest.GraphQL)),
-		wire.Bind(new(fw.GeoLocation), new(mdgeo.IPStack)),
+		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserURLRelationSQL)),
+		wire.Bind(new(repository.User), new(*sqldb.UserSQL)),
+		wire.Bind(new(repository.URL), new(*sqldb.URLSql)),
 
 		observabilitySet,
 		authSet,
@@ -232,21 +229,20 @@ func InjectRoutingService(
 		keyGenSet,
 		featureDecisionSet,
 
-		mdruntime.NewBuildIn,
-		mdservice.New,
-		mdrouting.NewBuiltIn,
-		mdhttp.NewClient,
-		mdrequest.NewHTTP,
-		mdrequest.NewGraphQL,
-		mdtimer.NewTimer,
+		service.NewRouting,
+		webreq.NewHTTPClient,
+		webreq.NewHTTP,
+		graphql.NewClientFactory,
+		timer.NewSystem,
 		provider.NewIPStack,
+		env.NewDeployment,
 
-		db.NewUserSQL,
-		db.NewURLSql,
-		db.NewUserURLRelationSQL,
+		sqldb.NewUserSQL,
+		sqldb.NewURLSql,
+		sqldb.NewUserURLRelationSQL,
 		url.NewRetrieverPersist,
 		account.NewProvider,
 		provider.NewShortRoutes,
 	)
-	return mdservice.Service{}, nil
+	return service.Routing{}, nil
 }

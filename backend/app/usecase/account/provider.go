@@ -1,15 +1,15 @@
 package account
 
 import (
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 // Provider providers user account service.
 type Provider struct {
 	userRepo repository.User
-	timer    fw.Timer
+	timer    timer.Timer
 }
 
 // IsAccountExist checks whether an user account exist.
@@ -29,7 +29,7 @@ func (r Provider) CreateAccount(email string, name string) error {
 }
 
 // NewProvider creates user account service provider.
-func NewProvider(userRepo repository.User, timer fw.Timer) Provider {
+func NewProvider(userRepo repository.User, timer timer.Timer) Provider {
 	return Provider{
 		userRepo: userRepo,
 		timer:    timer,

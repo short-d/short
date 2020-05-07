@@ -6,11 +6,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/keygen"
-	"github.com/short-d/short/app/usecase/repository"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/keygen"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 func TestPersist_CreateChange(t *testing.T) {
@@ -25,7 +26,7 @@ func TestPersist_CreateChange(t *testing.T) {
 		changeLog             []entity.Change
 		change                entity.Change
 		expectedChange        entity.Change
-		availableKeys         []service.Key
+		availableKeys         []external.Key
 		expectedChangeLogSize int
 		hasErr                bool
 	}{
@@ -53,7 +54,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				SummaryMarkdown: &summaryMarkdown3,
 				ReleasedAt:      now,
 			},
-			availableKeys:         []service.Key{"test"},
+			availableKeys:         []external.Key{"test"},
 			expectedChangeLogSize: 3,
 			hasErr:                false,
 		}, {
@@ -75,7 +76,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				SummaryMarkdown: &summaryMarkdown3,
 			},
 			expectedChange:        entity.Change{},
-			availableKeys:         []service.Key{},
+			availableKeys:         []external.Key{},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
 		}, {
@@ -97,7 +98,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				SummaryMarkdown: &summaryMarkdown3,
 			},
 			expectedChange:        entity.Change{},
-			availableKeys:         []service.Key{"12345"},
+			availableKeys:         []external.Key{"12345"},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
 		}, {
@@ -124,7 +125,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				SummaryMarkdown: nil,
 				ReleasedAt:      now,
 			},
-			availableKeys:         []service.Key{"22222"},
+			availableKeys:         []external.Key{"22222"},
 			expectedChangeLogSize: 3,
 			hasErr:                false,
 		},
@@ -136,31 +137,31 @@ func TestPersist_CreateChange(t *testing.T) {
 			t.Parallel()
 
 			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
-			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
+			keyFetcher := external.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
-			fakeTimer := mdtest.NewTimerFake(now)
+			tm := timer.NewStub(now)
 			persist := NewPersist(
 				keyGen,
-				fakeTimer,
+				tm,
 				&changeLogRepo,
 				nil,
 			)
 
 			newChange, err := persist.CreateChange(testCase.change.Title, testCase.change.SummaryMarkdown)
 			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
-			mdtest.Equal(t, testCase.expectedChange, newChange)
+			assert.Equal(t, testCase.expectedChange, newChange)
 
 			changeLog, err := persist.GetChangeLog()
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
-			mdtest.Equal(t, testCase.expectedChangeLogSize, len(changeLog))
+			assert.Equal(t, testCase.expectedChangeLogSize, len(changeLog))
 		})
 	}
 }
@@ -174,7 +175,7 @@ func TestPersist_GetChangeLog(t *testing.T) {
 	testCases := []struct {
 		name          string
 		changeLog     []entity.Change
-		availableKeys []service.Key
+		availableKeys []external.Key
 	}{
 		{
 			name: "get full changelog successfully",
@@ -190,11 +191,11 @@ func TestPersist_GetChangeLog(t *testing.T) {
 					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
-			availableKeys: []service.Key{},
+			availableKeys: []external.Key{},
 		}, {
 			name:          "get empty changelog successfully",
 			changeLog:     []entity.Change{},
-			availableKeys: []service.Key{},
+			availableKeys: []external.Key{},
 		},
 	}
 
@@ -204,22 +205,21 @@ func TestPersist_GetChangeLog(t *testing.T) {
 			t.Parallel()
 
 			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
-			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
+			keyFetcher := external.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
-			fakeTimer := mdtest.NewTimerFake(now)
+			tm := timer.NewStub(now)
 			persist := NewPersist(
 				keyGen,
-				fakeTimer,
+				tm,
 				&changeLogRepo,
 				nil,
 			)
 
 			changeLog, err := persist.GetChangeLog()
-			mdtest.Equal(t, nil, err)
-
-			mdtest.SameElements(t, testCase.changeLog, changeLog)
+			assert.Equal(t, nil, err)
+			assert.SameElements(t, testCase.changeLog, changeLog)
 		})
 	}
 }

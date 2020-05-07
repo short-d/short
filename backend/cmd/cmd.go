@@ -4,31 +4,32 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app"
+	"github.com/short-d/app/fw/cli"
+	"github.com/short-d/app/fw/db"
+	"github.com/short-d/short/backend/app"
 )
 
 // NewRootCmd creates the base command.
 func NewRootCmd(
-	dbConfig fw.DBConfig,
+	dbConfig db.Config,
 	config app.ServiceConfig,
-	cmdFactory fw.CommandFactory,
-	dbConnector fw.DBConnector,
-	dbMigrationTool fw.DBMigrationTool,
-) fw.Command {
+	cmdFactory cli.CommandFactory,
+	dbConnector db.Connector,
+	dbMigrationTool db.MigrationTool,
+) cli.Command {
 	var migrationRoot string
 
 	startCmd := cmdFactory.NewCommand(
-		fw.CommandConfig{
+		cli.CommandConfig{
 			Usage:        "start",
 			ShortHelpMsg: "Start service",
-			OnExecute: func(cmd *fw.Command, args []string) {
+			OnExecute: func(cmd *cli.Command, args []string) {
 				config.MigrationRoot = migrationRoot
 				app.Start(
 					dbConfig,
-					config,
 					dbConnector,
 					dbMigrationTool,
+					config,
 				)
 			},
 		},
@@ -36,14 +37,14 @@ func NewRootCmd(
 	startCmd.AddStringFlag(
 		&migrationRoot,
 		"migration",
-		"app/adapter/db/migration",
+		"app/adapter/sqldb/migration",
 		"migration migrations root directory",
 	)
 
 	rootCmd := cmdFactory.NewCommand(
-		fw.CommandConfig{
+		cli.CommandConfig{
 			Usage:     "short",
-			OnExecute: func(cmd *fw.Command, args []string) {},
+			OnExecute: func(cmd *cli.Command, args []string) {},
 		},
 	)
 	err := rootCmd.AddSubCommand(startCmd)
@@ -55,7 +56,7 @@ func NewRootCmd(
 }
 
 // Execute runs the root command.
-func Execute(rootCmd fw.Command) {
+func Execute(rootCmd cli.Command) {
 	err := rootCmd.Execute()
 	if err != nil {
 		fmt.Println(err)

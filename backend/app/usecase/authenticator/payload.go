@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/crypto"
 )
 
 // Payload represents the metadata encoded in the authentication token.
@@ -14,7 +14,7 @@ type Payload struct {
 }
 
 // TokenPayload retrieves key-value pairs representation of the payload.
-func (p Payload) TokenPayload() fw.TokenPayload {
+func (p Payload) TokenPayload() crypto.TokenPayload {
 	return map[string]interface{}{
 		"email":     p.email,
 		"issued_at": p.issuedAt,
@@ -28,7 +28,7 @@ func newPayload(email string, issuedAt time.Time) Payload {
 	}
 }
 
-func fromTokenPayload(tokenPayload fw.TokenPayload) (Payload, error) {
+func fromTokenPayload(tokenPayload crypto.TokenPayload) (Payload, error) {
 	payload := Payload{}
 	var ok bool
 

@@ -1,10 +1,11 @@
-import React, { Component, ChangeEvent } from 'react';
+import React, { ChangeEvent, Component } from 'react';
 import classNames from 'classnames';
 
 import './SearchBar.scss';
 import { Url } from '../../entity/Url';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { Icon, IconID } from './Icon';
 
 interface State {
   showAutoCompleteBox: boolean;
@@ -89,7 +90,9 @@ export class SearchBar extends Component<Props, State> {
             onFocus={this.showAutoCompleteBox}
             onBlur={this.hideAutoCompleteBox}
           />
-          <i className="material-icons search">search</i>
+          <div className={'search-icon'}>
+            <Icon defaultIconID={IconID.Search} />
+          </div>
         </div>
         {this.createAutoCompleteBox()}
       </div>

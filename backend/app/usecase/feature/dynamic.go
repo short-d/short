@@ -1,8 +1,8 @@
 package feature
 
 import (
-	"github.com/short-d/short/app/usecase/instrumentation"
-	"github.com/short-d/short/app/usecase/repository"
+	"github.com/short-d/short/backend/app/usecase/instrumentation"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 var _ DecisionMaker = (*DynamicDecisionMaker)(nil)
