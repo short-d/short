@@ -25,18 +25,18 @@ export class PageControl extends Component<IProps, IStates> {
     };
   }
 
+  static getDerivedStateFromProps(props: IProps, state: IStates): IStates {
+    return {
+      currentPageIdx: Math.min(
+        state.currentPageIdx,
+        props.totalPages - 1
+      )
+    };
+  }
+
   componentDidMount(): void {
     this.setState({
       currentPageIdx: 0
-    });
-  }
-
-  componentWillReceiveProps(nextProps: IProps): void {
-    this.setState({
-      currentPageIdx: Math.min(
-        this.state.currentPageIdx,
-        nextProps.totalPages - 1
-      )
     });
   }
 
