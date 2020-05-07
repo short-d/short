@@ -27,10 +27,7 @@ export class PageControl extends Component<IProps, IStates> {
 
   static getDerivedStateFromProps(props: IProps, state: IStates): IStates {
     return {
-      currentPageIdx: Math.min(
-        state.currentPageIdx,
-        props.totalPages - 1
-      )
+      currentPageIdx: Math.min(state.currentPageIdx, props.totalPages - 1)
     };
   }
 

@@ -153,9 +153,7 @@ describe('PageControl component', () => {
     fireEvent.click(pageNumbers[8]);
     expect(currentPageIdx).toBe(8);
 
-    rerender(
-      <PageControl totalPages={5} onPageChanged={handlePageChanged} />
-    );
+    rerender(<PageControl totalPages={5} onPageChanged={handlePageChanged} />);
 
     const prevButton = container.querySelector('.previous');
     expect(prevButton).toBeTruthy();
@@ -181,9 +179,7 @@ describe('PageControl component', () => {
     fireEvent.click(pageNumbers[3]);
     expect(currentPageIdx).toBe(3);
 
-    rerender(
-      <PageControl totalPages={10} onPageChanged={handlePageChanged} />
-    );
+    rerender(<PageControl totalPages={10} onPageChanged={handlePageChanged} />);
 
     const prevButton = container.querySelector('.previous');
     expect(prevButton).toBeTruthy();
