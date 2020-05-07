@@ -31,6 +31,15 @@ export class PageControl extends Component<IProps, IStates> {
     });
   }
 
+  componentWillReceiveProps(nextProps: IProps): void {
+    this.setState({
+      currentPageIdx: Math.min(
+        this.state.currentPageIdx,
+        nextProps.totalPages - 1
+      )
+    });
+  }
+
   render() {
     const { totalPages } = this.props;
 
@@ -130,10 +139,11 @@ export class PageControl extends Component<IProps, IStates> {
 
   private showPage(pageIdx: number) {
     const { onPageChanged } = this.props;
-    this.setState({ currentPageIdx: pageIdx });
-    if (!onPageChanged) {
-      return;
-    }
-    onPageChanged(pageIdx);
+    this.setState({ currentPageIdx: pageIdx }, () => {
+      if (!onPageChanged) {
+        return;
+      }
+      onPageChanged(pageIdx);
+    });
   }
 }

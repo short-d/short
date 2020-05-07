@@ -135,4 +135,12 @@ describe('PageControl component', () => {
     fireEvent.click(nextButton!);
     expect(currentPageIdx).toBe(6);
   });
+
+  test('should fallback to last page if changing to page greater than total number of pages', () => {
+    fail('Not implemented');
+  });
+
+  test('should go to correct page after total number of pages changes', () => {
+    fail('Not implemented');
+  });
 });
