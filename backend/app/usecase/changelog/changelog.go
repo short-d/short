@@ -21,7 +21,7 @@ type ChangeLog interface {
 // Persist retrieves change log from and saves changes to persistent data store.
 type Persist struct {
 	keyGen            keygen.KeyGenerator
-	timer             fw.Timer
+	timer             timer.Timer
 	changeLogRepo     repository.ChangeLog
 	userChangeLogRepo repository.UserChangeLog
 }
