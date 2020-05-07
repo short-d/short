@@ -96,7 +96,8 @@ func TestAuthQuery_URL(t *testing.T) {
 
 			timerFake := timer.NewStub(now)
 			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
-			changeLog := changelog.NewPersist(keyGen, timerFake, &changeLogRepo, nil)
+			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
+			changeLog := changelog.NewPersist(keyGen, timerFake, &changeLogRepo, &userChangeLogRepo)
 
 			tokenizer := crypto.NewTokenizerFake()
 			auth := authenticator.NewAuthenticator(tokenizer, timerFake, time.Hour)

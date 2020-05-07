@@ -70,7 +70,8 @@ func TestQuery_AuthQuery(t *testing.T) {
 
 			tm := timer.NewStub(now)
 			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
-			changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, nil)
+			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
+			changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo)
 
 			query := newQuery(lg, auth, changeLog, retrieverFake)
 

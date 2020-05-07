@@ -142,11 +142,12 @@ func TestPersist_CreateChange(t *testing.T) {
 			assert.Equal(t, nil, err)
 
 			tm := timer.NewStub(now)
+			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
 			persist := NewPersist(
 				keyGen,
 				tm,
 				&changeLogRepo,
-				nil,
+				&userChangeLogRepo,
 			)
 
 			newChange, err := persist.CreateChange(testCase.change.Title, testCase.change.SummaryMarkdown)
@@ -210,16 +211,76 @@ func TestPersist_GetChangeLog(t *testing.T) {
 			assert.Equal(t, nil, err)
 
 			tm := timer.NewStub(now)
+			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
 			persist := NewPersist(
 				keyGen,
 				tm,
 				&changeLogRepo,
-				nil,
+				&userChangeLogRepo,
 			)
 
 			changeLog, err := persist.GetChangeLog()
 			assert.Equal(t, nil, err)
 			assert.SameElements(t, testCase.changeLog, changeLog)
+		})
+	}
+}
+
+func TestPersist_GetLastViewedAt(t *testing.T) {
+	t.Parallel()
+
+	now := time.Now().UTC()
+	twoMonthsAgo := now.AddDate(0, -2, 0)
+	testCases := []struct {
+		name          string
+		userChangeLog map[string]time.Time
+		user          entity.User
+		lastViewedAt  *time.Time
+	}{
+		{
+			name:          "Get last viewed at time for user which does not exist",
+			userChangeLog: map[string]time.Time{},
+			lastViewedAt:  &now,
+			user: entity.User{
+				ID:    "12345",
+				Name:  "Test User",
+				Email: "test@gmail.com",
+			},
+		},
+		{
+			name:          "Get last viewed at time for user which exists",
+			userChangeLog: map[string]time.Time{"test@gmail.com": twoMonthsAgo},
+			lastViewedAt:  &twoMonthsAgo,
+			user: entity.User{
+				ID:    "12345",
+				Name:  "Test User",
+				Email: "test@gmail.com",
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
+			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
+			keyFetcher := external.NewKeyFetcherFake([]external.Key{})
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			assert.Equal(t, nil, err)
+
+			tm := timer.NewStub(now)
+			userChangeLogRepo := repository.NewUserChangeLogFake(testCase.userChangeLog)
+
+			persist := NewPersist(
+				keyGen,
+				tm,
+				&changeLogRepo,
+				&userChangeLogRepo,
+			)
+
+			lastViewedAt := persist.GetLastViewedAt(testCase.user)
+			assert.Equal(t, testCase.lastViewedAt, lastViewedAt)
 		})
 	}
 }
