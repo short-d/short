@@ -15,7 +15,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/authorizer/role"
 )
 
-func TestUserRoleSql_AddRole(t *testing.T) {
+func TestUserRoleSQL_AddRole(t *testing.T) {
 	testCases := []struct {
 		name          string
 		user          entity.User
@@ -24,7 +24,7 @@ func TestUserRoleSql_AddRole(t *testing.T) {
 		hasErr        bool
 	}{
 		{
-			name: "simple add",
+			name: "add 1 role",
 			user: entity.User{
 				ID: "1343",
 			},
@@ -39,6 +39,15 @@ func TestUserRoleSql_AddRole(t *testing.T) {
 			},
 			toAdd:         []role.Role{role.ChangeLogViewer, role.Basic, role.Admin},
 			expectedRoles: []role.Role{role.Admin, role.Basic, role.ChangeLogViewer},
+			hasErr:        false,
+		},
+		{
+			name: "nonexistent user",
+			user: entity.User{
+				ID: "0000",
+			},
+			toAdd:         []role.Role{},
+			expectedRoles: []role.Role{},
 			hasErr:        false,
 		},
 	}
@@ -115,6 +124,16 @@ func TestUserRoleSql_DeleteRole(t *testing.T) {
 			toAdd:         []role.Role{role.Admin, role.Basic, role.ChangeLogViewer},
 			toDelete:      role.ChangeLogEditor,
 			expectedRoles: []role.Role{role.Admin, role.Basic, role.ChangeLogViewer},
+			hasErr:        false,
+		},
+		{
+			name: "should do nothing for nonexistent user",
+			user: entity.User{
+				ID: "1343",
+			},
+			toAdd:         []role.Role{},
+			toDelete:      role.ChangeLogEditor,
+			expectedRoles: []role.Role{},
 			hasErr:        false,
 		},
 	}

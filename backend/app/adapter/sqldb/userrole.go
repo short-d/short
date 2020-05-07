@@ -59,11 +59,8 @@ VALUES ($1, $2);
 		table.UserRole.ColumnRole,
 	)
 
-	if _, err := u.db.Exec(statement, user.ID, r); err != nil {
-		return err
-	}
-
-	return nil
+	_, err := u.db.Exec(statement, user.ID, r)
+	return err
 }
 
 func (u UserRoleSQL) DeleteRole(user entity.User, r role.Role) error {
@@ -76,11 +73,8 @@ WHERE "%s"=$1 AND "%s"=$2;
 		table.UserRole.ColumnRole,
 	)
 
-	if _, err := u.db.Exec(statement, user.ID, r); err != nil {
-		return err
-	}
-
-	return nil
+	_, err := u.db.Exec(statement, user.ID, r)
+	return err
 }
 
 func NewUserRoleSQL(db *sql.DB) UserRoleSQL {
