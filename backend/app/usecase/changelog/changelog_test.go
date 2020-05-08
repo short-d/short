@@ -240,22 +240,22 @@ func TestPersist_GetLastViewedAt(t *testing.T) {
 		{
 			name:          "Get last viewed at time for user which does not exist",
 			userChangeLog: map[string]time.Time{},
-			lastViewedAt:  &now,
 			user: entity.User{
 				ID:    "12345",
 				Name:  "Test User",
 				Email: "test@gmail.com",
 			},
+			lastViewedAt: nil,
 		},
 		{
 			name:          "Get last viewed at time for user which exists",
 			userChangeLog: map[string]time.Time{"test@gmail.com": twoMonthsAgo},
-			lastViewedAt:  &twoMonthsAgo,
 			user: entity.User{
 				ID:    "12345",
 				Name:  "Test User",
 				Email: "test@gmail.com",
 			},
+			lastViewedAt: &twoMonthsAgo,
 		},
 	}
 
@@ -279,7 +279,8 @@ func TestPersist_GetLastViewedAt(t *testing.T) {
 				&userChangeLogRepo,
 			)
 
-			lastViewedAt := persist.GetLastViewedAt(testCase.user)
+			lastViewedAt, err := persist.GetLastViewedAt(testCase.user)
+			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.lastViewedAt, lastViewedAt)
 		})
 	}

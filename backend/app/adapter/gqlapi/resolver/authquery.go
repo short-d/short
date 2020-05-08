@@ -47,7 +47,11 @@ func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	}
 
 	changeLog, err := v.changeLog.GetChangeLog()
-	lastViewedAt := v.changeLog.GetLastViewedAt(user)
+	if err != nil {
+		return newChangeLog(changeLog, nil), err
+	}
+
+	lastViewedAt, err := v.changeLog.GetLastViewedAt(user)
 	return newChangeLog(changeLog, lastViewedAt), err
 }
 
