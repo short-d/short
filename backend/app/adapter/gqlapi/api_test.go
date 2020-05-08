@@ -58,7 +58,8 @@ func TestGraphQlAPI(t *testing.T) {
 	assert.Equal(t, nil, err)
 
 	changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
-	changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo)
+	userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
+	changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo)
 	graphqlAPI := NewShort(lg, retriever, creator, changeLog, verifier, auth)
 	assert.Equal(t, true, graphql.IsGraphQlAPIValid(graphqlAPI))
 }
