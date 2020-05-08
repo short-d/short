@@ -7,12 +7,12 @@ describe('Tabs component', () => {
     render(<Tabs />);
   });
 
-  test('should not render anything when there are no tabs', () => {
+  test('should not render anything when there is no tab', () => {
     const { container } = render(<Tabs />);
     expect(container.innerHTML).toBeFalsy();
   });
 
-  test('should render first tab content by default', () => {
+  test('should render first tab by default', () => {
     const tabs = ['Content 1', 'Content 2', 'Content 3'];
 
     const { container } = render(<Tabs>{tabs}</Tabs>);
@@ -38,13 +38,12 @@ describe('Tabs component', () => {
 
     const { container } = render(<Tabs ref={tabRef}>{tabs}</Tabs>);
 
-    for (let tabIdx = 0; tabIdx < tabs.length; tabIdx++) {
-      tabRef.current!.showTab(tabIdx);
-      expect(container.textContent).toContain(tabs[tabIdx]);
-    }
+    expect(container.textContent).not.toContain(tabs[1]);
+    tabRef.current!.showTab(1);
+    expect(container.textContent).toContain(tabs[1]);
   });
 
-  test('should not render anything when negative index is given', () => {
+  test('should render nothing when negative index is given', () => {
     const tabs = ['Content 1', 'Content 2', 'Content 3'];
     const tabRef = React.createRef<Tabs>();
 
