@@ -42,7 +42,7 @@ const aliasInvalidErr = {
                 The alias you choose is invalid. Please choose a different 
                 alias, or leave alias field empty to automatically generate one.
                 `
-}
+};
 
 const maliciousContentErr = {
   name: 'Malicious Content Detected',
