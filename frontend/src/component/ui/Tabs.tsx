@@ -28,8 +28,10 @@ export class Tabs extends Component<IProps, IState> {
     if (!this.props.children) {
       return false;
     }
+
     const children = React.Children.toArray(this.props.children);
     const { tabIdx } = this.state;
+
     if (tabIdx < 0) {
       return false;
     }
