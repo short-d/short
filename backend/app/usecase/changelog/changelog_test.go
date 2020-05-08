@@ -238,7 +238,7 @@ func TestPersist_GetLastViewedAt(t *testing.T) {
 		lastViewedAt  *time.Time
 	}{
 		{
-			name:          "Get last viewed at time for user which does not exist",
+			name:          "user never viewed the change log before",
 			userChangeLog: map[string]time.Time{},
 			user: entity.User{
 				ID:    "12345",
@@ -248,7 +248,7 @@ func TestPersist_GetLastViewedAt(t *testing.T) {
 			lastViewedAt: nil,
 		},
 		{
-			name:          "Get last viewed at time for user which exists",
+			name:          "user viewed change log",
 			userChangeLog: map[string]time.Time{"test@gmail.com": twoMonthsAgo},
 			user: entity.User{
 				ID:    "12345",
