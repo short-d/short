@@ -16,19 +16,11 @@ type CustomAlias struct {
 
 // IsValid checks whether the given alias has valid format.
 func (c CustomAlias) IsValid(alias *string) bool {
-	if alias == nil {
+	if alias == nil || *alias == "" {
 		return true
 	}
 
-	if *alias == "" {
-		return true
-	}
-
-	if strings.ContainsRune(*alias, rune('#')) {
-		return false
-	}
-
-	if len(*alias) >= customAliasMaxLength {
+	if len(*alias) >= customAliasMaxLength || strings.ContainsRune(*alias, rune('#')) {
 		return false
 	}
 	return true
