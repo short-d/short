@@ -24,6 +24,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 
 	alias := "220uFicCJj"
 	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
+	invalidFragmentAlias := "cant-have#chr"
 	emptyAlias := ""
 
 	testCases := []struct {
@@ -56,14 +57,21 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			expHasErr: true,
 		},
 		{
-			name: "alias too long",
-			urls: urlMap{
-				"220uFicCJj": entity.URL{
-					Alias:    "220uFicCJj",
-					ExpireAt: &now,
-				},
-			},
+			name:  "alias too long",
+			urls:  urlMap{},
 			alias: &longAlias,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			url: entity.URL{
+				OriginalURL: "https://www.google.com",
+			},
+			expHasErr: true,
+		},
+		{
+			name:  "alias contains invalid URL fragment character",
+			urls:  urlMap{},
+			alias: &invalidFragmentAlias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -134,13 +142,8 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			},
 		},
 		{
-			name: "no available key",
-			urls: urlMap{
-				"220uFicCJj": entity.URL{
-					Alias:    "220uFicCJj",
-					ExpireAt: &now,
-				},
-			},
+			name:          "no available key",
+			urls:          urlMap{},
 			availableKeys: []external.Key{},
 			alias:         nil,
 			user: entity.User{

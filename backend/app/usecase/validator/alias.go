@@ -1,6 +1,9 @@
 package validator
 
-import "regexp"
+import (
+	"regexp"
+	"strings"
+)
 
 const (
 	customAliasMaxLength = 50
@@ -19,6 +22,10 @@ func (c CustomAlias) IsValid(alias *string) bool {
 
 	if *alias == "" {
 		return true
+	}
+
+	if strings.ContainsRune(*alias, rune('#')) {
+		return false
 	}
 
 	if len(*alias) >= customAliasMaxLength {

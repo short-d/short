@@ -5,6 +5,7 @@ export enum Err {
   InvalidReCaptchaSiteKey = 'invalidReCaptchaSiteKey',
   MaliciousContent = 'maliciousContent',
   AliasAlreadyExist = 'aliasAlreadyExist',
+  AliasInvalid = 'invalidCustomAlias',
   UserNotHuman = 'requesterNotHuman',
   Unauthenticated = 'invalidAuthToken',
   NetworkError = 'networkError',
@@ -34,6 +35,14 @@ const aliasNotAvailableErr = {
                 alias, or leave alias field empty to automatically generate one.
                 `
 };
+
+const aliasInvalidErr = {
+  name: 'Alias is invalid',
+  description: `
+                The alias you choose is invalid. Please choose a different 
+                alias, or leave alias field empty to automatically generate one.
+                `
+}
 
 const maliciousContentErr = {
   name: 'Malicious Content Detected',
@@ -65,6 +74,8 @@ export class ErrorService {
     switch (errCode) {
       case Err.AliasAlreadyExist:
         return aliasNotAvailableErr;
+      case Err.AliasInvalid:
+        return aliasInvalidErr;
       case Err.UserNotHuman:
         return userNotHumanErr;
       case Err.NetworkError:
