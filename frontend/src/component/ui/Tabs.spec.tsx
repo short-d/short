@@ -43,4 +43,24 @@ describe('Tabs component', () => {
       expect(container.textContent).toContain(tabs[tabIdx]);
     }
   });
+
+  test('should not render anything when negative index is given', () => {
+    const tabs = ['Content 1', 'Content 2', 'Content 3'];
+    const tabRef = React.createRef<Tabs>();
+
+    const { container } = render(<Tabs ref={tabRef}>{tabs}</Tabs>);
+
+    tabRef.current!.showTab(-1);
+    expect(container.innerHTML).toBeFalsy();
+  });
+
+  test('should not render anything when index grater than tabs count is given', () => {
+    const tabs = ['Content 1', 'Content 2', 'Content 3'];
+    const tabRef = React.createRef<Tabs>();
+
+    const { container } = render(<Tabs ref={tabRef}>{tabs}</Tabs>);
+
+    tabRef.current!.showTab(tabs.length + 1);
+    expect(container.innerHTML).toBeFalsy();
+  });
 });
