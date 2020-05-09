@@ -72,6 +72,5 @@ func (r Role) HasPermission(permission permission.Permission) bool {
 			return true
 		}
 	}
-
 	return false
 }

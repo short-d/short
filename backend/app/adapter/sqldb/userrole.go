@@ -12,10 +12,12 @@ import (
 
 var _ repository.UserRole = (*UserRoleSQL)(nil)
 
+// UserRoleSQL accesses a user's role information in user_role table through SQL.
 type UserRoleSQL struct {
 	db *sql.DB
 }
 
+// GetRoles returns the given user's roles
 func (u UserRoleSQL) GetRoles(user entity.User) ([]role.Role, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s" 
@@ -49,6 +51,7 @@ WHERE "%s"=$1;
 	return roles, nil
 }
 
+// AddRole inserts the given role for the user into user_role table
 func (u UserRoleSQL) AddRole(user entity.User, r role.Role) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s")
@@ -63,6 +66,7 @@ VALUES ($1, $2);
 	return err
 }
 
+// DeleteRole deletes the given role from the user
 func (u UserRoleSQL) DeleteRole(user entity.User, r role.Role) error {
 	statement := fmt.Sprintf(`
 DELETE FROM "%s"
@@ -77,6 +81,7 @@ WHERE "%s"=$1 AND "%s"=$2;
 	return err
 }
 
+// NewUserRoleSQL creates a UserRoleSQL object
 func NewUserRoleSQL(db *sql.DB) UserRoleSQL {
 	return UserRoleSQL{db: db}
 }

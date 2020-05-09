@@ -15,21 +15,51 @@ import (
 	"github.com/short-d/short/backend/app/usecase/authorizer/role"
 )
 
+var insertUserRoleRowSQL = fmt.Sprintf(`
+INSERT INTO "%s" ("%s", "%s")
+VALUES ($1, $2)`,
+	table.UserRole.TableName,
+	table.UserRole.ColumnUserID,
+	table.UserRole.ColumnRole,
+)
+
+type userRoleTableRow struct {
+	userID string
+	role   role.Role
+}
+
 func TestUserRoleSQL_AddRole(t *testing.T) {
 	testCases := []struct {
 		name          string
 		user          entity.User
-		toAdd         []role.Role
+		userRoleRows  []userRoleTableRow
+		newRoles      []role.Role
 		expectedRoles []role.Role
 		hasErr        bool
 	}{
 		{
-			name: "add 1 role",
+			name: "add 1 role for nonexistent user",
 			user: entity.User{
 				ID: "1343",
 			},
-			toAdd:         []role.Role{role.ChangeLogViewer},
+			userRoleRows: []userRoleTableRow{
+				{"4444", role.Basic},
+			},
+			newRoles:      []role.Role{role.ChangeLogViewer},
 			expectedRoles: []role.Role{role.ChangeLogViewer},
+			hasErr:        false,
+		},
+		{
+			name: "add 1 role for user with roles",
+			user: entity.User{
+				ID: "1343",
+			},
+			userRoleRows: []userRoleTableRow{
+				{"1343", role.Basic},
+				{"4444", role.Basic},
+			},
+			newRoles:      []role.Role{role.ChangeLogViewer},
+			expectedRoles: []role.Role{role.Basic, role.ChangeLogViewer},
 			hasErr:        false,
 		},
 		{
@@ -37,7 +67,11 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 			user: entity.User{
 				ID: "1343",
 			},
-			toAdd:         []role.Role{role.ChangeLogViewer, role.Basic, role.Admin},
+			userRoleRows: []userRoleTableRow{
+				{"1343", role.Basic},
+				{"4444", role.Basic},
+			},
+			newRoles:      []role.Role{role.ChangeLogViewer, role.Admin},
 			expectedRoles: []role.Role{role.Admin, role.Basic, role.ChangeLogViewer},
 			hasErr:        false,
 		},
@@ -46,7 +80,10 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 			user: entity.User{
 				ID: "0000",
 			},
-			toAdd:         []role.Role{},
+			userRoleRows: []userRoleTableRow{
+				{"1343", role.Basic},
+			},
+			newRoles:      []role.Role{},
 			expectedRoles: []role.Role{},
 			hasErr:        false,
 		},
@@ -61,9 +98,10 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 				dbConfig,
 				func(sqlDB *sql.DB) {
 					userRoleRepo := sqldb.NewUserRoleSQL(sqlDB)
+					insertUserRoleRow(t, sqlDB, testCase.userRoleRows)
 
-					for _, toAdd := range testCase.toAdd {
-						err := userRoleRepo.AddRole(testCase.user, toAdd)
+					for _, newRole := range testCase.newRoles {
+						err := userRoleRepo.AddRole(testCase.user, newRole)
 
 						if testCase.hasErr {
 							assert.NotEqual(t, nil, err)
@@ -87,41 +125,38 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 	}
 }
 
-func TestUserRoleSql_DeleteRole(t *testing.T) {
+// TODO(issue#755) Add test for foreign key constraint
+func TestUserRoleSQL_DeleteRole(t *testing.T) {
 	testCases := []struct {
 		name          string
 		user          entity.User
-		toAdd         []role.Role
+		userRoleRows  []userRoleTableRow
 		toDelete      role.Role
 		expectedRoles []role.Role
 		hasErr        bool
 	}{
 		{
-			name: "should delete the record",
+			name: "should delete a role",
 			user: entity.User{
 				ID: "1343",
 			},
-			toAdd:         []role.Role{role.ChangeLogViewer},
+			userRoleRows: []userRoleTableRow{
+				{"1343", role.ChangeLogViewer},
+			},
 			toDelete:      role.ChangeLogViewer,
 			expectedRoles: []role.Role{},
 			hasErr:        false,
 		},
 		{
-			name: "should delete the higher role",
+			name: "should do nothing as a user doesn't have the role",
 			user: entity.User{
 				ID: "1343",
 			},
-			toAdd:         []role.Role{role.Admin, role.ChangeLogViewer, role.Basic},
-			toDelete:      role.Admin,
-			expectedRoles: []role.Role{role.Basic, role.ChangeLogViewer},
-			hasErr:        false,
-		},
-		{
-			name: "should do nothing",
-			user: entity.User{
-				ID: "1343",
+			userRoleRows: []userRoleTableRow{
+				{"1343", role.Admin},
+				{"1343", role.Basic},
+				{"1343", role.ChangeLogViewer},
 			},
-			toAdd:         []role.Role{role.Admin, role.Basic, role.ChangeLogViewer},
 			toDelete:      role.ChangeLogEditor,
 			expectedRoles: []role.Role{role.Admin, role.Basic, role.ChangeLogViewer},
 			hasErr:        false,
@@ -131,7 +166,11 @@ func TestUserRoleSql_DeleteRole(t *testing.T) {
 			user: entity.User{
 				ID: "1343",
 			},
-			toAdd:         []role.Role{},
+			userRoleRows: []userRoleTableRow{
+				{"0000", role.Admin},
+				{"0000", role.Basic},
+				{"0000", role.ChangeLogViewer},
+			},
 			toDelete:      role.ChangeLogEditor,
 			expectedRoles: []role.Role{},
 			hasErr:        false,
@@ -147,15 +186,7 @@ func TestUserRoleSql_DeleteRole(t *testing.T) {
 				dbConfig,
 				func(sqlDB *sql.DB) {
 					userRoleRepo := sqldb.NewUserRoleSQL(sqlDB)
-
-					for _, toAdd := range testCase.toAdd {
-						err := userRoleRepo.AddRole(testCase.user, toAdd)
-
-						if testCase.hasErr {
-							assert.NotEqual(t, nil, err)
-							return
-						}
-					}
+					insertUserRoleRow(t, sqlDB, testCase.userRoleRows)
 
 					err := userRoleRepo.DeleteRole(testCase.user, testCase.toDelete)
 
@@ -177,5 +208,20 @@ func TestUserRoleSql_DeleteRole(t *testing.T) {
 					_, _ = sqlDB.Exec(fmt.Sprintf("TRUNCATE TABLE %s", table.UserRole.TableName))
 				})
 		})
+	}
+}
+
+func insertUserRoleRow(
+	t *testing.T,
+	sqlDB *sql.DB,
+	tableRows []userRoleTableRow,
+) {
+	for _, tableRow := range tableRows {
+		_, err := sqlDB.Exec(
+			insertUserRoleRowSQL,
+			tableRow.userID,
+			tableRow.role,
+		)
+		assert.Equal(t, nil, err)
 	}
 }

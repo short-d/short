@@ -1,5 +1,6 @@
 package permission
 
+// Permission is an approval of a mode of access to a resource
 type Permission int
 
 const (

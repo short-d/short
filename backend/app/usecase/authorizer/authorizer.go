@@ -6,6 +6,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
+// Authorizer provides the API for checking user's permissions
 type Authorizer struct {
 	userRoleRepo repository.UserRole
 }
@@ -32,6 +33,7 @@ func (a Authorizer) hasPermission(user entity.User, permission permission.Permis
 	return false, nil
 }
 
+// NewAuthorizer creates a new Authorizer object
 func NewAuthorizer(userRoleRepo repository.UserRole) Authorizer {
 	return Authorizer{userRoleRepo: userRoleRepo}
 }
