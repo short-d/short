@@ -298,7 +298,7 @@ func TestPersist_ViewChangeLog(t *testing.T) {
 		lastViewedAt  time.Time
 	}{
 		{
-			name:          "user viewed the change log first time",
+			name:          "user viewed the change log the first time",
 			userChangeLog: map[string]time.Time{},
 			user: entity.User{
 				ID:    "12345",
@@ -308,7 +308,7 @@ func TestPersist_ViewChangeLog(t *testing.T) {
 			lastViewedAt: now,
 		},
 		{
-			name:          "user has viewed change log before",
+			name:          "user has viewed the change log before",
 			userChangeLog: map[string]time.Time{"test@gmail.com": twoMonthsAgo},
 			user: entity.User{
 				ID:    "12345",
