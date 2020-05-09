@@ -286,7 +286,7 @@ func TestPersist_GetLastViewedAt(t *testing.T) {
 	}
 }
 
-func TestPersist_UpdateLastViewedAt(t *testing.T) {
+func TestPersist_ViewChangeLog(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now().UTC()
@@ -299,7 +299,7 @@ func TestPersist_UpdateLastViewedAt(t *testing.T) {
 	}{
 		{
 			name:          "user viewed the change log first time",
-			userChangeLog: map[string]time.Time{"test2@gmail.com": twoMonthsAgo},
+			userChangeLog: map[string]time.Time{},
 			user: entity.User{
 				ID:    "12345",
 				Name:  "Test User",
