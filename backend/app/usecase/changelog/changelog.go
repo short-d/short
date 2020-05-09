@@ -84,7 +84,6 @@ func (p Persist) UpdateLastViewedAt(user entity.User) (time.Time, error) {
 	return time.Time{}, err
 }
 
-
 // NewPersist creates Persist
 func NewPersist(
 	keyGen keygen.KeyGenerator,
