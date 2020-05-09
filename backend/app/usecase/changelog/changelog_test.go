@@ -285,3 +285,63 @@ func TestPersist_GetLastViewedAt(t *testing.T) {
 		})
 	}
 }
+
+func TestPersist_UpdateLastViewedAt(t *testing.T) {
+	t.Parallel()
+
+	now := time.Now().UTC()
+	twoMonthsAgo := now.AddDate(0, -2, 0)
+	testCases := []struct {
+		name          string
+		userChangeLog map[string]time.Time
+		user          entity.User
+		lastViewedAt  time.Time
+	}{
+		{
+			name:          "user viewed the change log first time",
+			userChangeLog: map[string]time.Time{"test2@gmail.com": twoMonthsAgo},
+			user: entity.User{
+				ID:    "12345",
+				Name:  "Test User",
+				Email: "test@gmail.com",
+			},
+			lastViewedAt: now,
+		},
+		{
+			name:          "user has viewed change log before",
+			userChangeLog: map[string]time.Time{"test@gmail.com": twoMonthsAgo},
+			user: entity.User{
+				ID:    "12345",
+				Name:  "Test User",
+				Email: "test@gmail.com",
+			},
+			lastViewedAt: now,
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
+			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
+			keyFetcher := external.NewKeyFetcherFake([]external.Key{})
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			assert.Equal(t, nil, err)
+
+			tm := timer.NewStub(now)
+			userChangeLogRepo := repository.NewUserChangeLogFake(testCase.userChangeLog)
+
+			persist := NewPersist(
+				keyGen,
+				tm,
+				&changeLogRepo,
+				&userChangeLogRepo,
+			)
+
+			lastViewedAt, err := persist.UpdateLastViewedAt(testCase.user)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.lastViewedAt, lastViewedAt)
+		})
+	}
+}
