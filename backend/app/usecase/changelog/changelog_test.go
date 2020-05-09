@@ -339,7 +339,7 @@ func TestPersist_ViewChangeLog(t *testing.T) {
 				&userChangeLogRepo,
 			)
 
-			lastViewedAt, err := persist.UpdateLastViewedAt(testCase.user)
+			lastViewedAt, err := persist.ViewChangeLog(testCase.user)
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.lastViewedAt, lastViewedAt)
 		})
