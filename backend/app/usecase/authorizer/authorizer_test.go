@@ -3,11 +3,10 @@ package authorizer
 import (
 	"testing"
 
-	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
-	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
-
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
