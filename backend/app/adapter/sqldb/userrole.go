@@ -2,6 +2,7 @@ package sqldb
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
@@ -31,6 +32,9 @@ WHERE "%s"=$1;
 
 	var roles []role.Role
 	rows, err := u.db.Query(statement, user.ID)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, repository.ErrEntryNotFound("user not found")
+	}
 	if err != nil {
 		return nil, err
 	}

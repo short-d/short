@@ -53,8 +53,8 @@ func TestAuthorizer_hasPermission(t *testing.T) {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			fakeRolesRepo := repository.NewUserRoleFake(testCase.roles)
-			r := rbac.NewRBAC(fakeRolesRepo)
-			authorizer := NewAuthorizer(r)
+			ac := rbac.NewRBAC(fakeRolesRepo)
+			authorizer := NewAuthorizer(ac)
 
 			canChange, err := authorizer.CanCreateChange(testCase.user)
 			assert.Equal(t, nil, err)

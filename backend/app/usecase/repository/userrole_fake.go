@@ -18,7 +18,7 @@ type UserRoleFake struct {
 func (u UserRoleFake) GetRoles(user entity.User) ([]role.Role, error) {
 	roles, ok := u.userRoles[user.ID]
 	if !ok {
-		return nil, errors.New("user not found")
+		return nil, ErrEntryNotFound("user not found")
 	}
 	return roles, nil
 }
