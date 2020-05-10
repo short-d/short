@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/authorizer/role"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
 )
 
 var _ UserRole = (*UserRoleFake)(nil)
@@ -14,7 +14,7 @@ type UserRoleFake struct {
 	userRoles map[string][]role.Role
 }
 
-// GetRoles returns the given user's roles
+// GetRoles fetches roles for the given user
 func (u UserRoleFake) GetRoles(user entity.User) ([]role.Role, error) {
 	roles, ok := u.userRoles[user.ID]
 	if !ok {
@@ -23,7 +23,7 @@ func (u UserRoleFake) GetRoles(user entity.User) ([]role.Role, error) {
 	return roles, nil
 }
 
-// AddRole adds the given role for the user in the repository
+// AddRole adds the given role to the user
 func (u UserRoleFake) AddRole(user entity.User, r role.Role) error {
 	if _, ok := u.userRoles[user.ID]; !ok {
 		return errors.New("user not found")
@@ -32,13 +32,13 @@ func (u UserRoleFake) AddRole(user entity.User, r role.Role) error {
 	return nil
 }
 
-// DeleteRole deletes the given role from the repository
+// DeleteRole removes the given role from the user
 func (u UserRoleFake) DeleteRole(user entity.User, r role.Role) error {
 	roles, ok := u.userRoles[user.ID]
 	if !ok {
 		return errors.New("user not found")
 	}
-	newRoles := []role.Role{}
+	var newRoles []role.Role
 	for _, v := range roles {
 		if v != r {
 			newRoles = append(newRoles, v)

@@ -1,8 +1,8 @@
 package role
 
-import "github.com/short-d/short/backend/app/usecase/authorizer/permission"
+import "github.com/short-d/short/backend/app/usecase/authorizer/rbac/permission"
 
-// Role represents a groupings of permissions
+// Role contains a list of permissions
 type Role string
 
 const (
@@ -13,8 +13,8 @@ const (
 	ShortLinkViewer Role = "short_link_viewer"
 	ShortLinkEditor Role = "short_link_editor"
 
-	ChangeLogViewer Role = "change_log_viewer"
-	ChangeLogEditor Role = "change_log_editor"
+	ChangeLogViewer Role = "changelog_viewer"
+	ChangeLogEditor Role = "changelog_editor"
 
 	Admin Role = "admin"
 )
@@ -65,7 +65,7 @@ var permissions = map[Role][]permission.Permission{
 	},
 }
 
-// HasPermission tells if the given role grants access to a permission
+// HasPermission checks whether a role grants the requested permission.
 func (r Role) HasPermission(permission permission.Permission) bool {
 	for _, value := range permissions[r] {
 		if value == permission {

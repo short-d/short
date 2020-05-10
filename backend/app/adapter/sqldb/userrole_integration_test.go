@@ -12,7 +12,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/authorizer/role"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
 )
 
 var insertUserRoleRowSQL = fmt.Sprintf(`
@@ -26,6 +26,62 @@ VALUES ($1, $2)`,
 type userRoleTableRow struct {
 	userID string
 	role   role.Role
+}
+
+func TestUserRoleSQL_GetRoles(t *testing.T) {
+	testCases := []struct {
+		name          string
+		user          entity.User
+		userRoleRows  []userRoleTableRow
+		expectedRoles []role.Role
+		hasErr        bool
+	}{
+		{
+			name: "get roles for user has no role",
+			user: entity.User{
+				ID: "1343",
+			},
+			userRoleRows:  []userRoleTableRow{},
+			expectedRoles: []role.Role{},
+			hasErr:        false,
+		},
+		{
+			name: "get roles for user with existing roles",
+			user: entity.User{
+				ID: "1343",
+			},
+			userRoleRows: []userRoleTableRow{
+				{"1343", role.Basic},
+				{"1343", role.ChangeLogViewer},
+			},
+			expectedRoles: []role.Role{role.Basic, role.ChangeLogViewer},
+			hasErr:        false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			dbtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertUserRoleRow(t, sqlDB, testCase.userRoleRows)
+
+					userRoleRepo := sqldb.NewUserRoleSQL(sqlDB)
+					roles, err := userRoleRepo.GetRoles(testCase.user)
+
+					if testCase.hasErr {
+						assert.NotEqual(t, nil, err)
+						return
+					}
+
+					assert.Equal(t, nil, err)
+					assert.Equal(t, testCase.expectedRoles, roles)
+				})
+		})
+	}
 }
 
 func TestUserRoleSQL_AddRole(t *testing.T) {
@@ -50,7 +106,7 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 			hasErr:        false,
 		},
 		{
-			name: "add 1 role for user with roles",
+			name: "add 1 role for user with existing roles",
 			user: entity.User{
 				ID: "1343",
 			},
@@ -63,7 +119,7 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 			hasErr:        false,
 		},
 		{
-			name: "add multiple",
+			name: "add multiple roles for a give user",
 			user: entity.User{
 				ID: "1343",
 			},
@@ -73,18 +129,6 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 			},
 			newRoles:      []role.Role{role.ChangeLogViewer, role.Admin},
 			expectedRoles: []role.Role{role.Admin, role.Basic, role.ChangeLogViewer},
-			hasErr:        false,
-		},
-		{
-			name: "nonexistent user",
-			user: entity.User{
-				ID: "0000",
-			},
-			userRoleRows: []userRoleTableRow{
-				{"1343", role.Basic},
-			},
-			newRoles:      []role.Role{},
-			expectedRoles: []role.Role{},
 			hasErr:        false,
 		},
 	}
@@ -97,8 +141,9 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					userRoleRepo := sqldb.NewUserRoleSQL(sqlDB)
 					insertUserRoleRow(t, sqlDB, testCase.userRoleRows)
+
+					userRoleRepo := sqldb.NewUserRoleSQL(sqlDB)
 
 					for _, newRole := range testCase.newRoles {
 						err := userRoleRepo.AddRole(testCase.user, newRole)
@@ -118,15 +163,13 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expectedRoles, roles)
-
-					_, _ = sqlDB.Exec(fmt.Sprintf("TRUNCATE TABLE %s", table.UserRole.TableName))
 				})
 		})
 	}
 }
 
-// TODO(issue#755) Add test for foreign key constraint
 func TestUserRoleSQL_DeleteRole(t *testing.T) {
+	// TODO(issue#755) Add integration test for foreign key constraint
 	testCases := []struct {
 		name          string
 		user          entity.User
@@ -136,7 +179,7 @@ func TestUserRoleSQL_DeleteRole(t *testing.T) {
 		hasErr        bool
 	}{
 		{
-			name: "should delete a role",
+			name: "should remove a role from the given",
 			user: entity.User{
 				ID: "1343",
 			},
@@ -148,7 +191,7 @@ func TestUserRoleSQL_DeleteRole(t *testing.T) {
 			hasErr:        false,
 		},
 		{
-			name: "should do nothing as a user doesn't have the role",
+			name: "should do nothing if a user doesn't have the role",
 			user: entity.User{
 				ID: "1343",
 			},
@@ -204,8 +247,6 @@ func TestUserRoleSQL_DeleteRole(t *testing.T) {
 
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expectedRoles, roles)
-
-					_, _ = sqlDB.Exec(fmt.Sprintf("TRUNCATE TABLE %s", table.UserRole.TableName))
 				})
 		})
 	}

@@ -6,7 +6,7 @@ import (
 
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/authorizer/role"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
@@ -17,7 +17,7 @@ type UserRoleSQL struct {
 	db *sql.DB
 }
 
-// GetRoles returns the given user's roles
+// GetRoles fetches all the roles for a given user
 func (u UserRoleSQL) GetRoles(user entity.User) ([]role.Role, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s" 
@@ -29,9 +29,8 @@ WHERE "%s"=$1;
 		table.UserRole.ColumnUserID,
 	)
 
-	roles := []role.Role{}
+	var roles []role.Role
 	rows, err := u.db.Query(statement, user.ID)
-
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +50,7 @@ WHERE "%s"=$1;
 	return roles, nil
 }
 
-// AddRole inserts the given role for the user into user_role table
+// AddRole assigns the given role to the user
 func (u UserRoleSQL) AddRole(user entity.User, r role.Role) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s")
@@ -66,7 +65,7 @@ VALUES ($1, $2);
 	return err
 }
 
-// DeleteRole deletes the given role from the user
+// DeleteRole removes the given role from the user
 func (u UserRoleSQL) DeleteRole(user entity.User, r role.Role) error {
 	statement := fmt.Sprintf(`
 DELETE FROM "%s"
@@ -81,7 +80,7 @@ WHERE "%s"=$1 AND "%s"=$2;
 	return err
 }
 
-// NewUserRoleSQL creates a UserRoleSQL object
+// NewUserRoleSQL creates UserRoleSQL
 func NewUserRoleSQL(db *sql.DB) UserRoleSQL {
 	return UserRoleSQL{db: db}
 }
