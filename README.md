@@ -68,15 +68,15 @@ from [source](https://short-d.com/r/ext-code)
 ### Accessing the source code
 
 ```bash
-git clone https://github.com/byliuyang/short.git
+git clone https://github.com/short-d/short.git
 ```
 
 ### Prerequisites
 
-- Go v1.13.1
-- Node.js v12.12.0
-- Yarn v1.19.1
-- Postgresql v12.0 ( or use [ElephantSQL](https://short-d.com/r/sql) instead )
+- [Go](https://golang.org/doc/install) v1.13.1
+- [Node.js](https://nodejs.org/en/download/) v12.12.0
+- [Yarn](https://classic.yarnpkg.com/en/docs/install) v1.19.1
+- [PostgreSQL](doc/tutorial/POSTGRES.md) v12.0
 
 ### Create reCAPTCHA account
 
@@ -213,8 +213,8 @@ Short backend is built on top of
 [Uncle Bob's Clean Architecture](https://api.short-d.com/r/ca), the central
 objective of which is separation of concerns.
 
-![Clean Architecture](doc/eng/clean-architecture/clean-architecture.jpg)
-![Boundary](doc/eng/clean-architecture/boundary.jpg)
+![Clean Architecture](doc/clean-architecture/clean-architecture.jpg)
+![Boundary](doc/clean-architecture/boundary.jpg)
 
 It enables the developers to modify a single component of the system at a time
 while leaving the rest unchanged. This minimizes the amount of changes have to
@@ -224,15 +224,17 @@ precious time when creating automated tests.
 
 Here is an example of finance app using clean architecture:
 
-![Finance App](doc/eng/clean-architecture/finance-app.jpg)
+![Finance App](doc/clean-architecture/finance-app.jpg)
 
 ### Service Level Architecture
+
+
 
 Short adopts [Microservices Architecture](https://api.short-d.com/r/ms) to
 organize dependent services around business capabilities and to enable
 independent deployment of each service.
 
-![Microservice Architecture](doc/eng/microservices.jpg)
+![Microservice Architecture](doc/microservices.jpg)
 
 ### Object Oriented Design
 
@@ -339,7 +341,7 @@ func InjectGraphQlService(
 
 ### Database Modeling
 
-![Entity Relation Diagram](doc/eng/db/er-v1.jpg)
+![Entity Relation Diagram](doc/db/er-v1.jpg)
 
 ### Feature Toggle
 
