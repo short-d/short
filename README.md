@@ -599,6 +599,21 @@ and achieves its goals, testing the entire system, from end to end.
 
 ## Deployment
 
+### Continuous Delivery
+![Continuous Delivery](doc/deployment/cd-pipeline.jpg)
+
+Currently, we use continuous delivery to deploy code changes to staging & 
+production environment. 
+
+Merging pull request into master branch on Github will automatically deploy the
+changes to [staging](https://staging.short-d.com). Merging from `master` branch
+to `production` branch will automatically deploy the latest code to the production.
+
+In the future, when after we add enough automated tests, we may migrate to 
+continuous deployment instead for faster releases.
+
+You can find the differences between continuous delivery & continuous deployment [here](doc/tutorial/CI-CD.md)
+
 ### Kubernetes
 
 Short leverages [Kubernetes](https://kubernetes.io) to automate deployment, scaling,
@@ -606,26 +621,11 @@ and management of containerized microservices.
 
 ![Node overview](https://d33wubrfki0l68.cloudfront.net/5cb72d407cbe2755e581b6de757e0d81760d5b86/a9df9/docs/tutorials/kubernetes-basics/public/images/module_03_nodes.svg)
 
-Short uses [GitOps](https://github.com/byliuyang/gitops) to manage Kubernetes cluster.
-![GitOps](https://images.contentstack.io/v3/assets/blt300387d93dabf50e/blt15812c9fe056ba3b/5ce4448f32fd88a3767ee9a3/download)
+### GitOps
+Short uses [GitOps](https://github.com/byliuyang/gitops) to configure Kubernetes
+cluster and span up new services.
 
-### Staging
-
-Merging pull request into master branch on Github will automatically deploy the
-changes to [staging](https://staging.short-d.com) environment.
-
-### Production
-
-Merging from `master` branch to `production` branch will automatically
-deploy the latest code to the production. This is called continuous
-delivery in the DevOps world.
-
-![Continuous Delivery](doc/devops/continuous-delivery.png)
-
-In the future, when there are enough automated tests, we may migrate to
-continuous deployment instead.
-
-![Continuous Deployment](doc/devops/continuous-deployment.png)
+![Git Ops](doc/deployment/gitops.jpg)
 
 ## Tools We Use
 
