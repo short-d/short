@@ -96,44 +96,8 @@ git clone https://github.com/short-d/short.git
 1. Replace the value of `REACT_APP_RECAPTCHA_SITE_KEY` in
    `frontend/.env.development` file with `SITE KEY`.
 
-### Create Github OAuth application
-
-1. Create a new OAuth app at
-   [Github Developers](https://short-d.com/r/ghdev) with the
-   following configurations:
-
-   | Field                      | Value                                            |
-   |----------------------------|--------------------------------------------------|
-   | Application Name           | `Short`                                          |
-   | Homepage URL               | `http://localhost`                               |
-   | Application description    | `URL shortening service written in Go and React` |
-   | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
-
-1. Copy `Client ID` and `Client Secret`.
-
-1. Replace the value of `GITHUB_CLIENT_ID` in the `backend/.env` file with
-   `Client ID`.
-1. Replace the value of `GITHUB_CLIENT_SECRET` in the `backend/.env` file with
-   `Client Secret`.
-
-### Create Facebook Application
-
-1. Create a new app at
-   [Facebook Developers](https://short-d.com/r/fbdev) with the following configurations:
-
-   | Field         | Value        |
-   |---------------|--------------|
-   | Display Name  | `Short Test` |
-   | Contact Email | your_email   |
-
-1. Add `Facebook Login` to the app.
-
-1. Copy `App ID` and `App Secret` on `Settings` > `Basic` tab.
-1. Replace the value of `FACEBOOK_CLIENT_ID` in `backend/.env` file with `App ID`.
-1. Replace the value of `FACEBOOK_CLIENT_SECRET` in `backend/.env` file with
-   `App Secret`.
-
-### Create Google OAuth Client ID
+### Configure Single Sign On
+#### Google
 
 Create a new Client ID at
    [Google API Credentials](https://console.developers.google.com/apis/credentials):
@@ -147,6 +111,12 @@ Create a new Client ID at
 1. Replace the value of `GOOGLE_CLIENT_ID` in `backend/.env` file with `Your Client ID`.
 1. Replace the value of `GOOGLE_CLIENT_SECRET` in `backend/.env` file with
    `Your Client Secret`.
+
+#### Facebook
+You can find the detailed instructions on setting up Facebook sign in [here](doc/sso/FACEBOOK.md) in case you are interested in. 
+
+#### Github
+You can find the detailed instructions on setting up Github sign in [here](doc/sso/GITHUB.md) in case you are interested in.
    
 ### Backend
 
