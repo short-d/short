@@ -214,17 +214,14 @@ Short backend is built on top of
 objective of which is separation of concerns.
 
 ![Clean Architecture](doc/clean-architecture/clean-architecture.jpg)
-![Boundary](doc/clean-architecture/boundary.jpg)
+
+![Short Backend](doc/clean-architecture/short-backend.jpg)
 
 It enables the developers to modify a single component of the system at a time
 while leaving the rest unchanged. This minimizes the amount of changes have to
 be made in order to support new requirements as the system grows. Clean
 Architecture also improves the testability of system, which in turn saves
 precious time when creating automated tests.
-
-Here is an example of finance app using clean architecture:
-
-![Finance App](doc/clean-architecture/finance-app.jpg)
 
 ### Service Level Architecture
 
