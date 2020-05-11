@@ -228,7 +228,7 @@ organize dependent services around business capabilities and to enable
 independent deployment of each service.
 
 ![Short Cloud](doc/cloud/overall.jpg)
-[SSR](https://docs.google.com/document/d/1TuWexeKwhQh8JTytRAwST3XujBi0wTGExwJan-WfXWs), 
+[SSR](https://docs.google.com/document/d/16iV91aESfnYU6rIEWGEzws3nbDX3hB-St9gAxrtCAa8), 
 [Toggle](https://docs.google.com/document/d/1TuWexeKwhQh8JTytRAwST3XujBi0wTGExwJan-WfXWs),
 [Status Page](https://docs.google.com/document/d/1pgRNnD8yAlEmj-sucS_FZ89LdvBy5zpKQ9OvILoBqDM), Search,
 [Data Reporter](https://docs.google.com/document/d/1-BtxBuS4zIk8H1oXDe-qqEccWp4v6aT2GrWBfwIX5oI),
