@@ -213,8 +213,6 @@ Short backend is built on top of
 [Uncle Bob's Clean Architecture](https://api.short-d.com/r/ca), the central
 objective of which is separation of concerns.
 
-![Clean Architecture](doc/clean-architecture/clean-architecture.jpg)
-
 ![Short Backend](doc/clean-architecture/short-backend.jpg)
 
 It enables the developers to modify a single component of the system at a time
