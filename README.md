@@ -89,13 +89,7 @@ git clone https://github.com/short-d/short.git
    | reCAPTCHA type  | `reCAPTCHAv3`  |
    | Domains         | `localhost`    |
 
-   ![Register Site](doc/recaptcha/register-site.jpg)
-
 1. Open `settings`. Copy `SITE KEY` and `SECRET KEY`.
-
-   ![Settings](doc/recaptcha/settings.jpg)
-
-   ![Credentials](doc/recaptcha/credentials.jpg)
 
 1. Replace the value of `RECAPTCHA_SECRET` in the `backend/.env` file with
    `SECRET KEY`.
@@ -115,13 +109,7 @@ git clone https://github.com/short-d/short.git
    | Application description    | `URL shortening service written in Go and React` |
    | Authorization callback URL | `http://localhost/oauth/github/sign-in/callback` |
 
-   ![OAuth Apps](doc/github/oauth-apps.jpg)
-
-   ![New OAuth App](doc/github/new-oauth-app.jpg)
-
 1. Copy `Client ID` and `Client Secret`.
-
-   ![Credentials](doc/github/credentials.jpg)
 
 1. Replace the value of `GITHUB_CLIENT_ID` in the `backend/.env` file with
    `Client ID`.
@@ -140,12 +128,7 @@ git clone https://github.com/short-d/short.git
 
 1. Add `Facebook Login` to the app.
 
-   ![Login](doc/facebook/login.jpg)
-
 1. Copy `App ID` and `App Secret` on `Settings` > `Basic` tab.
-
-   ![Credentials](doc/facebook/credentials.jpg)
-
 1. Replace the value of `FACEBOOK_CLIENT_ID` in `backend/.env` file with `App ID`.
 1. Replace the value of `FACEBOOK_CLIENT_SECRET` in `backend/.env` file with
    `App Secret`.
@@ -157,14 +140,10 @@ Create a new Client ID at
 
 1. Click on `Create Credentials` and select `OAuth client ID`.
 
-   ![Credentials](doc/google/credentials.jpg)
-
 1. Select `Web application` for `Application type`.
 
-1. Fill in `http://localhost/oauth/google/sign-in/callback` for `Authorized redirect URIs` and click on `Create`
-
-   ![OAuth](doc/google/OAuth.jpg)
-   
+1. Fill in `http://localhost/oauth/google/sign-in/callback` for `Authorized redirect URIs` and click on `Create`.
+ 
 1. Replace the value of `GOOGLE_CLIENT_ID` in `backend/.env` file with `Your Client ID`.
 1. Replace the value of `GOOGLE_CLIENT_SECRET` in `backend/.env` file with
    `Your Client Secret`.
