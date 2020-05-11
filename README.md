@@ -228,13 +228,17 @@ Here is an example of finance app using clean architecture:
 
 ### Service Level Architecture
 
-
-
 Short adopts [Microservices Architecture](https://api.short-d.com/r/ms) to
 organize dependent services around business capabilities and to enable
 independent deployment of each service.
 
-![Microservice Architecture](doc/microservices.jpg)
+![Short Cloud](doc/cloud/overall.jpg)
+[SSR](https://docs.google.com/document/d/1TuWexeKwhQh8JTytRAwST3XujBi0wTGExwJan-WfXWs), 
+[Toggle](https://docs.google.com/document/d/1TuWexeKwhQh8JTytRAwST3XujBi0wTGExwJan-WfXWs),
+[Status Page](https://docs.google.com/document/d/1pgRNnD8yAlEmj-sucS_FZ89LdvBy5zpKQ9OvILoBqDM), Search,
+[Data Reporter](https://docs.google.com/document/d/1-BtxBuS4zIk8H1oXDe-qqEccWp4v6aT2GrWBfwIX5oI),
+[Feedback Widget](https://docs.google.com/document/d/1IoaTMHsOi5Tb0ZV4btxsvUnKplKi2lxaIYU600cwRuc),
+ and Cloud API are still under active development.
 
 ### Object Oriented Design
 
