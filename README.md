@@ -620,12 +620,12 @@ Merging from `master` branch to `production` branch will automatically
 deploy the latest code to the production. This is called continuous
 delivery in the DevOps world.
 
-![Continuous Delivery](doc/eng/devops/continuous-delivery.png)
+![Continuous Delivery](doc/devops/continuous-delivery.png)
 
 In the future, when there are enough automated tests, we may migrate to
 continuous deployment instead.
 
-![Continuous Deployment](doc/eng/devops/continuous-deployment.png)
+![Continuous Deployment](doc/devops/continuous-deployment.png)
 
 ## Tools We Use
 
