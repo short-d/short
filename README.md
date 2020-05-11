@@ -68,15 +68,15 @@ from [source](https://short-d.com/r/ext-code)
 ### Accessing the source code
 
 ```bash
-git clone https://github.com/byliuyang/short.git
+git clone https://github.com/short-d/short.git
 ```
 
 ### Prerequisites
 
-- Go v1.13.1
-- Node.js v12.12.0
-- Yarn v1.19.1
-- Postgresql v12.0 ( or use [ElephantSQL](https://short-d.com/r/sql) instead )
+- [Go](https://golang.org/doc/install) v1.13.1
+- [Node.js](https://nodejs.org/en/download/) v12.12.0
+- [Yarn](https://classic.yarnpkg.com/en/docs/install) v1.19.1
+- [PostgreSQL](doc/tutorial/POSTGRES.md) v12.0
 
 ### Create reCAPTCHA account
 
@@ -213,8 +213,9 @@ Short backend is built on top of
 [Uncle Bob's Clean Architecture](https://api.short-d.com/r/ca), the central
 objective of which is separation of concerns.
 
-![Clean Architecture](doc/eng/clean-architecture/clean-architecture.jpg)
-![Boundary](doc/eng/clean-architecture/boundary.jpg)
+![Clean Architecture](doc/clean-architecture/clean-architecture.jpg)
+
+![Short Backend](doc/clean-architecture/short-backend.jpg)
 
 It enables the developers to modify a single component of the system at a time
 while leaving the rest unchanged. This minimizes the amount of changes have to
@@ -222,17 +223,19 @@ be made in order to support new requirements as the system grows. Clean
 Architecture also improves the testability of system, which in turn saves
 precious time when creating automated tests.
 
-Here is an example of finance app using clean architecture:
-
-![Finance App](doc/eng/clean-architecture/finance-app.jpg)
-
 ### Service Level Architecture
 
 Short adopts [Microservices Architecture](https://api.short-d.com/r/ms) to
 organize dependent services around business capabilities and to enable
 independent deployment of each service.
 
-![Microservice Architecture](doc/eng/microservices.jpg)
+![Short Cloud](doc/cloud/overall.jpg)
+[SSR](https://docs.google.com/document/d/1TuWexeKwhQh8JTytRAwST3XujBi0wTGExwJan-WfXWs), 
+[Toggle](https://docs.google.com/document/d/1TuWexeKwhQh8JTytRAwST3XujBi0wTGExwJan-WfXWs),
+[Status Page](https://docs.google.com/document/d/1pgRNnD8yAlEmj-sucS_FZ89LdvBy5zpKQ9OvILoBqDM), Search,
+[Data Reporter](https://docs.google.com/document/d/1-BtxBuS4zIk8H1oXDe-qqEccWp4v6aT2GrWBfwIX5oI),
+[Feedback Widget](https://docs.google.com/document/d/1IoaTMHsOi5Tb0ZV4btxsvUnKplKi2lxaIYU600cwRuc),
+ and Cloud API are still under active development.
 
 ### Object Oriented Design
 
@@ -339,7 +342,7 @@ func InjectGraphQlService(
 
 ### Database Modeling
 
-![Entity Relation Diagram](doc/eng/db/er-v1.jpg)
+![Entity Relation Diagram](doc/db/er.jpg)
 
 ### Feature Toggle
 
@@ -597,6 +600,21 @@ and achieves its goals, testing the entire system, from end to end.
 
 ## Deployment
 
+### Continuous Delivery
+![Continuous Delivery](doc/deployment/cd-pipeline.jpg)
+
+Currently, we use continuous delivery to deploy code changes to staging & 
+production environment. 
+
+Merging pull request into master branch on Github will automatically deploy the
+changes to [staging](https://staging.short-d.com). Merging from `master` branch
+to `production` branch will automatically deploy the latest code to the production.
+
+In the future, when after we add enough automated tests, we may migrate to 
+continuous deployment instead for faster releases.
+
+You can find the differences between continuous delivery & continuous deployment [here](doc/tutorial/CI-CD.md)
+
 ### Kubernetes
 
 Short leverages [Kubernetes](https://kubernetes.io) to automate deployment, scaling,
@@ -604,26 +622,11 @@ and management of containerized microservices.
 
 ![Node overview](https://d33wubrfki0l68.cloudfront.net/5cb72d407cbe2755e581b6de757e0d81760d5b86/a9df9/docs/tutorials/kubernetes-basics/public/images/module_03_nodes.svg)
 
-Short uses [GitOps](https://github.com/byliuyang/gitops) to manage Kubernetes cluster.
-![GitOps](https://images.contentstack.io/v3/assets/blt300387d93dabf50e/blt15812c9fe056ba3b/5ce4448f32fd88a3767ee9a3/download)
+### GitOps
+Short uses [GitOps](https://github.com/byliuyang/gitops) to configure Kubernetes
+cluster and span up new services.
 
-### Staging
-
-Merging pull request into master branch on Github will automatically deploy the
-changes to [staging](https://staging.short-d.com) environment.
-
-### Production
-
-Merging from `master` branch to `production` branch will automatically
-deploy the latest code to the production. This is called continuous
-delivery in the DevOps world.
-
-![Continuous Delivery](doc/eng/devops/continuous-delivery.png)
-
-In the future, when there are enough automated tests, we may migrate to
-continuous deployment instead.
-
-![Continuous Deployment](doc/eng/devops/continuous-deployment.png)
+![Git Ops](doc/deployment/gitops.jpg)
 
 ## Tools We Use
 
