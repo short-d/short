@@ -341,7 +341,7 @@ func InjectGraphQlService(
 
 ### Database Modeling
 
-![Entity Relation Diagram](doc/db/er-v1.jpg)
+![Entity Relation Diagram](doc/db/er.jpg)
 
 ### Feature Toggle
 
