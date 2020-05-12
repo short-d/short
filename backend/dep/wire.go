@@ -159,6 +159,7 @@ func InjectGraphQLService(
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
+		wire.Bind(new(url.Updater), new(url.UpdaterPersist)),
 
 		observabilitySet,
 		authSet,
@@ -186,6 +187,7 @@ func InjectGraphQLService(
 		changelog.NewPersist,
 		url.NewRetrieverPersist,
 		url.NewCreatorPersist,
+		url.NewUpdaterPersist,
 		requester.NewVerifier,
 	)
 	return service.GraphQL{}, nil

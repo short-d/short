@@ -17,6 +17,7 @@ type AuthMutation struct {
 	authenticator authenticator.Authenticator
 	changeLog     changelog.ChangeLog
 	urlCreator    url.Creator
+	urlUpdater    url.Updater
 }
 
 // URLInput represents possible URL attributes
@@ -77,6 +78,26 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 }
 
+func (a AuthMutation) UpdateURL(oldAlias string, urlInput URLInput, isPublic *bool) (*URL, error) {
+	user, err := viewer(a.authToken, a.authenticator)
+	if err != nil {
+		return nil, ErrInvalidAuthToken{}
+	}
+
+	update := entity.URL{
+		Alias:       *urlInput.CustomAlias,
+		OriginalURL: urlInput.OriginalURL,
+		ExpireAt:    urlInput.ExpireAt,
+	}
+
+	newURL, err := a.urlUpdater.UpdateURL(oldAlias, update, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &URL{url: newURL}, nil
+}
+
 // CreateChange creates a Change in the change log
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
 	change, err := a.changeLog.CreateChange(args.Change.Title, args.Change.SummaryMarkdown)
@@ -99,11 +120,13 @@ func newAuthMutation(
 	authenticator authenticator.Authenticator,
 	changeLog changelog.ChangeLog,
 	urlCreator url.Creator,
+	urlUpdater url.Updater,
 ) AuthMutation {
 	return AuthMutation{
 		authToken:     authToken,
 		authenticator: authenticator,
 		changeLog:     changeLog,
 		urlCreator:    urlCreator,
+		urlUpdater:    urlUpdater,
 	}
 }
