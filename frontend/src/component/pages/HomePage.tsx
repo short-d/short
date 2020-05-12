@@ -21,6 +21,7 @@ import {
   clearError,
   raiseCreateShortLinkError,
   raiseGetUserShortLinksError,
+  raiseGetChangeLogError,
   raiseInputError,
   updateAlias,
   updateCreatedUrl,
@@ -30,7 +31,6 @@ import { ErrorService } from '../../service/Error.service';
 import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
-import { Update } from '../../entity/Update';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
 import { ChangeLogService } from '../../service/ChangeLog.service';
 import { CreateShortLinkSection } from './shared/CreateShortLinkSection';
@@ -42,6 +42,7 @@ import {
 } from '../../service/ShortLink.service';
 import { AnalyticsService } from '../../service/Analytics.service';
 import { Icon, IconID } from '../ui/Icon';
+import { Change } from '../../entity/Change';
 
 interface Props {
   uiFactory: UIFactory;
@@ -72,7 +73,7 @@ interface State {
   inputErr?: string;
   isShortLinkPublic?: boolean;
   autoCompleteSuggestions?: Array<Url>;
-  changeLog?: Array<Update>;
+  changeLog?: Array<Change>;
   currentPagedShortLinks?: IPagedShortLinks;
 }
 
@@ -107,16 +108,20 @@ export class HomePage extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
+    try {
+      const changeLog = await this.props.changeLogService.getChangeLog();
+      this.setState({ changeLog: changeLog.changes }, async () => {
+        const hasUpdates = await this.props.changeLogService.hasUpdates();
+        if (!hasUpdates) {
+          return;
+        }
 
-    const changeLog = await this.props.changeLogService.getChangeLog();
-    this.setState({ changeLog }, async () => {
-      const hasUpdates = await this.props.changeLogService.hasUpdates();
-      if (!hasUpdates) {
-        return;
-      }
-
-      this.showChangeLogs();
-    });
+        this.showChangeLogs();
+      });
+    } catch (err) {
+      const { changeLogErr } = err;
+      this.props.store.dispatch(raiseGetChangeLogError(changeLogErr));
+    }
   }
 
   async setPromoDisplayStatus() {

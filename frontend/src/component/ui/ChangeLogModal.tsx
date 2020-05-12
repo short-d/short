@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment';
 
 import './ChangeLogModal.scss';
-import { Update } from '../../entity/Update';
+import { Change } from '../../entity/Change';
 import { Button } from './Button';
 import { Modal } from './Modal';
 import { Icon, IconID } from './Icon';
@@ -12,7 +12,7 @@ interface State {
 }
 
 interface Props {
-  changeLog?: Array<Update>;
+  changeLog?: Array<Change>;
   defaultVisibleLogs: number;
 }
 
@@ -44,10 +44,10 @@ export class ChangeLogModal extends Component<Props, State> {
     return (
       <div className={'changelog'}>
         <ul>
-          {changeLog.map((update: Update) => (
+          {changeLog.map((update: Change) => (
             <li key={update.releasedAt}>
               <div className={'title'}>{update.title}</div>
-              <div className={'summary'}>{update.summary}</div>
+              <div className={'summary'}>{update.summaryMarkdown}</div>
               <div className={'released-date'}>
                 {moment(update.releasedAt).fromNow()}
               </div>
