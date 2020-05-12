@@ -25,11 +25,11 @@ INSERT INTO "%s" ("%s","%s")
 VALUES ($1,$2)
 `,
 		table.UserURLRelation.TableName,
-		table.UserURLRelation.ColumnUserEmail,
+		table.UserURLRelation.ColumnUserID,
 		table.UserURLRelation.ColumnURLAlias,
 	)
 
-	_, err := u.db.Exec(statement, user.Email, url.Alias)
+	_, err := u.db.Exec(statement, user.ID, url.Alias)
 	return err
 }
 
@@ -39,11 +39,11 @@ func (u UserURLRelationSQL) FindAliasesByUser(user entity.User) ([]string, error
 	statement := fmt.Sprintf(`SELECT "%s" FROM "%s" WHERE "%s"=$1;`,
 		table.UserURLRelation.ColumnURLAlias,
 		table.UserURLRelation.TableName,
-		table.UserURLRelation.ColumnUserEmail,
+		table.UserURLRelation.ColumnUserID,
 	)
 
 	var aliases []string
-	rows, err := u.db.Query(statement, user.Email)
+	rows, err := u.db.Query(statement, user.ID)
 	// TODO(issue#711): errors should be checked before using defer
 	defer rows.Close()
 	if err != nil {
