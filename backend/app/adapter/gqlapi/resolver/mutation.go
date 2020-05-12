@@ -12,6 +12,7 @@ import (
 type Mutation struct {
 	logger            logger.Logger
 	urlCreator        url.Creator
+	urlUpdater        url.Updater
 	requesterVerifier requester.Verifier
 	authenticator     authenticator.Authenticator
 	changeLog         changelog.ChangeLog
@@ -35,7 +36,7 @@ func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
 		return nil, ErrNotHuman{}
 	}
 
-	authMutation := newAuthMutation(args.AuthToken, m.authenticator, m.changeLog, m.urlCreator)
+	authMutation := newAuthMutation(args.AuthToken, m.authenticator, m.changeLog, m.urlCreator, m.urlUpdater)
 	return &authMutation, nil
 }
 
@@ -43,6 +44,7 @@ func newMutation(
 	logger logger.Logger,
 	changeLog changelog.ChangeLog,
 	urlCreator url.Creator,
+	urlUpdater url.Updater,
 	requesterVerifier requester.Verifier,
 	authenticator authenticator.Authenticator,
 ) Mutation {
@@ -50,6 +52,7 @@ func newMutation(
 		logger:            logger,
 		changeLog:         changeLog,
 		urlCreator:        urlCreator,
+		urlUpdater:        urlUpdater,
 		requesterVerifier: requesterVerifier,
 		authenticator:     authenticator,
 	}

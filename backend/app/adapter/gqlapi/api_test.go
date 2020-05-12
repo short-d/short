@@ -50,7 +50,17 @@ func TestGraphQlAPI(t *testing.T) {
 		riskDetector,
 	)
 
-	s := requester.NewReCaptchaFake(requester.VerifyResponse{})
+	updater := url.NewUpdaterPersist(
+		&urlRepo,
+		&urlRelationRepo,
+		keyGen,
+		longLinkValidator,
+		customAliasValidator,
+		tm,
+		riskDetector,
+	)
+
+	s := external.NewReCaptchaFake(external.VerifyResponse{})
 	verifier := requester.NewVerifier(s)
 	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 

@@ -89,6 +89,7 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	safeBrowsing := provider.NewSafeBrowsing(googleAPIKey, http)
 	detector := risk.NewDetector(safeBrowsing)
 	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias, system, detector)
+	updaterPersist := url.NewUpdaterPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias, system, detector)
 	changeLogSQL := sqldb.NewChangeLogSQL(sqlDB)
 	userChangeLogSQL := sqldb.NewUserChangeLogSQL(sqlDB)
 	persist := changelog.NewPersist(keyGenerator, system, changeLogSQL, userChangeLogSQL)

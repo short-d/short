@@ -20,6 +20,7 @@ func NewResolver(
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
 	changeLog changelog.ChangeLog,
+	urlUpdater url.Updater,
 	requesterVerifier requester.Verifier,
 	authenticator authenticator.Authenticator,
 ) Resolver {
@@ -29,6 +30,7 @@ func NewResolver(
 			logger,
 			changeLog,
 			urlCreator,
+			urlUpdater,
 			requesterVerifier,
 			authenticator,
 		),
