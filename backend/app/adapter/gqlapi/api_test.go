@@ -13,7 +13,6 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
@@ -50,7 +49,7 @@ func TestGraphQlAPI(t *testing.T) {
 		riskDetector,
 	)
 
-	s := external.NewReCaptchaFake(external.VerifyResponse{})
+	s := requester.NewReCaptchaFake(requester.VerifyResponse{})
 	verifier := requester.NewVerifier(s)
 	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 
