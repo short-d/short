@@ -64,13 +64,13 @@ export function initUIFactory(
     envService
   );
   const clipboardService = new ClipboardServiceFactory().makeClipboardService();
-  const shortLinkGraphQLApiService = new ShortLinkGraphQLApi(
+  const shortLinkGraphQLApi = new ShortLinkGraphQLApi(
     authService,
     envService,
     graphQLService
   );
   const shortLinkService = new ShortLinkService(
-    shortLinkGraphQLApiService,
+    shortLinkGraphQLApi,
     errorService
   );
   const analyticsService = new AnalyticsService(shortHTTPApi);
