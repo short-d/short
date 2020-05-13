@@ -2,7 +2,7 @@ import { AuthService } from './Auth.service';
 import { EnvService } from './Env.service';
 import { GraphQLService, IGraphQLRequestError } from './GraphQL.service';
 import { Url } from '../entity/Url';
-import { getErrorCodes } from './ShortGraphQLHelpers';
+import { getErrorCodes } from './GraphQLError';
 
 interface IShortGraphQLQuery {
   authQuery: IShortGraphQLAuthQuery;
