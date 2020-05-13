@@ -21,6 +21,7 @@ import { DynamicDecisionService } from './service/feature-decision/DynamicDecisi
 import { ShortLinkService } from './service/ShortLink.service';
 import { ShortGraphQLApi } from './service/ShortGraphQL.api';
 import { AnalyticsService } from './service/Analytics.service';
+import { ShortLinkGraphQLApi } from './service/ShortLinkGraphQL.api';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -58,19 +59,21 @@ export function initUIFactory(
   );
   const versionService = new VersionService(envService);
   const store = initStore();
+  const shortGraphQLApi = new ShortGraphQLApi();
   const searchService = new SearchService();
   const changeLogService = new ChangeLogService();
   const extensionService = new BrowserExtensionFactory().makeBrowserExtensionService(
     envService
   );
   const clipboardService = new ClipboardServiceFactory().makeClipboardService();
-  const shortGraphQLApiService = new ShortGraphQLApi(
+  const shortLinkGraphQLApiService = new ShortLinkGraphQLApi(
     authService,
     envService,
-    graphQLService
+    graphQLService,
+    shortGraphQLApi
   );
   const shortLinkService = new ShortLinkService(
-    shortGraphQLApiService,
+    shortLinkGraphQLApiService,
     errorService
   );
   const analyticsService = new AnalyticsService(shortHTTPApi);
