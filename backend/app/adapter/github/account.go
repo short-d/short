@@ -41,7 +41,7 @@ query {
 		Variables: nil,
 	}
 
-	err := a.sendGraphQlRequest(accessToken, query, &profileResponse)
+	err := a.sendGraphQLRequest(accessToken, query, &profileResponse)
 	if err != nil {
 		return entity.SSOUser{}, err
 	}
@@ -53,11 +53,11 @@ query {
 	}, nil
 }
 
-func (a Account) sendGraphQlRequest(accessToken string, query graphql.Query, response interface{}) error {
+func (a Account) sendGraphQLRequest(accessToken string, query graphql.Query, response interface{}) error {
 	headers := map[string]string{
 		"Authorization": fmt.Sprintf("bearer %s", accessToken),
 	}
-	return a.gqlClient.Query(query, headers, &response)
+	return a.gqlClient.Query(query, headers, response)
 }
 
 // NewAccount initializes Github account API client.
