@@ -11,7 +11,7 @@ export interface IPagedShortLinks {
 
 export class ShortLinkService {
   constructor(
-    private shortLinkGraphQLApiService: ShortLinkGraphQLApi,
+    private shortLinkGraphQLApi: ShortLinkGraphQLApi,
     private errorService: ErrorService
   ) {}
 
@@ -21,7 +21,7 @@ export class ShortLinkService {
   ): Promise<IPagedShortLinks> {
     return new Promise((resolve, reject) => {
       // TODO(issue#673): support pagination for user created Short Links in API.
-      this.shortLinkGraphQLApiService
+      this.shortLinkGraphQLApi
         .getUserShortLinks(offset, pageSize)
         .then((URLs: Url[]) => {
           resolve(this.getPagedShortLinks(URLs, offset, pageSize));
