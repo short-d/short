@@ -22,6 +22,7 @@ import (
 type urlMap = map[string]entity.URL
 
 func TestAuthQuery_URL(t *testing.T) {
+	t.Parallel()
 	now := time.Now()
 	before := now.Add(-5 * time.Second)
 	after := now.Add(5 * time.Second)
@@ -85,7 +86,9 @@ func TestAuthQuery_URL(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			fakeURLRepo := repository.NewURLFake(testCase.urls)
 			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
 			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)

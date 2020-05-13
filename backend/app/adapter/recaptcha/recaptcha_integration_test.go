@@ -15,6 +15,7 @@ import (
 )
 
 func TestReCaptcha_Verify(t *testing.T) {
+	t.Parallel()
 	expSecret := "ZPDIGNFj1EQJeNfs"
 	expCaptchaResponse := "qHwha3zZh9G9mquEUOKZ"
 
@@ -49,7 +50,9 @@ func TestReCaptcha_Verify(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			httpRequest := webreq.NewHTTPFake(func(req *http.Request) (response *http.Response, e error) {
 				assert.Equal(t, "https://www.google.com/recaptcha/api/siteverify", req.URL.String())
 				assert.Equal(t, "POST", req.Method)

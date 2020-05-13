@@ -15,6 +15,7 @@ import (
 )
 
 func TestAccount_GetSingleSignOnUser(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name            string
 		httpResponse    *http.Response

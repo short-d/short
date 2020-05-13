@@ -16,6 +16,7 @@ import (
 )
 
 func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name              string
 		toggles           map[string]entity.Toggle
@@ -53,7 +54,9 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			featureRepo := repository.NewFeatureToggleFake(testCase.toggles)
 
 			entryRepo := logger.NewEntryRepoFake()
