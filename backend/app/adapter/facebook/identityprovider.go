@@ -74,18 +74,8 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessTo
 	query.Set("code", authorizationCode)
 	u.RawQuery = query.Encode()
 
-	body := url.Values{}
-	body.Set("client_id", clientID)
-	body.Set("redirect_uri", redirectURI)
-	body.Set("client_secret", clientSecret)
-	body.Set("code", authorizationCode)
-
-	headers := map[string]string{
-		"Content-Type": "application/x-www-form-urlencoded",
-	}
-
 	apiRes := fbAccessTokenResponse{}
-	err = g.httpRequest.JSON(http.MethodPost, u.String(), headers, body.Encode(), &apiRes)
+	err = g.httpRequest.JSON(http.MethodPost, u.String(), map[string]string{}, "", &apiRes)
 
 	if err != nil {
 		return "", err
