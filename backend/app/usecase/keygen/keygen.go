@@ -2,12 +2,10 @@ package keygen
 
 import (
 	"errors"
-
-	"github.com/short-d/short/backend/app/usecase/external"
 )
 
 type bufferEntry struct {
-	key external.Key
+	key Key
 	err error
 }
 
@@ -16,11 +14,11 @@ type bufferEntry struct {
 type KeyGenerator struct {
 	bufferSize int
 	buffer     chan bufferEntry
-	keyFetcher external.KeyFetcher
+	keyFetcher KeyFetcher
 }
 
 // NewKey produces a unique key
-func (r KeyGenerator) NewKey() (external.Key, error) {
+func (r KeyGenerator) NewKey() (Key, error) {
 	if len(r.buffer) == 0 {
 		go func() {
 			r.fetchKeys()
@@ -50,7 +48,7 @@ func (r KeyGenerator) fetchKeys() {
 }
 
 // NewKeyGenerator creates KeyGenerator
-func NewKeyGenerator(bufferSize int, keyFetcher external.KeyFetcher) (KeyGenerator, error) {
+func NewKeyGenerator(bufferSize int, keyFetcher KeyFetcher) (KeyGenerator, error) {
 	if bufferSize < 1 {
 		return KeyGenerator{}, errors.New("buffer size can't be less than 1")
 	}

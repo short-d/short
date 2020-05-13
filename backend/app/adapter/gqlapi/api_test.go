@@ -31,7 +31,7 @@ func TestGraphQlAPI(t *testing.T) {
 	urlRepo := repository.NewURLFake(map[string]entity.URL{})
 	urlRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.URL{})
 	retriever := url.NewRetrieverPersist(&urlRepo, &urlRelationRepo)
-	keyFetcher := external.NewKeyFetcherFake([]external.Key{})
+	keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 	keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 	assert.Equal(t, nil, err)
 
