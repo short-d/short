@@ -1,4 +1,4 @@
-package external
+package account
 
 import "github.com/short-d/short/backend/app/entity"
 
