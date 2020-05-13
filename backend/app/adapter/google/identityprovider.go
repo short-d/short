@@ -75,12 +75,8 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 	query.Set("grant_type", grantType)
 	u.RawQuery = query.Encode()
 
-	headers := map[string]string{
-		"Content-Type": "application/x-www-form-urlencoded",
-	}
-
 	apiRes := accessTokenResponse{}
-	err = g.httpRequest.JSON(http.MethodPost, u.String(), headers, "", &apiRes)
+	err = g.httpRequest.JSON(http.MethodPost, u.String(), map[string]string{}, "", &apiRes)
 	if err != nil {
 		return "", err
 	}
