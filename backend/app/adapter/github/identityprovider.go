@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
 const (
@@ -22,7 +22,7 @@ type accessTokenResponse struct {
 	TokenType   string `json:"token_type"`
 }
 
-var _ external.IdentityProvider = (*IdentityProvider)(nil)
+var _ sso.IdentityProvider = (*IdentityProvider)(nil)
 
 // IdentityProvider represents Github OAuth service.
 type IdentityProvider struct {
