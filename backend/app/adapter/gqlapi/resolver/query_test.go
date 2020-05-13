@@ -19,6 +19,7 @@ import (
 )
 
 func TestQuery_AuthQuery(t *testing.T) {
+	t.Parallel()
 	now := time.Now()
 	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 	user := entity.User{
@@ -56,7 +57,9 @@ func TestQuery_AuthQuery(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			fakeURLRepo := repository.NewURLFake(map[string]entity.URL{})
 			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
 			auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)

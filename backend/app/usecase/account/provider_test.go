@@ -16,7 +16,6 @@ func TestProvider_IsAccountExist(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now()
-
 	testCases := []struct {
 		name            string
 		users           []entity.User

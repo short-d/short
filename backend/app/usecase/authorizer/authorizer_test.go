@@ -11,6 +11,7 @@ import (
 )
 
 func TestAuthorizer_hasPermission(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name     string
 		roles    map[string][]role.Role
@@ -50,7 +51,9 @@ func TestAuthorizer_hasPermission(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			fakeRolesRepo := repository.NewUserRoleFake(testCase.roles)
 			ac := rbac.NewRBAC(fakeRolesRepo)
 			authorizer := NewAuthorizer(ac)
