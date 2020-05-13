@@ -3,19 +3,16 @@ package sso
 import (
 	"errors"
 
-	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/account"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
-	"github.com/short-d/short/backend/app/usecase/external"
 )
 
 // SingleSignOn enables sign in through external identity providers, such as
 // Github, Facebook, and Google.
 type SingleSignOn struct {
-	identityProvider  external.IdentityProvider
-	ssoAccountService external.SSOAccount
-	accountProvider   account.Provider
-	authenticator     authenticator.Authenticator
+	identityProvider IdentityProvider
+	account          Account
+	accountLinker    AccountLinker
+	authenticator    authenticator.Authenticator
 }
 
 // SignIn generates access token for a user using authorization code obtained
@@ -30,49 +27,59 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 		return "", err
 	}
 
-	ssoUser, err := o.ssoAccountService.GetSingleSignOnUser(accessToken)
+	ssoUser, err := o.account.GetSingleSignOnUser(accessToken)
 	if err != nil {
 		return "", err
 	}
 
-	email := ssoUser.Email
-	isExist, err := o.accountProvider.IsAccountExist(email)
+	isLinked, err := o.accountLinker.IsAccountLinked(ssoUser)
 	if err != nil {
 		return "", err
 	}
 
-	user := entity.User{
-		Email: email,
+	if !isLinked {
+		err = o.accountLinker.CreateAndLinkAccount(ssoUser)
+		if err != nil {
+			return "", err
+		}
 	}
-	authToken, err := o.authenticator.GenerateToken(user)
+
+	user, err := o.accountLinker.GetShortUser(ssoUser)
 	if err != nil {
 		return "", err
 	}
-
-	if isExist {
-		return authToken, nil
-	}
-
-	err = o.accountProvider.CreateAccount(email, ssoUser.Name)
-	if err != nil {
-		return "", nil
-	}
-
-	return authToken, nil
+	return o.authenticator.GenerateToken(user)
 }
 
-// NewSingleSignOn creates SingleSignOn service for a given external
-// identity provider.
-func NewSingleSignOn(
-	identityProvider external.IdentityProvider,
-	ssoAccountService external.SSOAccount,
-	accountProvider account.Provider,
-	authenticator authenticator.Authenticator,
+func (o SingleSignOn) IsSignedIn(authToken string) bool {
+	return o.authenticator.IsSignedIn(authToken)
+}
+
+func (o SingleSignOn) GetSignInLink() string {
+	return o.identityProvider.GetAuthorizationURL()
+}
+
+type Factory struct {
+	authenticator authenticator.Authenticator
+}
+
+func (s Factory) NewSingleSignOn(
+	identityProvider IdentityProvider,
+	account Account,
+	accountLinker AccountLinker,
 ) SingleSignOn {
 	return SingleSignOn{
-		identityProvider:  identityProvider,
-		ssoAccountService: ssoAccountService,
-		accountProvider:   accountProvider,
-		authenticator:     authenticator,
+		identityProvider: identityProvider,
+		account:          account,
+		accountLinker:    accountLinker,
+		authenticator:    s.authenticator,
+	}
+}
+
+func NewFactory(
+	authenticator authenticator.Authenticator,
+) Factory {
+	return Factory{
+		authenticator: authenticator,
 	}
 }

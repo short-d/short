@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/short-d/short/backend/app/usecase/sso"
+
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/short/backend/app/usecase/external"
 )
 
 // More info here: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
@@ -17,7 +18,7 @@ const (
 	fbResponseType     = "code"
 )
 
-var _ external.IdentityProvider = (*IdentityProvider)(nil)
+var _ sso.IdentityProvider = (*IdentityProvider)(nil)
 
 // IdentityProvider represents Facebook OAuth service.
 type IdentityProvider struct {

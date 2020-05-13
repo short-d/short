@@ -5,6 +5,9 @@ package dep
 import (
 	"database/sql"
 
+	"github.com/short-d/short/backend/app/usecase/keygen"
+	"github.com/short-d/short/backend/app/usecase/sso"
+
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"
@@ -27,9 +30,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
-	"github.com/short-d/short/backend/app/usecase/account"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
@@ -80,7 +81,7 @@ var googleAPISet = wire.NewSet(
 )
 
 var keyGenSet = wire.NewSet(
-	wire.Bind(new(external.KeyFetcher), new(kgs.RPC)),
+	wire.Bind(new(keygen.KeyFetcher), new(kgs.RPC)),
 	provider.NewKgsRPC,
 	provider.NewKeyGenerator,
 )
@@ -239,9 +240,16 @@ func InjectRoutingService(
 
 		sqldb.NewUserSQL,
 		sqldb.NewURLSql,
+		sqldb.NewGoogleSSOSql,
+		sqldb.NewGithubSSOSql,
+		sqldb.NewFacebookSSOSql,
 		sqldb.NewUserURLRelationSQL,
 		url.NewRetrieverPersist,
-		account.NewProvider,
+		provider.NewGoogleSSO,
+		provider.NewGithubSSO,
+		provider.NewFacebookSSO,
+		sso.NewFactory,
+		sso.NewAccountLinkerFactory,
 		provider.NewShortRoutes,
 	)
 	return service.Routing{}, nil

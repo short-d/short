@@ -3,6 +3,8 @@ package provider
 import (
 	"github.com/short-d/app/fw/webreq"
 	"github.com/short-d/short/backend/app/adapter/google"
+	"github.com/short-d/short/backend/app/adapter/sqldb"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
 // GoogleClientID represents client ID used for Google OAuth.
@@ -24,6 +26,17 @@ func NewGoogleIdentityProvider(
 	redirectURI GoogleRedirectURI,
 ) google.IdentityProvider {
 	return google.NewIdentityProvider(req, string(clientID), string(clientSecret), string(redirectURI))
+}
+
+func NewGoogleSSO(
+	ssoFactory sso.Factory,
+	accountLinkerFactory sso.AccountLinkerFactory,
+	identityProvider google.IdentityProvider,
+	account google.Account,
+	googleSSORepo sqldb.GoogleSSOSql,
+) google.SingleSignOn {
+	linker := accountLinkerFactory.NewAccountLinker(googleSSORepo)
+	return google.SingleSignOn(ssoFactory.NewSingleSignOn(identityProvider, account, linker))
 }
 
 // GoogleAPIKey represents the credential for Google APIs.

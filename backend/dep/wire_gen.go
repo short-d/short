@@ -29,12 +29,12 @@ import (
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
-	"github.com/short-d/short/backend/app/usecase/account"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
@@ -126,23 +126,27 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	urlSql := sqldb.NewURLSql(sqlDB)
 	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
-	identityProvider := provider.NewGithubIdentityProvider(http, githubClientID, githubClientSecret)
-	clientFactory := graphql.NewClientFactory(http)
-	githubAccount := github.NewAccount(clientFactory)
-	api := github.NewAPI(identityProvider, githubAccount)
-	facebookIdentityProvider := provider.NewFacebookIdentityProvider(http, facebookClientID, facebookClientSecret, facebookRedirectURI)
-	facebookAccount := facebook.NewAccount(http)
-	facebookAPI := facebook.NewAPI(facebookIdentityProvider, facebookAccount)
-	googleIdentityProvider := provider.NewGoogleIdentityProvider(http, googleClientID, googleClientSecret, googleRedirectURI)
-	googleAccount := google.NewAccount(http)
-	googleAPI := google.NewAPI(googleIdentityProvider, googleAccount)
 	featureToggleSQL := sqldb.NewFeatureToggleSQL(sqlDB)
 	decisionMakerFactory := provider.NewFeatureDecisionMakerFactorySwitch(deployment, featureToggleSQL)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
+	factory := sso.NewFactory(authenticator)
 	userSQL := sqldb.NewUserSQL(sqlDB)
-	accountProvider := account.NewProvider(userSQL, system)
-	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, api, facebookAPI, googleAPI, decisionMakerFactory, authenticator, accountProvider)
+	accountLinkerFactory := sso.NewAccountLinkerFactory(keyGenerator, userSQL)
+	identityProvider := provider.NewGithubIdentityProvider(http, githubClientID, githubClientSecret)
+	clientFactory := graphql.NewClientFactory(http)
+	account := github.NewAccount(clientFactory)
+	githubSSOSql := sqldb.NewGithubSSOSql(sqlDB, loggerLogger)
+	singleSignOn := provider.NewGithubSSO(factory, accountLinkerFactory, identityProvider, account, githubSSOSql)
+	facebookIdentityProvider := provider.NewFacebookIdentityProvider(http, facebookClientID, facebookClientSecret, facebookRedirectURI)
+	facebookAccount := facebook.NewAccount(http)
+	facebookSSOSql := sqldb.NewFacebookSSOSql(sqlDB, loggerLogger)
+	facebookSingleSignOn := provider.NewFacebookSSO(factory, accountLinkerFactory, facebookIdentityProvider, facebookAccount, facebookSSOSql)
+	googleIdentityProvider := provider.NewGoogleIdentityProvider(http, googleClientID, googleClientSecret, googleRedirectURI)
+	googleAccount := google.NewAccount(http)
+	googleSSOSql := sqldb.NewGoogleSSOSql(sqlDB, loggerLogger)
+	googleSingleSignOn := provider.NewGoogleSSO(factory, accountLinkerFactory, googleIdentityProvider, googleAccount, googleSSOSql)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
 }
@@ -159,6 +163,6 @@ var facebookAPISet = wire.NewSet(provider.NewFacebookIdentityProvider, facebook.
 
 var googleAPISet = wire.NewSet(provider.NewGoogleIdentityProvider, google.NewAccount, google.NewAPI)
 
-var keyGenSet = wire.NewSet(wire.Bind(new(external.KeyFetcher), new(kgs.RPC)), provider.NewKgsRPC, provider.NewKeyGenerator)
+var keyGenSet = wire.NewSet(wire.Bind(new(keygen.KeyFetcher), new(kgs.RPC)), provider.NewKgsRPC, provider.NewKeyGenerator)
 
 var featureDecisionSet = wire.NewSet(wire.Bind(new(repository.FeatureToggle), new(sqldb.FeatureToggleSQL)), sqldb.NewFeatureToggleSQL, provider.NewFeatureDecisionMakerFactorySwitch)

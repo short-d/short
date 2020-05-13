@@ -336,10 +336,13 @@ github.com/short-d/app v0.0.0-20200505002405-1f2d4c0a2c85 h1:krST6labiGGu+TgasUD
 github.com/short-d/app v0.0.0-20200505002405-1f2d4c0a2c85/go.mod h1:ecZzHExNiYc/miIlEaucs9WZRarGxJAGSZfgRNGsn98=
 github.com/short-d/app v0.0.0-20200505070402-e85f4ca85824 h1:QDealMusrgJGvhVtdz458eDENCQATC1npBd++zwcdNs=
 github.com/short-d/app v0.0.0-20200505070402-e85f4ca85824/go.mod h1:ecZzHExNiYc/miIlEaucs9WZRarGxJAGSZfgRNGsn98=
+github.com/short-d/app v0.0.0-20200513043759-cb007a791086 h1:tPZApEeSRJ122/N6PK3n6Aa2DcpH7kYv9v7ULx8bPqk=
+github.com/short-d/app v0.0.0-20200513043759-cb007a791086/go.mod h1:ecZzHExNiYc/miIlEaucs9WZRarGxJAGSZfgRNGsn98=
 github.com/short-d/eventbus v0.0.0-20200105092235-2dfc4be1f9ee h1:LNafZ4caEAcTlgGe9zJ18njsyR+uogkE5+dzZ5LeeAI=
 github.com/short-d/eventbus v0.0.0-20200105092235-2dfc4be1f9ee/go.mod h1:S3Nww0QNubrzHbWTpfzAg8YQLwXuM9GH2cGshOU6GJQ=
 github.com/short-d/kgs v0.0.0-20200419183416-2deb6aa8d7ed h1:goDxEfMeotHFO2J8cg5JDA5aoGULS6Ov9xr2SaGjb7c=
 github.com/short-d/kgs v0.0.0-20200419183416-2deb6aa8d7ed/go.mod h1:b0Uw5WfhgcBsheLrDNm8RO0lb4C5UggG+WzBe4rxn7U=
+github.com/short-d/short v0.0.0-20200512033253-7bf2b5f39c07 h1:SmQafNAc19QGRX2aJQLwIhCp2hZVYyQVjMY/rlop6+k=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2 h1:SPIRibHv4MatM3XXNO2BJeFLZwZ2LvZgfQ5+UNI2im4=

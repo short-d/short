@@ -13,7 +13,6 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/url"
@@ -93,7 +92,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
 			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 
-			keyFetcher := external.NewKeyFetcherFake([]external.Key{})
+			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 

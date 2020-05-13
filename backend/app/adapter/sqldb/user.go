@@ -127,15 +127,19 @@ WHERE "%s"=$1;
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
-	if err != nil {
-		return user, err
+
+	if err == nil {
+		user.CreatedAt = utc(user.CreatedAt)
+		user.UpdatedAt = utc(user.UpdatedAt)
+		user.LastSignedInAt = utc(user.LastSignedInAt)
+		return user, nil
 	}
 
-	user.CreatedAt = utc(user.CreatedAt)
-	user.UpdatedAt = utc(user.UpdatedAt)
-	user.LastSignedInAt = utc(user.LastSignedInAt)
+	if err == sql.ErrNoRows {
+		return entity.User{}, repository.ErrEntryNotFound("user account not found")
+	}
 
-	return user, nil
+	return entity.User{}, err
 }
 
 // CreateUser inserts a new User into user table.
