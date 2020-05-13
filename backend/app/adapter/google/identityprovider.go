@@ -67,7 +67,7 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 		return "", err
 	}
 
-	query := u.Query()
+	query := url.Values{}
 	query.Set("code", authorizationCode)
 	query.Set("client_id", clientID)
 	query.Set("client_secret", clientSecret)

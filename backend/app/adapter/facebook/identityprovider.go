@@ -67,7 +67,7 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessTo
 		return "", err
 	}
 
-	query := u.Query()
+	query := url.Values{}
 	query.Set("client_id", clientID)
 	query.Set("redirect_uri", redirectURI)
 	query.Set("client_secret", clientSecret)

@@ -46,14 +46,18 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessToken string, err error) {
 	clientID := g.clientID
 	clientSecret := g.clientSecret
-	body := fmt.Sprintf("client_id=%s&client_secret=%s&code=%s", clientID, clientSecret, authorizationCode)
+
+	body := url.Values{}
+	body.Set("client_id", clientID)
+	body.Set("client_secret", clientSecret)
+	body.Set("code", authorizationCode)
 
 	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
 
 	apiRes := accessTokenResponse{}
-	err = g.http.JSON(http.MethodPost, accessTokenAPI, headers, body, &apiRes)
+	err = g.http.JSON(http.MethodPost, accessTokenAPI, headers, body.Encode(), &apiRes)
 	if err != nil {
 		return "", err
 	}
