@@ -19,7 +19,6 @@ import { FetchHTTPService } from './service/HTTP.service';
 import { ShortHTTPApi } from './service/ShortHTTP.api';
 import { DynamicDecisionService } from './service/feature-decision/DynamicDecision.service';
 import { ShortLinkService } from './service/ShortLink.service';
-import { ShortGraphQLApi } from './service/ShortGraphQL.api';
 import { AnalyticsService } from './service/Analytics.service';
 import { ShortLinkGraphQLApi } from './service/ShortLinkGraphQL.api';
 
@@ -59,7 +58,6 @@ export function initUIFactory(
   );
   const versionService = new VersionService(envService);
   const store = initStore();
-  const shortGraphQLApi = new ShortGraphQLApi();
   const searchService = new SearchService();
   const changeLogService = new ChangeLogService();
   const extensionService = new BrowserExtensionFactory().makeBrowserExtensionService(
@@ -69,8 +67,7 @@ export function initUIFactory(
   const shortLinkGraphQLApiService = new ShortLinkGraphQLApi(
     authService,
     envService,
-    graphQLService,
-    shortGraphQLApi
+    graphQLService
   );
   const shortLinkService = new ShortLinkService(
     shortLinkGraphQLApiService,

@@ -2,7 +2,7 @@ import { AuthService } from './Auth.service';
 import { EnvService } from './Env.service';
 import { GraphQLService, IGraphQLRequestError } from './GraphQL.service';
 import { Url } from '../entity/Url';
-import { ShortGraphQLApi } from './ShortGraphQL.api';
+import { getErrorCodes } from './ShortGraphQLHelpers';
 
 interface IShortGraphQLQuery {
   authQuery: IShortGraphQLAuthQuery;
@@ -23,8 +23,7 @@ export class ShortLinkGraphQLApi {
   constructor(
     private authService: AuthService,
     private envService: EnvService,
-    private graphQLService: GraphQLService,
-    private shortGraphQLApi: ShortGraphQLApi
+    private graphQLService: GraphQLService
   ) {
     this.baseURL = `${this.envService.getVal('GRAPHQL_API_BASE_URL')}/graphql`;
   }
@@ -52,7 +51,7 @@ export class ShortLinkGraphQLApi {
           resolve(URLs.map(this.parseUrl));
         })
         .catch((err: IGraphQLRequestError) => {
-          const errCodes = this.shortGraphQLApi.getErrorCodes(err);
+          const errCodes = getErrorCodes(err);
           reject(errCodes[0]);
         });
     });
