@@ -1,4 +1,4 @@
-package external
+package requester
 
 // VerifyResponse represents the JSON response received from ReCaptcha Verify
 // API.

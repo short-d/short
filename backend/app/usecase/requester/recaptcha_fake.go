@@ -1,4 +1,4 @@
-package external
+package requester
 
 var _ ReCaptcha = (*ReCaptchaFake)(nil)
 

@@ -5,12 +5,12 @@ import (
 
 	"github.com/short-d/app/fw/graphql"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/account"
 )
 
 const githubAPI = "https://api.github.com/graphql"
 
-var _ external.SSOAccount = (*Account)(nil)
+var _ account.SSOAccount = (*Account)(nil)
 
 // Account accesses user's account data through Github API v4.
 type Account struct {

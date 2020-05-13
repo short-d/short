@@ -1,4 +1,4 @@
-package external
+package sso
 
 // IdentityProvider represents external service that verifies the user's
 // identity.

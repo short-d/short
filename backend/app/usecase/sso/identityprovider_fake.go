@@ -1,4 +1,4 @@
-package external
+package sso
 
 var _ IdentityProvider = (*IdentityProviderFake)(nil)
 

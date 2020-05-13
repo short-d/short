@@ -9,7 +9,6 @@ import (
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/feature"
 	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/url"
@@ -50,7 +49,7 @@ func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL)
 
 // NewSSOSignIn redirects user to the sign in page.
 func NewSSOSignIn(
-	identityProvider external.IdentityProvider,
+	identityProvider sso.IdentityProvider,
 	auth authenticator.Authenticator,
 	webFrontendURL string,
 ) router.Handle {

@@ -12,7 +12,6 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/account"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
@@ -60,8 +59,8 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			identityProvider := external.NewIdentityProviderFake("http://localhost/sign-in", "")
-			profileService := external.NewSSOAccountFake(testCase.ssoUser)
+			identityProvider := NewIdentityProviderFake("http://localhost/sign-in", "")
+			profileService := account.NewSSOAccountFake(testCase.ssoUser)
 			fakeUserRepo := repository.NewUserFake(testCase.users)
 			tm := timer.NewStub(time.Now())
 			accountProvider := account.NewProvider(&fakeUserRepo, tm)

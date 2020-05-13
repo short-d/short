@@ -7,7 +7,6 @@ import (
 
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
@@ -67,7 +66,7 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			keyFetcher := external.NewKeyFetcherFake([]external.Key{})
+			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 			userRepo := repository.NewUserFake(testCase.users)
@@ -162,7 +161,7 @@ func TestLinker_LinkAccount(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			keyFetcher := external.NewKeyFetcherFake([]external.Key{"key", "key2"})
+			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{"key", "key2"})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 			fakeUserRepo := repository.NewUserFake(testCase.users)

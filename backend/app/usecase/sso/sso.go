@@ -6,16 +6,15 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/account"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
-	"github.com/short-d/short/backend/app/usecase/external"
 )
 
 // SingleSignOn enables sign in through external identity providers, such as
 // Github, Facebook, and Google.
 type SingleSignOn struct {
-	identityProvider  external.IdentityProvider
-	ssoAccountService external.SSOAccount
-	accountProvider   account.Provider
-	authenticator     authenticator.Authenticator
+	identityProvider IdentityProvider
+	ssoAccount       account.SSOAccount
+	accountProvider  account.Provider
+	authenticator    authenticator.Authenticator
 }
 
 // SignIn generates access token for a user using authorization code obtained
@@ -30,7 +29,7 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 		return "", err
 	}
 
-	ssoUser, err := o.ssoAccountService.GetSingleSignOnUser(accessToken)
+	ssoUser, err := o.ssoAccount.GetSingleSignOnUser(accessToken)
 	if err != nil {
 		return "", err
 	}
@@ -64,15 +63,15 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 // NewSingleSignOn creates SingleSignOn service for a given external
 // identity provider.
 func NewSingleSignOn(
-	identityProvider external.IdentityProvider,
-	ssoAccountService external.SSOAccount,
+	identityProvider IdentityProvider,
+	ssoAccount account.SSOAccount,
 	accountProvider account.Provider,
 	authenticator authenticator.Authenticator,
 ) SingleSignOn {
 	return SingleSignOn{
-		identityProvider:  identityProvider,
-		ssoAccountService: ssoAccountService,
-		accountProvider:   accountProvider,
-		authenticator:     authenticator,
+		identityProvider: identityProvider,
+		ssoAccount:       ssoAccount,
+		accountProvider:  accountProvider,
+		authenticator:    authenticator,
 	}
 }
