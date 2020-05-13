@@ -23,6 +23,7 @@ import (
 )
 
 func TestGraphQlAPI(t *testing.T) {
+	t.Parallel()
 	now := time.Now()
 	blockedURLs := map[string]bool{}
 	blacklist := risk.NewBlackListFake(blockedURLs)

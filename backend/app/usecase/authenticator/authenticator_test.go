@@ -13,6 +13,7 @@ import (
 )
 
 func TestAuthenticator_GenerateToken(t *testing.T) {
+	t.Parallel()
 	tokenizer := crypto.NewTokenizerFake()
 	expIssuedAt := time.Now()
 	tm := timer.NewStub(expIssuedAt)
@@ -34,6 +35,7 @@ func TestAuthenticator_GenerateToken(t *testing.T) {
 }
 
 func TestAuthenticator_IsSignedIn(t *testing.T) {
+	t.Parallel()
 	now := time.Now()
 
 	testCases := []struct {
@@ -108,7 +110,9 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			tokenizer := crypto.NewTokenizerFake()
 			tm := timer.NewStub(testCase.currentTime)
 			authenticator := NewAuthenticator(tokenizer, tm, testCase.tokenValidDuration)
@@ -122,6 +126,7 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 }
 
 func TestAuthenticator_GetUser(t *testing.T) {
+	t.Parallel()
 	now := time.Now()
 
 	testCases := []struct {
@@ -205,7 +210,9 @@ func TestAuthenticator_GetUser(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			tokenizer := crypto.NewTokenizerFake()
 			tm := timer.NewStub(testCase.currentTime)
 			authenticator := NewAuthenticator(tokenizer, tm, testCase.tokenValidDuration)
