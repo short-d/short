@@ -44,7 +44,7 @@ func (a AccountLinker) CreateAndLinkAccount(ssoUser entity.SSOUser) error {
 
 	user, err := a.userRepo.GetUserByEmail(ssoUser.Email)
 	if err == nil {
-		return a.linkExistingAccount(ssoUser, user)
+		return a.ssoMap.CreateMapping(ssoUser.ID, user.ID)
 	}
 
 	var errNotFound repository.ErrEntryNotFound
@@ -57,23 +57,6 @@ func (a AccountLinker) CreateAndLinkAccount(ssoUser entity.SSOUser) error {
 		return err
 	}
 	return a.ssoMap.CreateMapping(ssoUser.ID, userID)
-}
-
-func (a AccountLinker) linkExistingAccount(ssoUser entity.SSOUser, user entity.User) error {
-	if len(user.ID) > 0 {
-		return a.ssoMap.CreateMapping(ssoUser.ID, user.ID)
-	}
-
-	newID, err := a.generateUnassignedUserID()
-	if err != nil {
-		return err
-	}
-
-	err = a.userRepo.UpdateUserID(ssoUser.Email, newID)
-	if err != nil {
-		return err
-	}
-	return a.ssoMap.CreateMapping(ssoUser.ID, newID)
 }
 
 func (a AccountLinker) createAccount(ssoUser entity.SSOUser) (string, error) {
