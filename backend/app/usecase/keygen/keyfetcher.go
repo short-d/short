@@ -1,4 +1,4 @@
-package external
+package keygen
 
 // Key represents unique identifier
 type Key string

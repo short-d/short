@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
 const (
@@ -14,7 +14,7 @@ const (
 	accessTokenAPI   = "https://www.googleapis.com/oauth2/v4/token"
 )
 
-var _ external.IdentityProvider = (*IdentityProvider)(nil)
+var _ sso.IdentityProvider = (*IdentityProvider)(nil)
 
 type scope = string
 

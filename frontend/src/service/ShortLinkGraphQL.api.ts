@@ -1,12 +1,8 @@
 import { AuthService } from './Auth.service';
-import { Err } from './Error.service';
 import { EnvService } from './Env.service';
-import {
-  GraphQLService,
-  IGraphQLError,
-  IGraphQLRequestError
-} from './GraphQL.service';
+import { GraphQLService, IGraphQLRequestError } from './GraphQL.service';
 import { Url } from '../entity/Url';
+import { getErrorCodes } from './GraphQLError';
 
 interface IShortGraphQLQuery {
   authQuery: IShortGraphQLAuthQuery;
@@ -21,7 +17,7 @@ interface IShortGraphQLURL {
   originalURL: string;
 }
 
-export class ShortGraphQLApi {
+export class ShortLinkGraphQLApi {
   private baseURL: string;
 
   constructor(
@@ -55,7 +51,7 @@ export class ShortGraphQLApi {
           resolve(URLs.map(this.parseUrl));
         })
         .catch((err: IGraphQLRequestError) => {
-          const errCodes = this.getErrorCodes(err);
+          const errCodes = getErrorCodes(err);
           reject(errCodes[0]);
         });
     });
@@ -66,25 +62,5 @@ export class ShortGraphQLApi {
       originalUrl: url.originalURL,
       alias: url.alias
     };
-  }
-
-  private getErrorCodes(errors: IGraphQLRequestError): string[] {
-    const { networkError, graphQLErrors } = errors;
-    if (networkError) {
-      return [Err.NetworkError];
-    }
-    if (!graphQLErrors || graphQLErrors.length === 0) {
-      return [Err.Unknown];
-    }
-    return graphQLErrors.map(this.gqlErrorToCode);
-  }
-
-  private gqlErrorToCode(graphQLError: IGraphQLError): string {
-    switch (graphQLError.extensions.code) {
-      case Err.Unauthenticated:
-        return Err.Unauthenticated;
-      default:
-        return Err.Unknown;
-    }
   }
 }

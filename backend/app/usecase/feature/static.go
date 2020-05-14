@@ -38,6 +38,7 @@ func (s StaticDecisionMakerFactory) NewDecision(
 			"google-sign-in":           true,
 			"search-bar":               true,
 			"user-short-links-section": true,
+			"preference-toggles":       true,
 		},
 	}
 }

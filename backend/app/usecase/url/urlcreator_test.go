@@ -9,7 +9,6 @@ import (
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/risk"
@@ -30,7 +29,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		name          string
 		urls          urlMap
 		alias         *string
-		availableKeys []external.Key
+		availableKeys []keygen.Key
 		user          entity.User
 		url           entity.URL
 		relationUsers []entity.User
@@ -96,7 +95,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		{
 			name: "automatically generate alias if null alias provided",
 			urls: urlMap{},
-			availableKeys: []external.Key{
+			availableKeys: []keygen.Key{
 				"test",
 			},
 			alias: nil,
@@ -116,7 +115,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		{
 			name: "automatically generate alias if empty string alias provided",
 			urls: urlMap{},
-			availableKeys: []external.Key{
+			availableKeys: []keygen.Key{
 				"test",
 			},
 			alias: &emptyAlias,
@@ -141,7 +140,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			availableKeys: []external.Key{},
+			availableKeys: []keygen.Key{},
 			alias:         nil,
 			user: entity.User{
 				Email: "alpha@example.com",
@@ -165,7 +164,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				testCase.relationUsers,
 				testCase.relationURLs,
 			)
-			keyFetcher := external.NewKeyFetcherFake(testCase.availableKeys)
+			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 			longLinkValidator := validator.NewLongLink()

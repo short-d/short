@@ -36,6 +36,7 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 }
 
 func TestIdentityProvider_RequestAccessToken(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name                string
 		httpResponse        *http.Response

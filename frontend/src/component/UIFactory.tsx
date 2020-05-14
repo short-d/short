@@ -23,6 +23,7 @@ import { PublicListingToggle } from './pages/shared/PublicListingToggle';
 import { ShortLinkService } from '../service/ShortLink.service';
 import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
 import { AnalyticsService } from '../service/Analytics.service';
+import { PreferenceTogglesSubSection } from './pages/shared/PreferenceTogglesSubSection';
 
 export class UIFactory {
   private ToggledGoogleSignInButton: ComponentType<any>;
@@ -30,6 +31,7 @@ export class UIFactory {
   private ToggledFacebookSignInButton: ComponentType<any>;
   private ToggledSearchBar: ComponentType<any>;
   private ToggledViewChangeLogButton: ComponentType<any>;
+  private ToggledPreferenceTogglesSubSection: ComponentType<any>;
   private ToggledPublicListingToggle: ComponentType<any>;
   private ToggledUserShortLinksSection: ComponentType<any>;
 
@@ -73,6 +75,12 @@ export class UIFactory {
     this.ToggledViewChangeLogButton = withFeatureToggle(
       ViewChangeLogButton,
       includeViewChangeLogButton
+    );
+
+    const includePreferenceTogglesSubSection = this.featureDecisionService.includePreferenceTogglesSubSection();
+    this.ToggledPreferenceTogglesSubSection = withFeatureToggle(
+      PreferenceTogglesSubSection,
+      includePreferenceTogglesSubSection
     );
 
     const includePublicListingToggle = this.featureDecisionService.includePublicListingToggle();
@@ -139,6 +147,10 @@ export class UIFactory {
         facebookSignInLink={this.authService.facebookSignInLink()}
       />
     );
+  }
+
+  public createPreferenceTogglesSubSection(props: any): ReactElement {
+    return <this.ToggledPreferenceTogglesSubSection {...props} />;
   }
 
   public createPublicListingToggle(props: any): ReactElement {

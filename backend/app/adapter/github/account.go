@@ -1,16 +1,17 @@
 package github
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/short-d/app/fw/graphql"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
 const githubAPI = "https://api.github.com/graphql"
 
-var _ external.SSOAccount = (*Account)(nil)
+var _ sso.Account = (*Account)(nil)
 
 // Account accesses user's account data through Github API v4.
 type Account struct {
@@ -44,6 +45,10 @@ query {
 	err := a.sendGraphQLRequest(accessToken, query, &profileResponse)
 	if err != nil {
 		return entity.SSOUser{}, err
+	}
+
+	if profileResponse.Viewer.ID == "" {
+		return entity.SSOUser{}, errors.New("user ID can't be empty")
 	}
 
 	return entity.SSOUser{

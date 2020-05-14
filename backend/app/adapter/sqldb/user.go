@@ -88,13 +88,17 @@ WHERE "%s"=$1;
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
-	if err != nil {
-		return user, err
+
+	if err == nil {
+		user.CreatedAt = utc(user.CreatedAt)
+		user.UpdatedAt = utc(user.UpdatedAt)
+		user.LastSignedInAt = utc(user.LastSignedInAt)
+		return user, nil
 	}
 
-	user.CreatedAt = utc(user.CreatedAt)
-	user.UpdatedAt = utc(user.UpdatedAt)
-	user.LastSignedInAt = utc(user.LastSignedInAt)
+	if err == sql.ErrNoRows {
+		return entity.User{}, repository.ErrEntryNotFound("user account not found")
+	}
 
 	return user, nil
 }
@@ -127,15 +131,19 @@ WHERE "%s"=$1;
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
-	if err != nil {
-		return user, err
+
+	if err == nil {
+		user.CreatedAt = utc(user.CreatedAt)
+		user.UpdatedAt = utc(user.UpdatedAt)
+		user.LastSignedInAt = utc(user.LastSignedInAt)
+		return user, nil
 	}
 
-	user.CreatedAt = utc(user.CreatedAt)
-	user.UpdatedAt = utc(user.UpdatedAt)
-	user.LastSignedInAt = utc(user.LastSignedInAt)
+	if err == sql.ErrNoRows {
+		return entity.User{}, repository.ErrEntryNotFound("user account not found")
+	}
 
-	return user, nil
+	return entity.User{}, err
 }
 
 // CreateUser inserts a new User into user table.
@@ -162,28 +170,6 @@ VALUES ($1, $2, $3, $4, $5, $6)
 		user.CreatedAt,
 		user.UpdatedAt,
 	)
-	return err
-}
-
-// UpdateUserID updates the ID of an user in user table with given email address.
-func (u UserSQL) UpdateUserID(email string, userID string) error {
-	isExist, err := u.IsEmailExist(email)
-	if err != nil {
-		return err
-	}
-
-	if !isExist {
-		return fmt.Errorf("email %s does not exist", email)
-	}
-	statement := fmt.Sprintf(`
-UPDATE "%s"
-SET "%s"=$1
-WHERE "%s"=$2
-`,
-		table.User.TableName,
-		table.User.ColumnID,
-		table.User.ColumnEmail)
-	_, err = u.db.Exec(statement, userID, email)
 	return err
 }
 
