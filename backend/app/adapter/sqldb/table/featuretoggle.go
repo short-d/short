@@ -5,8 +5,10 @@ var FeatureToggle = struct {
 	TableName       string
 	ColumnToggleID  string
 	ColumnIsEnabled string
+	ColumnType      string
 }{
 	TableName:       "feature_toggle",
 	ColumnToggleID:  "toggle_id",
 	ColumnIsEnabled: "is_enabled",
+	ColumnType:      "type",
 }

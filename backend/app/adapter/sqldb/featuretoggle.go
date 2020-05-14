@@ -19,17 +19,18 @@ type FeatureToggleSQL struct {
 // FindToggleByID fetches feature toggle from the database given toggle id.
 func (f FeatureToggleSQL) FindToggleByID(id string) (entity.Toggle, error) {
 	query := fmt.Sprintf(`
-SELECT "%s","%s" 
+SELECT "%s","%s", "%s"
 FROM "%s"
 WHERE "%s"=$1;`,
 		table.FeatureToggle.ColumnToggleID,
 		table.FeatureToggle.ColumnIsEnabled,
+		table.FeatureToggle.ColumnType,
 		table.FeatureToggle.TableName,
 		table.FeatureToggle.ColumnToggleID,
 	)
 
 	toggle := entity.Toggle{}
-	err := f.db.QueryRow(query, id).Scan(&toggle.ID, &toggle.IsEnabled)
+	err := f.db.QueryRow(query, id).Scan(&toggle.ID, &toggle.IsEnabled, &toggle.Type)
 	return toggle, err
 }
 

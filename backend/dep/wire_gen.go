@@ -29,6 +29,8 @@ import (
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
@@ -127,7 +129,10 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
 	featureToggleSQL := sqldb.NewFeatureToggleSQL(sqlDB)
-	decisionMakerFactory := provider.NewFeatureDecisionMakerFactorySwitch(deployment, featureToggleSQL)
+	userRoleSQL := sqldb.NewUserRoleSQL(sqlDB)
+	rbacRBAC := rbac.NewRBAC(userRoleSQL)
+	authorizerAuthorizer := authorizer.NewAuthorizer(rbacRBAC)
+	decisionMakerFactory := provider.NewFeatureDecisionMakerFactorySwitch(deployment, featureToggleSQL, authorizerAuthorizer)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
 	factory := sso.NewFactory(authenticator)
@@ -149,14 +154,16 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	googleSSOSql := sqldb.NewGoogleSSOSql(sqlDB, loggerLogger)
 	googleAccountLinker := provider.NewGoogleAccountLinker(accountLinkerFactory, googleSSOSql)
 	googleSingleSignOn := provider.NewGoogleSSO(factory, googleIdentityProvider, googleAccount, googleAccountLinker)
-	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticator)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
 }
 
 // wire.go:
 
-var authSet = wire.NewSet(provider.NewJwtGo, provider.NewAuthenticator)
+var authenticatorSet = wire.NewSet(provider.NewJwtGo, provider.NewAuthenticator)
+
+var authorizerSet = wire.NewSet(wire.Bind(new(repository.UserRole), new(sqldb.UserRoleSQL)), sqldb.NewUserRoleSQL, rbac.NewRBAC, authorizer.NewAuthorizer)
 
 var observabilitySet = wire.NewSet(wire.Bind(new(io.Output), new(io.StdOut)), wire.Bind(new(runtime.Runtime), new(runtime.Program)), wire.Bind(new(metrics.Metrics), new(metrics.DataDog)), wire.Bind(new(analytics.Analytics), new(analytics.Segment)), wire.Bind(new(network.Network), new(network.Proxy)), io.NewStdOut, provider.NewEntryRepositorySwitch, provider.NewLogger, runtime.NewProgram, provider.NewDataDogMetrics, provider.NewSegment, network.NewProxy, request.NewClient, request.NewInstrumentationFactory)
 
