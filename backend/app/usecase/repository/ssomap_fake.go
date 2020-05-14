@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 )
 
 var _ SSOMap = (*SSOMapFake)(nil)
@@ -17,7 +16,6 @@ type SSOMapFake struct {
 // user.
 func (s SSOMapFake) GetShortUserID(ssoUserID string) (string, error) {
 	for idx, currSSOUserID := range s.ssoUserIDs {
-		fmt.Println(currSSOUserID)
 		if currSSOUserID == ssoUserID {
 			return s.userIDs[idx], nil
 		}

@@ -73,7 +73,7 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 	}
 }
 
-func TestLinker_LinkAccount(t *testing.T) {
+func TestLinker_CreateAndLinkAccount(t *testing.T) {
 	testCases := []struct {
 		name              string
 		key               string
