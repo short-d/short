@@ -11,7 +11,7 @@ import (
 
 var _ repository.SSOMap = (*FacebookSSOSql)(nil)
 
-// FacebookSSOSql accesses mapping between Facebook and Short accounts from the
+// FacebookSSOSql accesses mapping between Facebook and Short accounts in
 // SQL database.
 type FacebookSSOSql struct {
 	db     *sql.DB
@@ -68,7 +68,7 @@ WHERE "%s"=$1;
 	return false, err
 }
 
-// CreateMapping creates mapping between user's Facebook and Short accounts in the
+// CreateMapping creates links user's Facebook and Short accounts in the
 // database.
 func (g FacebookSSOSql) CreateMapping(ssoUserID string, userID string) error {
 	statement := fmt.Sprintf(`

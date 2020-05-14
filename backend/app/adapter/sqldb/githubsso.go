@@ -11,7 +11,7 @@ import (
 
 var _ repository.SSOMap = (*GithubSSOSql)(nil)
 
-// GithubSSOSql accesses mapping between Github and Short accounts from the
+// GithubSSOSql accesses mapping between Github and Short accounts in the
 // SQL database.
 type GithubSSOSql struct {
 	db     *sql.DB

@@ -11,7 +11,7 @@ import (
 
 var _ repository.SSOMap = (*GoogleSSOSql)(nil)
 
-// GoogleSSOSql accesses mapping between Google and Short accounts from the
+// GoogleSSOSql accesses mapping between Google and Short accounts in the
 // SQL database.
 type GoogleSSOSql struct {
 	db     *sql.DB
@@ -68,7 +68,7 @@ WHERE "%s"=$1;
 	return false, err
 }
 
-// CreateMapping creates mapping between user's Google and Short accounts in the
+// CreateMapping creates links user's Google and Short accounts in the
 // database.
 func (g GoogleSSOSql) CreateMapping(ssoUserID string, userID string) error {
 	statement := fmt.Sprintf(`
