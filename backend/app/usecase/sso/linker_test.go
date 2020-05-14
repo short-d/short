@@ -15,19 +15,19 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name             string
-		keys             []string
-		users            []entity.User
-		mappingUsers     []entity.User
-		mappingSSOUsers  []entity.SSOUser
-		ssoUser          entity.SSOUser
-		expectedIsLinked bool
+		name              string
+		keys              []string
+		users             []entity.User
+		mappingUserIDs    []string
+		mappingSSOUserIDs []string
+		ssoUser           entity.SSOUser
+		expectedIsLinked  bool
 	}{
 		{
-			name:            "account not linked",
-			keys:            []string{},
-			mappingUsers:    []entity.User{},
-			mappingSSOUsers: []entity.SSOUser{},
+			name:              "account not linked",
+			keys:              []string{},
+			mappingUserIDs:    []string{},
+			mappingSSOUserIDs: []string{},
 			ssoUser: entity.SSOUser{
 				ID:    "alpha",
 				Email: "alpha@example.com",
@@ -38,19 +38,11 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 		{
 			name: "account already linked",
 			keys: []string{},
-			mappingUsers: []entity.User{
-				{
-					ID:    "beta",
-					Name:  "Beta",
-					Email: "beta@example.com",
-				},
+			mappingUserIDs: []string{
+				"beta",
 			},
-			mappingSSOUsers: []entity.SSOUser{
-				{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-					Name:  "Alpha User",
-				},
+			mappingSSOUserIDs: []string{
+				"alpha",
 			},
 			ssoUser: entity.SSOUser{
 				ID:    "alpha",
@@ -70,7 +62,7 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			userRepo := repository.NewUserFake([]entity.User{})
 			linkerFactory := NewAccountLinkerFactory(keyGen, &userRepo)
-			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUsers, testCase.mappingUsers)
+			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUserIDs, testCase.mappingUserIDs)
 			assert.Equal(t, nil, err)
 
 			linker := linkerFactory.NewAccountLinker(&ssoMap)
@@ -83,20 +75,20 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 
 func TestLinker_LinkAccount(t *testing.T) {
 	testCases := []struct {
-		name            string
-		key             string
-		mappingUsers    []entity.User
-		mappingSSOUsers []entity.SSOUser
-		users           []entity.User
-		ssoUser         entity.SSOUser
-		user            entity.User
-		expectedIDExist bool
+		name              string
+		key               string
+		mappingUserIDs    []string
+		mappingSSOUserIDs []string
+		users             []entity.User
+		ssoUser           entity.SSOUser
+		user              entity.User
+		expectedIDExist   bool
 	}{
 		{
-			name:            "account exists not linked",
-			key:             "alpha",
-			mappingUsers:    []entity.User{},
-			mappingSSOUsers: []entity.SSOUser{},
+			name:              "account exists not linked",
+			key:               "alpha",
+			mappingUserIDs:    []string{},
+			mappingSSOUserIDs: []string{},
 			users: []entity.User{
 				{
 					ID:    "alpha",
@@ -114,11 +106,11 @@ func TestLinker_LinkAccount(t *testing.T) {
 			expectedIDExist: false,
 		},
 		{
-			name:            "create new account",
-			key:             "alpha",
-			mappingUsers:    []entity.User{},
-			mappingSSOUsers: []entity.SSOUser{},
-			users:           []entity.User{},
+			name:              "create new account",
+			key:               "alpha",
+			mappingUserIDs:    []string{},
+			mappingSSOUserIDs: []string{},
+			users:             []entity.User{},
 			ssoUser: entity.SSOUser{
 				ID:    "gama",
 				Email: "alpha@example.com",
@@ -139,7 +131,7 @@ func TestLinker_LinkAccount(t *testing.T) {
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			userRepo := repository.NewUserFake(testCase.users)
 			linkerFactory := NewAccountLinkerFactory(keyGen, &userRepo)
-			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUsers, testCase.mappingUsers)
+			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUserIDs, testCase.mappingUserIDs)
 			assert.Equal(t, nil, err)
 
 			linker := linkerFactory.NewAccountLinker(&ssoMap)

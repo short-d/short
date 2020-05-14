@@ -2,34 +2,34 @@ package repository
 
 import (
 	"errors"
-
-	"github.com/short-d/short/backend/app/entity"
+	"fmt"
 )
 
 var _ SSOMap = (*SSOMapFake)(nil)
 
 // SSOMapFake represents in memory implementation of SSOMap repository.
 type SSOMapFake struct {
-	ssoUsers []entity.SSOUser
-	users    []entity.User
+	ssoUserIDs []string
+	userIDs    []string
 }
 
 // GetShortUserID retrieves the internal user ID that is linked to the external
 // user.
 func (s SSOMapFake) GetShortUserID(ssoUserID string) (string, error) {
-	for idx, currSSOUser := range s.ssoUsers {
-		if currSSOUser.ID == ssoUserID {
-			return s.users[idx].ID, nil
+	for idx, currSSOUserID := range s.ssoUserIDs {
+		fmt.Println(currSSOUserID)
+		if currSSOUserID == ssoUserID {
+			return s.userIDs[idx], nil
 		}
 	}
-	return "", ErrEntryNotFound("user not found")
+	return "", ErrEntryNotFound("user ID not found")
 }
 
 // IsSSOUserExist checks whether a external user is linked to any internal
 // user.
 func (s SSOMapFake) IsSSOUserExist(ssoUserID string) (bool, error) {
-	for _, currSSOUser := range s.ssoUsers {
-		if currSSOUser.ID == ssoUserID {
+	for _, currSSOUserID := range s.ssoUserIDs {
+		if currSSOUserID == ssoUserID {
 			return true, nil
 		}
 	}
@@ -39,12 +39,12 @@ func (s SSOMapFake) IsSSOUserExist(ssoUserID string) (bool, error) {
 // IsRelationExist checks whether a given external user is linked to a given
 // internal user.
 func (s SSOMapFake) IsRelationExist(ssoUserID string, userID string) bool {
-	for idx, currSSOUser := range s.ssoUsers {
-		if currSSOUser.ID != ssoUserID {
+	for idx, currSSOUserID := range s.ssoUserIDs {
+		if currSSOUserID != ssoUserID {
 			continue
 		}
 
-		if s.users[idx].ID == userID {
+		if s.userIDs[idx] == userID {
 			return true
 		}
 	}
@@ -57,20 +57,20 @@ func (s *SSOMapFake) CreateMapping(ssoUserID string, userID string) error {
 	if isExist {
 		return nil
 	}
-	s.users = append(s.users, entity.User{ID: userID})
-	s.ssoUsers = append(s.ssoUsers, entity.SSOUser{ID: ssoUserID})
+	s.userIDs = append(s.userIDs, userID)
+	s.ssoUserIDs = append(s.ssoUserIDs, ssoUserID)
 	return nil
 }
 
 // NewsSSOMapFake creates in memory implementation of SSOMapFake repository.
 func NewsSSOMapFake(
-	ssoUsers []entity.SSOUser,
-	users []entity.User) (SSOMapFake, error) {
-	if len(ssoUsers) != len(users) {
+	ssoUserIDs []string,
+	userIDs []string) (SSOMapFake, error) {
+	if len(ssoUserIDs) != len(userIDs) {
 		return SSOMapFake{}, errors.New("account length does not match")
 	}
 	return SSOMapFake{
-		ssoUsers: ssoUsers,
-		users:    users,
+		ssoUserIDs: ssoUserIDs,
+		userIDs:    userIDs,
 	}, nil
 }
