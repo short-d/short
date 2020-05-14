@@ -60,7 +60,7 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 			t.Parallel()
 
 			identityProvider := NewIdentityProviderFake("http://localhost/sign-in", "")
-			profileService := account.NewSSOAccountFake(testCase.ssoUser)
+			profileService := NewAccountFake(testCase.ssoUser)
 			fakeUserRepo := repository.NewUserFake(testCase.users)
 			tm := timer.NewStub(time.Now())
 			accountProvider := account.NewProvider(&fakeUserRepo, tm)
