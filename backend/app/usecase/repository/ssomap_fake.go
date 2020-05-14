@@ -14,6 +14,8 @@ type SSOMapFake struct {
 	users    []entity.User
 }
 
+// GetShortUserID retrieves the internal user ID that is linked to the external
+// user.
 func (s SSOMapFake) GetShortUserID(ssoUserID string) (string, error) {
 	for idx, currSSOUser := range s.ssoUsers {
 		if currSSOUser.ID == ssoUserID {

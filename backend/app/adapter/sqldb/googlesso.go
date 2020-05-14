@@ -11,13 +11,15 @@ import (
 
 var _ repository.SSOMap = (*GoogleSSOSql)(nil)
 
-// GoogleSSOMapSql accesses mapping between Google and Short accounts from the
+// GoogleSSOSql accesses mapping between Google and Short accounts from the
 // SQL database.
 type GoogleSSOSql struct {
 	db     *sql.DB
 	logger logger.Logger
 }
 
+// GetShortUserID retrieves the internal user ID that is linked to the user's
+// Google account.
 func (g GoogleSSOSql) GetShortUserID(ssoUserID string) (string, error) {
 	query := fmt.Sprintf(`
 SELECT "%s"

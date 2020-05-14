@@ -11,13 +11,15 @@ import (
 
 var _ repository.SSOMap = (*FacebookSSOSql)(nil)
 
-// FacebookSSOMapSql accesses mapping between Facebook and Short accounts from the
+// FacebookSSOSql accesses mapping between Facebook and Short accounts from the
 // SQL database.
 type FacebookSSOSql struct {
 	db     *sql.DB
 	logger logger.Logger
 }
 
+// GetShortUserID retrieves the internal user ID that is linked to the user's
+// Facebook account.
 func (g FacebookSSOSql) GetShortUserID(ssoUserID string) (string, error) {
 	query := fmt.Sprintf(`
 SELECT "%s"

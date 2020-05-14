@@ -11,13 +11,15 @@ import (
 
 var _ repository.SSOMap = (*GithubSSOSql)(nil)
 
-// GithubSSOMapSql accesses mapping between Github and Short accounts from the
+// GithubSSOSql accesses mapping between Github and Short accounts from the
 // SQL database.
 type GithubSSOSql struct {
 	db     *sql.DB
 	logger logger.Logger
 }
 
+// GetShortUserID retrieves the internal user ID that is linked to the user's
+// Github account.
 func (g GithubSSOSql) GetShortUserID(ssoUserID string) (string, error) {
 	query := fmt.Sprintf(`
 SELECT "%s"
