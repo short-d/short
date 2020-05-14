@@ -1,4 +1,4 @@
-package account
+package sso
 
 import (
 	"github.com/short-d/short/backend/app/entity"

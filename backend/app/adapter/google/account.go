@@ -6,12 +6,12 @@ import (
 
 	"github.com/short-d/app/fw/webreq"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/account"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
 const userInfoAPI = "https://openidconnect.googleapis.com/v1/userinfo"
 
-var _ account.SSOAccount = (*Account)(nil)
+var _ sso.Account = (*Account)(nil)
 
 // Account accesses user's account data through Google API.
 type Account struct {

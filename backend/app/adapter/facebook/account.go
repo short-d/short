@@ -6,12 +6,12 @@ import (
 
 	"github.com/short-d/app/fw/webreq"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/account"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
 const facebookAPI = "https://graph.facebook.com/me"
 
-var _ account.SSOAccount = (*Account)(nil)
+var _ sso.Account = (*Account)(nil)
 
 // Account accesses user's account data through FB Graph API.
 type Account struct {

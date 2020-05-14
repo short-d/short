@@ -1,6 +1,6 @@
 // +build !integration all
 
-package account
+package sso
 
 import (
 	"testing"

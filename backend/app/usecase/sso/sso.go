@@ -12,7 +12,7 @@ import (
 // Github, Facebook, and Google.
 type SingleSignOn struct {
 	identityProvider IdentityProvider
-	ssoAccount       account.SSOAccount
+	account          Account
 	accountProvider  account.Provider
 	authenticator    authenticator.Authenticator
 }
@@ -29,7 +29,7 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 		return "", err
 	}
 
-	ssoUser, err := o.ssoAccount.GetSingleSignOnUser(accessToken)
+	ssoUser, err := o.account.GetSingleSignOnUser(accessToken)
 	if err != nil {
 		return "", err
 	}
@@ -64,13 +64,13 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 // identity provider.
 func NewSingleSignOn(
 	identityProvider IdentityProvider,
-	ssoAccount account.SSOAccount,
+	account Account,
 	accountProvider account.Provider,
 	authenticator authenticator.Authenticator,
 ) SingleSignOn {
 	return SingleSignOn{
 		identityProvider: identityProvider,
-		ssoAccount:       ssoAccount,
+		account:          account,
 		accountProvider:  accountProvider,
 		authenticator:    authenticator,
 	}
