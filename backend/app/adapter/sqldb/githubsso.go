@@ -68,7 +68,7 @@ WHERE "%s"=$1;
 	return false, err
 }
 
-// CreateMapping creates mapping between user's Github and Short accounts in the
+// CreateMapping links user's Github and Short accounts in the
 // database.
 func (g GithubSSOSql) CreateMapping(ssoUserID string, userID string) error {
 	statement := fmt.Sprintf(`
