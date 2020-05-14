@@ -136,7 +136,6 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 					assert.Equal(t, testCase.redirectURI, req.URL.Query().Get("redirect_uri"))
 					assert.Equal(t, "POST", req.Method)
 					assert.Equal(t, "application/json", req.Header.Get("Accept"))
-					assert.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
 
 					return testCase.httpResponse, testCase.httpErr
 				})

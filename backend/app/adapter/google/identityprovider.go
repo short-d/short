@@ -67,7 +67,7 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 		return "", err
 	}
 
-	query := u.Query()
+	query := url.Values{}
 	query.Set("code", authorizationCode)
 	query.Set("client_id", clientID)
 	query.Set("client_secret", clientSecret)
@@ -75,19 +75,8 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 	query.Set("grant_type", grantType)
 	u.RawQuery = query.Encode()
 
-	body := url.Values{}
-	body.Set("code", authorizationCode)
-	body.Set("client_id", clientID)
-	body.Set("client_secret", clientSecret)
-	body.Set("redirect_uri", redirectURI)
-	body.Set("grant_type", grantType)
-
-	headers := map[string]string{
-		"Content-Type": "application/x-www-form-urlencoded",
-	}
-
 	apiRes := accessTokenResponse{}
-	err = g.httpRequest.JSON(http.MethodPost, u.String(), headers, body.Encode(), &apiRes)
+	err = g.httpRequest.JSON(http.MethodPost, u.String(), map[string]string{}, "", &apiRes)
 	if err != nil {
 		return "", err
 	}

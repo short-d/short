@@ -19,7 +19,7 @@ INSERT INTO %s (%s, %s)
 VALUES ($1, $2)`,
 	table.UserURLRelation.TableName,
 	table.UserURLRelation.ColumnURLAlias,
-	table.UserURLRelation.ColumnUserEmail,
+	table.UserURLRelation.ColumnUserID,
 )
 
 type userURLRelationTableRow struct {
