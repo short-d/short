@@ -43,9 +43,11 @@ import {
 import { AnalyticsService } from '../../service/Analytics.service';
 import { Icon, IconID } from '../ui/Icon';
 import { Change } from '../../entity/Change';
+import { IFeatureDecisionService } from '../../service/feature-decision/FeatureDecision.service';
 
 interface Props {
   uiFactory: UIFactory;
+  featureDecisionService: IFeatureDecisionService;
   urlService: UrlService;
   authService: AuthService;
   clipboardService: IClipboardService;
@@ -108,6 +110,15 @@ export class HomePage extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
+    this.autoShowChangeLog();
+  }
+
+  autoShowChangeLog = async () => {
+    const showChangeLog = this.props.featureDecisionService.includeViewChangeLogButton();
+    if (!showChangeLog) {
+      return;
+    }
+
     try {
       const changeLog = await this.props.changeLogService.getChangeLog();
       this.setState({ changeLog: changeLog.changes }, async () => {
@@ -122,7 +133,7 @@ export class HomePage extends Component<Props, State> {
       const { changeLogErr } = err;
       this.props.store.dispatch(raiseGetChangeLogError(changeLogErr));
     }
-  }
+  };
 
   async setPromoDisplayStatus() {
     const shouldShowPromo =

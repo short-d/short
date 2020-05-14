@@ -100,6 +100,7 @@ export class UIFactory {
     return (
       <HomePage
         uiFactory={this}
+        featureDecisionService={this.featureDecisionService}
         authService={this.authService}
         clipboardService={this.clipboardService}
         extensionService={this.extensionService}

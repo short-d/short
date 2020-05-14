@@ -1,14 +1,10 @@
 import { AuthService } from './Auth.service';
-import { Err } from './Error.service';
 import { EnvService } from './Env.service';
 
-import {
-  GraphQLService,
-  IGraphQLError,
-  IGraphQLRequestError
-} from './GraphQL.service';
+import { GraphQLService, IGraphQLRequestError } from './GraphQL.service';
 import { ChangeLog } from '../entity/ChangeLog';
 import { Change } from '../entity/Change';
+import { getErrorCodes } from './GraphQLError';
 
 interface IChangeLogGraphQLQuery {
   authQuery: IGraphQLAuthQuery;
@@ -69,7 +65,7 @@ export class ChangeLogGraphQLApi {
           resolve(this.parseChangeLog(changeLog));
         })
         .catch((err: IGraphQLRequestError) => {
-          const errCodes = this.getErrorCodes(err);
+          const errCodes = getErrorCodes(err);
           reject(errCodes[0]);
         });
     });
@@ -89,26 +85,5 @@ export class ChangeLogGraphQLApi {
       summaryMarkdown: change.summaryMarkdown,
       releasedAt: change.releasedAt
     };
-  }
-
-  private getErrorCodes(errors: IGraphQLRequestError): string[] {
-    const { networkError, graphQLErrors } = errors;
-    if (networkError) {
-      return [Err.NetworkError];
-    }
-    if (!graphQLErrors || graphQLErrors.length === 0) {
-      return [Err.Unknown];
-    }
-    return graphQLErrors.map(this.gqlErrorToCode);
-  }
-
-  private gqlErrorToCode(graphQLError: IGraphQLError): string {
-    console.log(graphQLError);
-    switch (graphQLError.extensions.code) {
-      case Err.Unauthenticated:
-        return Err.Unauthenticated;
-      default:
-        return Err.Unknown;
-    }
   }
 }
