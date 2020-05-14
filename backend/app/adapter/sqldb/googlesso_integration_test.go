@@ -14,29 +14,29 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 )
 
-type githubSSOTableRow struct {
-	githubUserID string
+type GoogleSSOTableRow struct {
+	googleUserID string
 	shortUserID  string
 }
 
-func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
+func TestGoogleSSOSql_IsSSOUserExist(t *testing.T) {
 	testCases := []struct {
 		name            string
-		tableRows       []githubSSOTableRow
+		tableRows       []GoogleSSOTableRow
 		ssoUserID       string
 		expectedIsExist bool
 	}{
 		{
 			name:            "sso user not found",
-			tableRows:       []githubSSOTableRow{},
+			tableRows:       []GoogleSSOTableRow{},
 			ssoUserID:       "220uFicCJj",
 			expectedIsExist: false,
 		},
 		{
 			name: "sso user exists",
-			tableRows: []githubSSOTableRow{
+			tableRows: []GoogleSSOTableRow{
 				{
-					githubUserID: "220uFicCJj",
+					googleUserID: "220uFicCJj",
 					shortUserID:  "alpha",
 				},
 			},
@@ -53,14 +53,14 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					insertGithubSSOTableRows(t, sqlDB, testCase.tableRows)
+					insertGoogleSSOTableRows(t, sqlDB, testCase.tableRows)
 
 					entryRepo := logger.NewEntryRepoFake()
 					lg, err := logger.NewFake(logger.LogOff, &entryRepo)
 					assert.Equal(t, nil, err)
 
-					githubSSORepo := sqldb.NewGithubSSOSql(sqlDB, lg)
-					gotIsExist, err := githubSSORepo.IsSSOUserExist(testCase.ssoUserID)
+					GoogleSSORepo := sqldb.NewGoogleSSOSql(sqlDB, lg)
+					gotIsExist, err := GoogleSSORepo.IsSSOUserExist(testCase.ssoUserID)
 
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expectedIsExist, gotIsExist)
@@ -69,18 +69,18 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 	}
 }
 
-func TestGithubSSOSql_CreateMapping(t *testing.T) {
+func TestGoogleSSOSql_CreateMapping(t *testing.T) {
 	testCases := []struct {
 		name        string
-		tableRows   []githubSSOTableRow
+		tableRows   []GoogleSSOTableRow
 		ssoUserID   string
 		shortUserID string
 		hasErr      bool
 	}{
 		{
 			name: "mapping exists",
-			tableRows: []githubSSOTableRow{
-				{githubUserID: "long_user_id", shortUserID: "short"},
+			tableRows: []GoogleSSOTableRow{
+				{googleUserID: "long_user_id", shortUserID: "short"},
 			},
 			ssoUserID:   "long_user_id",
 			shortUserID: "short",
@@ -88,8 +88,8 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 		},
 		{
 			name: "only SSO user ID exists",
-			tableRows: []githubSSOTableRow{
-				{githubUserID: "long_user_id", shortUserID: "short"},
+			tableRows: []GoogleSSOTableRow{
+				{googleUserID: "long_user_id", shortUserID: "short"},
 			},
 			ssoUserID:   "long_user_id",
 			shortUserID: "alpha",
@@ -97,8 +97,8 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 		},
 		{
 			name: "only Short user ID exists",
-			tableRows: []githubSSOTableRow{
-				{githubUserID: "long_user_id", shortUserID: "short"},
+			tableRows: []GoogleSSOTableRow{
+				{googleUserID: "long_user_id", shortUserID: "short"},
 			},
 			ssoUserID:   "another_user_id",
 			shortUserID: "short",
@@ -106,8 +106,8 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 		},
 		{
 			name: "neither SSO user ID nor Short user ID exists",
-			tableRows: []githubSSOTableRow{
-				{githubUserID: "long_user_id", shortUserID: "short"},
+			tableRows: []GoogleSSOTableRow{
+				{googleUserID: "long_user_id", shortUserID: "short"},
 			},
 			ssoUserID:   "another_user_id",
 			shortUserID: "alpha",
@@ -123,14 +123,14 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					insertGithubSSOTableRows(t, sqlDB, testCase.tableRows)
+					insertGoogleSSOTableRows(t, sqlDB, testCase.tableRows)
 
 					entryRepo := logger.NewEntryRepoFake()
 					lg, err := logger.NewFake(logger.LogOff, &entryRepo)
 					assert.Equal(t, nil, err)
 
-					githubSSORepo := sqldb.NewGithubSSOSql(sqlDB, lg)
-					err = githubSSORepo.CreateMapping(testCase.ssoUserID, testCase.shortUserID)
+					GoogleSSORepo := sqldb.NewGoogleSSOSql(sqlDB, lg)
+					err = GoogleSSORepo.CreateMapping(testCase.ssoUserID, testCase.shortUserID)
 					assert.Equal(t, nil, err)
 
 					if testCase.hasErr {
@@ -143,19 +143,19 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 	}
 }
 
-var insertGithubSSORowSQL = fmt.Sprintf(`
+var insertGoogleSSORowSQL = fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s")
 VALUES ($1, $2)`,
-	table.GithubSSO.TableName,
-	table.GithubSSO.ColumnGithubUserID,
-	table.GithubSSO.ColumnShortUserID,
+	table.GoogleSSO.TableName,
+	table.GoogleSSO.ColumnGoogleUserID,
+	table.GoogleSSO.ColumnShortUserID,
 )
 
-func insertGithubSSOTableRows(t *testing.T, sqlDB *sql.DB, rows []githubSSOTableRow) {
+func insertGoogleSSOTableRows(t *testing.T, sqlDB *sql.DB, rows []GoogleSSOTableRow) {
 	for _, row := range rows {
 		_, err := sqlDB.Exec(
-			insertGithubSSORowSQL,
-			row.githubUserID,
+			insertGoogleSSORowSQL,
+			row.googleUserID,
 			row.shortUserID,
 		)
 		assert.Equal(t, nil, err)
