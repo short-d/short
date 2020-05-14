@@ -44,12 +44,12 @@ export class ChangeLogModal extends Component<Props, State> {
     return (
       <div className={'changelog'}>
         <ul>
-          {changeLog.map((update: Change) => (
-            <li key={update.releasedAt}>
-              <div className={'title'}>{update.title}</div>
-              <div className={'summary'}>{update.summaryMarkdown}</div>
+          {changeLog.map((change: Change) => (
+            <li key={change.releasedAt}>
+              <div className={'title'}>{change.title}</div>
+              <div className={'summary'}>{change.summaryMarkdown}</div>
               <div className={'released-date'}>
-                {moment(update.releasedAt).fromNow()}
+                {moment(change.releasedAt).fromNow()}
               </div>
             </li>
           ))}

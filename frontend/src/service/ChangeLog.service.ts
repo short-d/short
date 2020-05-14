@@ -1,6 +1,7 @@
 import { ChangeLog } from '../entity/ChangeLog';
 import { ChangeLogGraphQLApi } from './ChangeLogGraphQL.api';
 import { ErrorService, Err } from './Error.service';
+import { Change } from '../entity/Change';
 
 export class ChangeLogService {
   constructor(
@@ -12,12 +13,7 @@ export class ChangeLogService {
     return new Promise(async (resolve, reject) => {
       try {
         const changeLog = await this.changeLogGraphQLApi.getChangeLog();
-        if (!changeLog.changes) {
-          resolve(false);
-          return;
-        }
-
-        if (!changeLog.changes[0]) {
+        if (!changeLog.changes || changeLog.changes.length < 1) {
           resolve(false);
           return;
         }
@@ -27,14 +23,13 @@ export class ChangeLogService {
           return;
         }
 
-        for (let i = 0; i < changeLog.changes.length; i++) {
-          if (
-            new Date(changeLog.lastViewedAt).getTime() <
-            new Date(changeLog.changes[i].releasedAt).getTime()
-          ) {
-            resolve(true);
-            return;
-          }
+        changeLog.changes = this.sortChanges(changeLog.changes);
+        if (
+          new Date(changeLog.lastViewedAt).getTime() <
+          new Date(changeLog.changes[0].releasedAt).getTime()
+        ) {
+          resolve(true);
+          return;
         }
 
         resolve(false);
@@ -55,6 +50,7 @@ export class ChangeLogService {
     return new Promise(async (resolve, reject) => {
       try {
         const changeLog = await this.changeLogGraphQLApi.getChangeLog();
+        changeLog.changes = this.sortChanges(changeLog.changes);
         resolve(changeLog);
       } catch (errCode) {
         reject({
@@ -62,5 +58,15 @@ export class ChangeLogService {
         });
       }
     });
+  }
+
+  sortChanges(changes: Change[]) {
+    changes.sort((a: Change, b: Change) => {
+      return (
+        new Date(b.releasedAt).getTime() - new Date(a.releasedAt).getTime()
+      );
+    });
+
+    return changes;
   }
 }

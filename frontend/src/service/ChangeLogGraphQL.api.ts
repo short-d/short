@@ -103,6 +103,7 @@ export class ChangeLogGraphQLApi {
   }
 
   private gqlErrorToCode(graphQLError: IGraphQLError): string {
+    console.log(graphQLError);
     switch (graphQLError.extensions.code) {
       case Err.Unauthenticated:
         return Err.Unauthenticated;
