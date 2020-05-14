@@ -68,16 +68,12 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 
 			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			assert.Equal(t, nil, err)
-			userRepo := repository.NewUserFake(testCase.users)
-			accountMappingRepo, err :=
-				repository.NewAccountMappingFake(
-					testCase.mappingSSOUsers,
-					testCase.mappingUsers,
-				)
+			userRepo := repository.NewUserFake([]entity.User{})
+			linkerFactory := NewAccountLinkerFactory(keyGen, &userRepo)
+			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUsers, testCase.mappingUsers)
 			assert.Equal(t, nil, err)
 
-			linker := NewLinker(keyGen, &userRepo, &accountMappingRepo)
+			linker := linkerFactory.NewAccountLinker(&ssoMap)
 			isLinked, err := linker.IsAccountLinked(testCase.ssoUser)
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedIsLinked, isLinked)
@@ -97,37 +93,13 @@ func TestLinker_LinkAccount(t *testing.T) {
 		expectedIDExist bool
 	}{
 		{
-			name: "account already linked",
-			mappingUsers: []entity.User{
-				{
-					ID: "alpha",
-				},
-			},
-			mappingSSOUsers: []entity.SSOUser{
-				{
-					ID: "gama",
-				},
-			},
-			users: []entity.User{
-				{
-					ID: "alpha",
-				},
-			},
-			ssoUser: entity.SSOUser{
-				ID: "gama",
-			},
-			user: entity.User{
-				ID: "alpha",
-			},
-			expectedIDExist: true,
-		},
-		{
 			name:            "account exists not linked",
 			key:             "alpha",
 			mappingUsers:    []entity.User{},
 			mappingSSOUsers: []entity.SSOUser{},
 			users: []entity.User{
 				{
+					ID:    "alpha",
 					Email: "alpha@example.com",
 				},
 			},
@@ -161,26 +133,28 @@ func TestLinker_LinkAccount(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{"key", "key2"})
+			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{
+				keygen.Key(testCase.key),
+			})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			assert.Equal(t, nil, err)
-			fakeUserRepo := repository.NewUserFake(testCase.users)
-			accountMappingRepo, err :=
-				repository.NewAccountMappingFake(
-					testCase.mappingSSOUsers,
-					testCase.mappingUsers,
-				)
+			userRepo := repository.NewUserFake(testCase.users)
+			linkerFactory := NewAccountLinkerFactory(keyGen, &userRepo)
+			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUsers, testCase.mappingUsers)
 			assert.Equal(t, nil, err)
 
-			linker := NewLinker(keyGen, &fakeUserRepo, &accountMappingRepo)
+			linker := linkerFactory.NewAccountLinker(&ssoMap)
+
+			gotIsRelationExist := ssoMap.IsRelationExist(testCase.ssoUser.ID, testCase.user.ID)
+			assert.Equal(t, testCase.expectedIDExist, gotIsRelationExist)
+
 			err = linker.CreateAndLinkAccount(testCase.ssoUser)
 			assert.Equal(t, nil, err)
 
-			gotIsRelationExist := accountMappingRepo.IsRelationExist(testCase.ssoUser, testCase.user)
-			assert.Equal(t, testCase.expectedIDExist, gotIsRelationExist)
+			gotIsRelationExist = ssoMap.IsRelationExist(testCase.ssoUser.ID, testCase.user.ID)
+			assert.Equal(t, true, gotIsRelationExist)
 
-			gotIsIDExist := fakeUserRepo.IsUserIDExist(testCase.user.ID)
-			assert.Equal(t, testCase.expectedIDExist, gotIsIDExist)
+			gotIsIDExist := userRepo.IsUserIDExist(testCase.user.ID)
+			assert.Equal(t, true, gotIsIDExist)
 		})
 	}
 }
