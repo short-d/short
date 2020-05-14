@@ -114,7 +114,7 @@ export class HomePage extends Component<Props, State> {
   }
 
   autoShowChangeLog = async () => {
-    const showChangeLog = this.props.featureDecisionService.includeViewChangeLogButton();
+    const showChangeLog = await this.props.featureDecisionService.includeViewChangeLogButton();
     if (!showChangeLog) {
       return;
     }
