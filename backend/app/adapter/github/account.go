@@ -1,6 +1,7 @@
 package github
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/short-d/app/fw/graphql"
@@ -44,6 +45,10 @@ query {
 	err := a.sendGraphQLRequest(accessToken, query, &profileResponse)
 	if err != nil {
 		return entity.SSOUser{}, err
+	}
+
+	if profileResponse.Viewer.ID == "" {
+		return entity.SSOUser{}, errors.New("user ID can't be empty")
 	}
 
 	return entity.SSOUser{

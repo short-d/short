@@ -15,19 +15,19 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name             string
-		keys             []string
-		users            []entity.User
-		mappingUsers     []entity.User
-		mappingSSOUsers  []entity.SSOUser
-		ssoUser          entity.SSOUser
-		expectedIsLinked bool
+		name              string
+		keys              []string
+		users             []entity.User
+		mappingUserIDs    []string
+		mappingSSOUserIDs []string
+		ssoUser           entity.SSOUser
+		expectedIsLinked  bool
 	}{
 		{
-			name:            "account not linked",
-			keys:            []string{},
-			mappingUsers:    []entity.User{},
-			mappingSSOUsers: []entity.SSOUser{},
+			name:              "account not linked",
+			keys:              []string{},
+			mappingUserIDs:    []string{},
+			mappingSSOUserIDs: []string{},
 			ssoUser: entity.SSOUser{
 				ID:    "alpha",
 				Email: "alpha@example.com",
@@ -38,19 +38,11 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 		{
 			name: "account already linked",
 			keys: []string{},
-			mappingUsers: []entity.User{
-				{
-					ID:    "beta",
-					Name:  "Beta",
-					Email: "beta@example.com",
-				},
+			mappingUserIDs: []string{
+				"beta",
 			},
-			mappingSSOUsers: []entity.SSOUser{
-				{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-					Name:  "Alpha User",
-				},
+			mappingSSOUserIDs: []string{
+				"alpha",
 			},
 			ssoUser: entity.SSOUser{
 				ID:    "alpha",
@@ -68,16 +60,12 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 
 			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			assert.Equal(t, nil, err)
-			userRepo := repository.NewUserFake(testCase.users)
-			accountMappingRepo, err :=
-				repository.NewAccountMappingFake(
-					testCase.mappingSSOUsers,
-					testCase.mappingUsers,
-				)
+			userRepo := repository.NewUserFake([]entity.User{})
+			linkerFactory := NewAccountLinkerFactory(keyGen, &userRepo)
+			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUserIDs, testCase.mappingUserIDs)
 			assert.Equal(t, nil, err)
 
-			linker := NewLinker(keyGen, &userRepo, &accountMappingRepo)
+			linker := linkerFactory.NewAccountLinker(&ssoMap)
 			isLinked, err := linker.IsAccountLinked(testCase.ssoUser)
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedIsLinked, isLinked)
@@ -85,49 +73,25 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 	}
 }
 
-func TestLinker_LinkAccount(t *testing.T) {
+func TestLinker_CreateAndLinkAccount(t *testing.T) {
 	testCases := []struct {
-		name            string
-		key             string
-		mappingUsers    []entity.User
-		mappingSSOUsers []entity.SSOUser
-		users           []entity.User
-		ssoUser         entity.SSOUser
-		user            entity.User
-		expectedIDExist bool
+		name              string
+		key               string
+		mappingUserIDs    []string
+		mappingSSOUserIDs []string
+		users             []entity.User
+		ssoUser           entity.SSOUser
+		user              entity.User
+		expectedIDExist   bool
 	}{
 		{
-			name: "account already linked",
-			mappingUsers: []entity.User{
-				{
-					ID: "alpha",
-				},
-			},
-			mappingSSOUsers: []entity.SSOUser{
-				{
-					ID: "gama",
-				},
-			},
+			name:              "account exists not linked",
+			key:               "alpha",
+			mappingUserIDs:    []string{},
+			mappingSSOUserIDs: []string{},
 			users: []entity.User{
 				{
-					ID: "alpha",
-				},
-			},
-			ssoUser: entity.SSOUser{
-				ID: "gama",
-			},
-			user: entity.User{
-				ID: "alpha",
-			},
-			expectedIDExist: true,
-		},
-		{
-			name:            "account exists not linked",
-			key:             "alpha",
-			mappingUsers:    []entity.User{},
-			mappingSSOUsers: []entity.SSOUser{},
-			users: []entity.User{
-				{
+					ID:    "alpha",
 					Email: "alpha@example.com",
 				},
 			},
@@ -142,11 +106,11 @@ func TestLinker_LinkAccount(t *testing.T) {
 			expectedIDExist: false,
 		},
 		{
-			name:            "create new account",
-			key:             "alpha",
-			mappingUsers:    []entity.User{},
-			mappingSSOUsers: []entity.SSOUser{},
-			users:           []entity.User{},
+			name:              "create new account",
+			key:               "alpha",
+			mappingUserIDs:    []string{},
+			mappingSSOUserIDs: []string{},
+			users:             []entity.User{},
 			ssoUser: entity.SSOUser{
 				ID:    "gama",
 				Email: "alpha@example.com",
@@ -161,26 +125,28 @@ func TestLinker_LinkAccount(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{"key", "key2"})
+			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{
+				keygen.Key(testCase.key),
+			})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			assert.Equal(t, nil, err)
-			fakeUserRepo := repository.NewUserFake(testCase.users)
-			accountMappingRepo, err :=
-				repository.NewAccountMappingFake(
-					testCase.mappingSSOUsers,
-					testCase.mappingUsers,
-				)
+			userRepo := repository.NewUserFake(testCase.users)
+			linkerFactory := NewAccountLinkerFactory(keyGen, &userRepo)
+			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUserIDs, testCase.mappingUserIDs)
 			assert.Equal(t, nil, err)
 
-			linker := NewLinker(keyGen, &fakeUserRepo, &accountMappingRepo)
+			linker := linkerFactory.NewAccountLinker(&ssoMap)
+
+			gotIsRelationExist := ssoMap.IsRelationExist(testCase.ssoUser.ID, testCase.user.ID)
+			assert.Equal(t, testCase.expectedIDExist, gotIsRelationExist)
+
 			err = linker.CreateAndLinkAccount(testCase.ssoUser)
 			assert.Equal(t, nil, err)
 
-			gotIsRelationExist := accountMappingRepo.IsRelationExist(testCase.ssoUser, testCase.user)
-			assert.Equal(t, testCase.expectedIDExist, gotIsRelationExist)
+			gotIsRelationExist = ssoMap.IsRelationExist(testCase.ssoUser.ID, testCase.user.ID)
+			assert.Equal(t, true, gotIsRelationExist)
 
-			gotIsIDExist := fakeUserRepo.IsUserIDExist(testCase.user.ID)
-			assert.Equal(t, testCase.expectedIDExist, gotIsIDExist)
+			gotIsIDExist := userRepo.IsUserIDExist(testCase.user.ID)
+			assert.Equal(t, true, gotIsIDExist)
 		})
 	}
 }

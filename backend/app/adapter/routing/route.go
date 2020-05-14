@@ -10,8 +10,6 @@ import (
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/routing/analytics"
-	"github.com/short-d/short/backend/app/usecase/account"
-	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
 	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/url"
@@ -23,31 +21,11 @@ func NewShort(
 	webFrontendURL string,
 	timer timer.Timer,
 	urlRetriever url.Retriever,
-	githubAPI github.API,
-	facebookAPI facebook.API,
-	googleAPI google.API,
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
-	auth authenticator.Authenticator,
-	accountProvider account.Provider,
+	githubSSO github.SingleSignOn,
+	facebookSSO facebook.SingleSignOn,
+	googleSSO google.SingleSignOn,
 ) []router.Route {
-	githubSignIn := sso.NewSingleSignOn(
-		githubAPI.IdentityProvider,
-		githubAPI.Account,
-		accountProvider,
-		auth,
-	)
-	facebookSignIn := sso.NewSingleSignOn(
-		facebookAPI.IdentityProvider,
-		facebookAPI.Account,
-		accountProvider,
-		auth,
-	)
-	googleSignIn := sso.NewSingleSignOn(
-		googleAPI.IdentityProvider,
-		googleAPI.Account,
-		accountProvider,
-		auth,
-	)
 	frontendURL, err := netURL.Parse(webFrontendURL)
 	if err != nil {
 		panic(err)
@@ -57,8 +35,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
 			Handle: NewSSOSignIn(
-				githubAPI.IdentityProvider,
-				auth,
+				sso.SingleSignOn(githubSSO),
 				webFrontendURL,
 			),
 		},
@@ -66,7 +43,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/github/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				githubSignIn,
+				sso.SingleSignOn(githubSSO),
 				*frontendURL,
 			),
 		},
@@ -74,8 +51,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in",
 			Handle: NewSSOSignIn(
-				facebookAPI.IdentityProvider,
-				auth,
+				sso.SingleSignOn(facebookSSO),
 				webFrontendURL,
 			),
 		},
@@ -83,7 +59,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				facebookSignIn,
+				sso.SingleSignOn(facebookSSO),
 				*frontendURL,
 			),
 		},
@@ -91,8 +67,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/google/sign-in",
 			Handle: NewSSOSignIn(
-				googleAPI.IdentityProvider,
-				auth,
+				sso.SingleSignOn(googleSSO),
 				webFrontendURL,
 			),
 		},
@@ -100,7 +75,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/google/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				googleSignIn,
+				sso.SingleSignOn(googleSSO),
 				*frontendURL,
 			),
 		},

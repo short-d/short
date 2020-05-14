@@ -1,92 +1,111 @@
 package sso
 
 import (
+	"errors"
+
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
-// Linker provides account linking service.
-type Linker struct {
-	keyGen             keygen.KeyGenerator
-	userRepo           repository.User
-	accountMappingRepo repository.AccountMapping
+// AccountLinker maps external user accounts to Short user accounts.
+type AccountLinker struct {
+	keyGen   keygen.KeyGenerator
+	userRepo repository.User
+	ssoMap   repository.SSOMap
 }
 
 // IsAccountLinked checks whether a given external account is linked to any
 // internal users already.
-func (l Linker) IsAccountLinked(ssoUser entity.SSOUser) (bool, error) {
-	return l.accountMappingRepo.IsSSOUserExist(ssoUser)
+func (a AccountLinker) IsAccountLinked(ssoUser entity.SSOUser) (bool, error) {
+	return a.ssoMap.IsSSOUserExist(ssoUser.ID)
+}
+
+// GetShortUser fetches the internal user linked to the given external user.
+func (a AccountLinker) GetShortUser(ssoUser entity.SSOUser) (entity.User, error) {
+	id, err := a.ssoMap.GetShortUserID(ssoUser.ID)
+	if err != nil {
+		return entity.User{}, err
+	}
+	return a.userRepo.GetUserByID(id)
 }
 
 // CreateAndLinkAccount creates an internal account when there is no internal
 // account sharing the same email as the given external account and link them
 // together afterwards.
-func (l Linker) CreateAndLinkAccount(ssoUser entity.SSOUser) error {
-	isAccountLinked, err := l.IsAccountLinked(ssoUser)
-	if err != nil {
+func (a AccountLinker) CreateAndLinkAccount(ssoUser entity.SSOUser) error {
+	if len(ssoUser.Email) < 1 {
+		userID, err := a.createAccount(ssoUser)
+		if err != nil {
+			return err
+		}
+		return a.ssoMap.CreateMapping(ssoUser.ID, userID)
+	}
+
+	user, err := a.userRepo.GetUserByEmail(ssoUser.Email)
+	if err == nil {
+		return a.ssoMap.CreateMapping(ssoUser.ID, user.ID)
+	}
+
+	var errNotFound repository.ErrEntryNotFound
+	if !errors.As(err, &errNotFound) {
 		return err
 	}
 
-	if isAccountLinked {
-		return nil
-	}
-
-	user, err := l.ensureUserExist(ssoUser)
+	userID, err := a.createAccount(ssoUser)
 	if err != nil {
 		return err
 	}
-	return l.accountMappingRepo.CreateMapping(ssoUser, user)
+	return a.ssoMap.CreateMapping(ssoUser.ID, userID)
 }
 
-func (l Linker) ensureUserExist(ssoUser entity.SSOUser) (entity.User, error) {
-	isEmailExist, err := l.userRepo.IsEmailExist(ssoUser.Email)
+func (a AccountLinker) createAccount(ssoUser entity.SSOUser) (string, error) {
+	userID, err := a.generateUnassignedUserID()
 	if err != nil {
-		return entity.User{}, err
+		return "", err
 	}
-	userID, err := l.generateUnassignedUserID()
-	if err != nil {
-		return entity.User{}, err
-	}
-
-	if isEmailExist {
-		err = l.assignUserID(ssoUser.Email, userID)
-		return entity.User{ID: userID}, err
-	}
-	return l.createUser(userID, ssoUser.Name, ssoUser.Email)
+	err = a.createUser(userID, ssoUser.Name, ssoUser.Email)
+	return userID, err
 }
 
-func (l Linker) generateUnassignedUserID() (string, error) {
-	newKey, err := l.keyGen.NewKey()
+func (a AccountLinker) generateUnassignedUserID() (string, error) {
+	newKey, err := a.keyGen.NewKey()
 	return string(newKey), err
 }
 
-func (l Linker) createUser(id string, name string, email string) (entity.User, error) {
+func (a AccountLinker) createUser(id string, name string, email string) error {
 	user := entity.User{
 		ID:    id,
 		Name:  name,
 		Email: email,
 	}
-	err := l.userRepo.CreateUser(user)
-	if err != nil {
-		return entity.User{}, err
+	return a.userRepo.CreateUser(user)
+}
+
+// AccountLinkerFactory creates AccountLinker.
+type AccountLinkerFactory struct {
+	keyGen   keygen.KeyGenerator
+	userRepo repository.User
+}
+
+// NewAccountLinker creates a new account linker.
+func (a AccountLinkerFactory) NewAccountLinker(
+	ssoMap repository.SSOMap,
+) AccountLinker {
+	return AccountLinker{
+		keyGen:   a.keyGen,
+		userRepo: a.userRepo,
+		ssoMap:   ssoMap,
 	}
-	return user, nil
 }
 
-func (l Linker) assignUserID(userEmail string, userID string) error {
-	return l.userRepo.UpdateUserID(userEmail, userID)
-}
-
-// NewLinker creates a new account linking service.
-func NewLinker(
+// NewAccountLinkerFactory creates AccountLinkerFactory.
+func NewAccountLinkerFactory(
 	keyGen keygen.KeyGenerator,
 	userRepo repository.User,
-	accountMappingRepo repository.AccountMapping,
-) Linker {
-	return Linker{
-		keyGen:             keyGen,
-		userRepo:           userRepo,
-		accountMappingRepo: accountMappingRepo,
+) AccountLinkerFactory {
+	return AccountLinkerFactory{
+		keyGen:   keyGen,
+		userRepo: userRepo,
 	}
 }

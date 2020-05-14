@@ -20,7 +20,7 @@ func TestAuthenticator_GenerateToken(t *testing.T) {
 	authenticator := NewAuthenticator(tokenizer, tm, 2*time.Millisecond)
 
 	expUser := entity.User{
-		Email: "test@s.time4hacks.com",
+		ID: "alpha",
 	}
 	token, err := authenticator.GenerateToken(expUser)
 	assert.Equal(t, nil, err)
@@ -28,7 +28,7 @@ func TestAuthenticator_GenerateToken(t *testing.T) {
 	tokenPayload, err := tokenizer.Decode(token)
 	assert.Equal(t, nil, err)
 
-	assert.Equal(t, expUser.Email, tokenPayload["email"])
+	assert.Equal(t, expUser.ID, tokenPayload["id"])
 
 	expIssuedAtStr := expIssuedAt.Format(time.RFC3339Nano)
 	assert.Equal(t, expIssuedAtStr, tokenPayload["issued_at"])
@@ -55,7 +55,7 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 			expIsSignIn:        false,
 		},
 		{
-			name:               "Token payload without email",
+			name:               "Token payload without ID",
 			expIssuedAt:        now,
 			tokenValidDuration: time.Hour,
 			currentTime:        now.Add(30 * time.Minute),
@@ -65,12 +65,12 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 			expIsSignIn: false,
 		},
 		{
-			name:               "Token payload has empty email",
+			name:               "Token payload has empty ID",
 			expIssuedAt:        now,
 			tokenValidDuration: time.Hour,
 			currentTime:        now.Add(30 * time.Minute),
 			tokenPayload: map[string]interface{}{
-				"email":     "",
+				"id":        "",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
 			expIsSignIn: false,
@@ -81,7 +81,7 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 			tokenValidDuration: time.Hour,
 			currentTime:        now.Add(30 * time.Minute),
 			tokenPayload: map[string]interface{}{
-				"email": "test@s.time4hacks.com",
+				"id": "alpha",
 			},
 			expIsSignIn: false,
 		},
@@ -91,7 +91,7 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 			tokenValidDuration: time.Hour,
 			currentTime:        now.Add(2 * time.Hour),
 			tokenPayload: map[string]interface{}{
-				"email":     "test@s.time4hacks.com",
+				"id":        "alpha",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
 			expIsSignIn: false,
@@ -102,7 +102,7 @@ func TestAuthenticator_IsSignedIn(t *testing.T) {
 			tokenValidDuration: time.Hour,
 			currentTime:        now.Add(30 * time.Minute),
 			tokenPayload: map[string]interface{}{
-				"email":     "test@s.time4hacks.com",
+				"id":        "alpha",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
 			expIsSignIn: true,
@@ -148,7 +148,7 @@ func TestAuthenticator_GetUser(t *testing.T) {
 			expUser:            entity.User{},
 		},
 		{
-			name:               "Token payload without email",
+			name:               "Token payload without ID",
 			expIssuedAt:        now,
 			tokenValidDuration: time.Hour,
 			currentTime:        now.Add(30 * time.Minute),
@@ -164,7 +164,7 @@ func TestAuthenticator_GetUser(t *testing.T) {
 			tokenValidDuration: time.Hour,
 			currentTime:        now.Add(30 * time.Minute),
 			tokenPayload: map[string]interface{}{
-				"email": "test@s.time4hacks.com",
+				"id": "alpha",
 			},
 			hasErr:  true,
 			expUser: entity.User{},
@@ -175,36 +175,36 @@ func TestAuthenticator_GetUser(t *testing.T) {
 			tokenValidDuration: time.Hour,
 			currentTime:        now.Add(2 * time.Hour),
 			tokenPayload: map[string]interface{}{
-				"email":     "test@s.time4hacks.com",
+				"id":        "alpha",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
 			hasErr:  true,
 			expUser: entity.User{},
 		},
 		{
-			name:               "Valid token with empty email",
+			name:               "Valid token with empty ID",
 			expIssuedAt:        now,
 			tokenValidDuration: time.Hour,
 			currentTime:        now.Add(30 * time.Minute),
 			tokenPayload: map[string]interface{}{
-				"email":     "",
+				"id":        "",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
 			hasErr:  true,
 			expUser: entity.User{},
 		},
 		{
-			name:               "Token valid with correct email",
+			name:               "Token valid with correct ID",
 			expIssuedAt:        now,
 			tokenValidDuration: time.Hour,
 			currentTime:        now.Add(30 * time.Minute),
 			tokenPayload: map[string]interface{}{
-				"email":     "test@s.time4hacks.com",
+				"id":        "alpha",
 				"issued_at": now.Format(time.RFC3339Nano),
 			},
 			hasErr: false,
 			expUser: entity.User{
-				Email: "test@s.time4hacks.com",
+				ID: "alpha",
 			},
 		},
 	}
