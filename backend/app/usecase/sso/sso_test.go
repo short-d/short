@@ -7,12 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/authenticator"
-	"github.com/short-d/short/app/usecase/repository"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/keygen"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 func TestSingleSignOn_SignIn(t *testing.T) {
@@ -21,8 +20,12 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 	testCases := []struct {
 		name              string
 		authorizationCode string
-		ssoUser           entity.SSOUser
+		profileSSOUser    entity.SSOUser
+		mappingUserIDs    []string
+		mappingSSOUserIDs []string
 		users             []entity.User
+		availableKeys     []keygen.Key
+		expectedUser      entity.User
 		hasErr            bool
 	}{
 		{
@@ -31,25 +34,63 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 			hasErr:            true,
 		},
 		{
-			name:              "account found",
+			name:              "account already linked",
 			authorizationCode: "authorized",
-			ssoUser: entity.SSOUser{
+			profileSSOUser: entity.SSOUser{
+				ID:    "random_sso_id",
 				Email: "alpha@example.com",
-				Name:  "Alpha",
+			},
+			mappingUserIDs: []string{
+				"alpha",
+			},
+			mappingSSOUserIDs: []string{
+				"random_sso_id",
 			},
 			users: []entity.User{
-				{Email: "alpha@example.com"},
+				{
+					ID: "alpha",
+				},
+			},
+			expectedUser: entity.User{
+				ID: "alpha",
+			},
+			hasErr: false,
+		},
+		{
+			name:              "account with same email found",
+			authorizationCode: "authorized",
+			profileSSOUser: entity.SSOUser{
+				ID:    "random_sso_id",
+				Email: "alpha@example.com",
+			},
+			mappingUserIDs:    []string{},
+			mappingSSOUserIDs: []string{},
+			users: []entity.User{
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			expectedUser: entity.User{
+				ID: "alpha",
 			},
 			hasErr: false,
 		},
 		{
 			name:              "account not exist",
 			authorizationCode: "authorized",
-			ssoUser: entity.SSOUser{
+			profileSSOUser: entity.SSOUser{
 				Email: "alpha@example.com",
 				Name:  "Alpha",
 			},
-			users:  []entity.User{},
+			mappingUserIDs:    []string{},
+			mappingSSOUserIDs: []string{},
+			availableKeys: []keygen.Key{
+				"beta",
+			},
+			expectedUser: entity.User{
+				ID: "beta",
+			},
 			hasErr: false,
 		},
 	}
@@ -59,32 +100,45 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			identityProvider := service.NewIdentityProviderFake("http://localhost/sign-in", "")
-			profileService := service.NewSSOAccountFake(testCase.ssoUser)
-			fakeUserRepo := repository.NewUserFake(testCase.users)
-			fakeTimer := mdtest.NewTimerFake(time.Now())
-			accountProvider := account.NewProvider(&fakeUserRepo, fakeTimer)
+			identityProvider := NewIdentityProviderFake("http://localhost/sign-in", "")
+			profileService := NewAccountFake(testCase.profileSSOUser)
 
 			now := time.Now()
-			authenticator := authenticator.NewAuthenticatorFake(now, time.Minute)
+			auth := authenticator.NewAuthenticatorFake(now, time.Minute)
 
-			singleSignOn := NewSingleSignOn(identityProvider, profileService, accountProvider, authenticator)
+			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+
+			userRepo := repository.NewUserFake(testCase.users)
+			linkerFactory := NewAccountLinkerFactory(keyGen, &userRepo)
+
+			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUserIDs, testCase.mappingUserIDs)
+			assert.Equal(t, nil, err)
+
+			linker := linkerFactory.NewAccountLinker(&ssoMap)
+			factory := NewFactory(auth)
+
+			singleSignOn := factory.NewSingleSignOn(identityProvider, profileService, linker)
 			gotAuthToken, err := singleSignOn.SignIn(testCase.authorizationCode)
 			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
+				return
+			}
+			assert.Equal(t, nil, err)
+			if err != nil {
 				return
 			}
 
 			values := map[string]string{
-				"email":     testCase.ssoUser.Email,
+				"id":        testCase.expectedUser.ID,
 				"issued_at": now.Format(time.RFC3339Nano),
 			}
 
 			buf, err := json.Marshal(values)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
 			expAuthToken := string(buf)
-			mdtest.Equal(t, expAuthToken, gotAuthToken)
+			assert.Equal(t, expAuthToken, gotAuthToken)
 		})
 	}
 }

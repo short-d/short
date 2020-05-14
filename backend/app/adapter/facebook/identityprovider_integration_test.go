@@ -11,12 +11,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/short-d/app/mdtest"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/webreq"
 )
 
 func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	t.Parallel()
-	httpRequest := mdtest.NewHTTPRequestFake(
+	httpRequest := webreq.NewHTTPFake(
 		func(req *http.Request) (response *http.Response, e error) {
 			return nil, nil
 		})
@@ -29,20 +30,21 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 
 	parsedUrl, err := url.Parse(urlResponse)
 
-	mdtest.Equal(t, nil, err)
-	mdtest.Equal(t, "https", parsedUrl.Scheme)
-	mdtest.Equal(t, "www.facebook.com", parsedUrl.Host)
-	mdtest.Equal(t, "/v4.0/dialog/oauth", parsedUrl.Path)
-	mdtest.Equal(t, "code", parsedUrl.Query().Get("response_type"))
-	mdtest.Equal(t, clientID, parsedUrl.Query().Get("client_id"))
-	mdtest.Equal(t, redirectURI, parsedUrl.Query().Get("redirect_uri"))
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "https", parsedUrl.Scheme)
+	assert.Equal(t, "www.facebook.com", parsedUrl.Host)
+	assert.Equal(t, "/v4.0/dialog/oauth", parsedUrl.Path)
+	assert.Equal(t, "code", parsedUrl.Query().Get("response_type"))
+	assert.Equal(t, clientID, parsedUrl.Query().Get("client_id"))
+	assert.Equal(t, redirectURI, parsedUrl.Query().Get("redirect_uri"))
 
 	expectedScope := []string{"public_profile", "email"}
 	actualScope := strings.Split(parsedUrl.Query().Get("scope"), ",")
-	mdtest.SameElements(t, expectedScope, actualScope)
+	assert.SameElements(t, expectedScope, actualScope)
 }
 
 func TestIdentityProvider_RequestAccessToken(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name                string
 		httpResponse        *http.Response
@@ -124,18 +126,17 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			httpRequest := mdtest.NewHTTPRequestFake(
+			httpRequest := webreq.NewHTTPFake(
 				func(req *http.Request) (response *http.Response, e error) {
-					mdtest.Equal(t, "https", req.URL.Scheme)
-					mdtest.Equal(t, "graph.facebook.com", req.URL.Host)
-					mdtest.Equal(t, "/v4.0/oauth/access_token", req.URL.Path)
-					mdtest.Equal(t, testCase.clientID, req.URL.Query().Get("client_id"))
-					mdtest.Equal(t, testCase.clientSecret, req.URL.Query().Get("client_secret"))
-					mdtest.Equal(t, testCase.authorizationCode, req.URL.Query().Get("code"))
-					mdtest.Equal(t, testCase.redirectURI, req.URL.Query().Get("redirect_uri"))
-					mdtest.Equal(t, "POST", req.Method)
-					mdtest.Equal(t, "application/json", req.Header.Get("Accept"))
-					mdtest.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
+					assert.Equal(t, "https", req.URL.Scheme)
+					assert.Equal(t, "graph.facebook.com", req.URL.Host)
+					assert.Equal(t, "/v4.0/oauth/access_token", req.URL.Path)
+					assert.Equal(t, testCase.clientID, req.URL.Query().Get("client_id"))
+					assert.Equal(t, testCase.clientSecret, req.URL.Query().Get("client_secret"))
+					assert.Equal(t, testCase.authorizationCode, req.URL.Query().Get("code"))
+					assert.Equal(t, testCase.redirectURI, req.URL.Query().Get("redirect_uri"))
+					assert.Equal(t, "POST", req.Method)
+					assert.Equal(t, "application/json", req.Header.Get("Accept"))
 
 					return testCase.httpResponse, testCase.httpErr
 				})
@@ -143,11 +144,11 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 			actualAccessToken, err := identityProvider.RequestAccessToken(testCase.authorizationCode)
 
 			if testCase.expectHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedAccessToken, actualAccessToken)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedAccessToken, actualAccessToken)
 		})
 	}
 }

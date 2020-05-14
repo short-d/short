@@ -61,7 +61,7 @@ export class UrlService {
     )}/graphql`;
   }
 
-  createShortLink(editingUrl: Url): Promise<Url> {
+  createShortLink(editingUrl: Url, isPublic: boolean = false): Promise<Url> {
     return new Promise(async (resolve, reject) => {
       const longLink = editingUrl.originalUrl;
       const customAlias = editingUrl.alias;
@@ -73,7 +73,7 @@ export class UrlService {
       }
 
       try {
-        const url = await this.invokeCreateShortLinkApi(editingUrl);
+        const url = await this.invokeCreateShortLinkApi(editingUrl, isPublic);
         resolve(url);
         return;
       } catch (errCode) {
@@ -126,7 +126,10 @@ export class UrlService {
     return null;
   }
 
-  private async invokeCreateShortLinkApi(link: Url): Promise<Url> {
+  private async invokeCreateShortLinkApi(
+    shortLink: Url,
+    isPublic: boolean
+  ): Promise<Url> {
     let captchaResponse = '';
 
     try {
@@ -135,8 +138,11 @@ export class UrlService {
       return Promise.reject(err);
     }
 
-    let alias = link.alias === '' ? null : link.alias!;
-    let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
+    let variables = this.gqlCreateURLVariable(
+      captchaResponse,
+      shortLink,
+      isPublic
+    );
     return new Promise<Url>( // TODO(issue#599): simplify business logic below to improve readability
       (resolve: (createdURL: Url) => void, reject: (errCode: Err) => any) => {
         this.graphQLService
@@ -179,7 +185,6 @@ export class UrlService {
   private gqlCreateURLVariable(
     captchaResponse: string,
     link: Url,
-    alias: string | null,
     isPublic: boolean = false
   ) {
     return {
@@ -187,7 +192,7 @@ export class UrlService {
       authToken: this.authService.getAuthToken(),
       urlInput: {
         originalURL: link.originalUrl,
-        customAlias: alias
+        customAlias: link.alias
       },
       isPublic
     };

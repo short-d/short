@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/webreq"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
 const (
@@ -14,7 +14,7 @@ const (
 	accessTokenAPI   = "https://www.googleapis.com/oauth2/v4/token"
 )
 
-var _ service.IdentityProvider = (*IdentityProvider)(nil)
+var _ sso.IdentityProvider = (*IdentityProvider)(nil)
 
 type scope = string
 
@@ -27,7 +27,7 @@ const (
 type IdentityProvider struct {
 	clientID     string
 	clientSecret string
-	httpRequest  fw.HTTPRequest
+	httpRequest  webreq.HTTP
 	redirectURI  string
 }
 
@@ -67,7 +67,7 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 		return "", err
 	}
 
-	query := u.Query()
+	query := url.Values{}
 	query.Set("code", authorizationCode)
 	query.Set("client_id", clientID)
 	query.Set("client_secret", clientSecret)
@@ -75,19 +75,8 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (string, 
 	query.Set("grant_type", grantType)
 	u.RawQuery = query.Encode()
 
-	body := url.Values{}
-	body.Set("code", authorizationCode)
-	body.Set("client_id", clientID)
-	body.Set("client_secret", clientSecret)
-	body.Set("redirect_uri", redirectURI)
-	body.Set("grant_type", grantType)
-
-	headers := map[string]string{
-		"Content-Type": "application/x-www-form-urlencoded",
-	}
-
 	apiRes := accessTokenResponse{}
-	err = g.httpRequest.JSON(http.MethodPost, u.String(), headers, body.Encode(), &apiRes)
+	err = g.httpRequest.JSON(http.MethodPost, u.String(), map[string]string{}, "", &apiRes)
 	if err != nil {
 		return "", err
 	}
@@ -101,7 +90,7 @@ type accessTokenResponse struct {
 }
 
 // NewIdentityProvider initializes Google OAuth service.
-func NewIdentityProvider(http fw.HTTPRequest, clientID string, clientSecret string, redirectURI string) IdentityProvider {
+func NewIdentityProvider(http webreq.HTTP, clientID string, clientSecret string, redirectURI string) IdentityProvider {
 	return IdentityProvider{
 		clientID:     clientID,
 		clientSecret: clientSecret,

@@ -9,11 +9,13 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/graphql"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 func TestAccount_GetSingleSignOnUser(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name            string
 		httpResponse    *http.Response
@@ -79,24 +81,24 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			graphQLRequest := mdtest.NewGraphQLRequestFake(
+			graphQLClientFactory := graphql.NewClientFactoryFake(
 				func(req *http.Request) (response *http.Response, e error) {
-					mdtest.Equal(t, "https://api.github.com/graphql", req.URL.String())
-					mdtest.Equal(t, "POST", req.Method)
-					mdtest.Equal(t, "application/json", req.Header.Get("Content-Type"))
-					mdtest.Equal(t, "application/json", req.Header.Get("Accept"))
+					assert.Equal(t, "https://api.github.com/graphql", req.URL.String())
+					assert.Equal(t, "POST", req.Method)
+					assert.Equal(t, "application/json", req.Header.Get("Content-Type"))
+					assert.Equal(t, "application/json", req.Header.Get("Accept"))
 
 					return testCase.httpResponse, testCase.httpErr
 				})
-			githubAccount := NewAccount(graphQLRequest)
+			githubAccount := NewAccount(graphQLClientFactory)
 
 			gotSSOUser, err := githubAccount.GetSingleSignOnUser("access_token")
 			if testCase.expectHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedSSOUser, gotSSOUser)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedSSOUser, gotSSOUser)
 		})
 	}
 }

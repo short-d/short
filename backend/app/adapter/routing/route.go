@@ -3,68 +3,39 @@ package routing
 import (
 	netURL "net/url"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/adapter/facebook"
-	"github.com/short-d/short/app/adapter/github"
-	"github.com/short-d/short/app/adapter/google"
-	"github.com/short-d/short/app/adapter/request"
-	"github.com/short-d/short/app/adapter/routing/analytics"
-	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/authenticator"
-	"github.com/short-d/short/app/usecase/feature"
-	"github.com/short-d/short/app/usecase/sso"
-	"github.com/short-d/short/app/usecase/url"
+	"github.com/short-d/app/fw/router"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/adapter/facebook"
+	"github.com/short-d/short/backend/app/adapter/github"
+	"github.com/short-d/short/backend/app/adapter/google"
+	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/adapter/routing/analytics"
+	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/sso"
+	"github.com/short-d/short/backend/app/usecase/url"
 )
-
-// Observability represents a set of metrics data producers which improve the observability of the
-// system, such as logger and tracer.
-type Observability struct {
-	Logger fw.Logger
-	Tracer fw.Tracer
-}
 
 // NewShort creates HTTP routing table.
 func NewShort(
 	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL string,
-	timer fw.Timer,
+	timer timer.Timer,
 	urlRetriever url.Retriever,
-	githubAPI github.API,
-	facebookAPI facebook.API,
-	googleAPI google.API,
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
-	auth authenticator.Authenticator,
-	accountProvider account.Provider,
-) []fw.Route {
-	githubSignIn := sso.NewSingleSignOn(
-		githubAPI.IdentityProvider,
-		githubAPI.Account,
-		accountProvider,
-		auth,
-	)
-	facebookSignIn := sso.NewSingleSignOn(
-		facebookAPI.IdentityProvider,
-		facebookAPI.Account,
-		accountProvider,
-		auth,
-	)
-	googleSignIn := sso.NewSingleSignOn(
-		googleAPI.IdentityProvider,
-		googleAPI.Account,
-		accountProvider,
-		auth,
-	)
+	githubSSO github.SingleSignOn,
+	facebookSSO facebook.SingleSignOn,
+	googleSSO google.SingleSignOn,
+) []router.Route {
 	frontendURL, err := netURL.Parse(webFrontendURL)
 	if err != nil {
 		panic(err)
 	}
-	return []fw.Route{
+	return []router.Route{
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
 			Handle: NewSSOSignIn(
-				githubAPI.IdentityProvider,
-				auth,
+				sso.SingleSignOn(githubSSO),
 				webFrontendURL,
 			),
 		},
@@ -72,7 +43,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/github/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				githubSignIn,
+				sso.SingleSignOn(githubSSO),
 				*frontendURL,
 			),
 		},
@@ -80,8 +51,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in",
 			Handle: NewSSOSignIn(
-				facebookAPI.IdentityProvider,
-				auth,
+				sso.SingleSignOn(facebookSSO),
 				webFrontendURL,
 			),
 		},
@@ -89,7 +59,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				facebookSignIn,
+				sso.SingleSignOn(facebookSSO),
 				*frontendURL,
 			),
 		},
@@ -97,8 +67,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/google/sign-in",
 			Handle: NewSSOSignIn(
-				googleAPI.IdentityProvider,
-				auth,
+				sso.SingleSignOn(googleSSO),
 				webFrontendURL,
 			),
 		},
@@ -106,7 +75,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/google/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				googleSignIn,
+				sso.SingleSignOn(googleSSO),
 				*frontendURL,
 			),
 		},

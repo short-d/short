@@ -6,13 +6,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/keygen"
-	"github.com/short-d/short/app/usecase/repository"
-	"github.com/short-d/short/app/usecase/risk"
-	"github.com/short-d/short/app/usecase/service"
-	"github.com/short-d/short/app/usecase/validator"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/keygen"
+	"github.com/short-d/short/backend/app/usecase/repository"
+	"github.com/short-d/short/backend/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/validator"
 )
 
 func TestURLCreatorPersist_CreateURL(t *testing.T) {
@@ -23,12 +23,13 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 
 	alias := "220uFicCJj"
 	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
+	emptyAlias := ""
 
 	testCases := []struct {
 		name          string
 		urls          urlMap
 		alias         *string
-		availableKeys []service.Key
+		availableKeys []keygen.Key
 		user          entity.User
 		url           entity.URL
 		relationUsers []entity.User
@@ -92,17 +93,32 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			},
 		},
 		{
-			name: "automatically generate alias",
-			urls: urlMap{
-				"220uFicCJj": entity.URL{
-					Alias:    "220uFicCJj",
-					ExpireAt: &now,
-				},
-			},
-			availableKeys: []service.Key{
+			name: "automatically generate alias if null alias provided",
+			urls: urlMap{},
+			availableKeys: []keygen.Key{
 				"test",
 			},
 			alias: nil,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			url: entity.URL{
+				OriginalURL: "https://www.google.com",
+			},
+			expHasErr: false,
+			expectedURL: entity.URL{
+				Alias:       "test",
+				OriginalURL: "https://www.google.com",
+				CreatedAt:   &utc,
+			},
+		},
+		{
+			name: "automatically generate alias if empty string alias provided",
+			urls: urlMap{},
+			availableKeys: []keygen.Key{
+				"test",
+			},
+			alias: &emptyAlias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -124,7 +140,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			availableKeys: []service.Key{},
+			availableKeys: []keygen.Key{},
 			alias:         nil,
 			user: entity.User{
 				Email: "alpha@example.com",
@@ -148,12 +164,12 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				testCase.relationUsers,
 				testCase.relationURLs,
 			)
-			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
+			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
-			timer := mdtest.NewTimerFake(now)
+			tm := timer.NewStub(now)
 			riskDetector := risk.NewDetector(blacklist)
 
 			creator := NewCreatorPersist(
@@ -162,36 +178,36 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				keyGen,
 				longLinkValidator,
 				aliasValidator,
-				timer,
+				tm,
 				riskDetector,
 			)
 
 			_, err = urlRepo.GetByAlias(testCase.url.Alias)
-			mdtest.NotEqual(t, nil, err)
+			assert.NotEqual(t, nil, err)
 
 			isExist := userURLRepo.IsRelationExist(testCase.user, testCase.url)
-			mdtest.Equal(t, false, isExist)
+			assert.Equal(t, false, isExist)
 
 			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 
 				_, err = urlRepo.GetByAlias(testCase.expectedURL.Alias)
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 
 				isExist := userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
-				mdtest.Equal(t, false, isExist)
+				assert.Equal(t, false, isExist)
 				return
 			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURL, url)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedURL, url)
 
 			savedURL, err := urlRepo.GetByAlias(testCase.expectedURL.Alias)
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedURL, savedURL)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedURL, savedURL)
 
 			isExist = userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
-			mdtest.Equal(t, true, isExist)
+			assert.Equal(t, true, isExist)
 		})
 	}
 }

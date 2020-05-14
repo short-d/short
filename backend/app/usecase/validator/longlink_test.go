@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/short-d/app/mdtest"
+	"github.com/short-d/app/fw/assert"
 )
 
 func TestLongLink_IsValid(t *testing.T) {
@@ -53,7 +53,7 @@ func TestLongLink_IsValid(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			mdtest.Equal(t, testCase.expIsValid, validator.IsValid(&testCase.longLink))
+			assert.Equal(t, testCase.expIsValid, validator.IsValid(&testCase.longLink))
 		})
 	}
 }

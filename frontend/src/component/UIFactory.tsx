@@ -1,7 +1,7 @@
 import React, { ComponentType, ReactElement } from 'react';
 import { App } from './App';
 import { IFeatureDecisionService } from '../service/feature-decision/FeatureDecision.service';
-import { Home } from './pages/Home';
+import { HomePage } from './pages/HomePage';
 import H from 'history';
 import { AuthService } from '../service/Auth.service';
 import { IBrowserExtensionService } from '../service/extensionService/BrowserExtension.service';
@@ -19,9 +19,11 @@ import { SearchBar } from './ui/SearchBar';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
 import { ChangeLogService } from '../service/ChangeLog.service';
 import { IClipboardService } from '../service/clipboardService/Clipboard.service';
+import { PublicListingToggle } from './pages/shared/PublicListingToggle';
 import { ShortLinkService } from '../service/ShortLink.service';
 import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
 import { AnalyticsService } from '../service/Analytics.service';
+import { PreferenceTogglesSubSection } from './pages/shared/PreferenceTogglesSubSection';
 
 export class UIFactory {
   private ToggledGoogleSignInButton: ComponentType<any>;
@@ -29,6 +31,8 @@ export class UIFactory {
   private ToggledFacebookSignInButton: ComponentType<any>;
   private ToggledSearchBar: ComponentType<any>;
   private ToggledViewChangeLogButton: ComponentType<any>;
+  private ToggledPreferenceTogglesSubSection: ComponentType<any>;
+  private ToggledPublicListingToggle: ComponentType<any>;
   private ToggledUserShortLinksSection: ComponentType<any>;
 
   constructor(
@@ -73,6 +77,18 @@ export class UIFactory {
       includeViewChangeLogButton
     );
 
+    const includePreferenceTogglesSubSection = this.featureDecisionService.includePreferenceTogglesSubSection();
+    this.ToggledPreferenceTogglesSubSection = withFeatureToggle(
+      PreferenceTogglesSubSection,
+      includePreferenceTogglesSubSection
+    );
+
+    const includePublicListingToggle = this.featureDecisionService.includePublicListingToggle();
+    this.ToggledPublicListingToggle = withFeatureToggle(
+      PublicListingToggle,
+      includePublicListingToggle
+    );
+
     const includeUserShortLinksSection = this.featureDecisionService.includeUserShortLinksSection();
     this.ToggledUserShortLinksSection = withFeatureToggle(
       UserShortLinksSection,
@@ -82,7 +98,7 @@ export class UIFactory {
 
   public createHomePage(location: H.Location<any>): ReactElement {
     return (
-      <Home
+      <HomePage
         uiFactory={this}
         authService={this.authService}
         clipboardService={this.clipboardService}
@@ -131,6 +147,14 @@ export class UIFactory {
         facebookSignInLink={this.authService.facebookSignInLink()}
       />
     );
+  }
+
+  public createPreferenceTogglesSubSection(props: any): ReactElement {
+    return <this.ToggledPreferenceTogglesSubSection {...props} />;
+  }
+
+  public createPublicListingToggle(props: any): ReactElement {
+    return <this.ToggledPublicListingToggle {...props} />;
   }
 
   public createUserShortLinksSection(props: any): ReactElement {

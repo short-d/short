@@ -19,8 +19,8 @@ import { FetchHTTPService } from './service/HTTP.service';
 import { ShortHTTPApi } from './service/ShortHTTP.api';
 import { DynamicDecisionService } from './service/feature-decision/DynamicDecision.service';
 import { ShortLinkService } from './service/ShortLink.service';
-import { ShortGraphQLApi } from './service/ShortGraphQL.api';
 import { AnalyticsService } from './service/Analytics.service';
+import { ShortLinkGraphQLApi } from './service/ShortLinkGraphQL.api';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -64,13 +64,13 @@ export function initUIFactory(
     envService
   );
   const clipboardService = new ClipboardServiceFactory().makeClipboardService();
-  const shortGraphQLApiService = new ShortGraphQLApi(
+  const shortLinkGraphQLApi = new ShortLinkGraphQLApi(
     authService,
     envService,
     graphQLService
   );
   const shortLinkService = new ShortLinkService(
-    shortGraphQLApiService,
+    shortLinkGraphQLApi,
     errorService
   );
   const analyticsService = new AnalyticsService(shortHTTPApi);

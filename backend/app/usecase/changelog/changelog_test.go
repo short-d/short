@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/keygen"
-	"github.com/short-d/short/app/usecase/repository"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/keygen"
+	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 func TestPersist_CreateChange(t *testing.T) {
@@ -25,7 +25,7 @@ func TestPersist_CreateChange(t *testing.T) {
 		changeLog             []entity.Change
 		change                entity.Change
 		expectedChange        entity.Change
-		availableKeys         []service.Key
+		availableKeys         []keygen.Key
 		expectedChangeLogSize int
 		hasErr                bool
 	}{
@@ -53,7 +53,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				SummaryMarkdown: &summaryMarkdown3,
 				ReleasedAt:      now,
 			},
-			availableKeys:         []service.Key{"test"},
+			availableKeys:         []keygen.Key{"test"},
 			expectedChangeLogSize: 3,
 			hasErr:                false,
 		}, {
@@ -75,7 +75,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				SummaryMarkdown: &summaryMarkdown3,
 			},
 			expectedChange:        entity.Change{},
-			availableKeys:         []service.Key{},
+			availableKeys:         []keygen.Key{},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
 		}, {
@@ -97,7 +97,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				SummaryMarkdown: &summaryMarkdown3,
 			},
 			expectedChange:        entity.Change{},
-			availableKeys:         []service.Key{"12345"},
+			availableKeys:         []keygen.Key{"12345"},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
 		}, {
@@ -124,7 +124,7 @@ func TestPersist_CreateChange(t *testing.T) {
 				SummaryMarkdown: nil,
 				ReleasedAt:      now,
 			},
-			availableKeys:         []service.Key{"22222"},
+			availableKeys:         []keygen.Key{"22222"},
 			expectedChangeLogSize: 3,
 			hasErr:                false,
 		},
@@ -136,30 +136,32 @@ func TestPersist_CreateChange(t *testing.T) {
 			t.Parallel()
 
 			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
-			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
+			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
-			fakeTimer := mdtest.NewTimerFake(now)
+			tm := timer.NewStub(now)
+			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
 			persist := NewPersist(
 				keyGen,
-				fakeTimer,
+				tm,
 				&changeLogRepo,
+				&userChangeLogRepo,
 			)
 
 			newChange, err := persist.CreateChange(testCase.change.Title, testCase.change.SummaryMarkdown)
 			if testCase.hasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
-			mdtest.Equal(t, testCase.expectedChange, newChange)
+			assert.Equal(t, testCase.expectedChange, newChange)
 
 			changeLog, err := persist.GetChangeLog()
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
-			mdtest.Equal(t, testCase.expectedChangeLogSize, len(changeLog))
+			assert.Equal(t, testCase.expectedChangeLogSize, len(changeLog))
 		})
 	}
 }
@@ -173,7 +175,7 @@ func TestPersist_GetChangeLog(t *testing.T) {
 	testCases := []struct {
 		name          string
 		changeLog     []entity.Change
-		availableKeys []service.Key
+		availableKeys []keygen.Key
 	}{
 		{
 			name: "get full changelog successfully",
@@ -189,11 +191,11 @@ func TestPersist_GetChangeLog(t *testing.T) {
 					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
-			availableKeys: []service.Key{},
+			availableKeys: []keygen.Key{},
 		}, {
 			name:          "get empty changelog successfully",
 			changeLog:     []entity.Change{},
-			availableKeys: []service.Key{},
+			availableKeys: []keygen.Key{},
 		},
 	}
 
@@ -203,21 +205,142 @@ func TestPersist_GetChangeLog(t *testing.T) {
 			t.Parallel()
 
 			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
-			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
+			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
-			fakeTimer := mdtest.NewTimerFake(now)
+			tm := timer.NewStub(now)
+			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
 			persist := NewPersist(
 				keyGen,
-				fakeTimer,
+				tm,
 				&changeLogRepo,
+				&userChangeLogRepo,
 			)
 
 			changeLog, err := persist.GetChangeLog()
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
+			assert.SameElements(t, testCase.changeLog, changeLog)
+		})
+	}
+}
 
-			mdtest.SameElements(t, testCase.changeLog, changeLog)
+func TestPersist_GetLastViewedAt(t *testing.T) {
+	t.Parallel()
+
+	now := time.Now().UTC()
+	twoMonthsAgo := now.AddDate(0, -2, 0)
+	testCases := []struct {
+		name          string
+		userChangeLog map[string]time.Time
+		user          entity.User
+		lastViewedAt  *time.Time
+	}{
+		{
+			name:          "user never viewed the change log before",
+			userChangeLog: map[string]time.Time{},
+			user: entity.User{
+				ID:    "12345",
+				Name:  "Test User",
+				Email: "test@gmail.com",
+			},
+			lastViewedAt: nil,
+		},
+		{
+			name:          "user viewed change log",
+			userChangeLog: map[string]time.Time{"test@gmail.com": twoMonthsAgo},
+			user: entity.User{
+				ID:    "12345",
+				Name:  "Test User",
+				Email: "test@gmail.com",
+			},
+			lastViewedAt: &twoMonthsAgo,
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
+			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
+			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			assert.Equal(t, nil, err)
+
+			tm := timer.NewStub(now)
+			userChangeLogRepo := repository.NewUserChangeLogFake(testCase.userChangeLog)
+
+			persist := NewPersist(
+				keyGen,
+				tm,
+				&changeLogRepo,
+				&userChangeLogRepo,
+			)
+
+			lastViewedAt, err := persist.GetLastViewedAt(testCase.user)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.lastViewedAt, lastViewedAt)
+		})
+	}
+}
+
+func TestPersist_ViewChangeLog(t *testing.T) {
+	t.Parallel()
+
+	now := time.Now().UTC()
+	twoMonthsAgo := now.AddDate(0, -2, 0)
+	testCases := []struct {
+		name          string
+		userChangeLog map[string]time.Time
+		user          entity.User
+		lastViewedAt  time.Time
+	}{
+		{
+			name:          "user viewed the change log the first time",
+			userChangeLog: map[string]time.Time{},
+			user: entity.User{
+				ID:    "12345",
+				Name:  "Test User",
+				Email: "test@gmail.com",
+			},
+			lastViewedAt: now,
+		},
+		{
+			name:          "user has viewed the change log before",
+			userChangeLog: map[string]time.Time{"test@gmail.com": twoMonthsAgo},
+			user: entity.User{
+				ID:    "12345",
+				Name:  "Test User",
+				Email: "test@gmail.com",
+			},
+			lastViewedAt: now,
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
+			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
+			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			assert.Equal(t, nil, err)
+
+			tm := timer.NewStub(now)
+			userChangeLogRepo := repository.NewUserChangeLogFake(testCase.userChangeLog)
+
+			persist := NewPersist(
+				keyGen,
+				tm,
+				&changeLogRepo,
+				&userChangeLogRepo,
+			)
+
+			lastViewedAt, err := persist.ViewChangeLog(testCase.user)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.lastViewedAt, lastViewedAt)
 		})
 	}
 }

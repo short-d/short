@@ -3,16 +3,18 @@ package app
 import (
 	"time"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/dep"
-	"github.com/short-d/short/dep/provider"
+	"github.com/short-d/app/fw/db"
+	"github.com/short-d/app/fw/env"
+	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/short/backend/dep"
+	"github.com/short-d/short/backend/dep/provider"
 )
 
 // ServiceConfig represents require parameters for the backend APIs
 type ServiceConfig struct {
-	ServerEnv            string
+	Runtime              string
 	LogPrefix            string
-	LogLevel             fw.LogLevel
+	LogLevel             logger.LogLevel
 	MigrationRoot        string
 	RecaptchaSecret      string
 	GithubClientID       string
@@ -39,22 +41,21 @@ type ServiceConfig struct {
 
 // Start launches the GraphQL & HTTP APIs
 func Start(
-	dbConfig fw.DBConfig,
+	dbConfig db.Config,
+	dbConnector db.Connector,
+	dbMigrationTool db.MigrationTool,
 	config ServiceConfig,
-	dbConnector fw.DBConnector,
-	dbMigrationTool fw.DBMigrationTool,
 ) {
-	db, err := dbConnector.Connect(dbConfig)
+	sqlDB, err := dbConnector.Connect(dbConfig)
 	if err != nil {
 		panic(err)
 	}
 
-	err = dbMigrationTool.MigrateUp(db, config.MigrationRoot)
+	err = dbMigrationTool.MigrateUp(sqlDB, config.MigrationRoot)
 	if err != nil {
 		panic(err)
 	}
 
-	serverEnv := fw.ServerEnv(config.ServerEnv)
 	kgsBufferSize := provider.KeyGenBufferSize(config.KeyGenBufferSize)
 	kgsRPCConfig := provider.KgsRPCConfig{
 		Hostname: config.KgsHostname,
@@ -67,11 +68,10 @@ func Start(
 	googleAPIKey := provider.GoogleAPIKey(config.GoogleAPIKey)
 
 	graphqlAPI, err := dep.InjectGraphQLService(
-		"GraphQL API",
-		serverEnv,
+		env.Runtime(config.Runtime),
 		provider.LogPrefix(config.LogPrefix),
 		config.LogLevel,
-		db,
+		sqlDB,
 		"/graphql",
 		provider.ReCaptchaSecret(config.RecaptchaSecret),
 		provider.JwtSecret(config.JwtSecret),
@@ -87,14 +87,13 @@ func Start(
 		panic(err)
 	}
 
-	graphqlAPI.Start(config.GraphQLAPIPort)
+	graphqlAPI.StartAsync(config.GraphQLAPIPort)
 
 	httpAPI, err := dep.InjectRoutingService(
-		"Routing API",
-		serverEnv,
+		env.Runtime(config.Runtime),
 		provider.LogPrefix(config.LogPrefix),
 		config.LogLevel,
-		db,
+		sqlDB,
 		provider.GithubClientID(config.GithubClientID),
 		provider.GithubClientSecret(config.GithubClientSecret),
 		provider.FacebookClientID(config.FacebookClientID),

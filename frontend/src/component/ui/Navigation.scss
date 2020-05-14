@@ -1,0 +1,27 @@
+@import '../styles/color';
+@import '../styles/corner';
+@import '../styles/font';
+
+.navigation {
+  ul.menu {
+    padding: 0;
+    list-style: none;
+
+    > li {
+      font-weight: $font-weight-semi-bold;
+      word-break: break-word;
+      padding: 10px 15px;
+      margin: 5px 10px;
+      cursor: pointer;
+      @include round-corner;
+
+      &.active {
+        background-color: color-transparent-black(0.06);
+      }
+
+      &:hover:not(.active) {
+        color: $color-primary;
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 package observability
 
-import "github.com/short-d/short/app/entity"
+import "github.com/short-d/short/backend/app/entity"
 
 // Observability measures the internal operation of the system.
 type Observability interface {

@@ -4,37 +4,37 @@ import (
 	"errors"
 	"time"
 
-	"github.com/short-d/app/fw"
+	"github.com/short-d/app/fw/crypto"
 )
 
 // Payload represents the metadata encoded in the authentication token.
 type Payload struct {
-	email    string
+	id       string
 	issuedAt time.Time
 }
 
 // TokenPayload retrieves key-value pairs representation of the payload.
-func (p Payload) TokenPayload() fw.TokenPayload {
+func (p Payload) TokenPayload() crypto.TokenPayload {
 	return map[string]interface{}{
-		"email":     p.email,
+		"id":        p.id,
 		"issued_at": p.issuedAt,
 	}
 }
 
-func newPayload(email string, issuedAt time.Time) Payload {
+func newPayload(id string, issuedAt time.Time) Payload {
 	return Payload{
-		email:    email,
+		id:       id,
 		issuedAt: issuedAt,
 	}
 }
 
-func fromTokenPayload(tokenPayload fw.TokenPayload) (Payload, error) {
+func fromTokenPayload(tokenPayload crypto.TokenPayload) (Payload, error) {
 	payload := Payload{}
 	var ok bool
 
-	email := tokenPayload["email"]
-	if payload.email, ok = email.(string); !ok {
-		return payload, errors.New("expect payload to contain email")
+	id := tokenPayload["id"]
+	if payload.id, ok = id.(string); !ok {
+		return payload, errors.New("expect payload to contain id")
 	}
 
 	issuedAtJSON := tokenPayload["issued_at"]
