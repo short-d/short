@@ -24,6 +24,7 @@ func NewGithubIdentityProvider(
 	return github.NewIdentityProvider(req, string(clientID), string(clientSecret))
 }
 
+// NewGithubAccountLinker creates GithubAccountLinker.
 func NewGithubAccountLinker(
 	factory sso.AccountLinkerFactory,
 	ssoMap sqldb.GithubSSOSql,
@@ -31,6 +32,7 @@ func NewGithubAccountLinker(
 	return github.AccountLinker(factory.NewAccountLinker(ssoMap))
 }
 
+// NewGithubSSO creates GithubSingleSignOn.
 func NewGithubSSO(
 	ssoFactory sso.Factory,
 	accountLinker github.AccountLinker,

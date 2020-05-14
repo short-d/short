@@ -28,6 +28,7 @@ func NewGoogleIdentityProvider(
 	return google.NewIdentityProvider(req, string(clientID), string(clientSecret), string(redirectURI))
 }
 
+// NewGoogleAccountLinker creates GoogleAccountLinker.
 func NewGoogleAccountLinker(
 	factory sso.AccountLinkerFactory,
 	googleSSORepo sqldb.GoogleSSOSql,
@@ -35,6 +36,7 @@ func NewGoogleAccountLinker(
 	return google.AccountLinker(factory.NewAccountLinker(googleSSORepo))
 }
 
+// NewGoogleSSO creates GoogleSingleSignOn.
 func NewGoogleSSO(
 	ssoFactory sso.Factory,
 	identityProvider google.IdentityProvider,

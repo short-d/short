@@ -28,6 +28,7 @@ func NewFacebookIdentityProvider(
 	return facebook.NewIdentityProvider(req, string(clientID), string(clientSecret), string(redirectURI))
 }
 
+// NewFacebookAccountLinker creates FacebookAccountLinker.
 func NewFacebookAccountLinker(
 	factory sso.AccountLinkerFactory,
 	facebookSSORepo sqldb.FacebookSSOSql,
@@ -35,6 +36,7 @@ func NewFacebookAccountLinker(
 	return facebook.AccountLinker(factory.NewAccountLinker(facebookSSORepo))
 }
 
+// NewFacebookSSO creates FacebookSingleSignOn.
 func NewFacebookSSO(
 	ssoFactory sso.Factory,
 	identityProvider facebook.IdentityProvider,

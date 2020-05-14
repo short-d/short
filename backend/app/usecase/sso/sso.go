@@ -51,18 +51,22 @@ func (o SingleSignOn) SignIn(authorizationCode string) (string, error) {
 	return o.authenticator.GenerateToken(user)
 }
 
+// IsSignedIn checks whether a user is authenticated by Short.
 func (o SingleSignOn) IsSignedIn(authToken string) bool {
 	return o.authenticator.IsSignedIn(authToken)
 }
 
+// GetSignInLink retrieves the sign in link of the external account provider.
 func (o SingleSignOn) GetSignInLink() string {
 	return o.identityProvider.GetAuthorizationURL()
 }
 
+// Factory makes SingleSignOn.
 type Factory struct {
 	authenticator authenticator.Authenticator
 }
 
+// NewSingleSignOn creates SingleSignOn.
 func (s Factory) NewSingleSignOn(
 	identityProvider IdentityProvider,
 	account Account,
@@ -76,6 +80,7 @@ func (s Factory) NewSingleSignOn(
 	}
 }
 
+// NewFactory creates single sign on factory.
 func NewFactory(
 	authenticator authenticator.Authenticator,
 ) Factory {

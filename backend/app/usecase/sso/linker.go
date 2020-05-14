@@ -21,6 +21,7 @@ func (a AccountLinker) IsAccountLinked(ssoUser entity.SSOUser) (bool, error) {
 	return a.ssoMap.IsSSOUserExist(ssoUser.ID)
 }
 
+// GetShortUser fetches the internal user linked to the given external user.
 func (a AccountLinker) GetShortUser(ssoUser entity.SSOUser) (entity.User, error) {
 	id, err := a.ssoMap.GetShortUserID(ssoUser.ID)
 	if err != nil {
@@ -81,12 +82,13 @@ func (a AccountLinker) createUser(id string, name string, email string) error {
 	return a.userRepo.CreateUser(user)
 }
 
+// AccountLinkerFactory creates AccountLinker.
 type AccountLinkerFactory struct {
 	keyGen   keygen.KeyGenerator
 	userRepo repository.User
 }
 
-// AccountLinkerFactory creates a new account linking service.
+// NewAccountLinker creates a new account linker.
 func (a AccountLinkerFactory) NewAccountLinker(
 	ssoMap repository.SSOMap,
 ) AccountLinker {
@@ -97,6 +99,7 @@ func (a AccountLinkerFactory) NewAccountLinker(
 	}
 }
 
+// NewAccountLinkerFactory creates AccountLinkerFactory.
 func NewAccountLinkerFactory(
 	keyGen keygen.KeyGenerator,
 	userRepo repository.User,
