@@ -26,10 +26,10 @@ FROM "%s"
 WHERE "%s"=$1;`,
 		table.UserChangeLog.ColumnLastViewedAt,
 		table.UserChangeLog.TableName,
-		table.UserChangeLog.ColumnEmail,
+		table.UserChangeLog.ColumnUserID,
 	)
 
-	row := u.db.QueryRow(statement, user.Email)
+	row := u.db.QueryRow(statement, user.ID)
 	lastViewedAt := time.Time{}
 	err := row.Scan(&lastViewedAt)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -48,13 +48,13 @@ WHERE %s=$2;
 `,
 		table.UserChangeLog.TableName,
 		table.UserChangeLog.ColumnLastViewedAt,
-		table.UserChangeLog.ColumnEmail,
+		table.UserChangeLog.ColumnUserID,
 	)
 
 	result, err := u.db.Exec(
 		statement,
 		currentTime,
-		user.Email,
+		user.ID,
 	)
 	if err != nil {
 		return time.Time{}, err
@@ -75,19 +75,17 @@ WHERE %s=$2;
 // CreateRelation inserts a new entry into user_changelog table.
 func (u UserChangeLogSQL) CreateRelation(user entity.User, currentTime time.Time) error {
 	statement := fmt.Sprintf(`
-INSERT INTO "%s" ("%s","%s","%s")
-VALUES ($1, $2, $3);
+INSERT INTO "%s" ("%s","%s")
+VALUES ($1, $2);
 `,
 		table.UserChangeLog.TableName,
 		table.UserChangeLog.ColumnUserID,
-		table.UserChangeLog.ColumnEmail,
 		table.UserChangeLog.ColumnLastViewedAt,
 	)
 
 	_, err := u.db.Exec(
 		statement,
 		user.ID,
-		user.Email,
 		currentTime,
 	)
 
