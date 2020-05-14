@@ -5,8 +5,5 @@ launch.json
 # Build
 build/
 
-# Environmental variables
-/backend/.env
-
 # Code Coverage
 /coverage*
