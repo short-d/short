@@ -27,12 +27,12 @@ import (
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
-	"github.com/short-d/short/backend/app/usecase/account"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
@@ -237,11 +237,22 @@ func InjectRoutingService(
 		provider.NewIPStack,
 		env.NewDeployment,
 
+		provider.NewGithubAccountLinker,
+		provider.NewGithubSSO,
+		provider.NewFacebookAccountLinker,
+		provider.NewFacebookSSO,
+		provider.NewGoogleAccountLinker,
+		provider.NewGoogleSSO,
+		sqldb.NewGithubSSOSql,
+		sqldb.NewFacebookSSOSql,
+		sqldb.NewGoogleSSOSql,
 		sqldb.NewUserSQL,
 		sqldb.NewURLSql,
 		sqldb.NewUserURLRelationSQL,
+
+		sso.NewAccountLinkerFactory,
+		sso.NewFactory,
 		url.NewRetrieverPersist,
-		account.NewProvider,
 		provider.NewShortRoutes,
 	)
 	return service.Routing{}, nil
