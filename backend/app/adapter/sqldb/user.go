@@ -173,6 +173,28 @@ VALUES ($1, $2, $3, $4, $5, $6)
 	return err
 }
 
+// UpdateUserID updates the ID of an user in user table with given email address.
+func (u UserSQL) UpdateUserID(email string, userID string) error {
+	isExist, err := u.IsEmailExist(email)
+	if err != nil {
+		return err
+	}
+
+	if !isExist {
+		return repository.ErrEntryNotFound(fmt.Sprintf("email %s does not exist", email))
+	}
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1
+WHERE "%s"=$2
+`,
+		table.User.TableName,
+		table.User.ColumnID,
+		table.User.ColumnEmail)
+	_, err = u.db.Exec(statement, userID, email)
+	return err
+}
+
 // NewUserSQL creates UserSQL
 func NewUserSQL(db *sql.DB) *UserSQL {
 	return &UserSQL{
