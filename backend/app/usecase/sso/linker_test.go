@@ -86,31 +86,12 @@ func TestLinker_CreateAndLinkAccount(t *testing.T) {
 	}{
 		{
 			name:              "account exists not linked",
-			mappingUserIDs:    []string{},
-			mappingSSOUserIDs: []string{},
-			users: []entity.User{
-				{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-				},
-			},
-			ssoUser: entity.SSOUser{
-				ID:    "gama",
-				Email: "alpha@example.com",
-			},
-			user: entity.User{
-				ID:    "alpha",
-				Email: "alpha@example.com",
-			},
-			expectedIDExist: false,
-		},
-		{
-			name:              "account exists with empty ID",
 			key:               "alpha",
 			mappingUserIDs:    []string{},
 			mappingSSOUserIDs: []string{},
 			users: []entity.User{
 				{
+					ID:    "alpha",
 					Email: "alpha@example.com",
 				},
 			},

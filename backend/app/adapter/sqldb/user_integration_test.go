@@ -341,56 +341,6 @@ func TestUserSql_CreateUser(t *testing.T) {
 	}
 }
 
-func TestUserSQL_UpdateUserID(t *testing.T) {
-	testCases := []struct {
-		name      string
-		email     string
-		tableRows []userTableRow
-		hasErr    bool
-	}{
-		{
-			name:      "user not found",
-			email:     "alpha@example.com",
-			tableRows: []userTableRow{},
-			hasErr:    true,
-		},
-		{
-			name:  "update user ID successfully",
-			email: "alpha@example.com",
-			tableRows: []userTableRow{
-				{email: "alpha@example.com"},
-			},
-			hasErr: false,
-		},
-	}
-
-	for _, testCase := range testCases {
-		t.Run(testCase.name, func(t *testing.T) {
-			dbtest.AccessTestDB(
-				dbConnector,
-				dbMigrationTool,
-				dbMigrationRoot,
-				dbConfig,
-				func(sqlDB *sql.DB) {
-					insertUserTableRows(t, sqlDB, testCase.tableRows)
-
-					userRepo := sqldb.NewUserSQL(sqlDB)
-
-					err := userRepo.UpdateUserID(testCase.email, "alpha")
-					if testCase.hasErr {
-						assert.NotEqual(t, nil, err)
-						return
-					}
-					assert.Equal(t, nil, err)
-
-					user, err := userRepo.GetUserByEmail(testCase.email)
-					assert.Equal(t, nil, err)
-					assert.Equal(t, "alpha", user.ID)
-				})
-		})
-	}
-}
-
 func insertUserTableRows(t *testing.T, sqlDB *sql.DB, tableRows []userTableRow) {
 	for _, tableRow := range tableRows {
 		_, err := sqlDB.Exec(
