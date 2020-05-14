@@ -78,6 +78,21 @@ git clone https://github.com/short-d/short.git
 - [Yarn](https://classic.yarnpkg.com/en/docs/install) v1.19.1
 - [PostgreSQL](doc/tutorial/POSTGRES.md) v12.0
 
+### Local environmental variables
+
+1. Copy `backend/.env.dist` file to `backend/.env`:
+
+   ```bash
+   cp backend/.env.dist backend/.env
+   ```
+
+1. Copy `frontend/.env.development.dist` file to `frontend/.env.development`:
+
+   ```bash
+   cp frontend/.env.development.dist frontend/.env.development
+   ```
+
+
 ### Create reCAPTCHA account
 
 1. Sign up at [ReCAPTCHA](https://short-d.com/r/recaptcha) with the
@@ -120,12 +135,6 @@ You can find the detailed instructions on setting up Github sign in [here](doc/s
    
 ### Backend
 
-1. Copy `backend/.env.dist` file to `backend/.env`:
-
-   ```bash
-   cp backend/.env.dist backend/.env
-   ```
-
 1. Update placeholder values with your own configurations.
 
 1. Launch backend server
@@ -143,7 +152,7 @@ You can find the detailed instructions on setting up Github sign in [here](doc/s
 
 ### Frontend
 
-Remember to update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`.
+1. Update `REACT_APP_RECAPTCHA_SITE_KEY` in `frontend/.env.development`.
 
 1. Launch frontend server
 
