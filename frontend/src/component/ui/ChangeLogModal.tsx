@@ -45,7 +45,7 @@ export class ChangeLogModal extends Component<Props, State> {
       <div className={'changelog'}>
         <ul>
           {changeLog.map((change: Change) => (
-            <li key={change.releasedAt}>
+            <li key={change.releasedAt.getTime()}>
               <div className={'title'}>{change.title}</div>
               <div className={'summary'}>{change.summaryMarkdown}</div>
               <div className={'released-date'}>

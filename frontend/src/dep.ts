@@ -60,13 +60,13 @@ export function initUIFactory(
   const versionService = new VersionService(envService);
   const store = initStore();
   const searchService = new SearchService();
-  const changeLogGraphQLApiService = new ChangeLogGraphQLApi(
+  const changeLogGraphQLApi = new ChangeLogGraphQLApi(
     authService,
     envService,
     graphQLService
   );
   const changeLogService = new ChangeLogService(
-    changeLogGraphQLApiService,
+    changeLogGraphQLApi,
     errorService
   );
   const extensionService = new BrowserExtensionFactory().makeBrowserExtensionService(

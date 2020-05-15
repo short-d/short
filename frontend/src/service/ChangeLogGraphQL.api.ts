@@ -72,9 +72,15 @@ export class ChangeLogGraphQLApi {
   }
 
   private parseChangeLog(changeLog: IGraphQLChangeLog): ChangeLog {
+    if (changeLog.lastViewedAt) {
+      return {
+        changes: changeLog.changes.map(this.parseChange),
+        lastViewedAt: new Date(changeLog.lastViewedAt)
+      };
+    }
+
     return {
-      changes: changeLog.changes.map(this.parseChange),
-      lastViewedAt: changeLog.lastViewedAt
+      changes: changeLog.changes.map(this.parseChange)
     };
   }
 
@@ -83,7 +89,7 @@ export class ChangeLogGraphQLApi {
       id: change.id,
       title: change.title,
       summaryMarkdown: change.summaryMarkdown,
-      releasedAt: change.releasedAt
+      releasedAt: new Date(change.releasedAt)
     };
   }
 }

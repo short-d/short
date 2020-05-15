@@ -119,20 +119,26 @@ export class HomePage extends Component<Props, State> {
       return;
     }
 
+    let changeLog;
     try {
-      const changeLog = await this.props.changeLogService.getChangeLog();
-      this.setState({ changeLog: changeLog.changes }, async () => {
-        const hasUpdates = await this.props.changeLogService.hasUpdates();
-        if (!hasUpdates) {
-          return;
-        }
-
-        this.showChangeLogs();
-      });
+      changeLog = await this.props.changeLogService.getChangeLog();
     } catch (err) {
       const { changeLogErr } = err;
       this.props.store.dispatch(raiseGetChangeLogError(changeLogErr));
     }
+
+    if (!changeLog) {
+      return;
+    }
+
+    this.setState({ changeLog: changeLog.changes }, async () => {
+      const hasUpdates = await this.props.changeLogService.hasUpdates();
+      if (!hasUpdates) {
+        return;
+      }
+
+      this.showChangeLogs();
+    });
   };
 
   async setPromoDisplayStatus() {
