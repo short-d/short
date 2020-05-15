@@ -38,6 +38,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
+	"github.com/short-d/short/backend/tool"
 )
 
 // Injectors from wire.go:
@@ -152,6 +153,22 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
+}
+
+func InjectDataTool(dbConfig db.Config, dbConnector db.Connector, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (tool.Data, error) {
+	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	keyGenerator, err := provider.NewKeyGenerator(bufferSize, rpc)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	data, err := tool.NewData(dbConfig, dbConnector, keyGenerator)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	return data, nil
 }
 
 // wire.go:

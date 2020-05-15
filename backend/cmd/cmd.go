@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/short-d/short/backend/dep"
+	"github.com/short-d/short/backend/dep/provider"
+
 	"github.com/short-d/app/fw/cli"
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/short/backend/app"
@@ -41,6 +44,23 @@ func NewRootCmd(
 		"migration migrations root directory",
 	)
 
+	idCmd := cmdFactory.NewCommand(cli.CommandConfig{
+		Usage:        "data-id",
+		ShortHelpMsg: "Use user ID to uniquely identify a user",
+		OnExecute: func(cmd *cli.Command, args []string) {
+			kgsConfig := provider.KgsRPCConfig{
+				Hostname: config.KgsHostname,
+				Port:     config.KgsPort,
+			}
+			keyGenBufferSize := provider.KeyGenBufferSize(config.KeyGenBufferSize)
+			dataTool, err := dep.InjectDataTool(dbConfig, dbConnector, keyGenBufferSize, kgsConfig)
+			if err != nil {
+				panic(err)
+			}
+			dataTool.EmailToID()
+		},
+	})
+
 	rootCmd := cmdFactory.NewCommand(
 		cli.CommandConfig{
 			Usage:     "short",
@@ -48,6 +68,11 @@ func NewRootCmd(
 		},
 	)
 	err := rootCmd.AddSubCommand(startCmd)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	err = rootCmd.AddSubCommand(idCmd)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

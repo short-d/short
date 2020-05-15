@@ -5,6 +5,8 @@ package dep
 import (
 	"database/sql"
 
+	"github.com/short-d/short/backend/tool"
+
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"
@@ -256,4 +258,17 @@ func InjectRoutingService(
 		provider.NewShortRoutes,
 	)
 	return service.Routing{}, nil
+}
+
+func InjectDataTool(
+	dbConfig db.Config,
+	dbConnector db.Connector,
+	bufferSize provider.KeyGenBufferSize,
+	kgsRPCConfig provider.KgsRPCConfig,
+) (tool.Data, error) {
+	wire.Build(
+		keyGenSet,
+		tool.NewData,
+	)
+	return tool.Data{}, nil
 }
