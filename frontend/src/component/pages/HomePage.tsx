@@ -297,6 +297,10 @@ export class HomePage extends Component<Props, State> {
     this.errModal.current!.open();
   }
 
+  handleOpenChangeLogModal = () => {
+    this.props.changeLogService.viewChangeLog();
+  };
+
   handleShowChangeLogBtnClick = () => {
     this.showChangeLogs();
   };
@@ -390,6 +394,7 @@ export class HomePage extends Component<Props, State> {
         />
         <ChangeLogModal
           ref={this.changeLogModalRef}
+          onModalOpen={this.handleOpenChangeLogModal}
           changeLog={this.state.changeLog}
           defaultVisibleLogs={3}
         />
