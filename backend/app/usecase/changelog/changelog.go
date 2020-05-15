@@ -29,7 +29,7 @@ type Persist struct {
 
 // CreateChange creates a new change in the data store.
 func (p Persist) CreateChange(title string, summaryMarkdown *string) (entity.Change, error) {
-	now := p.timer.Now()
+	now := p.timer.Now().UTC()
 	key, err := p.keyGen.NewKey()
 	if err != nil {
 		return entity.Change{}, err
