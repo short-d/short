@@ -14,7 +14,6 @@ interface State {
 interface Props {
   changeLog?: Array<Change>;
   defaultVisibleLogs: number;
-  onClose: () => void;
 }
 
 export class ChangeLogModal extends Component<Props, State> {
@@ -76,11 +75,7 @@ export class ChangeLogModal extends Component<Props, State> {
 
   render() {
     return (
-      <Modal
-        ref={this.modalRef}
-        canClose={true}
-        onModalClose={this.props.onClose}
-      >
+      <Modal ref={this.modalRef} canClose={true}>
         <div className={'modal-body'}>
           <div className={'modal-header'}>
             Since You've Been Gone
