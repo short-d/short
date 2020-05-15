@@ -14,7 +14,7 @@ interface State {
 interface Props {
   changeLog?: Array<Change>;
   defaultVisibleLogs: number;
-  onOpen?: () => void;
+  onModalOpen?: () => void;
 }
 
 export class ChangeLogModal extends Component<Props, State> {
@@ -79,7 +79,7 @@ export class ChangeLogModal extends Component<Props, State> {
       <Modal
         ref={this.modalRef}
         canClose={true}
-        onModalOpen={this.props.onOpen}
+        onModalOpen={this.props.onModalOpen}
       >
         <div className={'modal-body'}>
           <div className={'modal-header'}>

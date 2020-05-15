@@ -394,7 +394,7 @@ export class HomePage extends Component<Props, State> {
         />
         <ChangeLogModal
           ref={this.changeLogModalRef}
-          onOpen={this.handleOpenChangeLogModal}
+          onModalOpen={this.handleOpenChangeLogModal}
           changeLog={this.state.changeLog}
           defaultVisibleLogs={3}
         />
