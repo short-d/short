@@ -78,7 +78,15 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 }
 
-func (a AuthMutation) UpdateURL(oldAlias string, urlInput URLInput, isPublic *bool) (*URL, error) {
+type UpdateURLArgs struct {
+	OldAlias string
+	Url      URLInput
+	IsPublic bool
+}
+
+func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {
+	oldAlias := args.OldAlias
+	urlInput := args.Url
 	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
 		return nil, ErrInvalidAuthToken{}
