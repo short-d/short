@@ -5,8 +5,6 @@ package dep
 import (
 	"database/sql"
 
-	"github.com/short-d/short/backend/tool"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"
@@ -38,6 +36,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
+	"github.com/short-d/short/backend/tool"
 )
 
 var authSet = wire.NewSet(

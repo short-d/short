@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/short-d/short/backend/dep"
-	"github.com/short-d/short/backend/dep/provider"
-
 	"github.com/short-d/app/fw/cli"
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/short/backend/app"
+	"github.com/short-d/short/backend/dep"
+	"github.com/short-d/short/backend/dep/provider"
 )
 
 // NewRootCmd creates the base command.
