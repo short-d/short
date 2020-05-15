@@ -17,21 +17,21 @@ describe('ChangeLogModal', () => {
       {
         id: '12345',
         title: 'Lorem ipsum',
-        releasedAt: new Date(1500000000003),
+        releasedAt: Date.parse('01 Jan 2020 00:00:00'),
         summaryMarkdown:
           'Lorem ipsum dolor sit amet, consectetuer adipiscing elit'
       },
       {
         id: '12346',
         title: 'Lorem ipsum',
-        releasedAt: new Date(1500000000002),
+        releasedAt: Date.parse('01 Jan 2015 00:00:00'),
         summaryMarkdown:
           'Lorem ipsum dolor sit amet, consectetuer adipiscing elit'
       },
       {
         id: '12347',
         title: 'Lorem ipsum',
-        releasedAt: new Date(1500000000001),
+        releasedAt: Date.parse('01 Jan 2010 00:00:00'),
         summaryMarkdown:
           'Lorem ipsum dolor sit amet, consectetuer adipiscing elit'
       }
