@@ -62,6 +62,10 @@ export class ChangeLogService {
     });
   }
 
+  viewChangeLog(): Promise<Date> {
+    return this.changeLogGraphQLApi.viewChangeLog();
+  }
+
   sortChanges(changes: Change[]) {
     changes.sort((a: Change, b: Change) => {
       return b.releasedAt.getTime() - a.releasedAt.getTime();
