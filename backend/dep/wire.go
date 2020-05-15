@@ -259,6 +259,7 @@ func InjectRoutingService(
 	return service.Routing{}, nil
 }
 
+// InjectDataTool creates data tool with configured dependencies.
 func InjectDataTool(
 	dbConfig db.Config,
 	dbConnector db.Connector,
