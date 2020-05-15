@@ -102,6 +102,7 @@ export class ChangeLogGraphQLApi {
         authToken: this.authService.getAuthToken(),
         captchaResponse: captchaResponse
       };
+
       try {
         const res: IChangeLogGraphQLMutation = await this.graphQLService.mutate<
           IChangeLogGraphQLMutation
