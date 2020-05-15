@@ -25,6 +25,7 @@ func NewRootCmd(
 		cli.CommandConfig{
 			Usage:        "start",
 			ShortHelpMsg: "Start service",
+			// TODO(issue#789): remove the star from cmd signature
 			OnExecute: func(cmd *cli.Command, args []string) {
 				config.MigrationRoot = migrationRoot
 				app.Start(
@@ -54,7 +55,8 @@ func NewRootCmd(
 			keyGenBufferSize := provider.KeyGenBufferSize(config.KeyGenBufferSize)
 			dataTool, err := dep.InjectDataTool(dbConfig, dbConnector, keyGenBufferSize, kgsConfig)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				os.Exit(1)
 			}
 			dataTool.EmailToID()
 		},
