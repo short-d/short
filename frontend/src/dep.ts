@@ -63,6 +63,7 @@ export function initUIFactory(
   const changeLogGraphQLApi = new ChangeLogGraphQLApi(
     authService,
     envService,
+    captchaService,
     graphQLService
   );
   const changeLogService = new ChangeLogService(
