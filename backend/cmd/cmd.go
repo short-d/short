@@ -7,6 +7,8 @@ import (
 	"github.com/short-d/app/fw/cli"
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/short/backend/app"
+	"github.com/short-d/short/backend/dep"
+	"github.com/short-d/short/backend/dep/provider"
 )
 
 // NewRootCmd creates the base command.
@@ -23,7 +25,7 @@ func NewRootCmd(
 		cli.CommandConfig{
 			Usage:        "start",
 			ShortHelpMsg: "Start service",
-			OnExecute: func(cmd *cli.Command, args []string) {
+			OnExecute: func(cmd cli.Command, args []string) {
 				config.MigrationRoot = migrationRoot
 				app.Start(
 					dbConfig,
@@ -41,13 +43,50 @@ func NewRootCmd(
 		"migration migrations root directory",
 	)
 
+	var batchSize int
+	idCmd := cmdFactory.NewCommand(cli.CommandConfig{
+		Usage:        "data-id",
+		ShortHelpMsg: "Use user ID to uniquely identify a user",
+		OnExecute: func(cmd cli.Command, args []string) {
+			kgsConfig := provider.KgsRPCConfig{
+				Hostname: config.KgsHostname,
+				Port:     config.KgsPort,
+			}
+			keyGenBufferSize := provider.KeyGenBufferSize(config.KeyGenBufferSize)
+			dataTool, err := dep.InjectDataTool(
+				provider.LogPrefix(config.LogPrefix),
+				config.LogLevel,
+				dbConfig,
+				dbConnector,
+				keyGenBufferSize,
+				kgsConfig,
+			)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			dataTool.EmailToID(batchSize)
+		},
+	})
+	idCmd.AddIntFlag(
+		&batchSize,
+		"size",
+		1000,
+		"the max number of records to migrate",
+	)
+
 	rootCmd := cmdFactory.NewCommand(
 		cli.CommandConfig{
 			Usage:     "short",
-			OnExecute: func(cmd *cli.Command, args []string) {},
+			OnExecute: func(cmd cli.Command, args []string) {},
 		},
 	)
 	err := rootCmd.AddSubCommand(startCmd)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	err = rootCmd.AddSubCommand(idCmd)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
