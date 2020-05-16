@@ -155,7 +155,7 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	return routing, nil
 }
 
-func InjectDataTool(dbConfig db.Config, dbConnector db.Connector, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (tool.Data, error) {
+func InjectDataTool(prefix provider.LogPrefix, logLevel logger.LogLevel, dbConfig db.Config, dbConnector db.Connector, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (tool.Data, error) {
 	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
 		return tool.Data{}, err
@@ -164,7 +164,12 @@ func InjectDataTool(dbConfig db.Config, dbConnector db.Connector, bufferSize pro
 	if err != nil {
 		return tool.Data{}, err
 	}
-	data, err := tool.NewData(dbConfig, dbConnector, keyGenerator)
+	system := timer.NewSystem()
+	program := runtime.NewProgram()
+	stdOut := io.NewStdOut()
+	local := logger.NewLocal(stdOut)
+	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, local)
+	data, err := tool.NewData(dbConfig, dbConnector, keyGenerator, loggerLogger)
 	if err != nil {
 		return tool.Data{}, err
 	}

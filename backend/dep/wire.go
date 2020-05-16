@@ -261,13 +261,25 @@ func InjectRoutingService(
 
 // InjectDataTool creates data tool with configured dependencies.
 func InjectDataTool(
+	prefix provider.LogPrefix,
+	logLevel logger.LogLevel,
 	dbConfig db.Config,
 	dbConnector db.Connector,
 	bufferSize provider.KeyGenBufferSize,
 	kgsRPCConfig provider.KgsRPCConfig,
 ) (tool.Data, error) {
 	wire.Build(
+		wire.Bind(new(io.Output), new(io.StdOut)),
+		wire.Bind(new(timer.Timer), new(timer.System)),
+		wire.Bind(new(logger.EntryRepository), new(logger.Local)),
+
 		keyGenSet,
+
+		io.NewStdOut,
+		runtime.NewProgram,
+		logger.NewLocal,
+		provider.NewLogger,
+		timer.NewSystem,
 		tool.NewData,
 	)
 	return tool.Data{}, nil
