@@ -60,7 +60,7 @@ func TestGraphQlAPI(t *testing.T) {
 		riskDetector,
 	)
 
-	s := external.NewReCaptchaFake(external.VerifyResponse{})
+	s := requester.NewReCaptchaFake(requester.VerifyResponse{})
 	verifier := requester.NewVerifier(s)
 	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 

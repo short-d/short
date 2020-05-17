@@ -9,7 +9,6 @@ import (
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/risk"
@@ -27,7 +26,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 	testCases := []struct {
 		name          string
 		alias         *string
-		availableKeys []external.Key
+		availableKeys []keygen.Key
 		urls          urlMap
 		user          entity.User
 		urlUpdate     entity.URL
@@ -88,7 +87,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			urlUpdate: entity.URL{
-				OriginalURL: "",
+				OriginalURL: "aaaaaaaaaaaaaaaaaaa",
 			},
 			expHasErr:   true,
 			expectedURL: entity.URL{},
@@ -105,7 +104,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				testCase.relationUsers,
 				testCase.relationURLs,
 			)
-			keyFetcher := external.NewKeyFetcherFake(testCase.availableKeys)
+			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 			longLinkValidator := validator.NewLongLink()

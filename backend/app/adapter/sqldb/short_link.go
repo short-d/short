@@ -73,7 +73,7 @@ WHERE "%s"=$5;`,
 		table.URL.ColumnOriginalURL,
 		table.URL.ColumnExpireAt,
 		table.URL.ColumnUpdatedAt,
-		oldAlias,
+		table.URL.ColumnAlias,
 	)
 
 	_, err := u.db.Exec(
