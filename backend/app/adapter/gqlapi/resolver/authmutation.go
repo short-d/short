@@ -82,7 +82,6 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 type UpdateURLArgs struct {
 	OldAlias string
 	Url      URLUpdateInput
-	IsPublic bool
 }
 
 type URLUpdateInput struct {
@@ -95,30 +94,35 @@ func (u URLUpdateInput) isValid() bool {
 	return u != URLUpdateInput{}
 }
 
-func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {
-	originalURL := args.Url.OriginalURL
-	customAlias := args.Url.CustomAlias
-	expireAt := args.Url.ExpireAt
+func (u *URLUpdateInput) createUpdate() (*entity.URL, error) {
+	if !u.isValid() {
+		return nil, errors.New("Empty Update")
+	}
 
+	update := &entity.URL{
+		ExpireAt: u.ExpireAt,
+	}
+
+	if u.OriginalURL != nil {
+		update.OriginalURL = *u.OriginalURL
+	}
+
+	if u.CustomAlias != nil {
+		update.Alias = *u.CustomAlias
+	}
+
+	return update, nil
+}
+
+func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {
 	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	if !args.Url.isValid() {
-		return nil, errors.New("Empty Update")
-	}
-
-	update := &entity.URL{
-		ExpireAt: expireAt,
-	}
-
-	if originalURL != nil {
-		update.OriginalURL = *originalURL
-	}
-
-	if customAlias != nil {
-		update.Alias = *customAlias
+	update, err := args.Url.createUpdate()
+	if err != nil {
+		return nil, err
 	}
 
 	newURL, err := a.urlUpdater.UpdateURL(args.OldAlias, *update, user)
