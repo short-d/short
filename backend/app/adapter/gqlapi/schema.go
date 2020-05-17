@@ -34,7 +34,7 @@ type Change {
 
 type AuthMutation {
 	createURL(url: URLInput!, isPublic: Boolean!): URL
-	updateURL(oldAlias: String!, url: URLInput!): URL
+	updateURL(oldAlias: String!, url: URLUpdateInput!): URL
 	createChange(change: ChangeInput!): Change!
 	viewChangeLog: Time!
 }
@@ -48,6 +48,12 @@ input URLInput {
 input ChangeInput {
   	title: String!
   	summaryMarkdown: String
+}
+
+input URLUpdateInput {
+	originalURL: String
+	customAlias: String
+	expireAt: Time
 }
 
 type URL {

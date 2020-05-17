@@ -30,48 +30,48 @@ func (u UpdaterPersist) UpdateURL(
 	update entity.URL,
 	user entity.User,
 ) (entity.URL, error) {
-	oldURL, err := u.urlRepo.GetByAlias(oldAlias)
+	url, err := u.urlRepo.GetByAlias(oldAlias)
 
 	if err != nil {
 		return entity.URL{}, err
 	}
 
-	update = u.updateAlias(oldURL, update)
-	update = u.updateLongLink(oldURL, update)
+	url = u.updateAlias(url, update)
+	url = u.updateLongLink(url, update)
 
-	if u.riskDetector.IsURLMalicious(update.OriginalURL) {
-		return entity.URL{}, ErrMaliciousLongLink(update.OriginalURL)
+	if u.riskDetector.IsURLMalicious(url.OriginalURL) {
+		return entity.URL{}, ErrMaliciousLongLink(url.OriginalURL)
 	}
 
-	if !u.aliasValidator.IsValid(&update.Alias) {
-		return entity.URL{}, ErrInvalidCustomAlias(oldAlias)
+	if !u.aliasValidator.IsValid(&url.Alias) {
+		return entity.URL{}, ErrInvalidCustomAlias(url.Alias)
 	}
 
-	if !u.longLinkValidator.IsValid(&update.OriginalURL) {
-		return entity.URL{}, ErrInvalidLongLink(update.OriginalURL)
+	if !u.longLinkValidator.IsValid(&url.OriginalURL) {
+		return entity.URL{}, ErrInvalidLongLink(url.OriginalURL)
 	}
 
-	return u.urlRepo.UpdateURL(oldAlias, update)
+	return u.urlRepo.UpdateURL(oldAlias, url)
 }
 
 func (u UpdaterPersist) updateAlias(url, update entity.URL) entity.URL {
 	newAlias := update.Alias
 
-	if newAlias == "" {
-		update.Alias = url.Alias
+	if newAlias != "" {
+		url.Alias = newAlias
 	}
 
-	return update
+	return url
 }
 
 func (u *UpdaterPersist) updateLongLink(url, update entity.URL) entity.URL {
 	newLongLink := update.OriginalURL
 
-	if newLongLink == "" {
-		url.OriginalURL = update.OriginalURL
+	if newLongLink != "" {
+		url.OriginalURL = newLongLink
 	}
 
-	return update
+	return url
 }
 
 func NewUpdaterPersist(

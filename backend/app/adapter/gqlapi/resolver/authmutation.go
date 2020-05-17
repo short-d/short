@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"errors"
 	"time"
 
 	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
@@ -80,25 +81,47 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 type UpdateURLArgs struct {
 	OldAlias string
-	Url      URLInput
+	Url      URLUpdateInput
 	IsPublic bool
 }
 
+type URLUpdateInput struct {
+	OriginalURL *string
+	CustomAlias *string
+	ExpireAt    *time.Time
+}
+
+func (u URLUpdateInput) isValid() bool {
+	return u != URLUpdateInput{}
+}
+
 func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {
-	oldAlias := args.OldAlias
-	urlInput := args.Url
+	originalURL := args.Url.OriginalURL
+	customAlias := args.Url.CustomAlias
+	expireAt := args.Url.ExpireAt
+
 	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	update := entity.URL{
-		Alias:       *urlInput.CustomAlias,
-		OriginalURL: urlInput.OriginalURL,
-		ExpireAt:    urlInput.ExpireAt,
+	if !args.Url.isValid() {
+		return nil, errors.New("Empty Update")
 	}
 
-	newURL, err := a.urlUpdater.UpdateURL(oldAlias, update, user)
+	update := &entity.URL{
+		ExpireAt: expireAt,
+	}
+
+	if originalURL != nil {
+		update.OriginalURL = *originalURL
+	}
+
+	if customAlias != nil {
+		update.Alias = *customAlias
+	}
+
+	newURL, err := a.urlUpdater.UpdateURL(args.OldAlias, *update, user)
 	if err != nil {
 		return nil, err
 	}
