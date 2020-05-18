@@ -32,6 +32,13 @@ func (e ErrInvalidCustomAlias) Error() string {
 	return string(e)
 }
 
+// ErrAliasWithFragment represents alias with URL fragment character ('#')
+type ErrAliasWithFragment string
+
+func (e ErrAliasWithFragment) Error() string {
+	return string(e)
+}
+
 // ErrMaliciousLongLink represents malicious long link error
 type ErrMaliciousLongLink string
 
@@ -73,6 +80,9 @@ func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user enti
 	}
 
 	if !c.aliasValidator.IsValid(customAlias) {
+		if c.aliasValidator.HasFragmentCharacter(*customAlias) {
+			return entity.URL{}, ErrAliasWithFragment(*customAlias)
+		}
 		return entity.URL{}, ErrInvalidCustomAlias(*customAlias)
 	}
 	return c.createURLWithCustomAlias(url, *customAlias, user)

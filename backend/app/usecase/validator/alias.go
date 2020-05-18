@@ -20,10 +20,15 @@ func (c CustomAlias) IsValid(alias *string) bool {
 		return true
 	}
 
-	if len(*alias) >= customAliasMaxLength || strings.ContainsRune(*alias, rune('#')) {
+	if len(*alias) >= customAliasMaxLength || c.HasFragmentCharacter(*alias) {
 		return false
 	}
 	return true
+}
+
+// HasFragmentCharacter returns whether the alias contains the '#' character which starts fragment identifiers in URLs
+func (c CustomAlias) HasFragmentCharacter(alias string) bool {
+	return strings.ContainsRune(alias, rune('#'))
 }
 
 // NewCustomAlias creates custom alias validator.

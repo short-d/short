@@ -10,6 +10,7 @@ const (
 	ErrCodeRequesterNotHuman          = "requesterNotHuman"
 	ErrCodeInvalidLongLink            = "invalidLongLink"
 	ErrCodeInvalidCustomAlias         = "invalidCustomAlias"
+	ErrCodeAliasWithFragment          = "aliasWithFragment"
 	ErrCodeMaliciousContent           = "maliciousContent"
 	ErrCodeInvalidAuthToken           = "invalidAuthToken"
 )
@@ -113,6 +114,26 @@ func (e ErrInvalidCustomAlias) Extensions() map[string]interface{} {
 // Error retrieves the human readable error message.
 func (e ErrInvalidCustomAlias) Error() string {
 	return "custom alias is invalid"
+}
+
+// ErrAliasWithFragment signifies that the provided custom alias has URL fragment
+// character, which is not allowed in a custom alias.
+type ErrAliasWithFragment string
+
+var _ GraphQlError = (*ErrAliasWithFragment)(nil)
+
+// Extensions keeps structured error metadata so that the clients can reliably
+// handle the error.
+func (e ErrAliasWithFragment) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code":        ErrCodeAliasWithFragment,
+		"customAlias": string(e),
+	}
+}
+
+// Error retrieves the human readable error message.
+func (e ErrAliasWithFragment) Error() string {
+	return "custom alias contains the '#' character which is not allowed"
 }
 
 // ErrInvalidAuthToken signifies the provided authentication is invalid.
