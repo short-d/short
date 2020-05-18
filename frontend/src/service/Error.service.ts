@@ -25,14 +25,15 @@ const unknownErr = {
 const invalidReCaptchaSiteKeyErr = {
   name: 'Invalid reCaptcha site key',
   description: `
-  Please email byliuyang11@gmail.com the screenshots and detailed steps to 
-  reproduce it so that I can investigate.`
+                Please email byliuyang11@gmail.com the screenshots and detailed steps to 
+                reproduce it so that I can investigate.
+                `
 };
 
 const aliasNotAvailableErr = {
   name: 'Alias not available',
   description: `
-                The alias you choose is not available. Please choose a different 
+                The alias you chose is not available. Please choose a different 
                 alias, or leave alias field empty to automatically generate one.
                 `
 };
@@ -40,7 +41,7 @@ const aliasNotAvailableErr = {
 const aliasInvalidErr = {
   name: 'Alias is invalid',
   description: `
-                The alias you choose is invalid. Please choose a different 
+                The alias you chose is invalid. Please choose a different 
                 alias, or leave alias field empty to automatically generate one.
                 `
 };
