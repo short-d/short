@@ -24,6 +24,7 @@ func NewLogger(
 	return logger.NewLogger(string(prefix), level, timer, programRuntime, entryRepo)
 }
 
+// NewLocalEntryRepo create LocalEntryRepo with line number disabled in logs.
 func NewLocalEntryRepo(output io.Output) logger.Local {
 	return logger.NewLocal(output, false)
 }
