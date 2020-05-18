@@ -15,19 +15,25 @@ describe('ChangeLogModal', () => {
     const changeLogModalRef = React.createRef<ChangeLogModal>();
     const changeLog = [
       {
+        id: '12345',
         title: 'Lorem ipsum',
-        releasedAt: 1500000000003,
-        summary: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit'
+        releasedAt: Date.parse('01 Jan 2020 00:00:00'),
+        summaryMarkdown:
+          'Lorem ipsum dolor sit amet, consectetuer adipiscing elit'
       },
       {
+        id: '12346',
         title: 'Lorem ipsum',
-        releasedAt: 1500000000002,
-        summary: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit'
+        releasedAt: Date.parse('01 Jan 2015 00:00:00'),
+        summaryMarkdown:
+          'Lorem ipsum dolor sit amet, consectetuer adipiscing elit'
       },
       {
+        id: '12347',
         title: 'Lorem ipsum',
-        releasedAt: 1500000000001,
-        summary: 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit'
+        releasedAt: Date.parse('01 Jan 2010 00:00:00'),
+        summaryMarkdown:
+          'Lorem ipsum dolor sit amet, consectetuer adipiscing elit'
       }
     ];
     const defaultVisibleLogs = 2;

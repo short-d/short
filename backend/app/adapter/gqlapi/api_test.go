@@ -13,7 +13,6 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
@@ -23,6 +22,7 @@ import (
 )
 
 func TestGraphQlAPI(t *testing.T) {
+	t.Parallel()
 	now := time.Now()
 	blockedURLs := map[string]bool{}
 	blacklist := risk.NewBlackListFake(blockedURLs)
@@ -30,7 +30,7 @@ func TestGraphQlAPI(t *testing.T) {
 	urlRepo := repository.NewURLFake(map[string]entity.URL{})
 	urlRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.URL{})
 	retriever := url.NewRetrieverPersist(&urlRepo, &urlRelationRepo)
-	keyFetcher := external.NewKeyFetcherFake([]external.Key{})
+	keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 	keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 	assert.Equal(t, nil, err)
 
@@ -49,7 +49,7 @@ func TestGraphQlAPI(t *testing.T) {
 		riskDetector,
 	)
 
-	s := external.NewReCaptchaFake(external.VerifyResponse{})
+	s := requester.NewReCaptchaFake(requester.VerifyResponse{})
 	verifier := requester.NewVerifier(s)
 	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 
@@ -58,7 +58,8 @@ func TestGraphQlAPI(t *testing.T) {
 	assert.Equal(t, nil, err)
 
 	changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
-	changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo)
+	userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
+	changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo)
 	graphqlAPI := NewShort(lg, retriever, creator, changeLog, verifier, auth)
 	assert.Equal(t, true, graphql.IsGraphQlAPIValid(graphqlAPI))
 }

@@ -8,6 +8,7 @@ export interface ReCaptcha {
 
 export const CREATE_SHORT_LINK = 'createShortLink';
 export const SEARCH_SHORT_LINK = 'searchShortLink';
+export const VIEW_CHANGE_LOG = 'viewChangeLog';
 
 const INVALID_SITE_KEY_ERR_MSG = 'Invalid site key or not loaded in api.js';
 

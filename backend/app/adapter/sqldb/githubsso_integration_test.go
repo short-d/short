@@ -12,7 +12,6 @@ import (
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
-	"github.com/short-d/short/backend/app/entity"
 )
 
 type githubSSOTableRow struct {
@@ -24,15 +23,13 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 	testCases := []struct {
 		name            string
 		tableRows       []githubSSOTableRow
-		ssoUser         entity.SSOUser
+		ssoUserID       string
 		expectedIsExist bool
 	}{
 		{
-			name:      "sso user not found",
-			tableRows: []githubSSOTableRow{},
-			ssoUser: entity.SSOUser{
-				ID: "220uFicCJj",
-			},
+			name:            "sso user not found",
+			tableRows:       []githubSSOTableRow{},
+			ssoUserID:       "220uFicCJj",
 			expectedIsExist: false,
 		},
 		{
@@ -43,9 +40,7 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 					shortUserID:  "alpha",
 				},
 			},
-			ssoUser: entity.SSOUser{
-				ID: "220uFicCJj",
-			},
+			ssoUserID:       "220uFicCJj",
 			expectedIsExist: true,
 		},
 	}
@@ -65,7 +60,7 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 					assert.Equal(t, nil, err)
 
 					githubSSORepo := sqldb.NewGithubSSOSql(sqlDB, lg)
-					gotIsExist, err := githubSSORepo.IsSSOUserExist(testCase.ssoUser)
+					gotIsExist, err := githubSSORepo.IsSSOUserExist(testCase.ssoUserID)
 
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expectedIsExist, gotIsExist)
@@ -76,47 +71,47 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 
 func TestGithubSSOSql_CreateMapping(t *testing.T) {
 	testCases := []struct {
-		name      string
-		tableRows []githubSSOTableRow
-		ssoUser   entity.SSOUser
-		shortUser entity.User
-		hasErr    bool
+		name        string
+		tableRows   []githubSSOTableRow
+		ssoUserID   string
+		shortUserID string
+		hasErr      bool
 	}{
 		{
 			name: "mapping exists",
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
-			ssoUser:   entity.SSOUser{ID: "long_user_id"},
-			shortUser: entity.User{ID: "short"},
-			hasErr:    true,
+			ssoUserID:   "long_user_id",
+			shortUserID: "short",
+			hasErr:      true,
 		},
 		{
 			name: "only SSO user ID exists",
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
-			ssoUser:   entity.SSOUser{ID: "long_user_id"},
-			shortUser: entity.User{ID: "alpha"},
-			hasErr:    true,
+			ssoUserID:   "long_user_id",
+			shortUserID: "alpha",
+			hasErr:      true,
 		},
 		{
 			name: "only Short user ID exists",
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
-			ssoUser:   entity.SSOUser{ID: "another_user_id"},
-			shortUser: entity.User{ID: "short"},
-			hasErr:    true,
+			ssoUserID:   "another_user_id",
+			shortUserID: "short",
+			hasErr:      true,
 		},
 		{
 			name: "neither SSO user ID nor Short user ID exists",
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
-			ssoUser:   entity.SSOUser{ID: "another_user_id"},
-			shortUser: entity.User{ID: "alpha"},
-			hasErr:    false,
+			ssoUserID:   "another_user_id",
+			shortUserID: "alpha",
+			hasErr:      false,
 		},
 	}
 
@@ -135,7 +130,7 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 					assert.Equal(t, nil, err)
 
 					githubSSORepo := sqldb.NewGithubSSOSql(sqlDB, lg)
-					err = githubSSORepo.CreateMapping(testCase.ssoUser, testCase.shortUser)
+					err = githubSSORepo.CreateMapping(testCase.ssoUserID, testCase.shortUserID)
 					assert.Equal(t, nil, err)
 
 					if testCase.hasErr {

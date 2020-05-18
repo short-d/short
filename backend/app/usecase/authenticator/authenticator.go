@@ -18,7 +18,7 @@ type Authenticator struct {
 
 func (a Authenticator) isTokenValid(payload Payload, validDuring time.Duration) bool {
 	now := a.timer.Now()
-	if payload.email == "" {
+	if payload.id == "" {
 		return false
 	}
 	tokenExpireAt := payload.issuedAt.Add(validDuring)
@@ -59,18 +59,18 @@ func (a Authenticator) GetUser(token string) (entity.User, error) {
 		return entity.User{}, errors.New("token expired")
 	}
 
-	if len(payload.email) < 1 {
-		return entity.User{}, errors.New("email can't be empty")
+	if len(payload.id) < 1 {
+		return entity.User{}, errors.New("id can't be empty")
 	}
 	return entity.User{
-		Email: payload.email,
+		ID: payload.id,
 	}, nil
 }
 
 // GenerateToken encodes part of user data into authentication token
 func (a Authenticator) GenerateToken(user entity.User) (string, error) {
 	issuedAt := a.timer.Now()
-	payload := newPayload(user.Email, issuedAt)
+	payload := newPayload(user.ID, issuedAt)
 	tokenPayload := payload.TokenPayload()
 	return a.tokenizer.Encode(tokenPayload)
 }

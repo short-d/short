@@ -6,13 +6,6 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 )
 
-// ErrEntryNotFound represents no entry found in the repository error
-type ErrEntryNotFound string
-
-func (e ErrEntryNotFound) Error() string {
-	return string(e)
-}
-
 // UserChangeLog accesses user-changelog information from storage, such as database.
 type UserChangeLog interface {
 	GetLastViewedAt(user entity.User) (time.Time, error)

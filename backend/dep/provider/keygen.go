@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 )
 
@@ -12,7 +11,7 @@ type KeyGenBufferSize int
 // bufferSize
 func NewKeyGenerator(
 	bufferSize KeyGenBufferSize,
-	keyFetcher external.KeyFetcher,
+	keyFetcher keygen.KeyFetcher,
 ) (keygen.KeyGenerator, error) {
 	return keygen.NewKeyGenerator(int(bufferSize), keyFetcher)
 }
