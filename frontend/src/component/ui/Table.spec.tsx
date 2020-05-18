@@ -149,6 +149,7 @@ describe('Table component', () => {
     const tableRows = container.querySelectorAll('tbody > tr');
     for (let row = 0; row < sampleRows.length; row++) {
       const curRowData = tableRows[row].querySelectorAll('td');
+
       for (let column = 0; column < sampleRows[row].length; column++) {
         expect(curRowData[column].className).toEqual('');
       }
@@ -180,6 +181,7 @@ describe('Table component', () => {
     const tableRows = container.querySelectorAll('tbody > tr');
     for (let row = 0; row < sampleRows.length; row++) {
       const curRowData = tableRows[row].querySelectorAll('td');
+
       for (let column = 0; column < sampleRows[row].length; column++) {
         expect(curRowData[column].className).toEqual(sampleClassNames[column]);
       }
