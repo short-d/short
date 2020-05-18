@@ -3,6 +3,7 @@ package resolver
 import (
 	"time"
 
+	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
@@ -82,6 +83,17 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
 	change, err := a.changeLog.CreateChange(args.Change.Title, args.Change.SummaryMarkdown)
 	return newChange(change), err
+}
+
+// ViewChangeLog records the time when the user viewed the change log
+func (a AuthMutation) ViewChangeLog() (scalar.Time, error) {
+	user, err := viewer(a.authToken, a.authenticator)
+	if err != nil {
+		return scalar.Time{}, ErrInvalidAuthToken{}
+	}
+
+	lastViewedAt, err := a.changeLog.ViewChangeLog(user)
+	return scalar.Time{Time: lastViewedAt}, err
 }
 
 func newAuthMutation(

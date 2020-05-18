@@ -27,15 +27,16 @@ import (
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
-	"github.com/short-d/short/backend/app/usecase/account"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
+	"github.com/short-d/short/backend/tool"
 )
 
 var authSet = wire.NewSet(
@@ -80,7 +81,7 @@ var googleAPISet = wire.NewSet(
 )
 
 var keyGenSet = wire.NewSet(
-	wire.Bind(new(external.KeyFetcher), new(kgs.RPC)),
+	wire.Bind(new(keygen.KeyFetcher), new(kgs.RPC)),
 	provider.NewKgsRPC,
 	provider.NewKeyGenerator,
 )
@@ -237,12 +238,49 @@ func InjectRoutingService(
 		provider.NewIPStack,
 		env.NewDeployment,
 
+		provider.NewGithubAccountLinker,
+		provider.NewGithubSSO,
+		provider.NewFacebookAccountLinker,
+		provider.NewFacebookSSO,
+		provider.NewGoogleAccountLinker,
+		provider.NewGoogleSSO,
+		sqldb.NewGithubSSOSql,
+		sqldb.NewFacebookSSOSql,
+		sqldb.NewGoogleSSOSql,
 		sqldb.NewUserSQL,
 		sqldb.NewURLSql,
 		sqldb.NewUserURLRelationSQL,
+
+		sso.NewAccountLinkerFactory,
+		sso.NewFactory,
 		url.NewRetrieverPersist,
-		account.NewProvider,
 		provider.NewShortRoutes,
 	)
 	return service.Routing{}, nil
+}
+
+// InjectDataTool creates data tool with configured dependencies.
+func InjectDataTool(
+	prefix provider.LogPrefix,
+	logLevel logger.LogLevel,
+	dbConfig db.Config,
+	dbConnector db.Connector,
+	bufferSize provider.KeyGenBufferSize,
+	kgsRPCConfig provider.KgsRPCConfig,
+) (tool.Data, error) {
+	wire.Build(
+		wire.Bind(new(io.Output), new(io.StdOut)),
+		wire.Bind(new(timer.Timer), new(timer.System)),
+		wire.Bind(new(logger.EntryRepository), new(logger.Local)),
+
+		keyGenSet,
+
+		io.NewStdOut,
+		runtime.NewProgram,
+		logger.NewLocal,
+		provider.NewLogger,
+		timer.NewSystem,
+		tool.NewData,
+	)
+	return tool.Data{}, nil
 }

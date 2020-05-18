@@ -12,6 +12,7 @@ import (
 )
 
 func TestURL_Alias(t *testing.T) {
+	t.Parallel()
 	urlResolver := URL{url: entity.URL{Alias: "TestAlias"}}
 
 	expected := urlResolver.url.Alias
@@ -20,6 +21,7 @@ func TestURL_Alias(t *testing.T) {
 }
 
 func TestURL_OriginalURL(t *testing.T) {
+	t.Parallel()
 	urlResolver := URL{url: entity.URL{OriginalURL: "TestOriginalUrl"}}
 
 	expected := urlResolver.url.OriginalURL
@@ -28,6 +30,7 @@ func TestURL_OriginalURL(t *testing.T) {
 }
 
 func TestURL_ExpireAt(t *testing.T) {
+	t.Parallel()
 	timeAfter := time.Now().Add(5 * time.Second)
 	testCases := []struct {
 		url      URL
@@ -42,6 +45,7 @@ func TestURL_ExpireAt(t *testing.T) {
 		},
 	}
 	for _, testCase := range testCases {
+		testCase := testCase
 		assert.Equal(t, testCase.expected, testCase.url.ExpireAt())
 	}
 }

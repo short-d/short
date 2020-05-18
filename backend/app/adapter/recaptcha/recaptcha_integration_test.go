@@ -11,10 +11,11 @@ import (
 
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/requester"
 )
 
 func TestReCaptcha_Verify(t *testing.T) {
+	t.Parallel()
 	expSecret := "ZPDIGNFj1EQJeNfs"
 	expCaptchaResponse := "qHwha3zZh9G9mquEUOKZ"
 
@@ -22,7 +23,7 @@ func TestReCaptcha_Verify(t *testing.T) {
 		name         string
 		httpResponse *http.Response
 		httpErr      error
-		expRes       external.VerifyResponse
+		expRes       requester.VerifyResponse
 	}{
 		{
 			name: "successful request with score = 0.8",
@@ -38,7 +39,7 @@ func TestReCaptcha_Verify(t *testing.T) {
 }
 `,
 				)))},
-			expRes: external.VerifyResponse{
+			expRes: requester.VerifyResponse{
 				Success:       true,
 				Action:        "homepage",
 				Score:         0.8,
@@ -49,7 +50,9 @@ func TestReCaptcha_Verify(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			httpRequest := webreq.NewHTTPFake(func(req *http.Request) (response *http.Response, e error) {
 				assert.Equal(t, "https://www.google.com/recaptcha/api/siteverify", req.URL.String())
 				assert.Equal(t, "POST", req.Method)

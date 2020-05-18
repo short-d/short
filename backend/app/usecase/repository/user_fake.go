@@ -50,7 +50,7 @@ func (u UserFake) GetUserByID(id string) (entity.User, error) {
 			return user, nil
 		}
 	}
-	return entity.User{}, errors.New("ID not found")
+	return entity.User{}, ErrEntryNotFound("ID not found")
 }
 
 // GetUserByEmail finds an user with a given email.
@@ -60,7 +60,7 @@ func (u UserFake) GetUserByEmail(email string) (entity.User, error) {
 			return user, nil
 		}
 	}
-	return entity.User{}, errors.New("email not found")
+	return entity.User{}, ErrEntryNotFound("email not found")
 }
 
 // CreateUser creates and persists user in the repository for future access.
@@ -72,17 +72,6 @@ func (u *UserFake) CreateUser(user entity.User) error {
 	}
 	u.users = append(u.users, user)
 	return nil
-}
-
-// UpdateUserID updates the ID of an user in the repository.
-func (u *UserFake) UpdateUserID(email string, userID string) error {
-	for idx, user := range u.users {
-		if user.Email == email {
-			u.users[idx].ID = userID
-			return nil
-		}
-	}
-	return errors.New("email does not exist")
 }
 
 // NewUserFake create in memory user repository implementation.
