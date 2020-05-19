@@ -19,8 +19,8 @@ func NewResolver(
 	logger logger.Logger,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
-	changeLog changelog.ChangeLog,
 	urlUpdater url.Updater,
+	changeLog changelog.ChangeLog,
 	requesterVerifier requester.Verifier,
 	authenticator authenticator.Authenticator,
 ) Resolver {
