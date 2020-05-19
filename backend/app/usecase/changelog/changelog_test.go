@@ -16,7 +16,7 @@ import (
 func TestPersist_CreateChange(t *testing.T) {
 	t.Parallel()
 
-	now := time.Now()
+	now := time.Now().UTC()
 	summaryMarkdown1 := "summary 1"
 	summaryMarkdown2 := "summary 2"
 	summaryMarkdown3 := "summary 3"

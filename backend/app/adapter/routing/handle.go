@@ -117,15 +117,18 @@ func getUser(r *http.Request, authenticator authenticator.Authenticator) *entity
 	return &user
 }
 
+// parses Authorization token of format "Bearer <token>"
 func getBearerToken(r *http.Request) string {
 	authHeader := r.Header.Get("Authorization")
 	if len(authHeader) < 1 {
 		return ""
 	}
+
 	words := strings.Split(authHeader, " ")
-	if len(words) < 2 {
+	if len(words) != 2 {
 		return ""
 	}
+
 	if words[0] != "Bearer" {
 		return ""
 	}

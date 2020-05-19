@@ -25,31 +25,30 @@ func (d DynamicDecisionMaker) IsFeatureEnable(featureID string, user *entity.Use
 		d.instrumentation.MadeFeatureDecision(featureID, false)
 		return false
 	}
-	defer func() {
-		d.instrumentation.FeatureToggleRetrievalSucceed()
-		d.instrumentation.MadeFeatureDecision(featureID, toggle.IsEnabled)
-	}()
-	if !toggle.IsEnabled {
-		return toggle.IsEnabled
+	d.instrumentation.FeatureToggleRetrievalSucceed()
+
+	if toggle.IsEnabled && toggle.Type == entity.PermissionToggle {
+		decision := d.makePermissionDecision(toggle, user)
+
+		d.instrumentation.MadeFeatureDecision(featureID, decision)
+		return decision
 	}
 
-	if toggle.Type == entity.PermissionToggle {
-		return d.makePermissionDecision(toggle, user)
-	}
-	return true
+	d.instrumentation.MadeFeatureDecision(featureID, toggle.IsEnabled)
+	return toggle.IsEnabled
 }
 
 func (d DynamicDecisionMaker) makePermissionDecision(toggle entity.Toggle, user *entity.User) bool {
 	checker, ok := d.permissionCheckers[toggle.ID]
 	if !ok {
-		return toggle.IsEnabled
+		return false
 	}
 	if user == nil {
-		return toggle.IsEnabled
+		return false
 	}
 	isEnabled, err := checker(*user)
 	if err != nil {
-		return toggle.IsEnabled
+		return false
 	}
 	return isEnabled
 }
@@ -67,7 +66,7 @@ func (d DynamicDecisionMakerFactory) NewDecision(
 	instrumentation instrumentation.Instrumentation,
 ) DecisionMaker {
 	permissionCheckers := map[string]PermissionChecker{
-		"include-admin-panel": d.authorizer.CanViewAdminPanel,
+		IncludeAdminPanel: d.authorizer.CanViewAdminPanel,
 	}
 	return &DynamicDecisionMaker{
 		instrumentation:    instrumentation,

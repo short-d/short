@@ -21,6 +21,7 @@ import {
   clearError,
   raiseCreateShortLinkError,
   raiseGetUserShortLinksError,
+  raiseGetChangeLogError,
   raiseInputError,
   updateAlias,
   updateCreatedUrl,
@@ -30,7 +31,6 @@ import { ErrorService } from '../../service/Error.service';
 import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
-import { Update } from '../../entity/Update';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
 import { ChangeLogService } from '../../service/ChangeLog.service';
 import { CreateShortLinkSection } from './shared/CreateShortLinkSection';
@@ -42,9 +42,12 @@ import {
 } from '../../service/ShortLink.service';
 import { AnalyticsService } from '../../service/Analytics.service';
 import { Icon, IconID } from '../ui/Icon';
+import { Change } from '../../entity/Change';
+import { IFeatureDecisionService } from '../../service/feature-decision/FeatureDecision.service';
 
 interface Props {
   uiFactory: UIFactory;
+  featureDecisionService: IFeatureDecisionService;
   urlService: UrlService;
   authService: AuthService;
   clipboardService: IClipboardService;
@@ -72,7 +75,7 @@ interface State {
   inputErr?: string;
   isShortLinkPublic?: boolean;
   autoCompleteSuggestions?: Array<Url>;
-  changeLog?: Array<Update>;
+  changeLog?: Array<Change>;
   currentPagedShortLinks?: IPagedShortLinks;
 }
 
@@ -107,9 +110,28 @@ export class HomePage extends Component<Props, State> {
     });
     this.handleStateChange();
     this.autoFillLongLink();
+    this.autoShowChangeLog();
+  }
 
-    const changeLog = await this.props.changeLogService.getChangeLog();
-    this.setState({ changeLog }, async () => {
+  autoShowChangeLog = async () => {
+    const showChangeLog = await this.props.featureDecisionService.includeViewChangeLogButton();
+    if (!showChangeLog) {
+      return;
+    }
+
+    let changeLog;
+    try {
+      changeLog = await this.props.changeLogService.getChangeLog();
+    } catch (err) {
+      const { changeLogErr } = err;
+      this.props.store.dispatch(raiseGetChangeLogError(changeLogErr));
+    }
+
+    if (!changeLog) {
+      return;
+    }
+
+    this.setState({ changeLog: changeLog.changes }, async () => {
       const hasUpdates = await this.props.changeLogService.hasUpdates();
       if (!hasUpdates) {
         return;
@@ -117,7 +139,7 @@ export class HomePage extends Component<Props, State> {
 
       this.showChangeLogs();
     });
-  }
+  };
 
   async setPromoDisplayStatus() {
     const shouldShowPromo =
@@ -275,6 +297,10 @@ export class HomePage extends Component<Props, State> {
     this.errModal.current!.open();
   }
 
+  handleOpenChangeLogModal = () => {
+    this.props.changeLogService.viewChangeLog();
+  };
+
   handleShowChangeLogBtnClick = () => {
     this.showChangeLogs();
   };
@@ -368,6 +394,7 @@ export class HomePage extends Component<Props, State> {
         />
         <ChangeLogModal
           ref={this.changeLogModalRef}
+          onModalOpen={this.handleOpenChangeLogModal}
           changeLog={this.state.changeLog}
           defaultVisibleLogs={3}
         />

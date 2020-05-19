@@ -7,7 +7,6 @@ package dep
 
 import (
 	"database/sql"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"
@@ -26,6 +25,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi"
+	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -40,6 +40,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
+	"github.com/short-d/short/backend/tool"
 )
 
 // Injectors from wire.go:
@@ -96,8 +97,9 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	verifier := requester.NewVerifier(reCaptcha)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
-	short := gqlapi.NewShort(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
-	graphGopherHandler := graphql.NewGraphGopherHandler(short)
+	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
+	api := gqlapi.NewShort(resolverResolver)
+	graphGopherHandler := graphql.NewGraphGopherHandler(api)
 	graphQL := provider.NewGraphQLService(graphqlPath, graphGopherHandler, loggerLogger)
 	return graphQL, nil
 }
@@ -157,6 +159,27 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticator)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
+}
+
+func InjectDataTool(prefix provider.LogPrefix, logLevel logger.LogLevel, dbConfig db.Config, dbConnector db.Connector, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (tool.Data, error) {
+	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	keyGenerator, err := provider.NewKeyGenerator(bufferSize, rpc)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	system := timer.NewSystem()
+	program := runtime.NewProgram()
+	stdOut := io.NewStdOut()
+	local := provider.NewLocalEntryRepo(stdOut)
+	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, local)
+	data, err := tool.NewData(dbConfig, dbConnector, keyGenerator, loggerLogger)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	return data, nil
 }
 
 // wire.go:

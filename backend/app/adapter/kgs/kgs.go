@@ -2,13 +2,10 @@ package kgs
 
 import (
 	"context"
-	"crypto/tls"
-	"fmt"
 
+	"github.com/short-d/app/fw/rpc"
 	"github.com/short-d/kgs/app/adapter/rpc/proto"
 	"github.com/short-d/short/backend/app/usecase/keygen"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 )
 
 var _ keygen.KeyFetcher = (*RPC)(nil)
@@ -40,15 +37,10 @@ func (k RPC) FetchKeys(maxCount int) ([]keygen.Key, error) {
 
 // NewRPC initializes GRPC client for key generation service APIs.
 func NewRPC(hostname string, port int) (RPC, error) {
-	target := fmt.Sprintf("%s:%d", hostname, port)
-
-	config := &tls.Config{
-		InsecureSkipVerify: true,
-	}
-
-	gRPCTls := credentials.NewTLS(config)
-	gRPCCredentials := grpc.WithTransportCredentials(gRPCTls)
-	connection, err := grpc.Dial(target, gRPCCredentials)
+	connection, err := rpc.
+		NewClientConnBuilder(hostname, port).
+		InsecureTLS().
+		Build()
 	if err != nil {
 		return RPC{}, err
 	}

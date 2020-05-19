@@ -1,6 +1,9 @@
 package feature
 
 import (
+	"github.com/short-d/short/backend/app/usecase/authorizer"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
 	"testing"
 	"time"
 
@@ -20,6 +23,8 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 	testCases := []struct {
 		name              string
 		toggles           map[string]entity.Toggle
+		user              entity.User
+		userRoles         map[string][]role.Role
 		featureID         string
 		expectedIsEnabled bool
 	}{
@@ -51,6 +56,60 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 			featureID:         "example-feature",
 			expectedIsEnabled: true,
 		},
+		{
+			name: "permission enabled",
+			toggles: map[string]entity.Toggle{
+				"include-admin-panel": {
+					ID:        "include-admin-panel",
+					IsEnabled: true,
+					Type:      entity.PermissionToggle,
+				},
+			},
+			user: entity.User{
+				ID: "user-id",
+			},
+			userRoles: map[string][]role.Role{
+				"user-id": {role.Admin},
+			},
+			featureID:         "include-admin-panel",
+			expectedIsEnabled: true,
+		},
+		{
+			name: "permission disabled",
+			toggles: map[string]entity.Toggle{
+				"include-admin-panel": {
+					ID:        "include-admin-panel",
+					IsEnabled: true,
+					Type:      entity.PermissionToggle,
+				},
+			},
+			user: entity.User{
+				ID: "user-id",
+			},
+			userRoles: map[string][]role.Role{
+				"user-id": {role.Basic},
+			},
+			featureID:         "include-admin-panel",
+			expectedIsEnabled: false,
+		},
+		{
+			name: "permission enabled, toggle disabled",
+			toggles: map[string]entity.Toggle{
+				"include-admin-panel": {
+					ID:        "include-admin-panel",
+					IsEnabled: false,
+					Type:      entity.PermissionToggle,
+				},
+			},
+			user: entity.User{
+				ID: "user-id",
+			},
+			userRoles: map[string][]role.Role{
+				"user-id": {role.Admin},
+			},
+			featureID:         "include-admin-panel",
+			expectedIsEnabled: false,
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -71,10 +130,16 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 				ctxCh <- ctx.ExecutionContext{}
 			}()
 
+			currentUser := testCase.user
+
+			fakeRolesRepo := repository.NewUserRoleFake(testCase.userRoles)
+			ac := rbac.NewRBAC(fakeRolesRepo)
+
 			ins := instrumentation.NewInstrumentation(lg, tm, mt, ana, ctxCh)
-			factory := NewDynamicDecisionMakerFactory(featureRepo)
+			factory := NewDynamicDecisionMakerFactory(featureRepo, authorizer.NewAuthorizer(ac))
 			decision := factory.NewDecision(ins)
-			gotIsEnabled := decision.IsFeatureEnable(testCase.featureID)
+
+			gotIsEnabled := decision.IsFeatureEnable(testCase.featureID, &currentUser)
 			assert.Equal(t, testCase.expectedIsEnabled, gotIsEnabled)
 		})
 	}

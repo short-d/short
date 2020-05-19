@@ -16,33 +16,33 @@ type StaticDecisionMaker struct {
 }
 
 func (s StaticDecisionMaker) IsFeatureEnable(featureID string, user *entity.User) bool {
-	checker, ok := s.permissionCheckers[featureID]
-	if ok {
-		if user == nil {
-			return s.decisions[featureID]
-		}
-		isEnabled, err := checker(*user)
-		if err != nil {
-			return s.decisions[featureID]
-		}
-		return isEnabled
-	}
 	isEnabled := s.decisions[featureID]
+
+	_, hasPermissionCheck := s.permissionCheckers[featureID]
+	if isEnabled && hasPermissionCheck {
+		decision := s.makePermissionDecision(featureID, user)
+
+		s.instrumentation.MadeFeatureDecision(featureID, decision)
+		return decision
+	}
+
 	s.instrumentation.MadeFeatureDecision(featureID, isEnabled)
 	return isEnabled
 }
 
-func (s StaticDecisionMaker) makePermissionDecision(toggle entity.Toggle, user *entity.User) bool {
-	checker, ok := s.permissionCheckers[toggle.ID]
+
+func (s StaticDecisionMaker) makePermissionDecision(featureID string, user *entity.User) bool {
+	checker, ok := s.permissionCheckers[featureID]
 	if !ok {
-		return toggle.IsEnabled
+		return false
 	}
 	if user == nil {
-		return toggle.IsEnabled
+		return false
 	}
+
 	isEnabled, err := checker(*user)
 	if err != nil {
-		return toggle.IsEnabled
+		return false
 	}
 	return isEnabled
 }
@@ -59,18 +59,19 @@ func (s StaticDecisionMakerFactory) NewDecision(
 	instrumentation instrumentation.Instrumentation,
 ) DecisionMaker {
 	permissionCheckers := map[string]PermissionChecker{
-		"include-admin-panel": s.authorizer.CanViewAdminPanel,
+		IncludeAdminPanel: s.authorizer.CanViewAdminPanel,
 	}
 	return &StaticDecisionMaker{
 		instrumentation: instrumentation,
 		decisions: map[string]bool{
-			"change-log":               true,
-			"facebook-sign-in":         true,
-			"github-sign-in":           true,
-			"google-sign-in":           true,
-			"search-bar":               true,
-			"user-short-links-section": true,
-			"preference-toggles":       true,
+			ChangeLog:             true,
+			FacebookSignIn:        true,
+			GithubSignIn:          true,
+			GoogleSignIn:          true,
+			SearchBar:             true,
+			UserShortLinksSection: true,
+			PreferenceToggles:     true,
+			IncludeAdminPanel:     true,
 		},
 		permissionCheckers: permissionCheckers,
 	}
