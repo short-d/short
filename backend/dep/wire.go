@@ -24,6 +24,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi"
+	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -147,7 +148,6 @@ func InjectGraphQLService(
 ) (service.GraphQL, error) {
 	wire.Build(
 		wire.Bind(new(timer.Timer), new(timer.System)),
-		wire.Bind(new(graphql.API), new(gqlapi.Short)),
 		wire.Bind(new(graphql.Handler), new(graphql.GraphGopherHandler)),
 
 		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
@@ -171,6 +171,7 @@ func InjectGraphQLService(
 		webreq.NewHTTP,
 		timer.NewSystem,
 
+		resolver.NewResolver,
 		gqlapi.NewShort,
 		provider.NewSafeBrowsing,
 		risk.NewDetector,
@@ -277,7 +278,7 @@ func InjectDataTool(
 
 		io.NewStdOut,
 		runtime.NewProgram,
-		logger.NewLocal,
+		provider.NewLocalEntryRepo,
 		provider.NewLogger,
 		timer.NewSystem,
 		tool.NewData,

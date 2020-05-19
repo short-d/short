@@ -26,6 +26,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi"
+	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -95,8 +96,9 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	verifier := requester.NewVerifier(reCaptcha)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
-	short := gqlapi.NewShort(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
-	graphGopherHandler := graphql.NewGraphGopherHandler(short)
+	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
+	api := gqlapi.NewShort(resolverResolver)
+	graphGopherHandler := graphql.NewGraphGopherHandler(api)
 	graphQL := provider.NewGraphQLService(graphqlPath, graphGopherHandler, loggerLogger)
 	return graphQL, nil
 }
@@ -167,7 +169,7 @@ func InjectDataTool(prefix provider.LogPrefix, logLevel logger.LogLevel, dbConfi
 	system := timer.NewSystem()
 	program := runtime.NewProgram()
 	stdOut := io.NewStdOut()
-	local := logger.NewLocal(stdOut)
+	local := provider.NewLocalEntryRepo(stdOut)
 	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, local)
 	data, err := tool.NewData(dbConfig, dbConnector, keyGenerator, loggerLogger)
 	if err != nil {
