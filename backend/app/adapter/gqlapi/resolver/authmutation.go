@@ -23,9 +23,32 @@ type AuthMutation struct {
 
 // URLInput represents possible URL attributes
 type URLInput struct {
-	OriginalURL string
+	OriginalURL *string
 	CustomAlias *string
 	ExpireAt    *time.Time
+}
+
+// isEmpty checks if the input contains only nil pointers
+func (u *URLInput) isEmpty() bool {
+	return *u == URLInput{}
+}
+
+// originalURL returns the URLInput OrignalURL and an empty string if the
+// pointer references a nil value.
+func (u *URLInput) originalURL() string {
+	if u.OriginalURL == nil {
+		return ""
+	}
+	return *u.OriginalURL
+}
+
+// customAlias returns the URLInput CustomAlias and an empty string if the
+// pointer references a nil value.
+func (u *URLInput) customAlias() string {
+	if u.CustomAlias == nil {
+		return ""
+	}
+	return *u.CustomAlias
 }
 
 // CreateURLArgs represents the possible parameters for CreateURL endpoint
@@ -52,9 +75,10 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 		return nil, ErrInvalidAuthToken{}
 	}
 
+	originalURL := args.URL.originalURL()
 	customAlias := args.URL.CustomAlias
 	u := entity.URL{
-		OriginalURL: args.URL.OriginalURL,
+		OriginalURL: originalURL,
 		ExpireAt:    args.URL.ExpireAt,
 	}
 
@@ -81,37 +105,20 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 type UpdateURLArgs struct {
 	OldAlias string
-	Url      URLUpdateInput
+	Url      URLInput
 }
 
-type URLUpdateInput struct {
-	OriginalURL *string
-	CustomAlias *string
-	ExpireAt    *time.Time
-}
-
-func (u URLUpdateInput) isValid() bool {
-	return u != URLUpdateInput{}
-}
-
-func (u *URLUpdateInput) createUpdate() (*entity.URL, error) {
-	if !u.isValid() {
+func (u *URLInput) createUpdate() (*entity.URL, error) {
+	if u.isEmpty() {
 		return nil, errors.New("Empty Update")
 	}
 
-	update := &entity.URL{
-		ExpireAt: u.ExpireAt,
-	}
+	return &entity.URL{
+		Alias:       u.customAlias(),
+		OriginalURL: u.originalURL(),
+		ExpireAt:    u.ExpireAt,
+	}, nil
 
-	if u.OriginalURL != nil {
-		update.OriginalURL = *u.OriginalURL
-	}
-
-	if u.CustomAlias != nil {
-		update.Alias = *u.CustomAlias
-	}
-
-	return update, nil
 }
 
 func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {

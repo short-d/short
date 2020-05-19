@@ -7,7 +7,6 @@ package dep
 
 import (
 	"database/sql"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"
@@ -97,7 +96,7 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	verifier := requester.NewVerifier(reCaptcha)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
-	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
+	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, updaterPersist, persist, verifier, authenticator)
 	api := gqlapi.NewShort(resolverResolver)
 	graphGopherHandler := graphql.NewGraphGopherHandler(api)
 	graphQL := provider.NewGraphQLService(graphqlPath, graphGopherHandler, loggerLogger)
