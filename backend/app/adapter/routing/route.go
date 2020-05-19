@@ -3,8 +3,6 @@ package routing
 import (
 	netURL "net/url"
 
-	"github.com/short-d/short/backend/app/usecase/authenticator"
-
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/adapter/facebook"
