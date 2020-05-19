@@ -12,6 +12,7 @@ const (
 	ErrCodeInvalidCustomAlias         = "invalidCustomAlias"
 	ErrCodeMaliciousContent           = "maliciousContent"
 	ErrCodeInvalidAuthToken           = "invalidAuthToken"
+	ErrCodeEmptyUpdate                = "emptyUpdate"
 )
 
 // GraphQlError represents a GraphAPI error.
@@ -150,4 +151,22 @@ func (e ErrMaliciousContent) Extensions() map[string]interface{} {
 // Error retrieves the human readable error message.
 func (e ErrMaliciousContent) Error() string {
 	return "contains malicious content"
+}
+
+// ErrEmptyUpdate signifies that input does not contain any URL fields to update.
+type ErrEmptyUpdate struct{}
+
+var _ GraphQlError = (*ErrEmptyUpdate)(nil)
+
+// Extensions keeps structured error metadata so that the clients can reliably
+// handle the error.
+func (e ErrEmptyUpdate) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code": ErrCodeEmptyUpdate,
+	}
+}
+
+// Error retrieves the human readable error message.
+func (e ErrEmptyUpdate) Error() string {
+	return "all input fields empty"
 }

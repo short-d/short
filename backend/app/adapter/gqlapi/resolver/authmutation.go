@@ -1,7 +1,6 @@
 package resolver
 
 import (
-	"errors"
 	"time"
 
 	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
@@ -110,7 +109,7 @@ type UpdateURLArgs struct {
 
 func (u *URLInput) createUpdate() (*entity.URL, error) {
 	if u.isEmpty() {
-		return nil, errors.New("Empty Update")
+		return nil, ErrEmptyUpdate{}
 	}
 
 	return &entity.URL{
