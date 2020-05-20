@@ -11,10 +11,12 @@ import (
 
 var _ Updater = (*UpdaterPersist)(nil)
 
+// Updater represents a short link attribute updater.
 type Updater interface {
 	UpdateURL(oldAlias string, update entity.URL, user entity.User) (entity.URL, error)
 }
 
+// CreatorPersist represents a short link updater that persists the given changes
 type UpdaterPersist struct {
 	urlRepo             repository.URL
 	userURLRelationRepo repository.UserURLRelation
@@ -25,6 +27,7 @@ type UpdaterPersist struct {
 	riskDetector        risk.Detector
 }
 
+// UpdateURL persists mutations for a given short link in the repository.
 func (u UpdaterPersist) UpdateURL(
 	oldAlias string,
 	update entity.URL,
@@ -74,6 +77,7 @@ func (u *UpdaterPersist) updateLongLink(url, update entity.URL) entity.URL {
 	return url
 }
 
+// NewUpdaterPersist creates a new UpdaterPersist instance.
 func NewUpdaterPersist(
 	urlRepo repository.URL,
 	userURLRelationRepo repository.UserURLRelation,

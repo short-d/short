@@ -102,6 +102,7 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 }
 
+// UpdateURLArgs represents the possible parameters for updateURL endpoint
 type UpdateURLArgs struct {
 	OldAlias string
 	Url      URLInput
@@ -120,6 +121,7 @@ func (u *URLInput) createUpdate() (*entity.URL, error) {
 
 }
 
+// UpdateURL updates a short link mapping that belongs to a user
 func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {
 	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
