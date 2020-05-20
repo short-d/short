@@ -1,8 +1,6 @@
 package url
 
 import (
-	"errors"
-
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/keygen"
@@ -63,7 +61,7 @@ type CreatorPersist struct {
 func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user entity.User, isPublic bool) (entity.URL, error) {
 	longLink := url.OriginalURL
 	if !c.longLinkValidator.IsProvided(&longLink) {
-		return entity.URL{}, errors.New("long link is not provided")
+		return entity.URL{}, ErrInvalidLongLink("long link is not provided")
 	}
 
 	if !c.longLinkValidator.IsValid(&longLink) {
