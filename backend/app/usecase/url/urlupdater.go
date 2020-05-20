@@ -16,7 +16,7 @@ type Updater interface {
 	UpdateURL(oldAlias string, update entity.URL, user entity.User) (entity.URL, error)
 }
 
-// CreatorPersist represents a short link updater that persists the given changes
+// UpdaterPersist represents a short link updater that persists the given changes
 type UpdaterPersist struct {
 	urlRepo             repository.URL
 	userURLRelationRepo repository.UserURLRelation
