@@ -50,7 +50,9 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url:       entity.URL{},
+			url: entity.URL{
+				OriginalURL: "https://www.google.com",
+			},
 			isPublic:  false,
 			expHasErr: true,
 		},

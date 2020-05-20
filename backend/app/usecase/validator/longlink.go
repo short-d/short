@@ -9,8 +9,8 @@ type LongLink struct {
 	uriPattern *regexp.Regexp
 }
 
-// IsValid checks whether the given long link has valid format.
-func (l LongLink) IsValid(longLink *string) bool {
+// IsProvided checks whether the given long link is provided.
+func (l LongLink) IsProvided(longLink *string) bool {
 	if longLink == nil {
 		return false
 	}
@@ -19,6 +19,11 @@ func (l LongLink) IsValid(longLink *string) bool {
 		return false
 	}
 
+	return true
+}
+
+// IsValid checks whether the given long link has valid format.
+func (l LongLink) IsValid(longLink *string) bool {
 	if len(*longLink) >= longLinkMaxLength {
 		return false
 	}
