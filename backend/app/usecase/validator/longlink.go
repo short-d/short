@@ -9,7 +9,7 @@ type LongLink struct {
 	uriPattern *regexp.Regexp
 }
 
-// IsProvided checks whether the given long link is provided.
+// IsProvided checks whether the long link is provided.
 func (l LongLink) IsProvided(longLink *string) bool {
 	if longLink == nil {
 		return false
