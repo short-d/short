@@ -6,7 +6,7 @@ var UserURLRelation = struct {
 	ColumnUserID   string
 	ColumnURLAlias string
 }{
-	TableName:      "user_url_relation",
+	TableName:      "user_short_link",
 	ColumnUserID:   "user_id",
-	ColumnURLAlias: "url_alias",
+	ColumnURLAlias: "short_link_alias",
 }
