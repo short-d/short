@@ -11,35 +11,35 @@ import (
 
 var _ repository.UserURLRelation = (*UserURLRelationSQL)(nil)
 
-// UserURLRelationSQL accesses UserURLRelation information in user_url_relation
+// UserURLRelationSQL accesses UserShortLink information in user_short_link
 // table.
 type UserURLRelationSQL struct {
 	db *sql.DB
 }
 
 // CreateRelation establishes bi-directional relationship between a user and a
-// url in user_url_relation table.
+// short link in user_short_link table.
 func (u UserURLRelationSQL) CreateRelation(user entity.User, url entity.URL) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s")
 VALUES ($1,$2)
 `,
-		table.UserURLRelation.TableName,
-		table.UserURLRelation.ColumnUserID,
-		table.UserURLRelation.ColumnURLAlias,
+		table.UserShortLink.TableName,
+		table.UserShortLink.ColumnUserID,
+		table.UserShortLink.ColumnShortLinkAlias,
 	)
 
 	_, err := u.db.Exec(statement, user.ID, url.Alias)
 	return err
 }
 
-// FindAliasesByUser fetches the aliases of all the URLs created by the given user.
+// FindAliasesByUser fetches the aliases of all the ShortLinks created by the given user.
 // TODO(issue#260): allow API client to filter urls based on visibility.
 func (u UserURLRelationSQL) FindAliasesByUser(user entity.User) ([]string, error) {
 	statement := fmt.Sprintf(`SELECT "%s" FROM "%s" WHERE "%s"=$1;`,
-		table.UserURLRelation.ColumnURLAlias,
-		table.UserURLRelation.TableName,
-		table.UserURLRelation.ColumnUserID,
+		table.UserShortLink.ColumnShortLinkAlias,
+		table.UserShortLink.TableName,
+		table.UserShortLink.ColumnUserID,
 	)
 
 	var aliases []string

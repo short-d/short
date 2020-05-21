@@ -12,20 +12,20 @@ import (
 
 var _ repository.URL = (*URLSql)(nil)
 
-// URLSql accesses URL information in url table through SQL.
+// URLSql accesses ShortLink information in short_link table through SQL.
 type URLSql struct {
 	db *sql.DB
 }
 
-// IsAliasExist checks whether a given alias exist in url table.
+// IsAliasExist checks whether a given alias exist in short_link table.
 func (u URLSql) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
 FROM "%s" 
 WHERE "%s"=$1;`,
-		table.URL.ColumnAlias,
-		table.URL.TableName,
-		table.URL.ColumnAlias,
+		table.ShortLink.ColumnAlias,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnAlias,
 	)
 
 	err := u.db.QueryRow(query, alias).Scan(&alias)
@@ -38,18 +38,18 @@ WHERE "%s"=$1;`,
 	return true, nil
 }
 
-// Create inserts a new URL into url table.
+// Create inserts a new ShortLink into short_link table.
 // TODO(issue#698): change to CreateURL
 func (u *URLSql) Create(url entity.URL) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5);`,
-		table.URL.TableName,
-		table.URL.ColumnAlias,
-		table.URL.ColumnOriginalURL,
-		table.URL.ColumnExpireAt,
-		table.URL.ColumnCreatedAt,
-		table.URL.ColumnUpdatedAt,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnAlias,
+		table.ShortLink.ColumnLongLink,
+		table.ShortLink.ColumnExpireAt,
+		table.ShortLink.ColumnCreatedAt,
+		table.ShortLink.ColumnUpdatedAt,
 	)
 	_, err := u.db.Exec(
 		statement,
@@ -62,17 +62,17 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
-// UpdateURL updates a URL that exists within the url table.
+// UpdateURL updates a ShortLink that exists within the short_link table.
 func (u *URLSql) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3, "%s"=$4
 WHERE "%s"=$5;`,
-		table.URL.TableName,
-		table.URL.ColumnAlias,
-		table.URL.ColumnOriginalURL,
-		table.URL.ColumnExpireAt,
-		table.URL.ColumnUpdatedAt,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnAlias,
+		table.ShortLink.ColumnLongLink,
+		table.ShortLink.ColumnExpireAt,
+		table.ShortLink.ColumnUpdatedAt,
 		oldAlias,
 	)
 
@@ -92,19 +92,19 @@ WHERE "%s"=$5;`,
 	return newURL, nil
 }
 
-// GetByAlias finds an URL in url table given alias.
+// GetByAlias finds an ShortLink in short_link table given alias.
 func (u URLSql) GetByAlias(alias string) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s" 
 WHERE "%s"=$1;`,
-		table.URL.ColumnAlias,
-		table.URL.ColumnOriginalURL,
-		table.URL.ColumnExpireAt,
-		table.URL.ColumnCreatedAt,
-		table.URL.ColumnUpdatedAt,
-		table.URL.TableName,
-		table.URL.ColumnAlias,
+		table.ShortLink.ColumnAlias,
+		table.ShortLink.ColumnLongLink,
+		table.ShortLink.ColumnExpireAt,
+		table.ShortLink.ColumnCreatedAt,
+		table.ShortLink.ColumnUpdatedAt,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnAlias,
 	)
 
 	row := u.db.QueryRow(statement, alias)
@@ -128,7 +128,7 @@ WHERE "%s"=$1;`,
 	return url, nil
 }
 
-// GetByAliases finds URLs for a list of aliases
+// GetByAliases finds ShortLinks for a list of aliases
 func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
 	if len(aliases) == 0 {
 		return []entity.URL{}, nil
@@ -149,13 +149,13 @@ func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s"
 WHERE "%s" IN (%s);`,
-		table.URL.ColumnAlias,
-		table.URL.ColumnOriginalURL,
-		table.URL.ColumnExpireAt,
-		table.URL.ColumnCreatedAt,
-		table.URL.ColumnUpdatedAt,
-		table.URL.TableName,
-		table.URL.ColumnAlias,
+		table.ShortLink.ColumnAlias,
+		table.ShortLink.ColumnLongLink,
+		table.ShortLink.ColumnExpireAt,
+		table.ShortLink.ColumnCreatedAt,
+		table.ShortLink.ColumnUpdatedAt,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnAlias,
 		parameterStr,
 	)
 

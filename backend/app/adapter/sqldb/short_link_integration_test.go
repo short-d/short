@@ -18,12 +18,12 @@ import (
 var insertURLRowSQL = fmt.Sprintf(`
 INSERT INTO %s (%s, %s, %s, %s, %s)
 VALUES ($1, $2, $3, $4, $5)`,
-	table.URL.TableName,
-	table.URL.ColumnAlias,
-	table.URL.ColumnOriginalURL,
-	table.URL.ColumnCreatedAt,
-	table.URL.ColumnExpireAt,
-	table.URL.ColumnUpdatedAt,
+	table.ShortLink.TableName,
+	table.ShortLink.ColumnAlias,
+	table.ShortLink.ColumnLongLink,
+	table.ShortLink.ColumnCreatedAt,
+	table.ShortLink.ColumnExpireAt,
+	table.ShortLink.ColumnUpdatedAt,
 )
 
 type urlTableRow struct {
