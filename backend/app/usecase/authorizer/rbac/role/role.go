@@ -23,6 +23,8 @@ var permissions = map[Role][]permission.Permission{
 	Basic: {},
 	ShortLinkViewer: {
 		permission.ViewShortLink,
+
+		permission.ViewAdminPanel,
 	},
 	ShortLinkEditor: {
 		permission.ViewShortLink,
@@ -30,19 +32,27 @@ var permissions = map[Role][]permission.Permission{
 		permission.EditShortLink,
 		permission.DisableShortLink,
 		permission.DeleteShortLink,
+
+		permission.ViewAdminPanel,
 	},
 	ChangeLogViewer: {
 		permission.ViewChange,
+
+		permission.ViewAdminPanel,
 	},
 	ChangeLogEditor: {
 		permission.ViewChange,
 		permission.CreateChange,
 		permission.EditChange,
 		permission.DeleteChange,
+
+		permission.ViewAdminPanel,
 	},
 	SecuritySpecialist: {
 		permission.DisableShortLink,
 		permission.DisableUser,
+
+		permission.ViewAdminPanel,
 	},
 	Admin: {
 		permission.ViewShortLink,
@@ -61,7 +71,7 @@ var permissions = map[Role][]permission.Permission{
 		permission.DisableUser,
 		permission.DeleteUser,
 
-		permission.ViewDashboards,
+		permission.ViewAdminPanel,
 	},
 }
 
