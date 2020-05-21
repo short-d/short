@@ -20,5 +20,5 @@ const (
 	DisableUser
 	DeleteUser
 
-	ViewDashboards
+	ViewAdminPanel
 )
