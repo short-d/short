@@ -105,7 +105,7 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 // UpdateURLArgs represents the possible parameters for updateURL endpoint
 type UpdateURLArgs struct {
 	OldAlias string
-	Url      URLInput
+	URL      URLInput
 }
 
 func (u *URLInput) createUpdate() (*entity.URL, error) {
@@ -128,7 +128,7 @@ func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	update, err := args.Url.createUpdate()
+	update, err := args.URL.createUpdate()
 	if err != nil {
 		return nil, err
 	}
