@@ -12,12 +12,12 @@ import (
 
 var _ repository.URL = (*URLSql)(nil)
 
-// URLSql accesses ShortLink information in url table through SQL.
+// URLSql accesses ShortLink information in short_link table through SQL.
 type URLSql struct {
 	db *sql.DB
 }
 
-// IsAliasExist checks whether a given alias exist in url table.
+// IsAliasExist checks whether a given alias exist in short_link table.
 func (u URLSql) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
@@ -38,7 +38,7 @@ WHERE "%s"=$1;`,
 	return true, nil
 }
 
-// Create inserts a new ShortLink into url table.
+// Create inserts a new ShortLink into short_link table.
 // TODO(issue#698): change to CreateURL
 func (u *URLSql) Create(url entity.URL) error {
 	statement := fmt.Sprintf(`
@@ -62,7 +62,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
-// UpdateURL updates a ShortLink that exists within the url table.
+// UpdateURL updates a ShortLink that exists within the short_link table.
 func (u *URLSql) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
@@ -92,7 +92,7 @@ WHERE "%s"=$5;`,
 	return newURL, nil
 }
 
-// GetByAlias finds an ShortLink in url table given alias.
+// GetByAlias finds an ShortLink in short_link table given alias.
 func (u URLSql) GetByAlias(alias string) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
@@ -128,7 +128,7 @@ WHERE "%s"=$1;`,
 	return url, nil
 }
 
-// GetByAliases finds URLs for a list of aliases
+// GetByAliases finds ShortLinks for a list of aliases
 func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
 	if len(aliases) == 0 {
 		return []entity.URL{}, nil
