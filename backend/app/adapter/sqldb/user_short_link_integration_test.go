@@ -17,9 +17,9 @@ import (
 var insertUserURLRelationRowSQL = fmt.Sprintf(`
 INSERT INTO %s (%s, %s)
 VALUES ($1, $2)`,
-	table.UserURLRelation.TableName,
-	table.UserURLRelation.ColumnURLAlias,
-	table.UserURLRelation.ColumnUserID,
+	table.UserShortLink.TableName,
+	table.UserShortLink.ColumnShortLinkAlias,
+	table.UserShortLink.ColumnUserID,
 )
 
 type userURLRelationTableRow struct {

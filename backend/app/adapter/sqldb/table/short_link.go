@@ -1,18 +1,18 @@
 package table
 
-// URL represents database table columns for 'url' table
-var URL = struct {
-	TableName         string
-	ColumnAlias       string
-	ColumnOriginalURL string
-	ColumnCreatedAt   string
-	ColumnExpireAt    string
-	ColumnUpdatedAt   string
+// ShortLink represents database table columns for 'short_link' table
+var ShortLink = struct {
+	TableName       string
+	ColumnAlias     string
+	ColumnLongLink  string
+	ColumnCreatedAt string
+	ColumnExpireAt  string
+	ColumnUpdatedAt string
 }{
-	TableName:         "short_link",
-	ColumnAlias:       "alias",
-	ColumnOriginalURL: "long_link",
-	ColumnCreatedAt:   "created_at",
-	ColumnExpireAt:    "expire_at",
-	ColumnUpdatedAt:   "updated_at",
+	TableName:       "short_link",
+	ColumnAlias:     "alias",
+	ColumnLongLink:  "long_link",
+	ColumnCreatedAt: "created_at",
+	ColumnExpireAt:  "expire_at",
+	ColumnUpdatedAt: "updated_at",
 }
