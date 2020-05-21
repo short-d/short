@@ -35,8 +35,9 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		relationUsers []entity.User
 		relationURLs  []entity.URL
 		isPublic      bool
-		expHasErr     bool
-		expectedURL   entity.URL
+		// TODO(issue#803): Check error types in tests.
+		expHasErr   bool
+		expectedURL entity.URL
 	}{
 		{
 			name: "alias exists",
