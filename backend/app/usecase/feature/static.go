@@ -1,6 +1,8 @@
 package feature
 
 import (
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/instrumentation"
 )
 
@@ -13,7 +15,7 @@ type StaticDecisionMaker struct {
 }
 
 // IsFeatureEnable determines whether a feature is enabled given featureID.
-func (s StaticDecisionMaker) IsFeatureEnable(featureID string) bool {
+func (s StaticDecisionMaker) IsFeatureEnable(featureID string, user *entity.User) bool {
 	isEnabled := s.decisions[featureID]
 	s.instrumentation.MadeFeatureDecision(featureID, isEnabled)
 	return isEnabled
@@ -23,13 +25,14 @@ var _ DecisionMakerFactory = (*StaticDecisionMakerFactory)(nil)
 
 // StaticDecisionMakerFactory creates static feature decision maker.
 type StaticDecisionMakerFactory struct {
+	authorizer authorizer.Authorizer
 }
 
 // NewDecision creates static feature decision maker with config map.
 func (s StaticDecisionMakerFactory) NewDecision(
 	instrumentation instrumentation.Instrumentation,
 ) DecisionMaker {
-	return StaticDecisionMaker{
+	return &StaticDecisionMaker{
 		instrumentation: instrumentation,
 		decisions: map[string]bool{
 			"change-log":               true,
@@ -44,6 +47,8 @@ func (s StaticDecisionMakerFactory) NewDecision(
 }
 
 // NewStaticDecisionMakerFactory creates StaticDecisionMakerFactory.
-func NewStaticDecisionMakerFactory() StaticDecisionMakerFactory {
-	return StaticDecisionMakerFactory{}
+func NewStaticDecisionMakerFactory(authorizer authorizer.Authorizer) StaticDecisionMakerFactory {
+	return StaticDecisionMakerFactory{
+		authorizer: authorizer,
+	}
 }

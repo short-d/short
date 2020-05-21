@@ -10,6 +10,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/routing/analytics"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
 	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/url"
@@ -25,6 +26,7 @@ func NewShort(
 	githubSSO github.SingleSignOn,
 	facebookSSO facebook.SingleSignOn,
 	googleSSO google.SingleSignOn,
+	authenticator authenticator.Authenticator,
 ) []router.Route {
 	frontendURL, err := netURL.Parse(webFrontendURL)
 	if err != nil {
@@ -92,7 +94,11 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/features/:featureID",
-			Handle: FeatureHandle(instrumentationFactory, featureDecisionMakerFactory),
+			Handle: FeatureHandle(
+				instrumentationFactory,
+				featureDecisionMakerFactory,
+				authenticator,
+			),
 		},
 		{
 			Method: "GET",

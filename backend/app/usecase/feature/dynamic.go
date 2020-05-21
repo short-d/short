@@ -1,6 +1,8 @@
 package feature
 
 import (
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/instrumentation"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
@@ -15,7 +17,7 @@ type DynamicDecisionMaker struct {
 }
 
 // IsFeatureEnable determines whether a feature is enabled given featureID.
-func (f DynamicDecisionMaker) IsFeatureEnable(featureID string) bool {
+func (f DynamicDecisionMaker) IsFeatureEnable(featureID string, user *entity.User) bool {
 	toggle, err := f.featureToggleRepo.FindToggleByID(featureID)
 	if err != nil {
 		f.instrumentation.FeatureToggleRetrievalFailed(err)
@@ -32,13 +34,14 @@ var _ DecisionMakerFactory = (*DynamicDecisionMakerFactory)(nil)
 // DynamicDecisionMakerFactory creates feature decision maker.
 type DynamicDecisionMakerFactory struct {
 	featureToggleRepo repository.FeatureToggle
+	authorizer        authorizer.Authorizer
 }
 
 // NewDecision creates feature decision maker with instrumentation.
 func (f DynamicDecisionMakerFactory) NewDecision(
 	instrumentation instrumentation.Instrumentation,
 ) DecisionMaker {
-	return DynamicDecisionMaker{
+	return &DynamicDecisionMaker{
 		instrumentation:   instrumentation,
 		featureToggleRepo: f.featureToggleRepo,
 	}
@@ -47,8 +50,10 @@ func (f DynamicDecisionMakerFactory) NewDecision(
 // NewDynamicDecisionMakerFactory creates DynamicDecisionMakerFactory.
 func NewDynamicDecisionMakerFactory(
 	featureToggleRepo repository.FeatureToggle,
+	authorizer authorizer.Authorizer,
 ) DynamicDecisionMakerFactory {
 	return DynamicDecisionMakerFactory{
 		featureToggleRepo: featureToggleRepo,
+		authorizer:        authorizer,
 	}
 }

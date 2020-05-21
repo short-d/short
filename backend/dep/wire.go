@@ -28,6 +28,8 @@ import (
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
@@ -40,9 +42,16 @@ import (
 	"github.com/short-d/short/backend/tool"
 )
 
-var authSet = wire.NewSet(
+var authenticatorSet = wire.NewSet(
 	provider.NewJwtGo,
 	provider.NewAuthenticator,
+)
+
+var authorizerSet = wire.NewSet(
+	wire.Bind(new(repository.UserRole), new(sqldb.UserRoleSQL)),
+	sqldb.NewUserRoleSQL,
+	rbac.NewRBAC,
+	authorizer.NewAuthorizer,
 )
 
 var observabilitySet = wire.NewSet(
@@ -161,7 +170,7 @@ func InjectGraphQLService(
 		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
 
 		observabilitySet,
-		authSet,
+		authenticatorSet,
 		keyGenSet,
 
 		env.NewDeployment,
@@ -224,7 +233,8 @@ func InjectRoutingService(
 		wire.Bind(new(repository.URL), new(*sqldb.URLSql)),
 
 		observabilitySet,
-		authSet,
+		authenticatorSet,
+		authorizerSet,
 		githubAPISet,
 		facebookAPISet,
 		googleAPISet,
