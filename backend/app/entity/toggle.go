@@ -1,10 +1,11 @@
 package entity
 
-import "database/sql"
+type ToggleType string
 
-type ToggleType = sql.NullString
-
-var PermissionToggle = ToggleType{String: "permission", Valid: true}
+const (
+	ManualToggle     ToggleType = "manual"
+	PermissionToggle ToggleType = "permission"
+)
 
 // Toggle represents a controllable switch that can be turned on or off.
 type Toggle struct {
