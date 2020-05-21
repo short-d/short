@@ -94,7 +94,7 @@ func TestURLSql_GetByAlias(t *testing.T) {
 			hasErr:    true,
 		},
 		{
-			name: "found url",
+			name: "found short link",
 			tableRows: []urlTableRow{
 				{
 					alias:     "220uFicCJj",
@@ -203,7 +203,7 @@ func TestURLSql_Create(t *testing.T) {
 			hasErr: true,
 		},
 		{
-			name: "successfully create url",
+			name: "successfully create short link",
 			tableRows: []urlTableRow{
 				{
 					alias:    "abc",
@@ -361,7 +361,7 @@ func TestURLSql_GetByAliases(t *testing.T) {
 			hasErr:    false,
 		},
 		{
-			name: "found url",
+			name: "found short link",
 			tableRows: []urlTableRow{
 				{
 					alias:     "220uFicCJj",
