@@ -10,31 +10,31 @@ import (
 
 var _ Retriever = (*RetrieverPersist)(nil)
 
-// Retriever represents URL retriever
+// Retriever represents ShortLink retriever
 type Retriever interface {
-	GetURL(alias string, expiringAt *time.Time) (entity.URL, error)
-	GetURLsByUser(user entity.User) ([]entity.URL, error)
+	GetURL(alias string, expiringAt *time.Time) (entity.ShortLink, error)
+	GetURLsByUser(user entity.User) ([]entity.ShortLink, error)
 }
 
-// RetrieverPersist represents URL retriever that fetches URL from persistent
+// RetrieverPersist represents ShortLink retriever that fetches ShortLink from persistent
 // storage, such as database
 type RetrieverPersist struct {
 	urlRepo             repository.URL
 	userURLRelationRepo repository.UserURLRelation
 }
 
-// GetURL retrieves URL from persistent storage given alias
-func (r RetrieverPersist) GetURL(alias string, expiringAt *time.Time) (entity.URL, error) {
+// GetURL retrieves ShortLink from persistent storage given alias
+func (r RetrieverPersist) GetURL(alias string, expiringAt *time.Time) (entity.ShortLink, error) {
 	if expiringAt == nil {
 		return r.getURL(alias)
 	}
 	return r.getURLExpireAfter(alias, *expiringAt)
 }
 
-func (r RetrieverPersist) getURLExpireAfter(alias string, expiringAt time.Time) (entity.URL, error) {
+func (r RetrieverPersist) getURLExpireAfter(alias string, expiringAt time.Time) (entity.ShortLink, error) {
 	url, err := r.getURL(alias)
 	if err != nil {
-		return entity.URL{}, err
+		return entity.ShortLink{}, err
 	}
 
 	if url.ExpireAt == nil {
@@ -42,32 +42,32 @@ func (r RetrieverPersist) getURLExpireAfter(alias string, expiringAt time.Time) 
 	}
 
 	if expiringAt.After(*url.ExpireAt) {
-		return entity.URL{}, fmt.Errorf("url expired (alias=%s,expiringAt=%v)", alias, expiringAt)
+		return entity.ShortLink{}, fmt.Errorf("url expired (alias=%s,expiringAt=%v)", alias, expiringAt)
 	}
 
 	return url, nil
 }
 
-func (r RetrieverPersist) getURL(alias string) (entity.URL, error) {
+func (r RetrieverPersist) getURL(alias string) (entity.ShortLink, error) {
 	url, err := r.urlRepo.GetByAlias(alias)
 	if err != nil {
-		return entity.URL{}, err
+		return entity.ShortLink{}, err
 	}
 
 	return url, nil
 }
 
 // GetURLsByUser retrieves URLs created by given user from persistent storage
-func (r RetrieverPersist) GetURLsByUser(user entity.User) ([]entity.URL, error) {
+func (r RetrieverPersist) GetURLsByUser(user entity.User) ([]entity.ShortLink, error) {
 	aliases, err := r.userURLRelationRepo.FindAliasesByUser(user)
 	if err != nil {
-		return []entity.URL{}, err
+		return []entity.ShortLink{}, err
 	}
 
 	return r.urlRepo.GetByAliases(aliases)
 }
 
-// NewRetrieverPersist creates persistent URL retriever
+// NewRetrieverPersist creates persistent ShortLink retriever
 func NewRetrieverPersist(urlRepo repository.URL, userURLRelationRepo repository.UserURLRelation) RetrieverPersist {
 	return RetrieverPersist{
 		urlRepo:             urlRepo,

@@ -5,22 +5,22 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 )
 
-// URL retrieves requested fields of URL entity.
+// ShortLink retrieves requested fields of ShortLink entity.
 type URL struct {
-	url entity.URL
+	url entity.ShortLink
 }
 
-// Alias retrieves the alias of URL entity.
+// Alias retrieves the alias of ShortLink entity.
 func (u URL) Alias() *string {
 	return &u.url.Alias
 }
 
-// OriginalURL retrieves the long link of URL entity.
+// LongLink retrieves the long link of ShortLink entity.
 func (u URL) OriginalURL() *string {
-	return &u.url.OriginalURL
+	return &u.url.LongLink
 }
 
-// ExpireAt retrieves the expiration time of URL entity.
+// ExpireAt retrieves the expiration time of ShortLink entity.
 func (u URL) ExpireAt() *scalar.Time {
 	if u.url.ExpireAt == nil {
 		return nil
@@ -29,6 +29,6 @@ func (u URL) ExpireAt() *scalar.Time {
 	return &scalar.Time{Time: *u.url.ExpireAt}
 }
 
-func newURL(url entity.URL) URL {
+func newURL(url entity.ShortLink) URL {
 	return URL{url: url}
 }
