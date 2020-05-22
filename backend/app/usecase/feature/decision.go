@@ -5,8 +5,6 @@ import (
 	"github.com/short-d/short/backend/app/usecase/instrumentation"
 )
 
-type PermissionChecker func(user entity.User) (bool, error)
-
 // DecisionMaker determines whether a feature should be turned on or off under
 // certain conditions.
 type DecisionMaker interface {
