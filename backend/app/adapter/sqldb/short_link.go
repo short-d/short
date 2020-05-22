@@ -91,8 +91,8 @@ WHERE "%s"=$5;`,
 	return newShortLink, nil
 }
 
-// GetByAlias finds an ShortLink in short_link table given alias.
-func (s ShortLinkSql) GetByAlias(alias string) (entity.ShortLink, error) {
+// GetShortLinkByAlias finds an ShortLink in short_link table given alias.
+func (s ShortLinkSql) GetShortLinkByAlias(alias string) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s" 
@@ -127,8 +127,8 @@ WHERE "%s"=$1;`,
 	return shortLink, nil
 }
 
-// GetByAliases finds ShortLinks for a list of aliases
-func (s ShortLinkSql) GetByAliases(aliases []string) ([]entity.ShortLink, error) {
+// GetShortLinksByAliases finds ShortLinks for a list of aliases
+func (s ShortLinkSql) GetShortLinksByAliases(aliases []string) ([]entity.ShortLink, error) {
 	if len(aliases) == 0 {
 		return []entity.ShortLink{}, nil
 	}

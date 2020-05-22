@@ -88,9 +88,9 @@ func TestAuthQuery_URL(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			fakeURLRepo := repository.NewShortLinkFake(testCase.urls)
-			fakeUserURLRelationRepo := repository.NewUserShortLinkRepoFake(nil, nil)
-			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
+			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.urls)
+			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake(nil, nil)
+			retrieverFake := url.NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 
 			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)

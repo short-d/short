@@ -162,7 +162,7 @@ func TestShortLinkSql_GetByAlias(t *testing.T) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
 					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
-					shortLink, err := shortLinkRepo.GetByAlias(testCase.alias)
+					shortLink, err := shortLinkRepo.GetShortLinkByAlias(testCase.alias)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
@@ -409,7 +409,7 @@ func TestShortLinkSql_GetByAliases(t *testing.T) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
 					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
-					shortLink, err := shortLinkRepo.GetByAliases(testCase.aliases)
+					shortLink, err := shortLinkRepo.GetShortLinksByAliases(testCase.aliases)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)

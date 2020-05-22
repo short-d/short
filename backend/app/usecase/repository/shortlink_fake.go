@@ -33,8 +33,8 @@ func (s *ShortLinkFake) CreateShortLink(shortLink entity.ShortLink) error {
 	return nil
 }
 
-// GetByAlias finds an ShortLink in short_link table given alias.
-func (s ShortLinkFake) GetByAlias(alias string) (entity.ShortLink, error) {
+// GetShortLinkByAlias finds an ShortLink in short_link table given alias.
+func (s ShortLinkFake) GetShortLinkByAlias(alias string) (entity.ShortLink, error) {
 	isExist, err := s.IsAliasExist(alias)
 	if err != nil {
 		return entity.ShortLink{}, err
@@ -46,15 +46,15 @@ func (s ShortLinkFake) GetByAlias(alias string) (entity.ShortLink, error) {
 	return shortLink, nil
 }
 
-// GetByAliases finds all ShortLink for a list of aliases
-func (s ShortLinkFake) GetByAliases(aliases []string) ([]entity.ShortLink, error) {
+// GetShortLinksByAliases finds all ShortLink for a list of aliases
+func (s ShortLinkFake) GetShortLinksByAliases(aliases []string) ([]entity.ShortLink, error) {
 	if len(aliases) == 0 {
 		return []entity.ShortLink{}, nil
 	}
 
 	var shortLinks []entity.ShortLink
 	for _, alias := range aliases {
-		shortLink, err := s.GetByAlias(alias)
+		shortLink, err := s.GetShortLinkByAlias(alias)
 
 		if err != nil {
 			return shortLinks, err
