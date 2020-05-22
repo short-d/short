@@ -27,13 +27,10 @@ type URLInput struct {
 	ExpireAt    *time.Time
 }
 
-// isEmpty checks if the input contains only nil pointers
 func (u *URLInput) isEmpty() bool {
 	return *u == URLInput{}
 }
 
-// originalURL returns the URLInput OrignalURL and an empty string if the
-// pointer references a nil value.
 func (u *URLInput) originalURL() string {
 	if u.OriginalURL == nil {
 		return ""
@@ -41,8 +38,6 @@ func (u *URLInput) originalURL() string {
 	return *u.OriginalURL
 }
 
-// customAlias returns the URLInput CustomAlias and an empty string if the
-// pointer references a nil value.
 func (u *URLInput) customAlias() string {
 	if u.CustomAlias == nil {
 		return ""
@@ -108,16 +103,16 @@ type UpdateURLArgs struct {
 	URL      URLInput
 }
 
-func (u *URLInput) createUpdate() (*entity.URL, error) {
+func (u *URLInput) createUpdate() *entity.URL {
 	if u.isEmpty() {
-		return nil, ErrEmptyUpdate{}
+		return nil
 	}
 
 	return &entity.URL{
 		Alias:       u.customAlias(),
 		OriginalURL: u.originalURL(),
 		ExpireAt:    u.ExpireAt,
-	}, nil
+	}
 
 }
 
@@ -128,8 +123,8 @@ func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	update, err := args.URL.createUpdate()
-	if err != nil {
+	update := args.URL.createUpdate()
+	if update == nil {
 		return nil, err
 	}
 
