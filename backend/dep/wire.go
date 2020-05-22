@@ -151,10 +151,10 @@ func InjectGraphQLService(
 		wire.Bind(new(graphql.Handler), new(graphql.GraphGopherHandler)),
 
 		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
-		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserURLRelationSQL)),
+		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.ChangeLog), new(sqldb.ChangeLogSQL)),
 		wire.Bind(new(repository.UserChangeLog), new(sqldb.UserChangeLogSQL)),
-		wire.Bind(new(repository.URL), new(*sqldb.URLSql)),
+		wire.Bind(new(repository.URL), new(*sqldb.ShortLinkSql)),
 
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
@@ -178,8 +178,8 @@ func InjectGraphQLService(
 		provider.NewReCaptchaService,
 		sqldb.NewChangeLogSQL,
 		sqldb.NewUserChangeLogSQL,
-		sqldb.NewURLSql,
-		sqldb.NewUserURLRelationSQL,
+		sqldb.NewShortLinkSql,
+		sqldb.NewUserShortLinkSQL,
 
 		validator.NewLongLink,
 		validator.NewCustomAlias,
@@ -219,9 +219,9 @@ func InjectRoutingService(
 		wire.Bind(new(geo.Geo), new(geo.IPStack)),
 
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserURLRelationSQL)),
+		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.User), new(*sqldb.UserSQL)),
-		wire.Bind(new(repository.URL), new(*sqldb.URLSql)),
+		wire.Bind(new(repository.URL), new(*sqldb.ShortLinkSql)),
 
 		observabilitySet,
 		authSet,
@@ -249,8 +249,8 @@ func InjectRoutingService(
 		sqldb.NewFacebookSSOSql,
 		sqldb.NewGoogleSSOSql,
 		sqldb.NewUserSQL,
-		sqldb.NewURLSql,
-		sqldb.NewUserURLRelationSQL,
+		sqldb.NewShortLinkSql,
+		sqldb.NewUserShortLinkSQL,
 
 		sso.NewAccountLinkerFactory,
 		sso.NewFactory,
