@@ -17,9 +17,9 @@ type Resolver struct {
 // NewResolver creates a new GraphQL resolver.
 func NewResolver(
 	logger logger.Logger,
-	changeLog changelog.ChangeLog,
 	urlRetriever url.Retriever,
 	urlCreator url.Creator,
+	changeLog changelog.ChangeLog,
 	requesterVerifier requester.Verifier,
 	authenticator authenticator.Authenticator,
 ) Resolver {

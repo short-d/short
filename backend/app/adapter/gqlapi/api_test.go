@@ -10,6 +10,7 @@ import (
 	"github.com/short-d/app/fw/graphql"
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
@@ -27,8 +28,8 @@ func TestGraphQlAPI(t *testing.T) {
 	blockedURLs := map[string]bool{}
 	blacklist := risk.NewBlackListFake(blockedURLs)
 
-	urlRepo := repository.NewURLFake(map[string]entity.URL{})
-	urlRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.URL{})
+	urlRepo := repository.NewURLFake(map[string]entity.ShortLink{})
+	urlRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.ShortLink{})
 	retriever := url.NewRetrieverPersist(&urlRepo, &urlRelationRepo)
 	keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 	keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
@@ -60,6 +61,7 @@ func TestGraphQlAPI(t *testing.T) {
 	changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
 	userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
 	changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo)
-	graphqlAPI := NewShort(lg, retriever, creator, changeLog, verifier, auth)
+	r := resolver.NewResolver(lg, retriever, creator, changeLog, verifier, auth)
+	graphqlAPI := NewShort(r)
 	assert.Equal(t, true, graphql.IsGraphQlAPIValid(graphqlAPI))
 }

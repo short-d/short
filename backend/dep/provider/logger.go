@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"github.com/short-d/app/fw/io"
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/app/fw/runtime"
 	"github.com/short-d/app/fw/timer"
@@ -21,4 +22,9 @@ func NewLogger(
 	entryRepo logger.EntryRepository,
 ) logger.Logger {
 	return logger.NewLogger(string(prefix), level, timer, programRuntime, entryRepo)
+}
+
+// NewLocalEntryRepo create LocalEntryRepo with line number disabled in logs.
+func NewLocalEntryRepo(output io.Output) logger.Local {
+	return logger.NewLocal(output, false)
 }
