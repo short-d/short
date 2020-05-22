@@ -39,7 +39,7 @@ func NewOriginalURL(
 		}
 		i.LongLinkRetrievalSucceed()
 
-		originURL := u.OriginalURL
+		originURL := u.LongLink
 		http.Redirect(w, r, originURL, http.StatusSeeOther)
 		i.RedirectedAliasToLongLink(u)
 	}
