@@ -76,7 +76,7 @@ func TestShortLinkSql_IsAliasExist(t *testing.T) {
 	}
 }
 
-func TestShortLinkSql_GetByAlias(t *testing.T) {
+func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
@@ -342,7 +342,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 	}
 }
 
-func TestShortLinkSql_GetByAliases(t *testing.T) {
+func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 

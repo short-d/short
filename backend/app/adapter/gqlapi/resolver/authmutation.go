@@ -58,9 +58,9 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 	isPublic := args.IsPublic
 
-	newURL, err := a.urlCreator.CreateShortLink(u, customAlias, user, isPublic)
+	newShortLink, err := a.urlCreator.CreateShortLink(u, customAlias, user, isPublic)
 	if err == nil {
-		return &URL{url: newURL}, nil
+		return &URL{url: newShortLink}, nil
 	}
 
 	switch err.(type) {
