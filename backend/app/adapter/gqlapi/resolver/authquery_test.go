@@ -18,7 +18,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/url"
 )
 
-type urlMap = map[string]entity.URL
+type urlMap = map[string]entity.ShortLink
 
 func TestAuthQuery_URL(t *testing.T) {
 	t.Parallel()
@@ -58,7 +58,7 @@ func TestAuthQuery_URL(t *testing.T) {
 				Time: now,
 			},
 			urls: urlMap{
-				"220uFicCJj": entity.URL{
+				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &before,
 				},
 			},
@@ -71,13 +71,13 @@ func TestAuthQuery_URL(t *testing.T) {
 				Time: now,
 			},
 			urls: urlMap{
-				"220uFicCJj": entity.URL{
+				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &after,
 				},
 			},
 			hasErr: false,
 			expectedURL: &URL{
-				url: entity.URL{
+				url: entity.ShortLink{
 					ExpireAt: &after,
 				},
 			},

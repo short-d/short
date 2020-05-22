@@ -9,9 +9,9 @@ import (
 
 var _ URL = (*URLFake)(nil)
 
-// URLFake accesses URL information in url table through SQL.
+// URLFake accesses ShortLink information in url table through SQL.
 type URLFake struct {
-	urls map[string]entity.URL
+	urls map[string]entity.ShortLink
 }
 
 // IsAliasExist checks whether a given alias exist in url table.
@@ -20,8 +20,8 @@ func (u URLFake) IsAliasExist(alias string) (bool, error) {
 	return ok, nil
 }
 
-// Create inserts a new URL into url table.
-func (u *URLFake) Create(url entity.URL) error {
+// Create inserts a new ShortLink into url table.
+func (u *URLFake) Create(url entity.ShortLink) error {
 	isExist, err := u.IsAliasExist(url.Alias)
 	if err != nil {
 		return err
@@ -33,26 +33,26 @@ func (u *URLFake) Create(url entity.URL) error {
 	return nil
 }
 
-// GetByAlias finds an URL in url table given alias.
-func (u URLFake) GetByAlias(alias string) (entity.URL, error) {
+// GetByAlias finds an ShortLink in url table given alias.
+func (u URLFake) GetByAlias(alias string) (entity.ShortLink, error) {
 	isExist, err := u.IsAliasExist(alias)
 	if err != nil {
-		return entity.URL{}, err
+		return entity.ShortLink{}, err
 	}
 	if !isExist {
-		return entity.URL{}, errors.New("alias not found")
+		return entity.ShortLink{}, errors.New("alias not found")
 	}
 	url := u.urls[alias]
 	return url, nil
 }
 
-// GetByAliases finds all URL for a list of aliases
-func (u URLFake) GetByAliases(aliases []string) ([]entity.URL, error) {
+// GetByAliases finds all ShortLink for a list of aliases
+func (u URLFake) GetByAliases(aliases []string) ([]entity.ShortLink, error) {
 	if len(aliases) == 0 {
-		return []entity.URL{}, nil
+		return []entity.ShortLink{}, nil
 	}
 
-	var urls []entity.URL
+	var urls []entity.ShortLink
 	for _, alias := range aliases {
 		url, err := u.GetByAlias(alias)
 
@@ -64,28 +64,28 @@ func (u URLFake) GetByAliases(aliases []string) ([]entity.URL, error) {
 	return urls, nil
 }
 
-// UpdateURL updates an existing URL with new properties.
-func (u URLFake) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
+// UpdateURL updates an existing ShortLink with new properties.
+func (u URLFake) UpdateURL(oldAlias string, newURL entity.ShortLink) (entity.ShortLink, error) {
 	prevURL, ok := u.urls[oldAlias]
 	if !ok {
-		return entity.URL{}, errors.New("alias not found")
+		return entity.ShortLink{}, errors.New("alias not found")
 	}
 
 	now := time.Now().UTC()
 	createdBy := prevURL.CreatedBy
 	createdAt := prevURL.CreatedAt
-	return entity.URL{
-		Alias:       newURL.Alias,
-		OriginalURL: newURL.OriginalURL,
-		ExpireAt:    newURL.ExpireAt,
-		CreatedBy:   createdBy,
-		CreatedAt:   createdAt,
-		UpdatedAt:   &now,
+	return entity.ShortLink{
+		Alias:     newURL.Alias,
+		LongLink:  newURL.LongLink,
+		ExpireAt:  newURL.ExpireAt,
+		CreatedBy: createdBy,
+		CreatedAt: createdAt,
+		UpdatedAt: &now,
 	}, nil
 }
 
-// NewURLFake creates in memory URL repository
-func NewURLFake(urls map[string]entity.URL) URLFake {
+// NewURLFake creates in memory ShortLink repository
+func NewURLFake(urls map[string]entity.ShortLink) URLFake {
 	return URLFake{
 		urls: urls,
 	}
