@@ -40,7 +40,7 @@ WHERE "%s"=$1;`,
 
 // Create inserts a new ShortLink into short_link table.
 // TODO(issue#698): change to CreateURL
-func (s *ShortLinkSql) Create(shortLink entity.URL) error {
+func (s *ShortLinkSql) Create(shortLink entity.ShortLink) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5);`,
@@ -54,7 +54,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 	_, err := s.db.Exec(
 		statement,
 		shortLink.Alias,
-		shortLink.OriginalURL,
+		shortLink.LongLink,
 		shortLink.ExpireAt,
 		shortLink.CreatedAt,
 		shortLink.UpdatedAt,
@@ -63,7 +63,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 }
 
 // UpdateURL updates a ShortLink that exists within the short_link table.
-func (s *ShortLinkSql) UpdateURL(oldAlias string, newShortLink entity.URL) (entity.URL, error) {
+func (s *ShortLinkSql) UpdateURL(oldAlias string, newShortLink entity.ShortLink) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3, "%s"=$4
@@ -79,21 +79,21 @@ WHERE "%s"=$5;`,
 	_, err := s.db.Exec(
 		statement,
 		newShortLink.Alias,
-		newShortLink.OriginalURL,
+		newShortLink.LongLink,
 		newShortLink.ExpireAt,
 		newShortLink.UpdatedAt,
 		oldAlias,
 	)
 
 	if err != nil {
-		return entity.URL{}, err
+		return entity.ShortLink{}, err
 	}
 
 	return newShortLink, nil
 }
 
 // GetByAlias finds an ShortLink in short_link table given alias.
-func (s ShortLinkSql) GetByAlias(alias string) (entity.URL, error) {
+func (s ShortLinkSql) GetByAlias(alias string) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s" 
 FROM "%s" 
@@ -109,16 +109,16 @@ WHERE "%s"=$1;`,
 
 	row := s.db.QueryRow(statement, alias)
 
-	shortLink := entity.URL{}
+	shortLink := entity.ShortLink{}
 	err := row.Scan(
 		&shortLink.Alias,
-		&shortLink.OriginalURL,
+		&shortLink.LongLink,
 		&shortLink.ExpireAt,
 		&shortLink.CreatedAt,
 		&shortLink.UpdatedAt,
 	)
 	if err != nil {
-		return entity.URL{}, err
+		return entity.ShortLink{}, err
 	}
 
 	shortLink.CreatedAt = utc(shortLink.CreatedAt)
@@ -129,9 +129,9 @@ WHERE "%s"=$1;`,
 }
 
 // GetByAliases finds ShortLinks for a list of aliases
-func (s ShortLinkSql) GetByAliases(aliases []string) ([]entity.URL, error) {
+func (s ShortLinkSql) GetByAliases(aliases []string) ([]entity.ShortLink, error) {
 	if len(aliases) == 0 {
-		return []entity.URL{}, nil
+		return []entity.ShortLink{}, nil
 	}
 
 	parameterStr := s.composeParamList(len(aliases))
@@ -142,7 +142,7 @@ func (s ShortLinkSql) GetByAliases(aliases []string) ([]entity.URL, error) {
 		aliasesInterface = append(aliasesInterface, alias)
 	}
 
-	var shortLinks []entity.URL
+	var shortLinks []entity.ShortLink
 
 	// TODO: compare performance between Query and QueryRow. Prefer QueryRow for readability
 	statement := fmt.Sprintf(`
@@ -172,10 +172,10 @@ WHERE "%s" IN (%s);`,
 
 	defer rows.Close()
 	for rows.Next() {
-		shortLink := entity.URL{}
+		shortLink := entity.ShortLink{}
 		err := rows.Scan(
 			&shortLink.Alias,
-			&shortLink.OriginalURL,
+			&shortLink.LongLink,
 			&shortLink.ExpireAt,
 			&shortLink.CreatedAt,
 			&shortLink.UpdatedAt,

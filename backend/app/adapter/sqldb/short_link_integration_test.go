@@ -85,7 +85,7 @@ func TestShortLinkSql_GetByAlias(t *testing.T) {
 		tableRows         []shortLinkTableRow
 		alias             string
 		hasErr            bool
-		expectedShortLink entity.URL
+		expectedShortLink entity.ShortLink
 	}{
 		{
 			name:      "alias not found",
@@ -113,12 +113,12 @@ func TestShortLinkSql_GetByAlias(t *testing.T) {
 			},
 			alias:  "220uFicCJj",
 			hasErr: false,
-			expectedShortLink: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "http://www.google.com",
-				CreatedAt:   &twoYearsAgo,
-				ExpireAt:    &now,
-				UpdatedAt:   &now,
+			expectedShortLink: entity.ShortLink{
+				Alias:     "220uFicCJj",
+				LongLink:  "http://www.google.com",
+				CreatedAt: &twoYearsAgo,
+				ExpireAt:  &now,
+				UpdatedAt: &now,
 			},
 		},
 		{
@@ -141,12 +141,12 @@ func TestShortLinkSql_GetByAlias(t *testing.T) {
 			},
 			alias:  "220uFicCJj",
 			hasErr: false,
-			expectedShortLink: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "http://www.google.com",
-				CreatedAt:   nil,
-				ExpireAt:    nil,
-				UpdatedAt:   nil,
+			expectedShortLink: entity.ShortLink{
+				Alias:     "220uFicCJj",
+				LongLink:  "http://www.google.com",
+				CreatedAt: nil,
+				ExpireAt:  nil,
+				UpdatedAt: nil,
 			},
 		},
 	}
@@ -183,7 +183,7 @@ func TestShortLinkSql_Create(t *testing.T) {
 	testCases := []struct {
 		name      string
 		tableRows []shortLinkTableRow
-		shortLink entity.URL
+		shortLink entity.ShortLink
 		hasErr    bool
 	}{
 		{
@@ -195,10 +195,10 @@ func TestShortLinkSql_Create(t *testing.T) {
 					expireAt: &now,
 				},
 			},
-			shortLink: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "http://www.google.com",
-				ExpireAt:    &now,
+			shortLink: entity.ShortLink{
+				Alias:    "220uFicCJj",
+				LongLink: "http://www.google.com",
+				ExpireAt: &now,
 			},
 			hasErr: true,
 		},
@@ -211,10 +211,10 @@ func TestShortLinkSql_Create(t *testing.T) {
 					expireAt: &now,
 				},
 			},
-			shortLink: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "http://www.google.com",
-				ExpireAt:    &now,
+			shortLink: entity.ShortLink{
+				Alias:    "220uFicCJj",
+				LongLink: "http://www.google.com",
+				ExpireAt: &now,
 			},
 			hasErr: false,
 		},
@@ -251,10 +251,10 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 	testCases := []struct {
 		name              string
 		oldAlias          string
-		newShortLink      entity.URL
+		newShortLink      entity.ShortLink
 		tableRows         []shortLinkTableRow
 		hasErr            bool
-		expectedShortLink entity.URL
+		expectedShortLink entity.ShortLink
 	}{
 		{
 			name:     "alias not found",
@@ -267,7 +267,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 				},
 			},
 			hasErr:            true,
-			expectedShortLink: entity.URL{},
+			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:     "alias is taken",
@@ -285,15 +285,15 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 				},
 			},
 			hasErr:            true,
-			expectedShortLink: entity.URL{},
+			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:     "valid new alias",
 			oldAlias: "220uFicCJj",
-			newShortLink: entity.URL{
-				Alias:       "GxtKXM9V",
-				OriginalURL: "https://www.google.com",
-				UpdatedAt:   &now,
+			newShortLink: entity.ShortLink{
+				Alias:     "GxtKXM9V",
+				LongLink:  "https://www.google.com",
+				UpdatedAt: &now,
 			},
 			tableRows: []shortLinkTableRow{
 				{
@@ -303,10 +303,10 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 				},
 			},
 			hasErr: false,
-			expectedShortLink: entity.URL{
-				Alias:       "GxtKXM9V",
-				OriginalURL: "https://www.google.com",
-				UpdatedAt:   &now,
+			expectedShortLink: entity.ShortLink{
+				Alias:     "GxtKXM9V",
+				LongLink:  "https://www.google.com",
+				UpdatedAt: &now,
 			},
 		},
 	}
@@ -334,7 +334,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 					}
 					assert.Equal(t, nil, err)
 					assert.Equal(t, expectedShortLink.Alias, shortLink.Alias)
-					assert.Equal(t, expectedShortLink.OriginalURL, shortLink.OriginalURL)
+					assert.Equal(t, expectedShortLink.LongLink, shortLink.LongLink)
 					assert.Equal(t, expectedShortLink.ExpireAt, shortLink.ExpireAt)
 					assert.Equal(t, expectedShortLink.UpdatedAt, shortLink.UpdatedAt)
 				},
@@ -352,7 +352,7 @@ func TestShortLinkSql_GetByAliases(t *testing.T) {
 		tableRows          []shortLinkTableRow
 		aliases            []string
 		hasErr             bool
-		expectedShortLinks []entity.URL
+		expectedShortLinks []entity.ShortLink
 	}{
 		{
 			name:      "alias not found",
@@ -380,20 +380,20 @@ func TestShortLinkSql_GetByAliases(t *testing.T) {
 			},
 			aliases: []string{"220uFicCJj", "yDOBcj5HIPbUAsw"},
 			hasErr:  false,
-			expectedShortLinks: []entity.URL{
+			expectedShortLinks: []entity.ShortLink{
 				{
-					Alias:       "220uFicCJj",
-					OriginalURL: "http://www.google.com",
-					CreatedAt:   &twoYearsAgo,
-					ExpireAt:    &now,
-					UpdatedAt:   &now,
+					Alias:     "220uFicCJj",
+					LongLink:  "http://www.google.com",
+					CreatedAt: &twoYearsAgo,
+					ExpireAt:  &now,
+					UpdatedAt: &now,
 				},
 				{
-					Alias:       "yDOBcj5HIPbUAsw",
-					OriginalURL: "http://www.facebook.com",
-					CreatedAt:   &twoYearsAgo,
-					ExpireAt:    &now,
-					UpdatedAt:   &now,
+					Alias:     "yDOBcj5HIPbUAsw",
+					LongLink:  "http://www.facebook.com",
+					CreatedAt: &twoYearsAgo,
+					ExpireAt:  &now,
+					UpdatedAt: &now,
 				},
 			},
 		},
