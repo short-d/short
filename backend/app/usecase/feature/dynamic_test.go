@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/short/backend/app/usecase/authorizer"
+
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/ctx"
@@ -72,9 +74,9 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 			}()
 
 			ins := instrumentation.NewInstrumentation(lg, tm, mt, ana, ctxCh)
-			factory := NewDynamicDecisionMakerFactory(featureRepo)
+			factory := NewDynamicDecisionMakerFactory(featureRepo, authorizer.Authorizer{})
 			decision := factory.NewDecision(ins)
-			gotIsEnabled := decision.IsFeatureEnable(testCase.featureID)
+			gotIsEnabled := decision.IsFeatureEnable(testCase.featureID, nil)
 			assert.Equal(t, testCase.expectedIsEnabled, gotIsEnabled)
 		})
 	}
