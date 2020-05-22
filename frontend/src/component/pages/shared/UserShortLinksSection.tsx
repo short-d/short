@@ -38,6 +38,7 @@ export class UserShortLinksSection extends Component<IProps> {
           <Table
             headers={['Long Link', 'Alias']}
             rows={this.createTableRows()}
+            widths={['70%', '30%']}
           />
           <div className={'page-control-wrapper'}>
             <PageControl
@@ -74,7 +75,7 @@ export class UserShortLinksSection extends Component<IProps> {
   };
 
   private renderAlias = (alias: string) => {
-    return alias;
+    return <span className={'alias'}>{alias}</span>;
   };
 
   public onPageChanged = (currentPageIdx: number) => {
