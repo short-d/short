@@ -26,7 +26,7 @@ type URLInput struct {
 	ExpireAt    *time.Time
 }
 
-// CreateURLArgs represents the possible parameters for CreateURL endpoint
+// CreateURLArgs represents the possible parameters for CreateShortLink endpoint
 type CreateURLArgs struct {
 	URL      URLInput
 	IsPublic bool
@@ -43,7 +43,7 @@ type ChangeInput struct {
 	SummaryMarkdown *string
 }
 
-// CreateURL creates mapping between an alias and a long link for a given user
+// CreateShortLink creates mapping between an alias and a long link for a given user
 func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
@@ -58,7 +58,7 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 	isPublic := args.IsPublic
 
-	newURL, err := a.urlCreator.CreateURL(u, customAlias, user, isPublic)
+	newURL, err := a.urlCreator.CreateShortLink(u, customAlias, user, isPublic)
 	if err == nil {
 		return &URL{url: newURL}, nil
 	}

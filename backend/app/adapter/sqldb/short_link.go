@@ -10,7 +10,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
-var _ repository.URL = (*ShortLinkSql)(nil)
+var _ repository.ShortLink = (*ShortLinkSql)(nil)
 
 // ShortLinkSql accesses ShortLink information in short_link table through SQL.
 type ShortLinkSql struct {
@@ -38,9 +38,8 @@ WHERE "%s"=$1;`,
 	return true, nil
 }
 
-// Create inserts a new ShortLink into short_link table.
-// TODO(issue#698): change to CreateURL
-func (s *ShortLinkSql) Create(shortLink entity.ShortLink) error {
+// CreateShortLink inserts a new ShortLink into short_link table.
+func (s *ShortLinkSql) CreateShortLink(shortLink entity.ShortLink) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5);`,
@@ -62,8 +61,8 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
-// UpdateURL updates a ShortLink that exists within the short_link table.
-func (s *ShortLinkSql) UpdateURL(oldAlias string, newShortLink entity.ShortLink) (entity.ShortLink, error) {
+// UpdateShortLink updates a ShortLink that exists within the short_link table.
+func (s *ShortLinkSql) UpdateShortLink(oldAlias string, newShortLink entity.ShortLink) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3, "%s"=$4

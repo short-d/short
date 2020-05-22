@@ -88,8 +88,8 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			fakeURLRepo := repository.NewURLFake(testCase.urls)
-			fakeUserURLRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.ShortLink{})
+			fakeURLRepo := repository.NewShortLinkFake(testCase.urls)
+			fakeUserURLRelationRepo := repository.NewUserShortLinkRepoFake([]entity.User{}, []entity.ShortLink{})
 			retriever := NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 			url, err := retriever.GetURL(testCase.alias, testCase.expiringAt)
 
@@ -237,8 +237,8 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			fakeURLRepo := repository.NewURLFake(testCase.urls)
-			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(testCase.users, testCase.createdURLs)
+			fakeURLRepo := repository.NewShortLinkFake(testCase.urls)
+			fakeUserURLRelationRepo := repository.NewUserShortLinkRepoFake(testCase.users, testCase.createdURLs)
 			retriever := NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 
 			urls, err := retriever.GetURLsByUser(testCase.user)

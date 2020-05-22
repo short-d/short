@@ -41,14 +41,14 @@ func (e ErrMaliciousLongLink) Error() string {
 
 // Creator represents a ShortLink alias creator
 type Creator interface {
-	CreateURL(url entity.ShortLink, alias *string, user entity.User, isPublic bool) (entity.ShortLink, error)
+	CreateShortLink(url entity.ShortLink, alias *string, user entity.User, isPublic bool) (entity.ShortLink, error)
 }
 
 // CreatorPersist represents a ShortLink alias creator which persist the generated
 // alias in the repository
 type CreatorPersist struct {
-	urlRepo             repository.URL
-	userURLRelationRepo repository.UserURLRelation
+	urlRepo             repository.ShortLink
+	userURLRelationRepo repository.UserShortLink
 	keyGen              keygen.KeyGenerator
 	longLinkValidator   validator.LongLink
 	aliasValidator      validator.CustomAlias
@@ -56,9 +56,9 @@ type CreatorPersist struct {
 	riskDetector        risk.Detector
 }
 
-// CreateURL persists a new url with a given or auto generated alias in the repository.
+// CreateShortLink persists a new url with a given or auto generated alias in the repository.
 // TODO(issue#235): add functionality for public URLs
-func (c CreatorPersist) CreateURL(url entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
+func (c CreatorPersist) CreateShortLink(url entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
 	longLink := url.LongLink
 	if !c.longLinkValidator.IsValid(&longLink) {
 		return entity.ShortLink{}, ErrInvalidLongLink(longLink)
@@ -106,7 +106,7 @@ func (c CreatorPersist) createURLWithCustomAlias(url entity.ShortLink, alias str
 	now := c.timer.Now().UTC()
 	url.CreatedAt = &now
 
-	err = c.urlRepo.Create(url)
+	err = c.urlRepo.CreateShortLink(url)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
@@ -117,8 +117,8 @@ func (c CreatorPersist) createURLWithCustomAlias(url entity.ShortLink, alias str
 
 // NewCreatorPersist creates CreatorPersist
 func NewCreatorPersist(
-	urlRepo repository.URL,
-	userURLRelationRepo repository.UserURLRelation,
+	urlRepo repository.ShortLink,
+	userURLRelationRepo repository.UserShortLink,
 	keyGen keygen.KeyGenerator,
 	longLinkValidator validator.LongLink,
 	aliasValidator validator.CustomAlias,

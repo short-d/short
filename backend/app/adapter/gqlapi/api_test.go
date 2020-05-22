@@ -28,8 +28,8 @@ func TestGraphQlAPI(t *testing.T) {
 	blockedURLs := map[string]bool{}
 	blacklist := risk.NewBlackListFake(blockedURLs)
 
-	urlRepo := repository.NewURLFake(map[string]entity.ShortLink{})
-	urlRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.ShortLink{})
+	urlRepo := repository.NewShortLinkFake(map[string]entity.ShortLink{})
+	urlRelationRepo := repository.NewUserShortLinkRepoFake([]entity.User{}, []entity.ShortLink{})
 	retriever := url.NewRetrieverPersist(&urlRepo, &urlRelationRepo)
 	keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 	keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)

@@ -159,8 +159,8 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 
 			blockedURLs := map[string]bool{}
 			blacklist := risk.NewBlackListFake(blockedURLs)
-			urlRepo := repository.NewURLFake(testCase.urls)
-			userURLRepo := repository.NewUserURLRepoFake(
+			urlRepo := repository.NewShortLinkFake(testCase.urls)
+			userURLRepo := repository.NewUserShortLinkRepoFake(
 				testCase.relationUsers,
 				testCase.relationURLs,
 			)
@@ -188,7 +188,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			isExist := userURLRepo.IsRelationExist(testCase.user, testCase.url)
 			assert.Equal(t, false, isExist)
 
-			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
+			url, err := creator.CreateShortLink(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
 				assert.NotEqual(t, nil, err)
 

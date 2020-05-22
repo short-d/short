@@ -19,8 +19,8 @@ type Retriever interface {
 // RetrieverPersist represents ShortLink retriever that fetches ShortLink from persistent
 // storage, such as database
 type RetrieverPersist struct {
-	urlRepo             repository.URL
-	userURLRelationRepo repository.UserURLRelation
+	urlRepo             repository.ShortLink
+	userURLRelationRepo repository.UserShortLink
 }
 
 // GetURL retrieves ShortLink from persistent storage given alias
@@ -68,7 +68,7 @@ func (r RetrieverPersist) GetURLsByUser(user entity.User) ([]entity.ShortLink, e
 }
 
 // NewRetrieverPersist creates persistent ShortLink retriever
-func NewRetrieverPersist(urlRepo repository.URL, userURLRelationRepo repository.UserURLRelation) RetrieverPersist {
+func NewRetrieverPersist(urlRepo repository.ShortLink, userURLRelationRepo repository.UserShortLink) RetrieverPersist {
 	return RetrieverPersist{
 		urlRepo:             urlRepo,
 		userURLRelationRepo: userURLRelationRepo,
