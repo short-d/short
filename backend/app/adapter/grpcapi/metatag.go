@@ -20,9 +20,9 @@ func (m MetaTagServer) UpdateOGTags(ctx context.Context, req *proto.UpdateOGTags
 	}
 
 	return &proto.UpdateOGTagsResponse{
-		Title:       ogMetaTags.OGTitle,
-		Description: ogMetaTags.OGDescription,
-		ImageUrl:    ogMetaTags.OGImageURL,
+		Title:       *ogMetaTags.OpenGraphTitle,
+		Description: *ogMetaTags.OpenGraphDescription,
+		ImageUrl:    *ogMetaTags.OpenGraphImageURL,
 	}, nil
 }
 
@@ -33,9 +33,9 @@ func (m MetaTagServer) UpdateTwitterTags(ctx context.Context, req *proto.UpdateT
 	}
 
 	return &proto.UpdateTwitterTagsResponse{
-		Title:       twitterMetaTags.TwitterTitle,
-		Description: twitterMetaTags.TwitterDescription,
-		ImageUrl:    twitterMetaTags.TwitterImageURL,
+		Title:       *twitterMetaTags.TwitterTitle,
+		Description: *twitterMetaTags.TwitterDescription,
+		ImageUrl:    *twitterMetaTags.TwitterImageURL,
 	}, nil
 }
 
@@ -46,9 +46,9 @@ func (m MetaTagServer) GetOGTags(ctx context.Context, req *proto.GetOGTagsReques
 	}
 
 	return &proto.GetOGTagsResponse{
-		Title:       ogMetaTags.OGTitle,
-		Description: ogMetaTags.OGDescription,
-		ImageUrl:    ogMetaTags.OGImageURL,
+		Title:       *ogMetaTags.OpenGraphTitle,
+		Description: *ogMetaTags.OpenGraphDescription,
+		ImageUrl:    *ogMetaTags.OpenGraphImageURL,
 	}, nil
 }
 
@@ -59,9 +59,9 @@ func (m MetaTagServer) GetTwitterTags(ctx context.Context, req *proto.GetTwitter
 	}
 
 	return &proto.GetTwitterTagsResponse{
-		Title:       twitterMetaTags.TwitterTitle,
-		Description: twitterMetaTags.TwitterDescription,
-		ImageUrl:    twitterMetaTags.TwitterImageURL,
+		Title:       *twitterMetaTags.TwitterTitle,
+		Description: *twitterMetaTags.TwitterDescription,
+		ImageUrl:    *twitterMetaTags.TwitterImageURL,
 	}, nil
 }
 

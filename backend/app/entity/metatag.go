@@ -1,18 +1,18 @@
 package entity
 
 type MetaTags struct {
-	MetaOGTags
-	MetaTwitterTags
+	OpenGraphTags
+	TwitterTags
 }
 
-type MetaOGTags struct {
-	OGTitle       string
-	OGDescription string
-	OGImageURL    string
+type OpenGraphTags struct {
+	OpenGraphTitle       *string
+	OpenGraphDescription *string
+	OpenGraphImageURL    *string
 }
 
-type MetaTwitterTags struct {
-	TwitterTitle       string
-	TwitterDescription string
-	TwitterImageURL    string
+type TwitterTags struct {
+	TwitterTitle       *string
+	TwitterDescription *string
+	TwitterImageURL    *string
 }

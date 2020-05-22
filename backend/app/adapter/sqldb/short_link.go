@@ -62,7 +62,7 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
-func (u *ShortLinkSql) UpdateOGMetaTags(alias string, metaOGTags entity.MetaOGTags) (entity.URL, error) {
+func (s *ShortLinkSql) UpdateOGMetaTags(alias string, openGraphTags entity.OpenGraphTags) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3
@@ -74,11 +74,11 @@ WHERE "%s"=$4;`,
 		table.ShortLink.ColumnAlias,
 	)
 
-	_, err := u.db.Exec(
+	_, err := s.db.Exec(
 		statement,
-		metaOGTags.OGTitle,
-		metaOGTags.OGDescription,
-		metaOGTags.OGImageURL,
+		openGraphTags.OpenGraphTitle,
+		openGraphTags.OpenGraphDescription,
+		openGraphTags.OpenGraphImageURL,
 		alias,
 	)
 
@@ -86,10 +86,10 @@ WHERE "%s"=$4;`,
 		return entity.URL{}, err
 	}
 
-	return u.GetByAlias(alias)
+	return s.GetByAlias(alias)
 }
 
-func (u *ShortLinkSql) UpdateTwitterMetaTags(alias string, metaTwitterTags entity.MetaTwitterTags) (entity.URL, error) {
+func (s *ShortLinkSql) UpdateTwitterMetaTags(alias string, twitterTags entity.TwitterTags) (entity.URL, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3
@@ -101,11 +101,11 @@ WHERE "%s"=$4;`,
 		table.ShortLink.ColumnAlias,
 	)
 
-	_, err := u.db.Exec(
+	_, err := s.db.Exec(
 		statement,
-		metaTwitterTags.TwitterTitle,
-		metaTwitterTags.TwitterDescription,
-		metaTwitterTags.TwitterImageURL,
+		twitterTags.TwitterTitle,
+		twitterTags.TwitterDescription,
+		twitterTags.TwitterImageURL,
 		alias,
 	)
 
@@ -113,7 +113,7 @@ WHERE "%s"=$4;`,
 		return entity.URL{}, err
 	}
 
-	return u.GetByAlias(alias)
+	return s.GetByAlias(alias)
 }
 
 // UpdateURL updates a ShortLink that exists within the short_link table.
@@ -176,9 +176,9 @@ WHERE "%s"=$1;`,
 		&shortLink.ExpireAt,
 		&shortLink.CreatedAt,
 		&shortLink.UpdatedAt,
-		&shortLink.OGTitle,
-		&shortLink.OGDescription,
-		&shortLink.OGImageURL,
+		&shortLink.OpenGraphTitle,
+		&shortLink.OpenGraphDescription,
+		&shortLink.OpenGraphImageURL,
 		&shortLink.TwitterTitle,
 		&shortLink.TwitterDescription,
 		&shortLink.TwitterImageURL,
@@ -251,9 +251,9 @@ WHERE "%s" IN (%s);`,
 			&shortLink.ExpireAt,
 			&shortLink.CreatedAt,
 			&shortLink.UpdatedAt,
-			&shortLink.OGTitle,
-			&shortLink.OGDescription,
-			&shortLink.OGImageURL,
+			&shortLink.OpenGraphTitle,
+			&shortLink.OpenGraphDescription,
+			&shortLink.OpenGraphImageURL,
 			&shortLink.TwitterTitle,
 			&shortLink.TwitterDescription,
 			&shortLink.TwitterImageURL,
