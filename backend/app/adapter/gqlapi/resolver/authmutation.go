@@ -3,6 +3,7 @@ package resolver
 import (
 	"time"
 
+	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
@@ -18,7 +19,7 @@ type AuthMutation struct {
 	urlCreator    url.Creator
 }
 
-// URLInput represents possible URL attributes
+// URLInput represents possible ShortLink attributes
 type URLInput struct {
 	OriginalURL string
 	CustomAlias *string
@@ -50,9 +51,9 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 
 	customAlias := args.URL.CustomAlias
-	u := entity.URL{
-		OriginalURL: args.URL.OriginalURL,
-		ExpireAt:    args.URL.ExpireAt,
+	u := entity.ShortLink{
+		LongLink: args.URL.OriginalURL,
+		ExpireAt: args.URL.ExpireAt,
 	}
 
 	isPublic := args.IsPublic
@@ -66,11 +67,11 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	case url.ErrAliasExist:
 		return nil, ErrURLAliasExist(*customAlias)
 	case url.ErrInvalidLongLink:
-		return nil, ErrInvalidLongLink(u.OriginalURL)
+		return nil, ErrInvalidLongLink(u.LongLink)
 	case url.ErrInvalidCustomAlias:
 		return nil, ErrInvalidCustomAlias(*customAlias)
 	case url.ErrMaliciousLongLink:
-		return nil, ErrMaliciousContent(u.OriginalURL)
+		return nil, ErrMaliciousContent(u.LongLink)
 	default:
 		return nil, ErrUnknown{}
 	}
@@ -80,6 +81,17 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
 	change, err := a.changeLog.CreateChange(args.Change.Title, args.Change.SummaryMarkdown)
 	return newChange(change), err
+}
+
+// ViewChangeLog records the time when the user viewed the change log
+func (a AuthMutation) ViewChangeLog() (scalar.Time, error) {
+	user, err := viewer(a.authToken, a.authenticator)
+	if err != nil {
+		return scalar.Time{}, ErrInvalidAuthToken{}
+	}
+
+	lastViewedAt, err := a.changeLog.ViewChangeLog(user)
+	return scalar.Time{Time: lastViewedAt}, err
 }
 
 func newAuthMutation(

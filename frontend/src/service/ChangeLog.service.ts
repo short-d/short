@@ -1,73 +1,76 @@
-import { Update } from '../entity/Update';
-
-type Time = number;
+import { ChangeLog } from '../entity/ChangeLog';
+import { ChangeLogGraphQLApi } from './ChangeLogGraphQL.api';
+import { ErrorService, Err } from './Error.service';
+import { Change } from '../entity/Change';
 
 export class ChangeLogService {
+  constructor(
+    private changeLogGraphQLApi: ChangeLogGraphQLApi,
+    private errorService: ErrorService
+  ) {}
+
   hasUpdates(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
-      const changeLog = await this.getChangeLog();
-      const lastSeenAt = await this.getLastSeenChangeLog();
-      if (!changeLog) {
-        resolve(false);
-        return;
-      }
-
-      if (!changeLog[0]) {
-        resolve(false);
-        return;
-      }
-
-      if (lastSeenAt >= changeLog[0].releasedAt) {
-        resolve(false);
-        return;
-      }
-
-      resolve(true);
-    });
-  }
-
-  getLastSeenChangeLog(): Promise<Time> {
-    return new Promise(async (resolve, reject) => {
-      resolve(await this.invokeLastSeenChangeLogApi());
-    });
-  }
-
-  getChangeLog(): Promise<Array<Update>> {
-    return new Promise(async (resolve, reject) => {
-      resolve(await this.invokeUpdatesApi());
-    });
-  }
-
-  private async invokeLastSeenChangeLogApi(): Promise<Time> {
-    return new Promise<Time>((resolve, reject) => {
-      resolve(1584156301379);
-    });
-  }
-
-  private async invokeUpdatesApi(): Promise<Array<Update>> {
-    return new Promise<Array<Update>>((resolve, reject) => {
-      resolve([
-        {
-          title: 'Added public url toggle',
-          releasedAt: 1583587586801,
-          summary: 'It is now possible to make links public or private'
-        },
-        {
-          title: 'Added search bar',
-          releasedAt: 1583587586800,
-          summary: 'Added search bar to the header'
-        },
-        {
-          title: 'Added sign out button',
-          releasedAt: 1583562845043,
-          summary: 'Added sign out button to the header'
-        },
-        {
-          title: 'Added sign out button',
-          releasedAt: 1583562845042,
-          summary: 'Added sign out button to the header'
+      let changeLog;
+      try {
+        changeLog = await this.changeLogGraphQLApi.getChangeLog();
+      } catch (errCode) {
+        if (errCode === Err.Unauthenticated) {
+          resolve(false);
+          return;
         }
-      ]);
+
+        reject({
+          changeLogErr: this.errorService.getErr(errCode)
+        });
+      }
+
+      if (!changeLog || !changeLog.changes || changeLog.changes.length < 1) {
+        resolve(false);
+        return;
+      }
+
+      if (!changeLog.lastViewedAt) {
+        resolve(true);
+        return;
+      }
+
+      changeLog.changes = this.sortChanges(changeLog.changes);
+      if (
+        changeLog.lastViewedAt.getTime() <
+        changeLog.changes[0].releasedAt.getTime()
+      ) {
+        resolve(true);
+        return;
+      }
+
+      resolve(false);
     });
+  }
+
+  getChangeLog(): Promise<ChangeLog> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const changeLog = await this.changeLogGraphQLApi.getChangeLog();
+        changeLog.changes = this.sortChanges(changeLog.changes);
+        resolve(changeLog);
+      } catch (errCode) {
+        reject({
+          changeLogErr: this.errorService.getErr(errCode)
+        });
+      }
+    });
+  }
+
+  viewChangeLog(): Promise<Date> {
+    return this.changeLogGraphQLApi.viewChangeLog();
+  }
+
+  sortChanges(changes: Change[]) {
+    changes.sort((a: Change, b: Change) => {
+      return b.releasedAt.getTime() - a.releasedAt.getTime();
+    });
+
+    return changes;
   }
 }

@@ -5,7 +5,7 @@ import (
 	"net/url"
 
 	"github.com/short-d/app/fw/webreq"
-	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
 // More info here: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
@@ -17,7 +17,7 @@ const (
 	fbResponseType     = "code"
 )
 
-var _ external.IdentityProvider = (*IdentityProvider)(nil)
+var _ sso.IdentityProvider = (*IdentityProvider)(nil)
 
 // IdentityProvider represents Facebook OAuth service.
 type IdentityProvider struct {
@@ -67,25 +67,15 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessTo
 		return "", err
 	}
 
-	query := u.Query()
+	query := url.Values{}
 	query.Set("client_id", clientID)
 	query.Set("redirect_uri", redirectURI)
 	query.Set("client_secret", clientSecret)
 	query.Set("code", authorizationCode)
 	u.RawQuery = query.Encode()
 
-	body := url.Values{}
-	body.Set("client_id", clientID)
-	body.Set("redirect_uri", redirectURI)
-	body.Set("client_secret", clientSecret)
-	body.Set("code", authorizationCode)
-
-	headers := map[string]string{
-		"Content-Type": "application/x-www-form-urlencoded",
-	}
-
 	apiRes := fbAccessTokenResponse{}
-	err = g.httpRequest.JSON(http.MethodPost, u.String(), headers, body.Encode(), &apiRes)
+	err = g.httpRequest.JSON(http.MethodPost, u.String(), map[string]string{}, "", &apiRes)
 
 	if err != nil {
 		return "", err

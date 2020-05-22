@@ -6,6 +6,7 @@ import classNames from 'classnames';
 interface Props {
   canClose?: boolean;
   onModalClose?: () => void;
+  onModalOpen?: () => void;
 }
 
 interface State {
@@ -33,6 +34,10 @@ export class Modal extends Component<Props, State> {
       this.setState({
         isShowing: true
       });
+      if (!this.props.onModalOpen) {
+        return;
+      }
+      this.props.onModalOpen();
     }, 0);
   }
 

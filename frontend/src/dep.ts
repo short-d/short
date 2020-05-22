@@ -19,8 +19,9 @@ import { FetchHTTPService } from './service/HTTP.service';
 import { ShortHTTPApi } from './service/ShortHTTP.api';
 import { DynamicDecisionService } from './service/feature-decision/DynamicDecision.service';
 import { ShortLinkService } from './service/ShortLink.service';
-import { ShortGraphQLApi } from './service/ShortGraphQL.api';
 import { AnalyticsService } from './service/Analytics.service';
+import { ChangeLogGraphQLApi } from './service/ChangeLogGraphQL.api';
+import { ShortLinkGraphQLApi } from './service/ShortLinkGraphQL.api';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -59,18 +60,27 @@ export function initUIFactory(
   const versionService = new VersionService(envService);
   const store = initStore();
   const searchService = new SearchService();
-  const changeLogService = new ChangeLogService();
+  const changeLogGraphQLApi = new ChangeLogGraphQLApi(
+    authService,
+    envService,
+    captchaService,
+    graphQLService
+  );
+  const changeLogService = new ChangeLogService(
+    changeLogGraphQLApi,
+    errorService
+  );
   const extensionService = new BrowserExtensionFactory().makeBrowserExtensionService(
     envService
   );
   const clipboardService = new ClipboardServiceFactory().makeClipboardService();
-  const shortGraphQLApiService = new ShortGraphQLApi(
+  const shortLinkGraphQLApi = new ShortLinkGraphQLApi(
     authService,
     envService,
     graphQLService
   );
   const shortLinkService = new ShortLinkService(
-    shortGraphQLApiService,
+    shortLinkGraphQLApi,
     errorService
   );
   const analyticsService = new AnalyticsService(shortHTTPApi);

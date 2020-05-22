@@ -19,13 +19,13 @@ type AuthQuery struct {
 	urlRetriever  url.Retriever
 }
 
-// URLArgs represents possible parameters for URL endpoint
+// URLArgs represents possible parameters for ShortLink endpoint
 type URLArgs struct {
 	Alias       string
 	ExpireAfter *scalar.Time
 }
 
-// URL retrieves an URL persistent storage given alias and expiration time.
+// ShortLink retrieves an ShortLink persistent storage given alias and expiration time.
 func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 	var expireAt *time.Time
 	if args.ExpireAfter != nil {
@@ -41,13 +41,17 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 
 // ChangeLog retrieves full ChangeLog from persistent storage
 func (v AuthQuery) ChangeLog() (ChangeLog, error) {
-	_, err := viewer(v.authToken, v.authenticator)
+	user, err := viewer(v.authToken, v.authenticator)
 	if err != nil {
 		return newChangeLog([]entity.Change{}, nil), ErrInvalidAuthToken{}
 	}
 
 	changeLog, err := v.changeLog.GetChangeLog()
-	lastViewedAt := v.changeLog.GetLastViewedAt()
+	if err != nil {
+		return ChangeLog{}, err
+	}
+
+	lastViewedAt, err := v.changeLog.GetLastViewedAt(user)
 	return newChangeLog(changeLog, lastViewedAt), err
 }
 

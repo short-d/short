@@ -187,14 +187,12 @@ export class UrlService {
     link: Url,
     isPublic: boolean = false
   ) {
-    // TODO(issue#728) move alias input validation to backend
-    let alias = link.alias === '' ? null : link.alias!;
     return {
       captchaResponse: captchaResponse,
       authToken: this.authService.getAuthToken(),
       urlInput: {
         originalURL: link.originalUrl,
-        customAlias: alias
+        customAlias: link.alias
       },
       isPublic
     };

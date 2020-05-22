@@ -26,18 +26,20 @@ import (
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi"
+	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
-	"github.com/short-d/short/backend/app/usecase/account"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/external"
+	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
+	"github.com/short-d/short/backend/tool"
 )
 
 // Injectors from wire.go:
@@ -71,8 +73,8 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	http := webreq.NewHTTP(client)
 	entryRepository := provider.NewEntryRepositorySwitch(runtime2, deployment, stdOut, dataDogAPIKey, http)
 	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, entryRepository)
-	urlSql := sqldb.NewURLSql(sqlDB)
-	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
+	urlSql := sqldb.NewShortLinkSql(sqlDB)
+	userURLRelationSQL := sqldb.NewUserShortLinkSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
 	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
@@ -88,13 +90,15 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	detector := risk.NewDetector(safeBrowsing)
 	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias, system, detector)
 	changeLogSQL := sqldb.NewChangeLogSQL(sqlDB)
-	persist := changelog.NewPersist(keyGenerator, system, changeLogSQL)
+	userChangeLogSQL := sqldb.NewUserChangeLogSQL(sqlDB)
+	persist := changelog.NewPersist(keyGenerator, system, changeLogSQL, userChangeLogSQL)
 	reCaptcha := provider.NewReCaptchaService(http, secret)
 	verifier := requester.NewVerifier(reCaptcha)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
-	short := gqlapi.NewShort(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
-	graphGopherHandler := graphql.NewGraphGopherHandler(short)
+	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
+	api := gqlapi.NewShort(resolverResolver)
+	graphGopherHandler := graphql.NewGraphGopherHandler(api)
 	graphQL := provider.NewGraphQLService(graphqlPath, graphGopherHandler, loggerLogger)
 	return graphQL, nil
 }
@@ -122,28 +126,56 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	ipStack := provider.NewIPStack(ipStackAPIKey, http, loggerLogger)
 	requestClient := request.NewClient(proxy, ipStack)
 	instrumentationFactory := request.NewInstrumentationFactory(loggerLogger, system, dataDog, segment, keyGenerator, requestClient)
-	urlSql := sqldb.NewURLSql(sqlDB)
-	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
+	urlSql := sqldb.NewShortLinkSql(sqlDB)
+	userURLRelationSQL := sqldb.NewUserShortLinkSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
-	identityProvider := provider.NewGithubIdentityProvider(http, githubClientID, githubClientSecret)
-	clientFactory := graphql.NewClientFactory(http)
-	githubAccount := github.NewAccount(clientFactory)
-	api := github.NewAPI(identityProvider, githubAccount)
-	facebookIdentityProvider := provider.NewFacebookIdentityProvider(http, facebookClientID, facebookClientSecret, facebookRedirectURI)
-	facebookAccount := facebook.NewAccount(http)
-	facebookAPI := facebook.NewAPI(facebookIdentityProvider, facebookAccount)
-	googleIdentityProvider := provider.NewGoogleIdentityProvider(http, googleClientID, googleClientSecret, googleRedirectURI)
-	googleAccount := google.NewAccount(http)
-	googleAPI := google.NewAPI(googleIdentityProvider, googleAccount)
 	featureToggleSQL := sqldb.NewFeatureToggleSQL(sqlDB)
 	decisionMakerFactory := provider.NewFeatureDecisionMakerFactorySwitch(deployment, featureToggleSQL)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
+	factory := sso.NewFactory(authenticator)
 	userSQL := sqldb.NewUserSQL(sqlDB)
-	accountProvider := account.NewProvider(userSQL, system)
-	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, api, facebookAPI, googleAPI, decisionMakerFactory, authenticator, accountProvider)
+	accountLinkerFactory := sso.NewAccountLinkerFactory(keyGenerator, userSQL)
+	githubSSOSql := sqldb.NewGithubSSOSql(sqlDB, loggerLogger)
+	accountLinker := provider.NewGithubAccountLinker(accountLinkerFactory, githubSSOSql)
+	identityProvider := provider.NewGithubIdentityProvider(http, githubClientID, githubClientSecret)
+	clientFactory := graphql.NewClientFactory(http)
+	account := github.NewAccount(clientFactory)
+	singleSignOn := provider.NewGithubSSO(factory, accountLinker, identityProvider, account)
+	facebookIdentityProvider := provider.NewFacebookIdentityProvider(http, facebookClientID, facebookClientSecret, facebookRedirectURI)
+	facebookAccount := facebook.NewAccount(http)
+	facebookSSOSql := sqldb.NewFacebookSSOSql(sqlDB, loggerLogger)
+	facebookAccountLinker := provider.NewFacebookAccountLinker(accountLinkerFactory, facebookSSOSql)
+	facebookSingleSignOn := provider.NewFacebookSSO(factory, facebookIdentityProvider, facebookAccount, facebookAccountLinker)
+	googleIdentityProvider := provider.NewGoogleIdentityProvider(http, googleClientID, googleClientSecret, googleRedirectURI)
+	googleAccount := google.NewAccount(http)
+	googleSSOSql := sqldb.NewGoogleSSOSql(sqlDB, loggerLogger)
+	googleAccountLinker := provider.NewGoogleAccountLinker(accountLinkerFactory, googleSSOSql)
+	googleSingleSignOn := provider.NewGoogleSSO(factory, googleIdentityProvider, googleAccount, googleAccountLinker)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
+}
+
+func InjectDataTool(prefix provider.LogPrefix, logLevel logger.LogLevel, dbConfig db.Config, dbConnector db.Connector, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (tool.Data, error) {
+	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	keyGenerator, err := provider.NewKeyGenerator(bufferSize, rpc)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	system := timer.NewSystem()
+	program := runtime.NewProgram()
+	stdOut := io.NewStdOut()
+	local := provider.NewLocalEntryRepo(stdOut)
+	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, local)
+	data, err := tool.NewData(dbConfig, dbConnector, keyGenerator, loggerLogger)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	return data, nil
 }
 
 // wire.go:
@@ -158,6 +190,6 @@ var facebookAPISet = wire.NewSet(provider.NewFacebookIdentityProvider, facebook.
 
 var googleAPISet = wire.NewSet(provider.NewGoogleIdentityProvider, google.NewAccount, google.NewAPI)
 
-var keyGenSet = wire.NewSet(wire.Bind(new(external.KeyFetcher), new(kgs.RPC)), provider.NewKgsRPC, provider.NewKeyGenerator)
+var keyGenSet = wire.NewSet(wire.Bind(new(keygen.KeyFetcher), new(kgs.RPC)), provider.NewKgsRPC, provider.NewKeyGenerator)
 
 var featureDecisionSet = wire.NewSet(wire.Bind(new(repository.FeatureToggle), new(sqldb.FeatureToggleSQL)), sqldb.NewFeatureToggleSQL, provider.NewFeatureDecisionMakerFactorySwitch)

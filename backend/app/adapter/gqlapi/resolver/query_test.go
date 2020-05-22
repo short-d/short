@@ -12,13 +12,13 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/url"
 )
 
 func TestQuery_AuthQuery(t *testing.T) {
+	t.Parallel()
 	now := time.Now()
 	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 	user := entity.User{
@@ -56,21 +56,24 @@ func TestQuery_AuthQuery(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
-			fakeURLRepo := repository.NewURLFake(map[string]entity.URL{})
+			t.Parallel()
+			fakeURLRepo := repository.NewURLFake(map[string]entity.ShortLink{})
 			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
 			auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
 			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 			entryRepo := logger.NewEntryRepoFake()
 			lg, err := logger.NewFake(logger.LogOff, &entryRepo)
 
-			keyFetcher := external.NewKeyFetcherFake([]external.Key{})
+			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 
 			tm := timer.NewStub(now)
 			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
-			changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo)
+			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
+			changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo)
 
 			query := newQuery(lg, auth, changeLog, retrieverFake)
 

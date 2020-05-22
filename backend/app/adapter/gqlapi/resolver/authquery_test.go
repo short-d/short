@@ -13,15 +13,15 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/url"
 )
 
-type urlMap = map[string]entity.URL
+type urlMap = map[string]entity.ShortLink
 
 func TestAuthQuery_URL(t *testing.T) {
+	t.Parallel()
 	now := time.Now()
 	before := now.Add(-5 * time.Second)
 	after := now.Add(5 * time.Second)
@@ -58,7 +58,7 @@ func TestAuthQuery_URL(t *testing.T) {
 				Time: now,
 			},
 			urls: urlMap{
-				"220uFicCJj": entity.URL{
+				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &before,
 				},
 			},
@@ -71,13 +71,13 @@ func TestAuthQuery_URL(t *testing.T) {
 				Time: now,
 			},
 			urls: urlMap{
-				"220uFicCJj": entity.URL{
+				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &after,
 				},
 			},
 			hasErr: false,
 			expectedURL: &URL{
-				url: entity.URL{
+				url: entity.ShortLink{
 					ExpireAt: &after,
 				},
 			},
@@ -85,18 +85,21 @@ func TestAuthQuery_URL(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
+		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			fakeURLRepo := repository.NewURLFake(testCase.urls)
 			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
 			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
 
-			keyFetcher := external.NewKeyFetcherFake([]external.Key{})
+			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 
 			timerFake := timer.NewStub(now)
 			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
-			changeLog := changelog.NewPersist(keyGen, timerFake, &changeLogRepo)
+			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
+			changeLog := changelog.NewPersist(keyGen, timerFake, &changeLogRepo, &userChangeLogRepo)
 
 			tokenizer := crypto.NewTokenizerFake()
 			auth := authenticator.NewAuthenticator(tokenizer, timerFake, time.Hour)

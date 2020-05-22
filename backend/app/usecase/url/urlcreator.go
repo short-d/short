@@ -39,12 +39,12 @@ func (e ErrMaliciousLongLink) Error() string {
 	return string(e)
 }
 
-// Creator represents a URL alias creator
+// Creator represents a ShortLink alias creator
 type Creator interface {
-	CreateURL(url entity.URL, alias *string, user entity.User, isPublic bool) (entity.URL, error)
+	CreateURL(url entity.ShortLink, alias *string, user entity.User, isPublic bool) (entity.ShortLink, error)
 }
 
-// CreatorPersist represents a URL alias creator which persist the generated
+// CreatorPersist represents a ShortLink alias creator which persist the generated
 // alias in the repository
 type CreatorPersist struct {
 	urlRepo             repository.URL
@@ -58,45 +58,49 @@ type CreatorPersist struct {
 
 // CreateURL persists a new url with a given or auto generated alias in the repository.
 // TODO(issue#235): add functionality for public URLs
-func (c CreatorPersist) CreateURL(url entity.URL, customAlias *string, user entity.User, isPublic bool) (entity.URL, error) {
-	longLink := url.OriginalURL
+func (c CreatorPersist) CreateURL(url entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
+	longLink := url.LongLink
 	if !c.longLinkValidator.IsValid(&longLink) {
-		return entity.URL{}, ErrInvalidLongLink(longLink)
+		return entity.ShortLink{}, ErrInvalidLongLink(longLink)
 	}
 
 	if c.riskDetector.IsURLMalicious(longLink) {
-		return entity.URL{}, ErrMaliciousLongLink(longLink)
+		return entity.ShortLink{}, ErrMaliciousLongLink(longLink)
 	}
 
-	if customAlias == nil {
+	if !c.isAliasProvided(customAlias) {
 		return c.createURLWithAutoAlias(url, user)
 	}
 
 	if !c.aliasValidator.IsValid(customAlias) {
-		return entity.URL{}, ErrInvalidCustomAlias(*customAlias)
+		return entity.ShortLink{}, ErrInvalidCustomAlias(*customAlias)
 	}
 	return c.createURLWithCustomAlias(url, *customAlias, user)
 }
 
-func (c CreatorPersist) createURLWithAutoAlias(url entity.URL, user entity.User) (entity.URL, error) {
+func (c CreatorPersist) isAliasProvided(customAlias *string) bool {
+	return customAlias != nil && *customAlias != ""
+}
+
+func (c CreatorPersist) createURLWithAutoAlias(url entity.ShortLink, user entity.User) (entity.ShortLink, error) {
 	key, err := c.keyGen.NewKey()
 	if err != nil {
-		return entity.URL{}, err
+		return entity.ShortLink{}, err
 	}
 	randomAlias := string(key)
 	return c.createURLWithCustomAlias(url, randomAlias, user)
 }
 
-func (c CreatorPersist) createURLWithCustomAlias(url entity.URL, alias string, user entity.User) (entity.URL, error) {
+func (c CreatorPersist) createURLWithCustomAlias(url entity.ShortLink, alias string, user entity.User) (entity.ShortLink, error) {
 	url.Alias = alias
 
 	isExist, err := c.urlRepo.IsAliasExist(alias)
 	if err != nil {
-		return entity.URL{}, err
+		return entity.ShortLink{}, err
 	}
 
 	if isExist {
-		return entity.URL{}, ErrAliasExist("url alias already exist")
+		return entity.ShortLink{}, ErrAliasExist("url alias already exist")
 	}
 
 	now := c.timer.Now().UTC()
@@ -104,7 +108,7 @@ func (c CreatorPersist) createURLWithCustomAlias(url entity.URL, alias string, u
 
 	err = c.urlRepo.Create(url)
 	if err != nil {
-		return entity.URL{}, err
+		return entity.ShortLink{}, err
 	}
 
 	err = c.userURLRelationRepo.CreateRelation(user, url)

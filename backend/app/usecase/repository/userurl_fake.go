@@ -8,14 +8,14 @@ import (
 
 var _ UserURLRelation = (*UserURLRelationFake)(nil)
 
-// UserURLRelationFake represents in memory implementation of User-URL relationship accessor.
+// UserURLRelationFake represents in memory implementation of User-ShortLink relationship accessor.
 type UserURLRelationFake struct {
 	users []entity.User
-	urls  []entity.URL
+	urls  []entity.ShortLink
 }
 
-// CreateRelation creates many to many relationship between User and URL.
-func (u *UserURLRelationFake) CreateRelation(user entity.User, url entity.URL) error {
+// CreateRelation creates many to many relationship between User and ShortLink.
+func (u *UserURLRelationFake) CreateRelation(user entity.User, url entity.ShortLink) error {
 	if u.IsRelationExist(user, url) {
 		return errors.New("relationship exists")
 	}
@@ -36,8 +36,8 @@ func (u UserURLRelationFake) FindAliasesByUser(user entity.User) ([]string, erro
 	return aliases, nil
 }
 
-// IsRelationExist checks whether the an URL is own by a given user.
-func (u UserURLRelationFake) IsRelationExist(user entity.User, url entity.URL) bool {
+// IsRelationExist checks whether the an ShortLink is own by a given user.
+func (u UserURLRelationFake) IsRelationExist(user entity.User, url entity.ShortLink) bool {
 	for idx, currUser := range u.users {
 		if currUser.ID != user.ID {
 			continue
@@ -51,7 +51,7 @@ func (u UserURLRelationFake) IsRelationExist(user entity.User, url entity.URL) b
 }
 
 // NewUserURLRepoFake creates UserURLFake
-func NewUserURLRepoFake(users []entity.User, urls []entity.URL) UserURLRelationFake {
+func NewUserURLRepoFake(users []entity.User, urls []entity.ShortLink) UserURLRelationFake {
 	return UserURLRelationFake{
 		users: users,
 		urls:  urls,

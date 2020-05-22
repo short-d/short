@@ -9,7 +9,6 @@ import (
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/external"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/risk"
@@ -24,24 +23,25 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 
 	alias := "220uFicCJj"
 	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
+	emptyAlias := ""
 
 	testCases := []struct {
 		name          string
 		urls          urlMap
 		alias         *string
-		availableKeys []external.Key
+		availableKeys []keygen.Key
 		user          entity.User
-		url           entity.URL
+		url           entity.ShortLink
 		relationUsers []entity.User
-		relationURLs  []entity.URL
+		relationURLs  []entity.ShortLink
 		isPublic      bool
 		expHasErr     bool
-		expectedURL   entity.URL
+		expectedURL   entity.ShortLink
 	}{
 		{
 			name: "alias exists",
 			urls: urlMap{
-				"220uFicCJj": entity.URL{
+				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: &now,
 				},
@@ -50,14 +50,14 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url:       entity.URL{},
+			url:       entity.ShortLink{},
 			isPublic:  false,
 			expHasErr: true,
 		},
 		{
 			name: "alias too long",
 			urls: urlMap{
-				"220uFicCJj": entity.URL{
+				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: &now,
 				},
@@ -66,8 +66,8 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url: entity.URL{
-				OriginalURL: "https://www.google.com",
+			url: entity.ShortLink{
+				LongLink: "https://www.google.com",
 			},
 			expHasErr: true,
 		},
@@ -78,60 +78,75 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "https://www.google.com",
-				ExpireAt:    &now,
+			url: entity.ShortLink{
+				Alias:    "220uFicCJj",
+				LongLink: "https://www.google.com",
+				ExpireAt: &now,
 			},
 			isPublic:  false,
 			expHasErr: false,
-			expectedURL: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "https://www.google.com",
-				ExpireAt:    &now,
-				CreatedAt:   &utc,
+			expectedURL: entity.ShortLink{
+				Alias:     "220uFicCJj",
+				LongLink:  "https://www.google.com",
+				ExpireAt:  &now,
+				CreatedAt: &utc,
 			},
 		},
 		{
-			name: "automatically generate alias",
-			urls: urlMap{
-				"220uFicCJj": entity.URL{
-					Alias:    "220uFicCJj",
-					ExpireAt: &now,
-				},
-			},
-			availableKeys: []external.Key{
+			name: "automatically generate alias if null alias provided",
+			urls: urlMap{},
+			availableKeys: []keygen.Key{
 				"test",
 			},
 			alias: nil,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url: entity.URL{
-				OriginalURL: "https://www.google.com",
+			url: entity.ShortLink{
+				LongLink: "https://www.google.com",
 			},
 			expHasErr: false,
-			expectedURL: entity.URL{
-				Alias:       "test",
-				OriginalURL: "https://www.google.com",
-				CreatedAt:   &utc,
+			expectedURL: entity.ShortLink{
+				Alias:     "test",
+				LongLink:  "https://www.google.com",
+				CreatedAt: &utc,
+			},
+		},
+		{
+			name: "automatically generate alias if empty string alias provided",
+			urls: urlMap{},
+			availableKeys: []keygen.Key{
+				"test",
+			},
+			alias: &emptyAlias,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			url: entity.ShortLink{
+				LongLink: "https://www.google.com",
+			},
+			expHasErr: false,
+			expectedURL: entity.ShortLink{
+				Alias:     "test",
+				LongLink:  "https://www.google.com",
+				CreatedAt: &utc,
 			},
 		},
 		{
 			name: "no available key",
 			urls: urlMap{
-				"220uFicCJj": entity.URL{
+				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: &now,
 				},
 			},
-			availableKeys: []external.Key{},
+			availableKeys: []keygen.Key{},
 			alias:         nil,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url: entity.URL{
-				OriginalURL: "https://www.google.com",
+			url: entity.ShortLink{
+				LongLink: "https://www.google.com",
 			},
 			expHasErr: true,
 		},
@@ -149,7 +164,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				testCase.relationUsers,
 				testCase.relationURLs,
 			)
-			keyFetcher := external.NewKeyFetcherFake(testCase.availableKeys)
+			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 			longLinkValidator := validator.NewLongLink()

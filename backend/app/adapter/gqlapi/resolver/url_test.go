@@ -12,7 +12,8 @@ import (
 )
 
 func TestURL_Alias(t *testing.T) {
-	urlResolver := URL{url: entity.URL{Alias: "TestAlias"}}
+	t.Parallel()
+	urlResolver := URL{url: entity.ShortLink{Alias: "TestAlias"}}
 
 	expected := urlResolver.url.Alias
 	got := *urlResolver.Alias()
@@ -20,28 +21,31 @@ func TestURL_Alias(t *testing.T) {
 }
 
 func TestURL_OriginalURL(t *testing.T) {
-	urlResolver := URL{url: entity.URL{OriginalURL: "TestOriginalUrl"}}
+	t.Parallel()
+	urlResolver := URL{url: entity.ShortLink{LongLink: "TestOriginalUrl"}}
 
-	expected := urlResolver.url.OriginalURL
+	expected := urlResolver.url.LongLink
 	got := *urlResolver.OriginalURL()
-	assert.Equal(t, got, expected, "*urlResolver.OriginalURL() = %v; want %v", expected, got)
+	assert.Equal(t, got, expected, "*urlResolver.LongLink() = %v; want %v", expected, got)
 }
 
 func TestURL_ExpireAt(t *testing.T) {
+	t.Parallel()
 	timeAfter := time.Now().Add(5 * time.Second)
 	testCases := []struct {
 		url      URL
 		expected *scalar.Time
 	}{
 		{
-			url:      URL{url: entity.URL{ExpireAt: &timeAfter}},
+			url:      URL{url: entity.ShortLink{ExpireAt: &timeAfter}},
 			expected: &scalar.Time{Time: timeAfter},
 		},
 		{
-			url: URL{url: entity.URL{ExpireAt: nil}},
+			url: URL{url: entity.ShortLink{ExpireAt: nil}},
 		},
 	}
 	for _, testCase := range testCases {
+		testCase := testCase
 		assert.Equal(t, testCase.expected, testCase.url.ExpireAt())
 	}
 }
