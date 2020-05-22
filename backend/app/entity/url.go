@@ -10,4 +10,5 @@ type URL struct {
 	CreatedBy   *User
 	CreatedAt   *time.Time
 	UpdatedAt   *time.Time
+	MetaTags
 }

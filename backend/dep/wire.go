@@ -5,6 +5,8 @@ package dep
 import (
 	"database/sql"
 
+	"github.com/short-d/short/backend/app/adapter/grpcapi"
+
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"
@@ -127,6 +129,18 @@ func InjectEnv() env.Env {
 		env.NewGoDotEnv,
 	)
 	return env.GoDotEnv{}
+}
+
+func InjectGRPCApi(sqlDB *sql.DB) grpcapi.ShortGRPCApi {
+	wire.Build(
+		wire.Bind(new(repository.URL), new(*sqldb.URLSql)),
+		wire.Bind(new(url.MetaTag), new(url.MetaTagPersist)),
+		sqldb.NewURLSql,
+		url.NewMetaTagPersist,
+		grpcapi.NewMetaTagServer,
+		grpcapi.NewShortGRPCApi,
+	)
+	return grpcapi.ShortGRPCApi{}
 }
 
 // InjectGraphQLService creates GraphQL service with configured dependencies.

@@ -12,4 +12,6 @@ type URL interface {
 	Create(url entity.URL) error
 	UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error)
 	GetByAliases(aliases []string) ([]entity.URL, error)
+	UpdateOGMetaTags(alias string, metaOGTags entity.MetaOGTags) (entity.URL, error)
+	UpdateTwitterMetaTags(alias string, metaTwitterTags entity.MetaTwitterTags) (entity.URL, error)
 }

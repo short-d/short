@@ -27,6 +27,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
+	"github.com/short-d/short/backend/app/adapter/grpcapi"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -62,6 +63,14 @@ func InjectDBMigrationTool() db.MigrationTool {
 func InjectEnv() env.Env {
 	goDotEnv := env.NewGoDotEnv()
 	return goDotEnv
+}
+
+func InjectGRPCApi(sqlDB *sql.DB) grpcapi.ShortGRPCApi {
+	urlSql := sqldb.NewURLSql(sqlDB)
+	metaTagPersist := url.NewMetaTagPersist(urlSql)
+	metaTagServiceServer := grpcapi.NewMetaTagServer(metaTagPersist)
+	shortGRPCApi := grpcapi.NewShortGRPCApi(metaTagServiceServer)
+	return shortGRPCApi
 }
 
 func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQLPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey, googleAPIKey provider.GoogleAPIKey) (service.GraphQL, error) {

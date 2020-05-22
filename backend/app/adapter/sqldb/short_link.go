@@ -62,6 +62,60 @@ VALUES ($1, $2, $3, $4, $5);`,
 	return err
 }
 
+func (u *URLSql) UpdateOGMetaTags(alias string, metaOGTags entity.MetaOGTags) (entity.URL, error) {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1, "%s"=$2, "%s"=$3
+WHERE "%s"=$4;`,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnOGTitle,
+		table.ShortLink.ColumnOGDescription,
+		table.ShortLink.ColumnOGImageURL,
+		table.ShortLink.ColumnAlias,
+	)
+
+	_, err := u.db.Exec(
+		statement,
+		metaOGTags.OGTitle,
+		metaOGTags.OGDescription,
+		metaOGTags.OGImageURL,
+		alias,
+	)
+
+	if err != nil {
+		return entity.URL{}, err
+	}
+
+	return u.GetByAlias(alias)
+}
+
+func (u *URLSql) UpdateTwitterMetaTags(alias string, metaTwitterTags entity.MetaTwitterTags) (entity.URL, error) {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1, "%s"=$2, "%s"=$3
+WHERE "%s"=$4;`,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnTwitterTitle,
+		table.ShortLink.ColumnTwitterDescription,
+		table.ShortLink.ColumnTwitterImageURL,
+		table.ShortLink.ColumnAlias,
+	)
+
+	_, err := u.db.Exec(
+		statement,
+		metaTwitterTags.TwitterTitle,
+		metaTwitterTags.TwitterDescription,
+		metaTwitterTags.TwitterImageURL,
+		alias,
+	)
+
+	if err != nil {
+		return entity.URL{}, err
+	}
+
+	return u.GetByAlias(alias)
+}
+
 // UpdateURL updates a ShortLink that exists within the short_link table.
 func (u *URLSql) UpdateURL(oldAlias string, newURL entity.URL) (entity.URL, error) {
 	statement := fmt.Sprintf(`
@@ -95,7 +149,7 @@ WHERE "%s"=$5;`,
 // GetByAlias finds an ShortLink in short_link table given alias.
 func (u URLSql) GetByAlias(alias string) (entity.URL, error) {
 	statement := fmt.Sprintf(`
-SELECT "%s","%s","%s","%s","%s" 
+SELECT "%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"
 FROM "%s" 
 WHERE "%s"=$1;`,
 		table.ShortLink.ColumnAlias,
@@ -103,6 +157,12 @@ WHERE "%s"=$1;`,
 		table.ShortLink.ColumnExpireAt,
 		table.ShortLink.ColumnCreatedAt,
 		table.ShortLink.ColumnUpdatedAt,
+		table.ShortLink.ColumnOGTitle,
+		table.ShortLink.ColumnOGDescription,
+		table.ShortLink.ColumnOGImageURL,
+		table.ShortLink.ColumnTwitterTitle,
+		table.ShortLink.ColumnTwitterDescription,
+		table.ShortLink.ColumnTwitterImageURL,
 		table.ShortLink.TableName,
 		table.ShortLink.ColumnAlias,
 	)
@@ -116,6 +176,12 @@ WHERE "%s"=$1;`,
 		&url.ExpireAt,
 		&url.CreatedAt,
 		&url.UpdatedAt,
+		&url.OGTitle,
+		&url.OGDescription,
+		&url.OGImageURL,
+		&url.TwitterTitle,
+		&url.TwitterDescription,
+		&url.TwitterImageURL,
 	)
 	if err != nil {
 		return entity.URL{}, err
@@ -146,7 +212,7 @@ func (u URLSql) GetByAliases(aliases []string) ([]entity.URL, error) {
 
 	// TODO: compare performance between Query and QueryRow. Prefer QueryRow for readability
 	statement := fmt.Sprintf(`
-SELECT "%s","%s","%s","%s","%s" 
+SELECT "%s","%s","%s","%s","%s","%s","%s","%s" ,"%s","%s","%s" 
 FROM "%s"
 WHERE "%s" IN (%s);`,
 		table.ShortLink.ColumnAlias,
@@ -154,6 +220,12 @@ WHERE "%s" IN (%s);`,
 		table.ShortLink.ColumnExpireAt,
 		table.ShortLink.ColumnCreatedAt,
 		table.ShortLink.ColumnUpdatedAt,
+		table.ShortLink.ColumnOGTitle,
+		table.ShortLink.ColumnOGDescription,
+		table.ShortLink.ColumnOGImageURL,
+		table.ShortLink.ColumnTwitterTitle,
+		table.ShortLink.ColumnTwitterDescription,
+		table.ShortLink.ColumnTwitterImageURL,
 		table.ShortLink.TableName,
 		table.ShortLink.ColumnAlias,
 		parameterStr,
@@ -179,6 +251,12 @@ WHERE "%s" IN (%s);`,
 			&url.ExpireAt,
 			&url.CreatedAt,
 			&url.UpdatedAt,
+			&url.OGTitle,
+			&url.OGDescription,
+			&url.OGImageURL,
+			&url.TwitterTitle,
+			&url.TwitterDescription,
+			&url.TwitterImageURL,
 		)
 		if err != nil {
 			return urls, err

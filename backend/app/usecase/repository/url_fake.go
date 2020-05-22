@@ -14,6 +14,14 @@ type URLFake struct {
 	urls map[string]entity.URL
 }
 
+func (u URLFake) UpdateOGMetaTags(alias string, metaOGTags entity.MetaOGTags) (entity.URL, error) {
+	panic("implement me")
+}
+
+func (u URLFake) UpdateTwitterMetaTags(alias string, metaTwitterTags entity.MetaTwitterTags) (entity.URL, error) {
+	panic("implement me")
+}
+
 // IsAliasExist checks whether a given alias exist in url table.
 func (u URLFake) IsAliasExist(alias string) (bool, error) {
 	_, ok := u.urls[alias]
