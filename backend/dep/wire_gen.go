@@ -7,7 +7,6 @@ package dep
 
 import (
 	"database/sql"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"
@@ -66,8 +65,8 @@ func InjectEnv() env.Env {
 }
 
 func InjectGRPCApi(sqlDB *sql.DB) grpcapi.ShortGRPCApi {
-	urlSql := sqldb.NewURLSql(sqlDB)
-	metaTagPersist := url.NewMetaTagPersist(urlSql)
+	shortLinkSql := sqldb.NewShortLinkSql(sqlDB)
+	metaTagPersist := url.NewMetaTagPersist(shortLinkSql)
 	metaTagServiceServer := grpcapi.NewMetaTagServer(metaTagPersist)
 	shortGRPCApi := grpcapi.NewShortGRPCApi(metaTagServiceServer)
 	return shortGRPCApi
@@ -82,9 +81,9 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	http := webreq.NewHTTP(client)
 	entryRepository := provider.NewEntryRepositorySwitch(runtime2, deployment, stdOut, dataDogAPIKey, http)
 	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, entryRepository)
-	urlSql := sqldb.NewURLSql(sqlDB)
-	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
-	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
+	shortLinkSql := sqldb.NewShortLinkSql(sqlDB)
+	userShortLinkSQL := sqldb.NewUserShortLinkSQL(sqlDB)
+	retrieverPersist := url.NewRetrieverPersist(shortLinkSql, userShortLinkSQL)
 	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
 		return service.GraphQL{}, err
@@ -97,7 +96,7 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	customAlias := validator.NewCustomAlias()
 	safeBrowsing := provider.NewSafeBrowsing(googleAPIKey, http)
 	detector := risk.NewDetector(safeBrowsing)
-	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias, system, detector)
+	creatorPersist := url.NewCreatorPersist(shortLinkSql, userShortLinkSQL, keyGenerator, longLink, customAlias, system, detector)
 	changeLogSQL := sqldb.NewChangeLogSQL(sqlDB)
 	userChangeLogSQL := sqldb.NewUserChangeLogSQL(sqlDB)
 	persist := changelog.NewPersist(keyGenerator, system, changeLogSQL, userChangeLogSQL)
@@ -135,9 +134,9 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	ipStack := provider.NewIPStack(ipStackAPIKey, http, loggerLogger)
 	requestClient := request.NewClient(proxy, ipStack)
 	instrumentationFactory := request.NewInstrumentationFactory(loggerLogger, system, dataDog, segment, keyGenerator, requestClient)
-	urlSql := sqldb.NewURLSql(sqlDB)
-	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
-	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
+	shortLinkSql := sqldb.NewShortLinkSql(sqlDB)
+	userShortLinkSQL := sqldb.NewUserShortLinkSQL(sqlDB)
+	retrieverPersist := url.NewRetrieverPersist(shortLinkSql, userShortLinkSQL)
 	featureToggleSQL := sqldb.NewFeatureToggleSQL(sqlDB)
 	decisionMakerFactory := provider.NewFeatureDecisionMakerFactorySwitch(deployment, featureToggleSQL)
 	tokenizer := provider.NewJwtGo(jwtSecret)
