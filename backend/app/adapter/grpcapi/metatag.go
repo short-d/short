@@ -40,7 +40,7 @@ func (m MetaTagServer) UpdateTwitterTags(ctx context.Context, req *proto.UpdateT
 }
 
 func (m MetaTagServer) GetOGTags(ctx context.Context, req *proto.GetOGTagsRequest) (*proto.GetOGTagsResponse, error) {
-	ogMetaTags, err := m.metaTag.FetchOGTags(req.GetAlias())
+	ogMetaTags, err := m.metaTag.GetOGTags(req.GetAlias())
 	if err != nil {
 		return &proto.GetOGTagsResponse{}, err
 	}
@@ -53,7 +53,7 @@ func (m MetaTagServer) GetOGTags(ctx context.Context, req *proto.GetOGTagsReques
 }
 
 func (m MetaTagServer) GetTwitterTags(ctx context.Context, req *proto.GetTwitterTagsRequest) (*proto.GetTwitterTagsResponse, error) {
-	twitterMetaTags, err := m.metaTag.FetchTwitterTags(req.GetAlias())
+	twitterMetaTags, err := m.metaTag.GetTwitterTags(req.GetAlias())
 	if err != nil {
 		return &proto.GetTwitterTagsResponse{}, err
 	}

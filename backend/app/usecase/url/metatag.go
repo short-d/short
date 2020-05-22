@@ -8,8 +8,8 @@ import (
 var _ MetaTag = (*MetaTagPersist)(nil)
 
 type MetaTag interface {
-	FetchOGTags(alias string) (entity.MetaOGTags, error)
-	FetchTwitterTags(alias string) (entity.MetaTwitterTags, error)
+	GetOGTags(alias string) (entity.MetaOGTags, error)
+	GetTwitterTags(alias string) (entity.MetaTwitterTags, error)
 	UpdateOGTags(alias string, ogTitle string, ogDescription string, ogImageURL string) (entity.MetaOGTags, error)
 	UpdateTwitterTags(alias string, twitterTitle string, twitterDescription string, twitterImageURL string) (entity.MetaTwitterTags, error)
 }
@@ -54,7 +54,7 @@ func (m MetaTagPersist) UpdateOGTags(alias string, ogTitle string, ogDescription
 	}, nil
 }
 
-func (m MetaTagPersist) FetchOGTags(alias string) (entity.MetaOGTags, error) {
+func (m MetaTagPersist) GetOGTags(alias string) (entity.MetaOGTags, error) {
 	url, err := m.urlRepo.GetByAlias(alias)
 	if err != nil {
 		return entity.MetaOGTags{}, err
@@ -67,7 +67,7 @@ func (m MetaTagPersist) FetchOGTags(alias string) (entity.MetaOGTags, error) {
 	}, nil
 }
 
-func (m MetaTagPersist) FetchTwitterTags(alias string) (entity.MetaTwitterTags, error) {
+func (m MetaTagPersist) GetTwitterTags(alias string) (entity.MetaTwitterTags, error) {
 	url, err := m.urlRepo.GetByAlias(alias)
 	if err != nil {
 		return entity.MetaTwitterTags{}, err
