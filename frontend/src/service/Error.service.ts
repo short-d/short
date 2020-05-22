@@ -52,7 +52,7 @@ const aliasWithFragment = {
                 The alias you chose contains the URL fragment character ('#') which is not allowed
                 in an alias. Please remove this character and try again.
                 `
-}
+};
 
 const maliciousContentErr = {
   name: 'Malicious Content Detected',

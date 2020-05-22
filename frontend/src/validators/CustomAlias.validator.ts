@@ -10,7 +10,7 @@ export function validateCustomAliasFormat(customAlias?: string): string | null {
   }
 
   if (customAlias.indexOf('#') >= 0) {
-    return `Custom alias cannot contain the URL fragment character ('#')`
+    return `Custom alias cannot contain the URL fragment character ('#')`;
   }
 
   return null;
