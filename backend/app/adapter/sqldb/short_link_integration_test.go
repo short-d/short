@@ -76,7 +76,7 @@ func TestShortLinkSql_IsAliasExist(t *testing.T) {
 	}
 }
 
-func TestShortLinkSql_GetByAlias(t *testing.T) {
+func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
@@ -162,7 +162,7 @@ func TestShortLinkSql_GetByAlias(t *testing.T) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
 					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
-					shortLink, err := shortLinkRepo.GetByAlias(testCase.alias)
+					shortLink, err := shortLinkRepo.GetShortLinkByAlias(testCase.alias)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
@@ -176,8 +176,7 @@ func TestShortLinkSql_GetByAlias(t *testing.T) {
 	}
 }
 
-// TODO(issue#698): change to TestURLSql_CreateURL
-func TestShortLinkSql_Create(t *testing.T) {
+func TestShortLinkSql_CreateShortLink(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
 	testCases := []struct {
@@ -231,7 +230,7 @@ func TestShortLinkSql_Create(t *testing.T) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
 					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
-					err := shortLinkRepo.Create(testCase.shortLink)
+					err := shortLinkRepo.CreateShortLink(testCase.shortLink)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
@@ -323,7 +322,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 					expectedShortLink := testCase.expectedShortLink
 
 					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
-					shortLink, err := shortLinkRepo.UpdateURL(
+					shortLink, err := shortLinkRepo.UpdateShortLink(
 						testCase.oldAlias,
 						testCase.newShortLink,
 					)
@@ -343,7 +342,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 	}
 }
 
-func TestShortLinkSql_GetByAliases(t *testing.T) {
+func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
@@ -410,7 +409,7 @@ func TestShortLinkSql_GetByAliases(t *testing.T) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
 					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
-					shortLink, err := shortLinkRepo.GetByAliases(testCase.aliases)
+					shortLink, err := shortLinkRepo.GetShortLinksByAliases(testCase.aliases)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
