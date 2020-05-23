@@ -14,6 +14,7 @@ export const UPDATE_CREATED_URL = 'UPDATE_CREATED_URL';
 export const CLEAR_ERROR = 'CLEAR_ERROR';
 export const RAISE_GET_USER_SHORT_LINKS_ERROR =
   'RAISE_GET_USER_SHORT_LINKS_ERROR';
+export const RAISE_GET_CHANGELOG_ERROR = 'RAISE_GET_CHANGELOG_ERROR';
 
 export const updateLongLink = (longLink: string): IPayloadAction => ({
   type: UPDATE_LONG_LINK,
@@ -37,6 +38,11 @@ export const raiseCreateShortLinkError = (err: IErr): IPayloadAction => ({
 
 export const raiseGetUserShortLinksError = (err: IErr): IPayloadAction => ({
   type: RAISE_GET_USER_SHORT_LINKS_ERROR,
+  payload: err
+});
+
+export const raiseGetChangeLogError = (err: IErr): IPayloadAction => ({
+  type: RAISE_GET_CHANGELOG_ERROR,
   payload: err
 });
 

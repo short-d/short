@@ -11,7 +11,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
-type urlMap = map[string]entity.URL
+type urlMap = map[string]entity.ShortLink
 
 func TestUrlRetriever_GetURL(t *testing.T) {
 	t.Parallel()
@@ -26,7 +26,7 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 		alias       string
 		expiringAt  *time.Time
 		hasErr      bool
-		expectedURL entity.URL
+		expectedURL entity.ShortLink
 	}{
 		{
 			name:        "alias not found",
@@ -34,12 +34,12 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 			alias:       "220uFicCJj",
 			expiringAt:  &now,
 			hasErr:      true,
-			expectedURL: entity.URL{},
+			expectedURL: entity.ShortLink{},
 		},
 		{
 			name: "url expired",
 			urls: urlMap{
-				"220uFicCJj": entity.URL{
+				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: &before,
 				},
@@ -47,12 +47,12 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 			alias:       "220uFicCJj",
 			expiringAt:  &now,
 			hasErr:      true,
-			expectedURL: entity.URL{},
+			expectedURL: entity.ShortLink{},
 		},
 		{
 			name: "url never expire",
 			urls: urlMap{
-				"220uFicCJj": entity.URL{
+				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: nil,
 				},
@@ -60,7 +60,7 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 			alias:      "220uFicCJj",
 			expiringAt: &now,
 			hasErr:     false,
-			expectedURL: entity.URL{
+			expectedURL: entity.ShortLink{
 				Alias:    "220uFicCJj",
 				ExpireAt: nil,
 			},
@@ -68,7 +68,7 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 		{
 			name: "unexpired url found",
 			urls: urlMap{
-				"220uFicCJj": entity.URL{
+				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: &after,
 				},
@@ -76,7 +76,7 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 			alias:      "220uFicCJj",
 			expiringAt: &now,
 			hasErr:     false,
-			expectedURL: entity.URL{
+			expectedURL: entity.ShortLink{
 				Alias:    "220uFicCJj",
 				ExpireAt: &after,
 			},
@@ -88,9 +88,9 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			fakeURLRepo := repository.NewURLFake(testCase.urls)
-			fakeUserURLRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.URL{})
-			retriever := NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
+			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.urls)
+			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake([]entity.User{}, []entity.ShortLink{})
+			retriever := NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 			url, err := retriever.GetURL(testCase.alias, testCase.expiringAt)
 
 			if testCase.hasErr {
@@ -110,25 +110,25 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 		name         string
 		urls         urlMap
 		users        []entity.User
-		createdURLs  []entity.URL
+		createdURLs  []entity.ShortLink
 		user         entity.User
 		hasErr       bool
-		expectedURLs []entity.URL
+		expectedURLs []entity.ShortLink
 	}{
 		{
 			name: "user created URLs",
 			urls: urlMap{
-				"google": entity.URL{
-					Alias:       "google",
-					OriginalURL: "https://www.google.com/",
+				"google": entity.ShortLink{
+					Alias:    "google",
+					LongLink: "https://www.google.com/",
 				},
-				"short": entity.URL{
-					Alias:       "short",
-					OriginalURL: "https://github.com/short-d/short/",
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://github.com/short-d/short/",
 				},
-				"mozilla": entity.URL{
-					Alias:       "mozilla",
-					OriginalURL: "https://www.mozilla.org/",
+				"mozilla": entity.ShortLink{
+					Alias:    "mozilla",
+					LongLink: "https://www.mozilla.org/",
 				},
 			},
 			users: []entity.User{
@@ -146,18 +146,18 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 					Email: "test2@gmail.com",
 				},
 			},
-			createdURLs: []entity.URL{
+			createdURLs: []entity.ShortLink{
 				{
-					Alias:       "google",
-					OriginalURL: "https://www.google.com/",
+					Alias:    "google",
+					LongLink: "https://www.google.com/",
 				},
 				{
-					Alias:       "short",
-					OriginalURL: "https://github.com/short-d/short/",
+					Alias:    "short",
+					LongLink: "https://github.com/short-d/short/",
 				},
 				{
-					Alias:       "mozilla",
-					OriginalURL: "https://www.mozilla.org/",
+					Alias:    "mozilla",
+					LongLink: "https://www.mozilla.org/",
 				},
 			},
 			user: entity.User{
@@ -166,31 +166,31 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 				Email: "test@gmail.com",
 			},
 			hasErr: false,
-			expectedURLs: []entity.URL{
+			expectedURLs: []entity.ShortLink{
 				{
-					Alias:       "google",
-					OriginalURL: "https://www.google.com/",
+					Alias:    "google",
+					LongLink: "https://www.google.com/",
 				},
 				{
-					Alias:       "short",
-					OriginalURL: "https://github.com/short-d/short/",
+					Alias:    "short",
+					LongLink: "https://github.com/short-d/short/",
 				},
 			},
 		},
 		{
-			name: "user has no URL",
+			name: "user has no ShortLink",
 			urls: urlMap{
-				"google": entity.URL{
-					Alias:       "google",
-					OriginalURL: "https://www.google.com/",
+				"google": entity.ShortLink{
+					Alias:    "google",
+					LongLink: "https://www.google.com/",
 				},
-				"short": entity.URL{
-					Alias:       "short",
-					OriginalURL: "https://github.com/short-d/short/",
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://github.com/short-d/short/",
 				},
-				"mozilla": entity.URL{
-					Alias:       "mozilla",
-					OriginalURL: "https://www.mozilla.org/",
+				"mozilla": entity.ShortLink{
+					Alias:    "mozilla",
+					LongLink: "https://www.mozilla.org/",
 				},
 			},
 			users: []entity.User{
@@ -208,18 +208,18 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 					Email: "test@gmail.com",
 				},
 			},
-			createdURLs: []entity.URL{
+			createdURLs: []entity.ShortLink{
 				{
-					Alias:       "google",
-					OriginalURL: "https://www.google.com/",
+					Alias:    "google",
+					LongLink: "https://www.google.com/",
 				},
 				{
-					Alias:       "short",
-					OriginalURL: "https://github.com/short-d/short/",
+					Alias:    "short",
+					LongLink: "https://github.com/short-d/short/",
 				},
 				{
-					Alias:       "mozilla",
-					OriginalURL: "https://www.mozilla.org/",
+					Alias:    "mozilla",
+					LongLink: "https://www.mozilla.org/",
 				},
 			},
 			user: entity.User{
@@ -228,7 +228,7 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 				Email: "test2@gmail.com",
 			},
 			hasErr:       false,
-			expectedURLs: []entity.URL{},
+			expectedURLs: []entity.ShortLink{},
 		},
 	}
 
@@ -237,9 +237,9 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			fakeURLRepo := repository.NewURLFake(testCase.urls)
-			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(testCase.users, testCase.createdURLs)
-			retriever := NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
+			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.urls)
+			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake(testCase.users, testCase.createdURLs)
+			retriever := NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 
 			urls, err := retriever.GetURLsByUser(testCase.user)
 			if testCase.hasErr {

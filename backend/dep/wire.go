@@ -24,6 +24,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi"
+	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -36,6 +37,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
+	"github.com/short-d/short/backend/tool"
 )
 
 var authSet = wire.NewSet(
@@ -146,14 +148,13 @@ func InjectGraphQLService(
 ) (service.GraphQL, error) {
 	wire.Build(
 		wire.Bind(new(timer.Timer), new(timer.System)),
-		wire.Bind(new(graphql.API), new(gqlapi.Short)),
 		wire.Bind(new(graphql.Handler), new(graphql.GraphGopherHandler)),
 
 		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
-		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserURLRelationSQL)),
+		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.ChangeLog), new(sqldb.ChangeLogSQL)),
 		wire.Bind(new(repository.UserChangeLog), new(sqldb.UserChangeLogSQL)),
-		wire.Bind(new(repository.URL), new(*sqldb.URLSql)),
+		wire.Bind(new(repository.ShortLink), new(*sqldb.ShortLinkSql)),
 
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
@@ -170,14 +171,15 @@ func InjectGraphQLService(
 		webreq.NewHTTP,
 		timer.NewSystem,
 
+		resolver.NewResolver,
 		gqlapi.NewShort,
 		provider.NewSafeBrowsing,
 		risk.NewDetector,
 		provider.NewReCaptchaService,
 		sqldb.NewChangeLogSQL,
 		sqldb.NewUserChangeLogSQL,
-		sqldb.NewURLSql,
-		sqldb.NewUserURLRelationSQL,
+		sqldb.NewShortLinkSql,
+		sqldb.NewUserShortLinkSQL,
 
 		validator.NewLongLink,
 		validator.NewCustomAlias,
@@ -217,9 +219,9 @@ func InjectRoutingService(
 		wire.Bind(new(geo.Geo), new(geo.IPStack)),
 
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserURLRelationSQL)),
+		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.User), new(*sqldb.UserSQL)),
-		wire.Bind(new(repository.URL), new(*sqldb.URLSql)),
+		wire.Bind(new(repository.ShortLink), new(*sqldb.ShortLinkSql)),
 
 		observabilitySet,
 		authSet,
@@ -247,8 +249,8 @@ func InjectRoutingService(
 		sqldb.NewFacebookSSOSql,
 		sqldb.NewGoogleSSOSql,
 		sqldb.NewUserSQL,
-		sqldb.NewURLSql,
-		sqldb.NewUserURLRelationSQL,
+		sqldb.NewShortLinkSql,
+		sqldb.NewUserShortLinkSQL,
 
 		sso.NewAccountLinkerFactory,
 		sso.NewFactory,
@@ -256,4 +258,30 @@ func InjectRoutingService(
 		provider.NewShortRoutes,
 	)
 	return service.Routing{}, nil
+}
+
+// InjectDataTool creates data tool with configured dependencies.
+func InjectDataTool(
+	prefix provider.LogPrefix,
+	logLevel logger.LogLevel,
+	dbConfig db.Config,
+	dbConnector db.Connector,
+	bufferSize provider.KeyGenBufferSize,
+	kgsRPCConfig provider.KgsRPCConfig,
+) (tool.Data, error) {
+	wire.Build(
+		wire.Bind(new(io.Output), new(io.StdOut)),
+		wire.Bind(new(timer.Timer), new(timer.System)),
+		wire.Bind(new(logger.EntryRepository), new(logger.Local)),
+
+		keyGenSet,
+
+		io.NewStdOut,
+		runtime.NewProgram,
+		provider.NewLocalEntryRepo,
+		provider.NewLogger,
+		timer.NewSystem,
+		tool.NewData,
+	)
+	return tool.Data{}, nil
 }

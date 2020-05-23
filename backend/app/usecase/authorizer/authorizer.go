@@ -12,9 +12,14 @@ type Authorizer struct {
 	rbac rbac.RBAC
 }
 
-// CanCreateChange decides whether an user to allowed to create a change.
+// CanCreateChange decides whether a user is allowed to create a change.
 func (a Authorizer) CanCreateChange(user entity.User) (bool, error) {
 	return a.rbac.HasPermission(user, permission.CreateChange)
+}
+
+// CanViewAdminPanel decides whether a user is allowed to view admin panel.
+func (a Authorizer) CanViewAdminPanel(user entity.User) (bool, error) {
+	return a.rbac.HasPermission(user, permission.ViewAdminPanel)
 }
 
 // NewAuthorizer creates a new Authorizer object

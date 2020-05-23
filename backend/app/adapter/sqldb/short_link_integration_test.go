@@ -15,18 +15,18 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 )
 
-var insertURLRowSQL = fmt.Sprintf(`
+var insertShortLinkRowSQL = fmt.Sprintf(`
 INSERT INTO %s (%s, %s, %s, %s, %s)
 VALUES ($1, $2, $3, $4, $5)`,
-	table.URL.TableName,
-	table.URL.ColumnAlias,
-	table.URL.ColumnOriginalURL,
-	table.URL.ColumnCreatedAt,
-	table.URL.ColumnExpireAt,
-	table.URL.ColumnUpdatedAt,
+	table.ShortLink.TableName,
+	table.ShortLink.ColumnAlias,
+	table.ShortLink.ColumnLongLink,
+	table.ShortLink.ColumnCreatedAt,
+	table.ShortLink.ColumnExpireAt,
+	table.ShortLink.ColumnUpdatedAt,
 )
 
-type urlTableRow struct {
+type shortLinkTableRow struct {
 	alias     string
 	longLink  string
 	createdAt *time.Time
@@ -34,23 +34,23 @@ type urlTableRow struct {
 	updatedAt *time.Time
 }
 
-func TestURLSql_IsAliasExist(t *testing.T) {
+func TestShortLinkSql_IsAliasExist(t *testing.T) {
 	testCases := []struct {
 		name       string
-		tableRows  []urlTableRow
+		tableRows  []shortLinkTableRow
 		alias      string
 		expIsExist bool
 	}{
 		{
 			name:       "alias doesn't exist",
 			alias:      "gg",
-			tableRows:  []urlTableRow{},
+			tableRows:  []shortLinkTableRow{},
 			expIsExist: false,
 		},
 		{
 			name:  "alias found",
 			alias: "gg",
-			tableRows: []urlTableRow{
+			tableRows: []shortLinkTableRow{
 				{alias: "gg"},
 			},
 			expIsExist: true,
@@ -65,10 +65,10 @@ func TestURLSql_IsAliasExist(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					insertURLTableRows(t, sqlDB, testCase.tableRows)
+					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					urlRepo := sqldb.NewURLSql(sqlDB)
-					gotIsExist, err := urlRepo.IsAliasExist(testCase.alias)
+					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					gotIsExist, err := shortLinkRepo.IsAliasExist(testCase.alias)
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expIsExist, gotIsExist)
 				})
@@ -76,26 +76,26 @@ func TestURLSql_IsAliasExist(t *testing.T) {
 	}
 }
 
-func TestURLSql_GetByAlias(t *testing.T) {
+func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
 	testCases := []struct {
-		name        string
-		tableRows   []urlTableRow
-		alias       string
-		hasErr      bool
-		expectedURL entity.URL
+		name              string
+		tableRows         []shortLinkTableRow
+		alias             string
+		hasErr            bool
+		expectedShortLink entity.ShortLink
 	}{
 		{
 			name:      "alias not found",
-			tableRows: []urlTableRow{},
+			tableRows: []shortLinkTableRow{},
 			alias:     "220uFicCJj",
 			hasErr:    true,
 		},
 		{
-			name: "found url",
-			tableRows: []urlTableRow{
+			name: "found short link",
+			tableRows: []shortLinkTableRow{
 				{
 					alias:     "220uFicCJj",
 					longLink:  "http://www.google.com",
@@ -113,17 +113,17 @@ func TestURLSql_GetByAlias(t *testing.T) {
 			},
 			alias:  "220uFicCJj",
 			hasErr: false,
-			expectedURL: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "http://www.google.com",
-				CreatedAt:   &twoYearsAgo,
-				ExpireAt:    &now,
-				UpdatedAt:   &now,
+			expectedShortLink: entity.ShortLink{
+				Alias:     "220uFicCJj",
+				LongLink:  "http://www.google.com",
+				CreatedAt: &twoYearsAgo,
+				ExpireAt:  &now,
+				UpdatedAt: &now,
 			},
 		},
 		{
 			name: "nil time",
-			tableRows: []urlTableRow{
+			tableRows: []shortLinkTableRow{
 				{
 					alias:     "220uFicCJj",
 					longLink:  "http://www.google.com",
@@ -141,12 +141,12 @@ func TestURLSql_GetByAlias(t *testing.T) {
 			},
 			alias:  "220uFicCJj",
 			hasErr: false,
-			expectedURL: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "http://www.google.com",
-				CreatedAt:   nil,
-				ExpireAt:    nil,
-				UpdatedAt:   nil,
+			expectedShortLink: entity.ShortLink{
+				Alias:     "220uFicCJj",
+				LongLink:  "http://www.google.com",
+				CreatedAt: nil,
+				ExpireAt:  nil,
+				UpdatedAt: nil,
 			},
 		},
 	}
@@ -159,62 +159,61 @@ func TestURLSql_GetByAlias(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					insertURLTableRows(t, sqlDB, testCase.tableRows)
+					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					urlRepo := sqldb.NewURLSql(sqlDB)
-					url, err := urlRepo.GetByAlias(testCase.alias)
+					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLink, err := shortLinkRepo.GetShortLinkByAlias(testCase.alias)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 						return
 					}
 					assert.Equal(t, nil, err)
-					assert.Equal(t, testCase.expectedURL, url)
+					assert.Equal(t, testCase.expectedShortLink, shortLink)
 				},
 			)
 		})
 	}
 }
 
-// TODO(issue#698): change to TestURLSql_CreateURL
-func TestURLSql_Create(t *testing.T) {
+func TestShortLinkSql_CreateShortLink(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
 	testCases := []struct {
 		name      string
-		tableRows []urlTableRow
-		url       entity.URL
+		tableRows []shortLinkTableRow
+		shortLink entity.ShortLink
 		hasErr    bool
 	}{
 		{
 			name: "alias exists",
-			tableRows: []urlTableRow{
+			tableRows: []shortLinkTableRow{
 				{
 					alias:    "220uFicCJj",
 					longLink: "http://www.facebook.com",
 					expireAt: &now,
 				},
 			},
-			url: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "http://www.google.com",
-				ExpireAt:    &now,
+			shortLink: entity.ShortLink{
+				Alias:    "220uFicCJj",
+				LongLink: "http://www.google.com",
+				ExpireAt: &now,
 			},
 			hasErr: true,
 		},
 		{
-			name: "successfully create url",
-			tableRows: []urlTableRow{
+			name: "successfully create short link",
+			tableRows: []shortLinkTableRow{
 				{
 					alias:    "abc",
 					longLink: "http://www.google.com",
 					expireAt: &now,
 				},
 			},
-			url: entity.URL{
-				Alias:       "220uFicCJj",
-				OriginalURL: "http://www.google.com",
-				ExpireAt:    &now,
+			shortLink: entity.ShortLink{
+				Alias:    "220uFicCJj",
+				LongLink: "http://www.google.com",
+				ExpireAt: &now,
 			},
 			hasErr: false,
 		},
@@ -228,10 +227,10 @@ func TestURLSql_Create(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					insertURLTableRows(t, sqlDB, testCase.tableRows)
+					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					urlRepo := sqldb.NewURLSql(sqlDB)
-					err := urlRepo.Create(testCase.url)
+					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					err := shortLinkRepo.CreateShortLink(testCase.shortLink)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
@@ -244,35 +243,35 @@ func TestURLSql_Create(t *testing.T) {
 	}
 }
 
-func TestURLSql_UpdateURL(t *testing.T) {
+func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 	createdAt := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 	now := time.Now()
 
 	testCases := []struct {
-		name        string
-		oldAlias    string
-		newURL      entity.URL
-		tableRows   []urlTableRow
-		hasErr      bool
-		expectedURL entity.URL
+		name              string
+		oldAlias          string
+		newShortLink      entity.ShortLink
+		tableRows         []shortLinkTableRow
+		hasErr            bool
+		expectedShortLink entity.ShortLink
 	}{
 		{
 			name:     "alias not found",
 			oldAlias: "does_not_exist",
-			tableRows: []urlTableRow{
+			tableRows: []shortLinkTableRow{
 				{
 					alias:     "220uFicCJj",
 					longLink:  "https://www.google.com",
 					createdAt: &createdAt,
 				},
 			},
-			hasErr:      true,
-			expectedURL: entity.URL{},
+			hasErr:            true,
+			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:     "alias is taken",
 			oldAlias: "220uFicCja",
-			tableRows: []urlTableRow{
+			tableRows: []shortLinkTableRow{
 				{
 					alias:     "220uFicCJj",
 					longLink:  "https://www.google.com",
@@ -284,18 +283,18 @@ func TestURLSql_UpdateURL(t *testing.T) {
 					createdAt: &createdAt,
 				},
 			},
-			hasErr:      true,
-			expectedURL: entity.URL{},
+			hasErr:            true,
+			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:     "valid new alias",
 			oldAlias: "220uFicCJj",
-			newURL: entity.URL{
-				Alias:       "GxtKXM9V",
-				OriginalURL: "https://www.google.com",
-				UpdatedAt:   &now,
+			newShortLink: entity.ShortLink{
+				Alias:     "GxtKXM9V",
+				LongLink:  "https://www.google.com",
+				UpdatedAt: &now,
 			},
-			tableRows: []urlTableRow{
+			tableRows: []shortLinkTableRow{
 				{
 					alias:     "220uFicCJj",
 					longLink:  "https://www.google.com",
@@ -303,10 +302,10 @@ func TestURLSql_UpdateURL(t *testing.T) {
 				},
 			},
 			hasErr: false,
-			expectedURL: entity.URL{
-				Alias:       "GxtKXM9V",
-				OriginalURL: "https://www.google.com",
-				UpdatedAt:   &now,
+			expectedShortLink: entity.ShortLink{
+				Alias:     "GxtKXM9V",
+				LongLink:  "https://www.google.com",
+				UpdatedAt: &now,
 			},
 		},
 	}
@@ -319,13 +318,13 @@ func TestURLSql_UpdateURL(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					insertURLTableRows(t, sqlDB, testCase.tableRows)
-					expectedURL := testCase.expectedURL
+					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
+					expectedShortLink := testCase.expectedShortLink
 
-					urlRepo := sqldb.NewURLSql(sqlDB)
-					url, err := urlRepo.UpdateURL(
+					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLink, err := shortLinkRepo.UpdateShortLink(
 						testCase.oldAlias,
-						testCase.newURL,
+						testCase.newShortLink,
 					)
 
 					if testCase.hasErr {
@@ -333,36 +332,36 @@ func TestURLSql_UpdateURL(t *testing.T) {
 						return
 					}
 					assert.Equal(t, nil, err)
-					assert.Equal(t, expectedURL.Alias, url.Alias)
-					assert.Equal(t, expectedURL.OriginalURL, url.OriginalURL)
-					assert.Equal(t, expectedURL.ExpireAt, url.ExpireAt)
-					assert.Equal(t, expectedURL.UpdatedAt, url.UpdatedAt)
+					assert.Equal(t, expectedShortLink.Alias, shortLink.Alias)
+					assert.Equal(t, expectedShortLink.LongLink, shortLink.LongLink)
+					assert.Equal(t, expectedShortLink.ExpireAt, shortLink.ExpireAt)
+					assert.Equal(t, expectedShortLink.UpdatedAt, shortLink.UpdatedAt)
 				},
 			)
 		})
 	}
 }
 
-func TestURLSql_GetByAliases(t *testing.T) {
+func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
 
 	testCases := []struct {
-		name         string
-		tableRows    []urlTableRow
-		aliases      []string
-		hasErr       bool
-		expectedURLs []entity.URL
+		name               string
+		tableRows          []shortLinkTableRow
+		aliases            []string
+		hasErr             bool
+		expectedShortLinks []entity.ShortLink
 	}{
 		{
 			name:      "alias not found",
-			tableRows: []urlTableRow{},
+			tableRows: []shortLinkTableRow{},
 			aliases:   []string{"220uFicCJj"},
 			hasErr:    false,
 		},
 		{
-			name: "found url",
-			tableRows: []urlTableRow{
+			name: "found short link",
+			tableRows: []shortLinkTableRow{
 				{
 					alias:     "220uFicCJj",
 					longLink:  "http://www.google.com",
@@ -380,20 +379,20 @@ func TestURLSql_GetByAliases(t *testing.T) {
 			},
 			aliases: []string{"220uFicCJj", "yDOBcj5HIPbUAsw"},
 			hasErr:  false,
-			expectedURLs: []entity.URL{
+			expectedShortLinks: []entity.ShortLink{
 				{
-					Alias:       "220uFicCJj",
-					OriginalURL: "http://www.google.com",
-					CreatedAt:   &twoYearsAgo,
-					ExpireAt:    &now,
-					UpdatedAt:   &now,
+					Alias:     "220uFicCJj",
+					LongLink:  "http://www.google.com",
+					CreatedAt: &twoYearsAgo,
+					ExpireAt:  &now,
+					UpdatedAt: &now,
 				},
 				{
-					Alias:       "yDOBcj5HIPbUAsw",
-					OriginalURL: "http://www.facebook.com",
-					CreatedAt:   &twoYearsAgo,
-					ExpireAt:    &now,
-					UpdatedAt:   &now,
+					Alias:     "yDOBcj5HIPbUAsw",
+					LongLink:  "http://www.facebook.com",
+					CreatedAt: &twoYearsAgo,
+					ExpireAt:  &now,
+					UpdatedAt: &now,
 				},
 			},
 		},
@@ -407,27 +406,27 @@ func TestURLSql_GetByAliases(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
-					insertURLTableRows(t, sqlDB, testCase.tableRows)
+					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					urlRepo := sqldb.NewURLSql(sqlDB)
-					urls, err := urlRepo.GetByAliases(testCase.aliases)
+					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLink, err := shortLinkRepo.GetShortLinksByAliases(testCase.aliases)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 						return
 					}
 					assert.Equal(t, nil, err)
-					assert.Equal(t, testCase.expectedURLs, urls)
+					assert.Equal(t, testCase.expectedShortLinks, shortLink)
 				},
 			)
 		})
 	}
 }
 
-func insertURLTableRows(t *testing.T, sqlDB *sql.DB, tableRows []urlTableRow) {
+func insertShortLinkTableRows(t *testing.T, sqlDB *sql.DB, tableRows []shortLinkTableRow) {
 	for _, tableRow := range tableRows {
 		_, err := sqlDB.Exec(
-			insertURLRowSQL,
+			insertShortLinkRowSQL,
 			tableRow.alias,
 			tableRow.longLink,
 			tableRow.createdAt,

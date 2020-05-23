@@ -26,6 +26,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi"
+	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -38,6 +39,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
+	"github.com/short-d/short/backend/tool"
 )
 
 // Injectors from wire.go:
@@ -71,8 +73,8 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	http := webreq.NewHTTP(client)
 	entryRepository := provider.NewEntryRepositorySwitch(runtime2, deployment, stdOut, dataDogAPIKey, http)
 	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, entryRepository)
-	urlSql := sqldb.NewURLSql(sqlDB)
-	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
+	urlSql := sqldb.NewShortLinkSql(sqlDB)
+	userURLRelationSQL := sqldb.NewUserShortLinkSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
 	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
@@ -94,8 +96,9 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	verifier := requester.NewVerifier(reCaptcha)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
-	short := gqlapi.NewShort(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
-	graphGopherHandler := graphql.NewGraphGopherHandler(short)
+	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
+	api := gqlapi.NewShort(resolverResolver)
+	graphGopherHandler := graphql.NewGraphGopherHandler(api)
 	graphQL := provider.NewGraphQLService(graphqlPath, graphGopherHandler, loggerLogger)
 	return graphQL, nil
 }
@@ -123,8 +126,8 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	ipStack := provider.NewIPStack(ipStackAPIKey, http, loggerLogger)
 	requestClient := request.NewClient(proxy, ipStack)
 	instrumentationFactory := request.NewInstrumentationFactory(loggerLogger, system, dataDog, segment, keyGenerator, requestClient)
-	urlSql := sqldb.NewURLSql(sqlDB)
-	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
+	urlSql := sqldb.NewShortLinkSql(sqlDB)
+	userURLRelationSQL := sqldb.NewUserShortLinkSQL(sqlDB)
 	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
 	featureToggleSQL := sqldb.NewFeatureToggleSQL(sqlDB)
 	decisionMakerFactory := provider.NewFeatureDecisionMakerFactorySwitch(deployment, featureToggleSQL)
@@ -152,6 +155,27 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
+}
+
+func InjectDataTool(prefix provider.LogPrefix, logLevel logger.LogLevel, dbConfig db.Config, dbConnector db.Connector, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig) (tool.Data, error) {
+	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	keyGenerator, err := provider.NewKeyGenerator(bufferSize, rpc)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	system := timer.NewSystem()
+	program := runtime.NewProgram()
+	stdOut := io.NewStdOut()
+	local := provider.NewLocalEntryRepo(stdOut)
+	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, local)
+	data, err := tool.NewData(dbConfig, dbConnector, keyGenerator, loggerLogger)
+	if err != nil {
+		return tool.Data{}, err
+	}
+	return data, nil
 }
 
 // wire.go:

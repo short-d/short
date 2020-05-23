@@ -17,7 +17,7 @@ func NewEntryRepositorySwitch(
 	httpRequest webreq.HTTP,
 ) logger.EntryRepository {
 	if deployment.IsDevelopment() {
-		return logger.NewLocal(stdOut)
+		return NewLocalEntryRepo(stdOut)
 	}
 	return NewDataDogEntryRepo(dataDogAPIKey, httpRequest, runtime)
 }
