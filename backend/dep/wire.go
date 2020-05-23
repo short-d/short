@@ -160,10 +160,10 @@ func InjectGraphQLService(
 		wire.Bind(new(graphql.Handler), new(graphql.GraphGopherHandler)),
 
 		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
-		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserShortLinkSQL)),
+		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.ChangeLog), new(sqldb.ChangeLogSQL)),
 		wire.Bind(new(repository.UserChangeLog), new(sqldb.UserChangeLogSQL)),
-		wire.Bind(new(repository.URL), new(*sqldb.ShortLinkSql)),
+		wire.Bind(new(repository.ShortLink), new(*sqldb.ShortLinkSql)),
 
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
@@ -228,9 +228,9 @@ func InjectRoutingService(
 		wire.Bind(new(geo.Geo), new(geo.IPStack)),
 
 		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserShortLinkSQL)),
+		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.User), new(*sqldb.UserSQL)),
-		wire.Bind(new(repository.URL), new(*sqldb.ShortLinkSql)),
+		wire.Bind(new(repository.ShortLink), new(*sqldb.ShortLinkSql)),
 
 		observabilitySet,
 		authenticatorSet,

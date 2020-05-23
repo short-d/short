@@ -159,8 +159,8 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 
 			blockedURLs := map[string]bool{}
 			blacklist := risk.NewBlackListFake(blockedURLs)
-			urlRepo := repository.NewURLFake(testCase.urls)
-			userURLRepo := repository.NewUserURLRepoFake(
+			shortLinkRepo := repository.NewShortLinkFake(testCase.urls)
+			userShortLinkRepo := repository.NewUserShortLinkRepoFake(
 				testCase.relationUsers,
 				testCase.relationURLs,
 			)
@@ -173,8 +173,8 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			riskDetector := risk.NewDetector(blacklist)
 
 			creator := NewCreatorPersist(
-				&urlRepo,
-				&userURLRepo,
+				&shortLinkRepo,
+				&userShortLinkRepo,
 				keyGen,
 				longLinkValidator,
 				aliasValidator,
@@ -182,31 +182,31 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				riskDetector,
 			)
 
-			_, err = urlRepo.GetByAlias(testCase.url.Alias)
+			_, err = shortLinkRepo.GetShortLinkByAlias(testCase.url.Alias)
 			assert.NotEqual(t, nil, err)
 
-			isExist := userURLRepo.IsRelationExist(testCase.user, testCase.url)
+			isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.url)
 			assert.Equal(t, false, isExist)
 
-			url, err := creator.CreateURL(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
+			shortLink, err := creator.CreateShortLink(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
 				assert.NotEqual(t, nil, err)
 
-				_, err = urlRepo.GetByAlias(testCase.expectedURL.Alias)
+				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.expectedURL.Alias)
 				assert.NotEqual(t, nil, err)
 
-				isExist := userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
+				isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.expectedURL)
 				assert.Equal(t, false, isExist)
 				return
 			}
 			assert.Equal(t, nil, err)
-			assert.Equal(t, testCase.expectedURL, url)
+			assert.Equal(t, testCase.expectedURL, shortLink)
 
-			savedURL, err := urlRepo.GetByAlias(testCase.expectedURL.Alias)
+			savedURL, err := shortLinkRepo.GetShortLinkByAlias(testCase.expectedURL.Alias)
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedURL, savedURL)
 
-			isExist = userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
+			isExist = userShortLinkRepo.IsRelationExist(testCase.user, testCase.expectedURL)
 			assert.Equal(t, true, isExist)
 		})
 	}

@@ -19,8 +19,8 @@ type Retriever interface {
 // RetrieverPersist represents ShortLink retriever that fetches ShortLink from persistent
 // storage, such as database
 type RetrieverPersist struct {
-	urlRepo             repository.URL
-	userURLRelationRepo repository.UserURLRelation
+	shortLinkRepo     repository.ShortLink
+	userShortLinkRepo repository.UserShortLink
 }
 
 // GetURL retrieves ShortLink from persistent storage given alias
@@ -49,7 +49,7 @@ func (r RetrieverPersist) getURLExpireAfter(alias string, expiringAt time.Time) 
 }
 
 func (r RetrieverPersist) getURL(alias string) (entity.ShortLink, error) {
-	url, err := r.urlRepo.GetByAlias(alias)
+	url, err := r.shortLinkRepo.GetShortLinkByAlias(alias)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
@@ -59,18 +59,18 @@ func (r RetrieverPersist) getURL(alias string) (entity.ShortLink, error) {
 
 // GetURLsByUser retrieves URLs created by given user from persistent storage
 func (r RetrieverPersist) GetURLsByUser(user entity.User) ([]entity.ShortLink, error) {
-	aliases, err := r.userURLRelationRepo.FindAliasesByUser(user)
+	aliases, err := r.userShortLinkRepo.FindAliasesByUser(user)
 	if err != nil {
 		return []entity.ShortLink{}, err
 	}
 
-	return r.urlRepo.GetByAliases(aliases)
+	return r.shortLinkRepo.GetShortLinksByAliases(aliases)
 }
 
 // NewRetrieverPersist creates persistent ShortLink retriever
-func NewRetrieverPersist(urlRepo repository.URL, userURLRelationRepo repository.UserURLRelation) RetrieverPersist {
+func NewRetrieverPersist(shortLinkRepo repository.ShortLink, userShortLinkRepo repository.UserShortLink) RetrieverPersist {
 	return RetrieverPersist{
-		urlRepo:             urlRepo,
-		userURLRelationRepo: userURLRelationRepo,
+		shortLinkRepo:     shortLinkRepo,
+		userShortLinkRepo: userShortLinkRepo,
 	}
 }
