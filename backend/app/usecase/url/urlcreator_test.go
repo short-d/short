@@ -22,13 +22,11 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	utc := now.UTC()
 
 	alias := "220uFicCJj"
-	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
-	emptyAlias := ""
 
 	testCases := []struct {
 		name          string
 		urls          urlMap
-		alias         *string
+		alias         string
 		availableKeys []keygen.Key
 		user          entity.User
 		url           entity.ShortLink
@@ -46,7 +44,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			alias: &alias,
+			alias: alias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -62,7 +60,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			alias: &longAlias,
+			alias: "an-alias-cannot-be-used-to-specify-default-arguments",
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -74,7 +72,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		{
 			name:  "create alias successfully",
 			urls:  urlMap{},
-			alias: &alias,
+			alias: alias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -93,32 +91,12 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			},
 		},
 		{
-			name: "automatically generate alias if null alias provided",
-			urls: urlMap{},
-			availableKeys: []keygen.Key{
-				"test",
-			},
-			alias: nil,
-			user: entity.User{
-				Email: "alpha@example.com",
-			},
-			url: entity.ShortLink{
-				LongLink: "https://www.google.com",
-			},
-			expHasErr: false,
-			expectedURL: entity.ShortLink{
-				Alias:     "test",
-				LongLink:  "https://www.google.com",
-				CreatedAt: &utc,
-			},
-		},
-		{
 			name: "automatically generate alias if empty string alias provided",
 			urls: urlMap{},
 			availableKeys: []keygen.Key{
 				"test",
 			},
-			alias: &emptyAlias,
+			alias: "",
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -141,7 +119,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				},
 			},
 			availableKeys: []keygen.Key{},
-			alias:         nil,
+			alias:         "",
 			user: entity.User{
 				Email: "alpha@example.com",
 			},

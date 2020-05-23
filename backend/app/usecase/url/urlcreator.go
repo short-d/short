@@ -41,7 +41,7 @@ func (e ErrMaliciousLongLink) Error() string {
 
 // Creator represents a ShortLink alias creator
 type Creator interface {
-	CreateURL(url entity.ShortLink, alias *string, user entity.User, isPublic bool) (entity.ShortLink, error)
+	CreateURL(url entity.ShortLink, alias string, user entity.User, isPublic bool) (entity.ShortLink, error)
 }
 
 // CreatorPersist represents a ShortLink alias creator which persist the generated
@@ -58,9 +58,9 @@ type CreatorPersist struct {
 
 // CreateURL persists a new url with a given or auto generated alias in the repository.
 // TODO(issue#235): add functionality for public URLs
-func (c CreatorPersist) CreateURL(url entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
+func (c CreatorPersist) CreateURL(url entity.ShortLink, customAlias string, user entity.User, isPublic bool) (entity.ShortLink, error) {
 	longLink := url.LongLink
-	if !c.longLinkValidator.IsValid(&longLink) {
+	if !c.longLinkValidator.IsValid(longLink) {
 		return entity.ShortLink{}, ErrInvalidLongLink(longLink)
 	}
 
@@ -73,13 +73,13 @@ func (c CreatorPersist) CreateURL(url entity.ShortLink, customAlias *string, use
 	}
 
 	if !c.aliasValidator.IsValid(customAlias) {
-		return entity.ShortLink{}, ErrInvalidCustomAlias(*customAlias)
+		return entity.ShortLink{}, ErrInvalidCustomAlias(customAlias)
 	}
-	return c.createURLWithCustomAlias(url, *customAlias, user)
+	return c.createURLWithCustomAlias(url, customAlias, user)
 }
 
-func (c CreatorPersist) isAliasProvided(customAlias *string) bool {
-	return customAlias != nil && *customAlias != ""
+func (c CreatorPersist) isAliasProvided(customAlias string) bool {
+	return customAlias != ""
 }
 
 func (c CreatorPersist) createURLWithAutoAlias(url entity.ShortLink, user entity.User) (entity.ShortLink, error) {

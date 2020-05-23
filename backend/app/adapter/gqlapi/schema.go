@@ -40,7 +40,7 @@ type AuthMutation {
 
 input URLInput {
 	originalURL: String!
-	customAlias: String
+	customAlias: String!
 	expireAt: Time
 }
 

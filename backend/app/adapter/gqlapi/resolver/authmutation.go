@@ -22,7 +22,7 @@ type AuthMutation struct {
 // URLInput represents possible ShortLink attributes
 type URLInput struct {
 	OriginalURL string
-	CustomAlias *string
+	CustomAlias string
 	ExpireAt    *time.Time
 }
 
@@ -65,11 +65,11 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 	switch err.(type) {
 	case url.ErrAliasExist:
-		return nil, ErrURLAliasExist(*customAlias)
+		return nil, ErrURLAliasExist(customAlias)
 	case url.ErrInvalidLongLink:
 		return nil, ErrInvalidLongLink(u.LongLink)
 	case url.ErrInvalidCustomAlias:
-		return nil, ErrInvalidCustomAlias(*customAlias)
+		return nil, ErrInvalidCustomAlias(customAlias)
 	case url.ErrMaliciousLongLink:
 		return nil, ErrMaliciousContent(u.LongLink)
 	default:

@@ -12,16 +12,12 @@ type CustomAlias struct {
 }
 
 // IsValid checks whether the given alias has valid format.
-func (c CustomAlias) IsValid(alias *string) bool {
-	if alias == nil {
+func (c CustomAlias) IsValid(alias string) bool {
+	if alias == "" {
 		return true
 	}
 
-	if *alias == "" {
-		return true
-	}
-
-	if len(*alias) >= customAliasMaxLength {
+	if len(alias) >= customAliasMaxLength {
 		return false
 	}
 	return true
