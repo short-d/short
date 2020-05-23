@@ -7,7 +7,7 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 // AuthMutation represents GraphQL mutation resolver that acts differently based
@@ -16,7 +16,7 @@ type AuthMutation struct {
 	authToken     *string
 	authenticator authenticator.Authenticator
 	changeLog     changelog.ChangeLog
-	urlCreator    url.Creator
+	urlCreator    shortlink.Creator
 }
 
 // URLInput represents possible ShortLink attributes
@@ -64,13 +64,13 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	}
 
 	switch err.(type) {
-	case url.ErrAliasExist:
+	case shortlink.ErrAliasExist:
 		return nil, ErrURLAliasExist(*customAlias)
-	case url.ErrInvalidLongLink:
+	case shortlink.ErrInvalidLongLink:
 		return nil, ErrInvalidLongLink(u.LongLink)
-	case url.ErrInvalidCustomAlias:
+	case shortlink.ErrInvalidCustomAlias:
 		return nil, ErrInvalidCustomAlias(*customAlias)
-	case url.ErrMaliciousLongLink:
+	case shortlink.ErrMaliciousLongLink:
 		return nil, ErrMaliciousContent(u.LongLink)
 	default:
 		return nil, ErrUnknown{}
@@ -98,7 +98,7 @@ func newAuthMutation(
 	authToken *string,
 	authenticator authenticator.Authenticator,
 	changeLog changelog.ChangeLog,
-	urlCreator url.Creator,
+	urlCreator shortlink.Creator,
 ) AuthMutation {
 	return AuthMutation{
 		authToken:     authToken,

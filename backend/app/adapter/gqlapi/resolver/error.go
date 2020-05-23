@@ -55,7 +55,7 @@ func (e ErrURLAliasExist) Extensions() map[string]interface{} {
 
 // Error retrieves the human readable error message.
 func (e ErrURLAliasExist) Error() string {
-	return "url alias already exists"
+	return "shortlink alias already exists"
 }
 
 // ErrNotHuman signifies that the API consumer is not human.

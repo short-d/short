@@ -7,7 +7,7 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 // AuthQuery represents GraphQL query resolver that acts differently based
@@ -16,7 +16,7 @@ type AuthQuery struct {
 	authToken     *string
 	authenticator authenticator.Authenticator
 	changeLog     changelog.ChangeLog
-	urlRetriever  url.Retriever
+	urlRetriever  shortlink.Retriever
 }
 
 // URLArgs represents possible parameters for ShortLink endpoint
@@ -32,7 +32,7 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 		expireAt = &args.ExpireAfter.Time
 	}
 
-	u, err := v.urlRetriever.GetURL(args.Alias, expireAt)
+	u, err := v.urlRetriever.GetShortLink(args.Alias, expireAt)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (v AuthQuery) URLs() ([]URL, error) {
 		return []URL{}, ErrInvalidAuthToken{}
 	}
 
-	urls, err := v.urlRetriever.GetURLsByUser(user)
+	urls, err := v.urlRetriever.GetShortLinksByUser(user)
 	if err != nil {
 		return []URL{}, err
 	}
@@ -79,7 +79,7 @@ func newAuthQuery(
 	authToken *string,
 	authenticator authenticator.Authenticator,
 	changeLog changelog.ChangeLog,
-	urlRetriever url.Retriever,
+	urlRetriever shortlink.Retriever,
 ) AuthQuery {
 	return AuthQuery{
 		authToken:     authToken,

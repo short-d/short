@@ -9,14 +9,14 @@ import (
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
-	"github.com/short-d/short/backend/app/usecase/url"
 )
 
 // NewOriginalURL translates alias to the original long link.
 func NewOriginalURL(
 	instrumentationFactory request.InstrumentationFactory,
-	urlRetriever url.Retriever,
+	urlRetriever shortlink.Retriever,
 	timer timer.Timer,
 	webFrontendURL netURL.URL,
 ) router.Handle {
@@ -27,7 +27,7 @@ func NewOriginalURL(
 		i.RedirectingAliasToLongLink(alias)
 
 		now := timer.Now()
-		u, err := urlRetriever.GetURL(alias, &now)
+		u, err := urlRetriever.GetShortLink(alias, &now)
 		if err != nil {
 			i.LongLinkRetrievalFailed(err)
 			serve404(w, r, webFrontendURL)

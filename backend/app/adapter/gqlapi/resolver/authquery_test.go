@@ -15,7 +15,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 type urlMap = map[string]entity.ShortLink
@@ -65,7 +65,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			hasErr: true,
 		},
 		{
-			name:  "url found",
+			name:  "shortlink found",
 			alias: "220uFicCJj",
 			expireAfter: &scalar.Time{
 				Time: now,
@@ -90,7 +90,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			t.Parallel()
 			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.urls)
 			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake(nil, nil)
-			retrieverFake := url.NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
+			retrieverFake := shortlink.NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 
 			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)

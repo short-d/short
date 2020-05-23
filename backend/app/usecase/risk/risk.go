@@ -5,13 +5,13 @@ type Detector struct {
 	blacklist BlackList
 }
 
-// IsURLMalicious checks whether the given URL is malicious.
-func (r Detector) IsURLMalicious(url string) bool {
-	hasURL, err := r.blacklist.HasURL(url)
+// IsShortLinkMalicious checks whether the given ShortLink is malicious.
+func (r Detector) IsShortLinkMalicious(shortLink string) bool {
+	hasShortLink, err := r.blacklist.HasShortLink(shortLink)
 	if err != nil {
 		return false
 	}
-	return hasURL
+	return hasShortLink
 }
 
 // NewDetector creates a new Detector

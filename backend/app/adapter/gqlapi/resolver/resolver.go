@@ -5,7 +5,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/requester"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 // Resolver contains GraphQL request handlers.
@@ -17,8 +17,8 @@ type Resolver struct {
 // NewResolver creates a new GraphQL resolver.
 func NewResolver(
 	logger logger.Logger,
-	urlRetriever url.Retriever,
-	urlCreator url.Creator,
+	urlRetriever shortlink.Retriever,
+	urlCreator shortlink.Creator,
 	changeLog changelog.ChangeLog,
 	requesterVerifier requester.Verifier,
 	authenticator authenticator.Authenticator,

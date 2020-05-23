@@ -4,7 +4,7 @@ import (
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 // Query represents GraphQL query resolver
@@ -12,7 +12,7 @@ type Query struct {
 	logger        logger.Logger
 	authenticator authenticator.Authenticator
 	changeLog     changelog.ChangeLog
-	urlRetriever  url.Retriever
+	urlRetriever  shortlink.Retriever
 }
 
 // AuthQueryArgs represents possible parameters for AuthQuery endpoint
@@ -30,7 +30,7 @@ func newQuery(
 	logger logger.Logger,
 	authenticator authenticator.Authenticator,
 	changeLog changelog.ChangeLog,
-	urlRetriever url.Retriever,
+	urlRetriever shortlink.Retriever,
 ) Query {
 	return Query{
 		logger:        logger,

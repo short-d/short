@@ -27,8 +27,8 @@ type IdentityProvider struct {
 	redirectURI  string
 }
 
-// GetAuthorizationURL retrieves the URL of Facebook sign in page.
-func (g IdentityProvider) GetAuthorizationURL() string {
+// GetAuthorizationShortLink retrieves the URL of Facebook sign in page.
+func (g IdentityProvider) GetAuthorizationShortLink() string {
 	clientID := g.clientID
 	redirectURI := g.redirectURI
 	responseType := fbResponseType
