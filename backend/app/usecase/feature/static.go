@@ -10,15 +10,45 @@ var _ DecisionMaker = (*StaticDecisionMaker)(nil)
 
 // StaticDecisionMaker makes feature decisions based on hardcoded values.
 type StaticDecisionMaker struct {
-	instrumentation instrumentation.Instrumentation
-	decisions       map[string]bool
+	instrumentation    instrumentation.Instrumentation
+	decisions          map[string]bool
+	permissionCheckers map[PermissionToggle]PermissionChecker
 }
 
 // IsFeatureEnable determines whether a feature is enabled given featureID.
 func (s StaticDecisionMaker) IsFeatureEnable(featureID string, user *entity.User) bool {
+	decision := s.makeDecision(featureID, user)
+	s.instrumentation.MadeFeatureDecision(featureID, decision)
+	return decision
+}
+
+func (s StaticDecisionMaker) makeDecision(featureID string, user *entity.User) bool {
+	_, hasChecker := s.permissionCheckers[PermissionToggle(featureID)]
+	if hasChecker {
+		return s.makePermissionDecision(featureID, user)
+	}
+
 	isEnabled := s.decisions[featureID]
-	s.instrumentation.MadeFeatureDecision(featureID, isEnabled)
 	return isEnabled
+}
+
+func (s StaticDecisionMaker) makePermissionDecision(featureID string, user *entity.User) bool {
+	if user == nil {
+		return false
+	}
+
+	isEnabled := s.decisions[featureID]
+	if !isEnabled {
+		return false
+	}
+
+	checker := s.permissionCheckers[PermissionToggle(featureID)]
+	decision, err := checker(*user)
+	if err != nil {
+		return false
+	}
+
+	return decision
 }
 
 var _ DecisionMakerFactory = (*StaticDecisionMakerFactory)(nil)
@@ -32,7 +62,10 @@ type StaticDecisionMakerFactory struct {
 func (s StaticDecisionMakerFactory) NewDecision(
 	instrumentation instrumentation.Instrumentation,
 ) DecisionMaker {
-	return &StaticDecisionMaker{
+	permissionCheckers := map[PermissionToggle]PermissionChecker{
+		AdminPanel: s.authorizer.CanViewAdminPanel,
+	}
+	return StaticDecisionMaker{
 		instrumentation: instrumentation,
 		decisions: map[string]bool{
 			"change-log":               true,
@@ -42,7 +75,9 @@ func (s StaticDecisionMakerFactory) NewDecision(
 			"search-bar":               true,
 			"user-short-links-section": true,
 			"preference-toggles":       true,
+			"admin-panel":              true,
 		},
+		permissionCheckers: permissionCheckers,
 	}
 }
 

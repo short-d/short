@@ -6,12 +6,11 @@ import (
 	netURL "net/url"
 	"strings"
 
-	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/authenticator"
-
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
 	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/url"
@@ -117,7 +116,7 @@ func getUser(r *http.Request, authenticator authenticator.Authenticator) *entity
 	return &user
 }
 
-// parses Authorization token of format "Bearer <token>"
+// getBearerToken parses Authorization token of format "Bearer <token>"
 func getBearerToken(r *http.Request) string {
 	authHeader := r.Header.Get("Authorization")
 	if len(authHeader) < 1 {

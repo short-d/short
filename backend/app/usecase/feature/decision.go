@@ -5,6 +5,16 @@ import (
 	"github.com/short-d/short/backend/app/usecase/instrumentation"
 )
 
+// PermissionChecker type is the signature for the checker method used to check
+// if the user has the privilege to access a feature
+type PermissionChecker func(user entity.User) (bool, error)
+
+type PermissionToggle string
+
+const (
+	AdminPanel PermissionToggle = "admin-panel"
+)
+
 // DecisionMaker determines whether a feature should be turned on or off under
 // certain conditions.
 type DecisionMaker interface {
