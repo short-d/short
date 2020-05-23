@@ -15,15 +15,24 @@ type CustomAlias struct {
 }
 
 // IsValid checks whether the given alias has valid format.
-func (c CustomAlias) IsValid(alias *string) bool {
-	if alias == nil || *alias == "" {
-		return true
+func (c CustomAlias) IsValid(alias *string) (bool, Violation) {
+	if alias == nil {
+		return true, Valid
 	}
 
-	if len(*alias) >= customAliasMaxLength || c.HasFragmentCharacter(*alias) {
-		return false
+	if *alias == "" {
+		return true, Valid
 	}
-	return true
+
+	if len(*alias) >= customAliasMaxLength {
+		return false, AliasTooLong
+	}
+
+	if c.HasFragmentCharacter(*alias) {
+		return false, HasFragmentCharacter
+	}
+
+	return true, Valid
 }
 
 // HasFragmentCharacter returns whether the alias contains the '#' character which starts fragment identifiers in URLs

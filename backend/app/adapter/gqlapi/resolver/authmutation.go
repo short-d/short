@@ -67,11 +67,9 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	case url.ErrAliasExist:
 		return nil, ErrURLAliasExist(*customAlias)
 	case url.ErrInvalidLongLink:
-		return nil, ErrInvalidLongLink(u.LongLink)
+		return nil, ErrInvalidLongLink{u.LongLink, err.(url.ErrInvalidLongLink).Violation.String()}
 	case url.ErrInvalidCustomAlias:
-		return nil, ErrInvalidCustomAlias(*customAlias)
-	case url.ErrAliasWithFragment:
-		return nil, ErrAliasWithFragment(*customAlias)
+		return nil, ErrInvalidCustomAlias{*customAlias, err.(url.ErrInvalidCustomAlias).Violation.String()}
 	case url.ErrMaliciousLongLink:
 		return nil, ErrMaliciousContent(u.LongLink)
 	default:

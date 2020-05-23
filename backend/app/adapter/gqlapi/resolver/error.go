@@ -78,7 +78,10 @@ func (e ErrNotHuman) Error() string {
 }
 
 // ErrInvalidLongLink signifies that the provided long link has incorrect format.
-type ErrInvalidLongLink string
+type ErrInvalidLongLink struct {
+	longLink  string
+	violation string
+}
 
 var _ GraphQlError = (*ErrInvalidLongLink)(nil)
 
@@ -86,8 +89,9 @@ var _ GraphQlError = (*ErrInvalidLongLink)(nil)
 // handle the error.
 func (e ErrInvalidLongLink) Extensions() map[string]interface{} {
 	return map[string]interface{}{
-		"code":     ErrCodeInvalidLongLink,
-		"longLink": string(e),
+		"code":      ErrCodeInvalidLongLink,
+		"longLink":  string(e.longLink),
+		"violation": string(e.violation),
 	}
 }
 
@@ -98,7 +102,10 @@ func (e ErrInvalidLongLink) Error() string {
 
 // ErrInvalidCustomAlias signifies that the provided custom alias has incorrect
 // format.
-type ErrInvalidCustomAlias string
+type ErrInvalidCustomAlias struct {
+	customAlias string
+	violation   string
+}
 
 var _ GraphQlError = (*ErrInvalidCustomAlias)(nil)
 
@@ -107,33 +114,14 @@ var _ GraphQlError = (*ErrInvalidCustomAlias)(nil)
 func (e ErrInvalidCustomAlias) Extensions() map[string]interface{} {
 	return map[string]interface{}{
 		"code":        ErrCodeInvalidCustomAlias,
-		"customAlias": string(e),
+		"customAlias": string(e.customAlias),
+		"violation":   string(e.violation),
 	}
 }
 
 // Error retrieves the human readable error message.
 func (e ErrInvalidCustomAlias) Error() string {
 	return "custom alias is invalid"
-}
-
-// ErrAliasWithFragment signifies that the provided custom alias has URL fragment
-// character, which is not allowed in a custom alias.
-type ErrAliasWithFragment string
-
-var _ GraphQlError = (*ErrAliasWithFragment)(nil)
-
-// Extensions keeps structured error metadata so that the clients can reliably
-// handle the error.
-func (e ErrAliasWithFragment) Extensions() map[string]interface{} {
-	return map[string]interface{}{
-		"code":        ErrCodeAliasWithFragment,
-		"customAlias": string(e),
-	}
-}
-
-// Error retrieves the human readable error message.
-func (e ErrAliasWithFragment) Error() string {
-	return "custom alias contains the '#' character which is not allowed"
 }
 
 // ErrInvalidAuthToken signifies the provided authentication is invalid.

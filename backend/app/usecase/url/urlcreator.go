@@ -19,24 +19,23 @@ func (e ErrAliasExist) Error() string {
 }
 
 // ErrInvalidLongLink represents incorrect long link format error
-type ErrInvalidLongLink string
+type ErrInvalidLongLink struct {
+	LongLink  string
+	Violation validator.Violation
+}
 
 func (e ErrInvalidLongLink) Error() string {
-	return string(e)
+	return string(e.LongLink)
 }
 
 // ErrInvalidCustomAlias represents incorrect custom alias format error
-type ErrInvalidCustomAlias string
-
-func (e ErrInvalidCustomAlias) Error() string {
-	return string(e)
+type ErrInvalidCustomAlias struct {
+	customAlias string
+	Violation   validator.Violation
 }
 
-// ErrAliasWithFragment represents alias with URL fragment character ('#')
-type ErrAliasWithFragment string
-
-func (e ErrAliasWithFragment) Error() string {
-	return string(e)
+func (e ErrInvalidCustomAlias) Error() string {
+	return string(e.customAlias)
 }
 
 // ErrMaliciousLongLink represents malicious long link error
@@ -67,8 +66,9 @@ type CreatorPersist struct {
 // TODO(issue#235): add functionality for public URLs
 func (c CreatorPersist) CreateURL(url entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
 	longLink := url.LongLink
-	if !c.longLinkValidator.IsValid(&longLink) {
-		return entity.ShortLink{}, ErrInvalidLongLink(longLink)
+	isValid, violation := c.longLinkValidator.IsValid(&longLink)
+	if !isValid {
+		return entity.ShortLink{}, ErrInvalidLongLink{longLink, violation}
 	}
 
 	if c.riskDetector.IsURLMalicious(longLink) {
@@ -79,11 +79,9 @@ func (c CreatorPersist) CreateURL(url entity.ShortLink, customAlias *string, use
 		return c.createURLWithAutoAlias(url, user)
 	}
 
-	if !c.aliasValidator.IsValid(customAlias) {
-		if c.aliasValidator.HasFragmentCharacter(*customAlias) {
-			return entity.ShortLink{}, ErrAliasWithFragment(*customAlias)
-		}
-		return entity.ShortLink{}, ErrInvalidCustomAlias(*customAlias)
+	isValid, violation = c.aliasValidator.IsValid(customAlias)
+	if !isValid {
+		return entity.ShortLink{}, ErrInvalidCustomAlias{*customAlias, violation}
 	}
 	return c.createURLWithCustomAlias(url, *customAlias, user)
 }

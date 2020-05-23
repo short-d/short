@@ -6,7 +6,6 @@ export enum Err {
   MaliciousContent = 'maliciousContent',
   AliasAlreadyExist = 'aliasAlreadyExist',
   AliasInvalid = 'invalidCustomAlias',
-  AliasWithFragment = 'aliasWithFragment',
   UserNotHuman = 'requesterNotHuman',
   Unauthenticated = 'invalidAuthToken',
   NetworkError = 'networkError',
@@ -46,14 +45,6 @@ const aliasInvalidErr = {
                 `
 };
 
-const aliasWithFragment = {
-  name: 'Alias contains fragment character',
-  description: `
-                The alias you chose contains the URL fragment character ('#') which is not allowed
-                in an alias. Please remove this character and try again.
-                `
-};
-
 const maliciousContentErr = {
   name: 'Malicious Content Detected',
   description: `
@@ -86,8 +77,6 @@ export class ErrorService {
         return aliasNotAvailableErr;
       case Err.AliasInvalid:
         return aliasInvalidErr;
-      case Err.AliasWithFragment:
-        return aliasWithFragment;
       case Err.UserNotHuman:
         return userNotHumanErr;
       case Err.NetworkError:
