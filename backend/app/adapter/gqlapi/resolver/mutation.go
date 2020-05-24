@@ -5,13 +5,13 @@ import (
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/requester"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 // Mutation represents GraphQL mutation resolver
 type Mutation struct {
 	logger            logger.Logger
-	urlCreator        url.Creator
+	urlCreator        shortlink.Creator
 	requesterVerifier requester.Verifier
 	authenticator     authenticator.Authenticator
 	changeLog         changelog.ChangeLog
@@ -42,7 +42,7 @@ func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
 func newMutation(
 	logger logger.Logger,
 	changeLog changelog.ChangeLog,
-	urlCreator url.Creator,
+	urlCreator shortlink.Creator,
 	requesterVerifier requester.Verifier,
 	authenticator authenticator.Authenticator,
 ) Mutation {

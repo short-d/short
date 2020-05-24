@@ -25,7 +25,7 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	redirectURI := "http://localhost/oauth/google/sign-in/callback"
 	identityProvider := NewIdentityProvider(httpRequest, clientID, clientSecret, redirectURI)
 
-	urlResponse := identityProvider.GetAuthorizationURL()
+	urlResponse := identityProvider.GetAuthorizationShortLink()
 
 	parsedUrl, err := url.Parse(urlResponse)
 	assert.Equal(t, nil, err)

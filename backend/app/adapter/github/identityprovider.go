@@ -31,8 +31,8 @@ type IdentityProvider struct {
 	http         webreq.HTTP
 }
 
-// GetAuthorizationURL retrieves the URL of Github sign in page.
-func (g IdentityProvider) GetAuthorizationURL() string {
+// GetAuthorizationShortLink retrieves the URL of Github sign in page.
+func (g IdentityProvider) GetAuthorizationShortLink() string {
 	scopes := strings.Join([]string{
 		readUserProfileScope,
 	}, " ")
