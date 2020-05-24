@@ -13,11 +13,11 @@ export class ShortHTTPApi {
 
   getFeatureToggle(featureID: string): Promise<boolean> {
     const url = `${this.baseURL}/features/${featureID}`;
-    return this.httpService.get<boolean>(url);
+    return this.httpService.getJSON<boolean>(url);
   }
 
-  trackEvent(event: string): Promise<void> {
+  trackEvent(event: string): Promise<Body> {
     const url = `${this.baseURL}/analytics/track/${event}`;
-    return this.httpService.get<void>(url);
+    return this.httpService.get(url);
   }
 }
