@@ -71,9 +71,9 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 	originalURL := args.URL.originalURL()
 	customAlias := args.URL.CustomAlias
-	u := entity.URL{
-		OriginalURL: originalURL,
-		ExpireAt:    args.URL.ExpireAt,
+	u := entity.ShortLink{
+		LongLink: originalURL,
+		ExpireAt: args.URL.ExpireAt,
 	}
 
 	isPublic := args.IsPublic
@@ -103,15 +103,15 @@ type UpdateURLArgs struct {
 	URL      URLInput
 }
 
-func (u *URLInput) createUpdate() *entity.URL {
+func (u *URLInput) createUpdate() *entity.ShortLink {
 	if u.isEmpty() {
 		return nil
 	}
 
-	return &entity.URL{
-		Alias:       u.customAlias(),
-		OriginalURL: u.originalURL(),
-		ExpireAt:    u.ExpireAt,
+	return &entity.ShortLink{
+		Alias:    u.customAlias(),
+		LongLink: u.originalURL(),
+		ExpireAt: u.ExpireAt,
 	}
 
 }

@@ -16,13 +16,13 @@ var _ Updater = (*UpdaterPersist)(nil)
 
 // Updater modifies the properties of existing short links.
 type Updater interface {
-	UpdateURL(oldAlias string, update entity.URL, user entity.User) (entity.URL, error)
+	UpdateURL(oldAlias string, update entity.ShortLink, user entity.User) (entity.ShortLink, error)
 }
 
 // UpdaterPersist persists the given changes to a short link in the database store.
 type UpdaterPersist struct {
-	urlRepo             repository.URL
-	userURLRelationRepo repository.UserURLRelation
+	urlRepo             repository.ShortLink
+	userURLRelationRepo repository.UserShortLink
 	keyGen              keygen.KeyGenerator
 	longLinkValidator   validator.LongLink
 	aliasValidator      validator.CustomAlias
@@ -33,40 +33,40 @@ type UpdaterPersist struct {
 // UpdateURL persists mutations for a given short link in the repository.
 func (u UpdaterPersist) UpdateURL(
 	oldAlias string,
-	update entity.URL,
+	update entity.ShortLink,
 	user entity.User,
-) (entity.URL, error) {
+) (entity.ShortLink, error) {
 	if !u.isURLRelated(oldAlias, user) {
-		return entity.URL{}, errors.New("short link not found")
+		return entity.ShortLink{}, errors.New("short link not found")
 	}
 
-	url, err := u.urlRepo.GetByAlias(oldAlias)
+	url, err := u.urlRepo.GetShortLinkByAlias(oldAlias)
 	if err != nil {
-		return entity.URL{}, err
+		return entity.ShortLink{}, err
 	}
 
 	url = u.updateAlias(url, update)
 	url = u.updateLongLink(url, update)
 
 	if !u.aliasValidator.IsValid(&url.Alias) {
-		return entity.URL{}, ErrInvalidCustomAlias(url.Alias)
+		return entity.ShortLink{}, ErrInvalidCustomAlias(url.Alias)
 	}
 
-	if !u.longLinkValidator.IsValid(&url.OriginalURL) {
-		return entity.URL{}, ErrInvalidLongLink(url.OriginalURL)
+	if !u.longLinkValidator.IsValid(&url.LongLink) {
+		return entity.ShortLink{}, ErrInvalidLongLink(url.LongLink)
 	}
 
-	if u.riskDetector.IsURLMalicious(url.OriginalURL) {
-		return entity.URL{}, ErrMaliciousLongLink(url.OriginalURL)
+	if u.riskDetector.IsURLMalicious(url.LongLink) {
+		return entity.ShortLink{}, ErrMaliciousLongLink(url.LongLink)
 	}
 
 	updateTime := u.timer.Now()
 	url.UpdatedAt = &updateTime
 
-	return u.urlRepo.UpdateURL(oldAlias, url)
+	return u.urlRepo.UpdateShortLink(oldAlias, url)
 }
 
-func (u UpdaterPersist) updateAlias(url, update entity.URL) entity.URL {
+func (u UpdaterPersist) updateAlias(url, update entity.ShortLink) entity.ShortLink {
 	newAlias := update.Alias
 	if newAlias != "" {
 		url.Alias = newAlias
@@ -75,10 +75,10 @@ func (u UpdaterPersist) updateAlias(url, update entity.URL) entity.URL {
 	return url
 }
 
-func (u *UpdaterPersist) updateLongLink(url, update entity.URL) entity.URL {
-	newLongLink := update.OriginalURL
+func (u *UpdaterPersist) updateLongLink(url, update entity.ShortLink) entity.ShortLink {
+	newLongLink := update.LongLink
 	if newLongLink != "" {
-		url.OriginalURL = newLongLink
+		url.LongLink = newLongLink
 	}
 
 	return url
@@ -105,8 +105,8 @@ func (u *UpdaterPersist) isURLRelated(shortlink string, user entity.User) bool {
 
 // NewUpdaterPersist creates a new UpdaterPersist instance.
 func NewUpdaterPersist(
-	urlRepo repository.URL,
-	userURLRelationRepo repository.UserURLRelation,
+	urlRepo repository.ShortLink,
+	userURLRelationRepo repository.UserShortLink,
 	keyGen keygen.KeyGenerator,
 	longLinkValidator validator.LongLink,
 	aliasValidator validator.CustomAlias,

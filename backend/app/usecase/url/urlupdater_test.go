@@ -29,134 +29,134 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 		availableKeys []keygen.Key
 		urls          urlMap
 		user          entity.User
-		urlUpdate     entity.URL
+		urlUpdate     entity.ShortLink
 		relationUsers []entity.User
-		relationURLs  []entity.URL
+		relationURLs  []entity.ShortLink
 		expHasErr     bool
-		expectedURL   entity.URL
+		expectedURL   entity.ShortLink
 	}{
 		{
 			name:  "successfully update existing long link",
 			alias: &alias,
 			urls: urlMap{
-				"boGp9w35": entity.URL{
-					Alias:       "boGp9w35",
-					OriginalURL: "https://httpbin.org",
-					UpdatedAt:   &now,
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
 				},
 			},
 			user: entity.User{
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			urlUpdate: entity.URL{
-				OriginalURL: validNewLongLink,
+			urlUpdate: entity.ShortLink{
+				LongLink: validNewLongLink,
 			},
 			relationUsers: []entity.User{
 				entity.User{ID: "1"},
 			},
-			relationURLs: []entity.URL{
-				entity.URL{
-					Alias:       "boGp9w35",
-					OriginalURL: "https://httpbin.org",
-					UpdatedAt:   &now,
+			relationURLs: []entity.ShortLink{
+				entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
 				},
 			},
 			expHasErr: false,
-			expectedURL: entity.URL{
-				Alias:       "boGp9w35",
-				OriginalURL: validNewLongLink,
+			expectedURL: entity.ShortLink{
+				Alias:    "boGp9w35",
+				LongLink: validNewLongLink,
 			},
 		},
 		{
 			name:  "alias doesn't exist",
 			alias: &validNewAlias,
 			urls: urlMap{
-				"boGp9w35zzzz": entity.URL{
-					Alias:       "boGp9w35zzzz",
-					OriginalURL: "https://httpbin.org",
-					UpdatedAt:   &now,
+				"boGp9w35zzzz": entity.ShortLink{
+					Alias:     "boGp9w35zzzz",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
 				},
 			},
 			user: entity.User{
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			urlUpdate: entity.URL{
-				OriginalURL: validNewLongLink,
+			urlUpdate: entity.ShortLink{
+				LongLink: validNewLongLink,
 			},
 			relationUsers: []entity.User{
 				entity.User{ID: "1"},
 			},
-			relationURLs: []entity.URL{
-				entity.URL{
-					Alias:       "boGp9w35",
-					OriginalURL: "https://httpbin.org",
-					UpdatedAt:   &now,
+			relationURLs: []entity.ShortLink{
+				entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
 				},
 			},
 			expHasErr:   true,
-			expectedURL: entity.URL{},
+			expectedURL: entity.ShortLink{},
 		},
 		{
 			name:  "long link is invalid",
 			alias: &alias,
 			urls: urlMap{
-				"boGp9w35": entity.URL{
-					Alias:       "boGp9w35",
-					OriginalURL: "https://httpbin.org",
-					UpdatedAt:   &now,
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
 				},
 			},
 			user: entity.User{
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			urlUpdate: entity.URL{
-				OriginalURL: "aaaaaaaaaaaaaaaaaaa",
+			urlUpdate: entity.ShortLink{
+				LongLink: "aaaaaaaaaaaaaaaaaaa",
 			},
 			relationUsers: []entity.User{
 				entity.User{ID: "1"},
 			},
-			relationURLs: []entity.URL{
-				entity.URL{
-					Alias:       "boGp9w35",
-					OriginalURL: "https://httpbin.org",
-					UpdatedAt:   &now,
+			relationURLs: []entity.ShortLink{
+				entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
 				},
 			},
 			expHasErr:   true,
-			expectedURL: entity.URL{},
+			expectedURL: entity.ShortLink{},
 		},
 		{
 			name:  "short link is not owned by user",
 			alias: &alias,
 			urls: urlMap{
-				"boGp9w35": entity.URL{
-					Alias:       "boGp9w35",
-					OriginalURL: "https://httpbin.org",
-					UpdatedAt:   &now,
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
 				},
 			},
 			user: entity.User{
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			urlUpdate: entity.URL{
-				OriginalURL: "https://google.com/",
+			urlUpdate: entity.ShortLink{
+				LongLink: "https://google.com/",
 			},
 			relationUsers: []entity.User{
 				entity.User{ID: "2"},
 			},
-			relationURLs: []entity.URL{
-				entity.URL{
-					Alias:       "boGp9w35",
-					OriginalURL: "https://httpbin.org",
-					UpdatedAt:   &now,
+			relationURLs: []entity.ShortLink{
+				entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
 				},
 			},
 			expHasErr:   true,
-			expectedURL: entity.URL{},
+			expectedURL: entity.ShortLink{},
 		},
 		{
 			name:  "malicious url update",
@@ -164,11 +164,11 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 			user: entity.User{
 				Email: "gopher@golang.org",
 			},
-			urlUpdate: entity.URL{
-				OriginalURL: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
+			urlUpdate: entity.ShortLink{
+				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
 			},
 			expHasErr:   true,
-			expectedURL: entity.URL{},
+			expectedURL: entity.ShortLink{},
 		},
 	}
 
@@ -180,8 +180,8 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": false,
 			}
 			tm := timer.NewStub(now)
-			urlRepo := repository.NewURLFake(testCase.urls)
-			userURLRepo := repository.NewUserURLRepoFake(
+			urlRepo := repository.NewShortLinkFake(testCase.urls)
+			userURLRepo := repository.NewUserShortLinkRepoFake(
 				testCase.relationUsers,
 				testCase.relationURLs,
 			)
@@ -207,7 +207,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 			if testCase.expHasErr {
 				assert.NotEqual(t, nil, err)
 
-				_, err = urlRepo.GetByAlias(testCase.expectedURL.Alias)
+				_, err = urlRepo.GetShortLinkByAlias(testCase.expectedURL.Alias)
 				assert.NotEqual(t, nil, err)
 
 				isExist := userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
@@ -215,7 +215,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				return
 			}
 			assert.Equal(t, nil, err)
-			assert.Equal(t, testCase.expectedURL.OriginalURL, url.OriginalURL)
+			assert.Equal(t, testCase.expectedURL.LongLink, url.LongLink)
 			assert.Equal(t, testCase.expectedURL.Alias, url.Alias)
 			assert.Equal(t, testCase.expectedURL.CreatedAt, url.CreatedAt)
 			assert.Equal(t, true, url.UpdatedAt.After(now))
