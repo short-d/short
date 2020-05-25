@@ -20,7 +20,7 @@ type AuthMutation struct {
 	urlUpdater    url.Updater
 }
 
-// URLInput represents possible URL attributes
+// URLInput represents possible ShortLink attributes
 type URLInput struct {
 	OriginalURL *string
 	CustomAlias *string
@@ -62,7 +62,7 @@ type ChangeInput struct {
 	SummaryMarkdown *string
 }
 
-// CreateURL creates mapping between an alias and a long link for a given user
+// CreateShortLink creates mapping between an alias and a long link for a given user
 func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
@@ -78,20 +78,20 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 	isPublic := args.IsPublic
 
-	newURL, err := a.urlCreator.CreateURL(u, customAlias, user, isPublic)
+	newShortLink, err := a.urlCreator.CreateShortLink(u, customAlias, user, isPublic)
 	if err == nil {
-		return &URL{url: newURL}, nil
+		return &URL{url: newShortLink}, nil
 	}
 
 	switch err.(type) {
 	case url.ErrAliasExist:
 		return nil, ErrURLAliasExist(*customAlias)
 	case url.ErrInvalidLongLink:
-		return nil, ErrInvalidLongLink(u.OriginalURL)
+		return nil, ErrInvalidLongLink(u.LongLink)
 	case url.ErrInvalidCustomAlias:
 		return nil, ErrInvalidCustomAlias(*customAlias)
 	case url.ErrMaliciousLongLink:
-		return nil, ErrMaliciousContent(u.OriginalURL)
+		return nil, ErrMaliciousContent(u.LongLink)
 	default:
 		return nil, ErrUnknown{}
 	}

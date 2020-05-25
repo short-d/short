@@ -59,10 +59,10 @@ func TestQuery_AuthQuery(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			fakeURLRepo := repository.NewURLFake(map[string]entity.URL{})
-			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
+			fakeShortLinkRepo := repository.NewShortLinkFake(map[string]entity.ShortLink{})
+			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake(nil, nil)
 			auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
-			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
+			retrieverFake := url.NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 			entryRepo := logger.NewEntryRepoFake()
 			lg, err := logger.NewFake(logger.LogOff, &entryRepo)
 

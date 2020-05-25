@@ -28,9 +28,9 @@ func TestGraphQlAPI(t *testing.T) {
 	blockedURLs := map[string]bool{}
 	blacklist := risk.NewBlackListFake(blockedURLs)
 
-	urlRepo := repository.NewURLFake(map[string]entity.URL{})
-	urlRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.URL{})
-	retriever := url.NewRetrieverPersist(&urlRepo, &urlRelationRepo)
+	shortLinkRepo := repository.NewShortLinkFake(map[string]entity.ShortLink{})
+	userShortLinkRepo := repository.NewUserShortLinkRepoFake([]entity.User{}, []entity.ShortLink{})
+	retriever := url.NewRetrieverPersist(&shortLinkRepo, &userShortLinkRepo)
 	keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 	keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 	assert.Equal(t, nil, err)
@@ -41,8 +41,8 @@ func TestGraphQlAPI(t *testing.T) {
 	riskDetector := risk.NewDetector(blacklist)
 
 	creator := url.NewCreatorPersist(
-		&urlRepo,
-		&urlRelationRepo,
+		&shortLinkRepo,
+		&userShortLinkRepo,
 		keyGen,
 		longLinkValidator,
 		customAliasValidator,
