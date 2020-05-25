@@ -11,6 +11,10 @@ type LongLink struct {
 
 // IsProvided checks whether the long link is provided.
 func (l LongLink) IsProvided(longLink *string) bool {
+	if longLink == nil {
+		return false
+	}
+	
 	return *longLink != ""
 }
 
