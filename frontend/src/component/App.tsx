@@ -23,6 +23,13 @@ export class App extends Component<IProps> {
             }
           />
           <Route
+            path={'/admin'}
+            exact
+            render={() => {
+              return this.props.uiFactory.createAdminPage();
+            }}
+          />
+          <Route
             path={'/r/:alias'}
             render={({ match }) => {
               let alias = match.params['alias'];
