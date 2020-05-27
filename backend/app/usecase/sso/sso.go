@@ -58,7 +58,7 @@ func (o SingleSignOn) IsSignedIn(authToken string) bool {
 
 // GetSignInLink retrieves the sign in link of the external account provider.
 func (o SingleSignOn) GetSignInLink() string {
-	return o.identityProvider.GetAuthorizationShortLink()
+	return o.identityProvider.GetAuthorizationURL()
 }
 
 // Factory makes SingleSignOn.

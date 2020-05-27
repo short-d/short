@@ -64,7 +64,7 @@ func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, customAlias 
 		return entity.ShortLink{}, ErrInvalidLongLink(longLink)
 	}
 
-	if c.riskDetector.IsShortLinkMalicious(longLink) {
+	if c.riskDetector.IsURLMalicious(longLink) {
 		return entity.ShortLink{}, ErrMaliciousLongLink(longLink)
 	}
 

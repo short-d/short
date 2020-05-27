@@ -17,18 +17,18 @@ type Resolver struct {
 // NewResolver creates a new GraphQL resolver.
 func NewResolver(
 	logger logger.Logger,
-	urlRetriever shortlink.Retriever,
-	urlCreator shortlink.Creator,
+	shortLinkRetriever shortlink.Retriever,
+	shortLinkCreator shortlink.Creator,
 	changeLog changelog.ChangeLog,
 	requesterVerifier requester.Verifier,
 	authenticator authenticator.Authenticator,
 ) Resolver {
 	return Resolver{
-		Query: newQuery(logger, authenticator, changeLog, urlRetriever),
+		Query: newQuery(logger, authenticator, changeLog, shortLinkRetriever),
 		Mutation: newMutation(
 			logger,
 			changeLog,
-			urlCreator,
+			shortLinkCreator,
 			requesterVerifier,
 			authenticator,
 		),

@@ -13,7 +13,7 @@ import (
 
 type shortLinks = map[string]entity.ShortLink
 
-func TestShortLinkRetriever_GetShortLink(t *testing.T) {
+func TestRetriever_GetShortLink(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now()
@@ -37,7 +37,7 @@ func TestShortLinkRetriever_GetShortLink(t *testing.T) {
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
-			name: "shortlink expired",
+			name: "short link expired",
 			shortLinks: shortLinks{
 				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
@@ -50,7 +50,7 @@ func TestShortLinkRetriever_GetShortLink(t *testing.T) {
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
-			name: "shortlink never expire",
+			name: "short link never expire",
 			shortLinks: shortLinks{
 				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
@@ -66,7 +66,7 @@ func TestShortLinkRetriever_GetShortLink(t *testing.T) {
 			},
 		},
 		{
-			name: "unexpired shortlink found",
+			name: "unexpired short link found",
 			shortLinks: shortLinks{
 				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
@@ -116,7 +116,7 @@ func TestRetrieverPersist_GetShortLinks(t *testing.T) {
 		expectedShortLinks []entity.ShortLink
 	}{
 		{
-			name: "user created ShortLinks",
+			name: "user created short links",
 			shortLinks: shortLinks{
 				"google": entity.ShortLink{
 					Alias:    "google",

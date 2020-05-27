@@ -7,9 +7,9 @@ type BlackListFake struct {
 	blacklist map[string]bool
 }
 
-// HasShortLink checks whether a given short link exists in the blacklist.
-func (b BlackListFake) HasShortLink(shortLink string) (bool, error) {
-	_, found := b.blacklist[shortLink]
+// HasURL checks whether a given url exists in the blacklist.
+func (b BlackListFake) HasURL(url string) (bool, error) {
+	_, found := b.blacklist[url]
 	return found, nil
 }
 

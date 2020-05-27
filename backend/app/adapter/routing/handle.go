@@ -16,7 +16,7 @@ import (
 // NewOriginalURL translates alias to the original long link.
 func NewOriginalURL(
 	instrumentationFactory request.InstrumentationFactory,
-	urlRetriever shortlink.Retriever,
+	shortLinkRetriever shortlink.Retriever,
 	timer timer.Timer,
 	webFrontendURL netURL.URL,
 ) router.Handle {
@@ -27,7 +27,7 @@ func NewOriginalURL(
 		i.RedirectingAliasToLongLink(alias)
 
 		now := timer.Now()
-		u, err := urlRetriever.GetShortLink(alias, &now)
+		s, err := shortLinkRetriever.GetShortLink(alias, &now)
 		if err != nil {
 			i.LongLinkRetrievalFailed(err)
 			serve404(w, r, webFrontendURL)
@@ -35,9 +35,9 @@ func NewOriginalURL(
 		}
 		i.LongLinkRetrievalSucceed()
 
-		originURL := u.LongLink
+		originURL := s.LongLink
 		http.Redirect(w, r, originURL, http.StatusSeeOther)
-		i.RedirectedAliasToLongLink(u)
+		i.RedirectedAliasToLongLink(s)
 	}
 }
 

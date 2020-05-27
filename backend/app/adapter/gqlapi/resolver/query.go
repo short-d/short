@@ -9,10 +9,10 @@ import (
 
 // Query represents GraphQL query resolver
 type Query struct {
-	logger        logger.Logger
-	authenticator authenticator.Authenticator
-	changeLog     changelog.ChangeLog
-	urlRetriever  shortlink.Retriever
+	logger             logger.Logger
+	authenticator      authenticator.Authenticator
+	changeLog          changelog.ChangeLog
+	shortLinkRetriever shortlink.Retriever
 }
 
 // AuthQueryArgs represents possible parameters for AuthQuery endpoint
@@ -22,7 +22,7 @@ type AuthQueryArgs struct {
 
 // AuthQuery extracts user information from authentication token
 func (q Query) AuthQuery(args *AuthQueryArgs) (*AuthQuery, error) {
-	authQuery := newAuthQuery(args.AuthToken, q.authenticator, q.changeLog, q.urlRetriever)
+	authQuery := newAuthQuery(args.AuthToken, q.authenticator, q.changeLog, q.shortLinkRetriever)
 	return &authQuery, nil
 }
 
@@ -30,12 +30,12 @@ func newQuery(
 	logger logger.Logger,
 	authenticator authenticator.Authenticator,
 	changeLog changelog.ChangeLog,
-	urlRetriever shortlink.Retriever,
+	shortLinkRetriever shortlink.Retriever,
 ) Query {
 	return Query{
-		logger:        logger,
-		authenticator: authenticator,
-		changeLog:     changeLog,
-		urlRetriever:  urlRetriever,
+		logger:             logger,
+		authenticator:      authenticator,
+		changeLog:          changeLog,
+		shortLinkRetriever: shortLinkRetriever,
 	}
 }

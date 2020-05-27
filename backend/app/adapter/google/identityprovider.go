@@ -31,8 +31,8 @@ type IdentityProvider struct {
 	redirectURI  string
 }
 
-// GetAuthorizationShortLink retrieves the URL of Google sign in page.
-func (g IdentityProvider) GetAuthorizationShortLink() string {
+// GetAuthorizationURL retrieves the URL of Google sign in page.
+func (g IdentityProvider) GetAuthorizationURL() string {
 	clientID := g.clientID
 	redirectURI := g.redirectURI
 

@@ -24,7 +24,7 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	clientSecret := "client_secret"
 	identityProvider := NewIdentityProvider(httpRequest, clientID, clientSecret)
 
-	urlResponse := identityProvider.GetAuthorizationShortLink()
+	urlResponse := identityProvider.GetAuthorizationURL()
 
 	parsedUrl, err := url.Parse(urlResponse)
 	assert.Equal(t, nil, err)

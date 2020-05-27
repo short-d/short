@@ -45,7 +45,7 @@ const (
 )
 
 type threat struct {
-	URL string `json:"shortlink"`
+	URL string `json:"url"`
 }
 
 type lookupAPIRequest struct {
@@ -76,8 +76,8 @@ type SafeBrowsing struct {
 	httpRequest webreq.HTTP
 }
 
-// HasShortLink checks whether a given URL is blacklisted by Google.
-func (s SafeBrowsing) HasShortLink(url string) (bool, error) {
+// HasURL checks whether a given URL is blacklisted by Google.
+func (s SafeBrowsing) HasURL(url string) (bool, error) {
 	api := s.auth(safeBrowsingLookupAPI)
 	body := lookupAPIRequest{
 		ThreatInfo: threatInfo{

@@ -18,7 +18,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
-type urlMap = map[string]entity.ShortLink
+type shortLinkMap = map[string]entity.ShortLink
 
 func TestAuthQuery_URL(t *testing.T) {
 	t.Parallel()
@@ -31,7 +31,7 @@ func TestAuthQuery_URL(t *testing.T) {
 		user        entity.User
 		alias       string
 		expireAfter *scalar.Time
-		urls        urlMap
+		urls        shortLinkMap
 		hasErr      bool
 		expectedURL *URL
 	}{
@@ -39,7 +39,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			name:        "alias not found with no expireAfter",
 			alias:       "220uFicCJj",
 			expireAfter: nil,
-			urls:        urlMap{},
+			urls:        shortLinkMap{},
 			hasErr:      true,
 		},
 		{
@@ -48,7 +48,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls:   urlMap{},
+			urls:   shortLinkMap{},
 			hasErr: true,
 		},
 		{
@@ -57,7 +57,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls: urlMap{
+			urls: shortLinkMap{
 				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &before,
 				},
@@ -70,7 +70,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls: urlMap{
+			urls: shortLinkMap{
 				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &after,
 				},

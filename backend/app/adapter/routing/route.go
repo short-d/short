@@ -20,7 +20,7 @@ func NewShort(
 	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL string,
 	timer timer.Timer,
-	urlRetriever shortlink.Retriever,
+	shortLinkRetriever shortlink.Retriever,
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
 	githubSSO github.SingleSignOn,
 	facebookSSO facebook.SingleSignOn,
@@ -84,7 +84,7 @@ func NewShort(
 			Path:   "/r/:alias",
 			Handle: NewOriginalURL(
 				instrumentationFactory,
-				urlRetriever,
+				shortLinkRetriever,
 				timer,
 				*frontendURL,
 			),

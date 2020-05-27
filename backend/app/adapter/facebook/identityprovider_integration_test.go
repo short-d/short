@@ -26,7 +26,7 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	redirectURI := "http://localhost/oauth/facebook/sign-in/callback"
 	identityProvider := NewIdentityProvider(httpRequest, clientID, clientSecret, redirectURI)
 
-	urlResponse := identityProvider.GetAuthorizationShortLink()
+	urlResponse := identityProvider.GetAuthorizationURL()
 
 	parsedUrl, err := url.Parse(urlResponse)
 

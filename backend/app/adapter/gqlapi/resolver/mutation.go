@@ -11,7 +11,7 @@ import (
 // Mutation represents GraphQL mutation resolver
 type Mutation struct {
 	logger            logger.Logger
-	urlCreator        shortlink.Creator
+	shortLinkCreator  shortlink.Creator
 	requesterVerifier requester.Verifier
 	authenticator     authenticator.Authenticator
 	changeLog         changelog.ChangeLog
@@ -35,21 +35,21 @@ func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
 		return nil, ErrNotHuman{}
 	}
 
-	authMutation := newAuthMutation(args.AuthToken, m.authenticator, m.changeLog, m.urlCreator)
+	authMutation := newAuthMutation(args.AuthToken, m.authenticator, m.changeLog, m.shortLinkCreator)
 	return &authMutation, nil
 }
 
 func newMutation(
 	logger logger.Logger,
 	changeLog changelog.ChangeLog,
-	urlCreator shortlink.Creator,
+	shortLinkCreator shortlink.Creator,
 	requesterVerifier requester.Verifier,
 	authenticator authenticator.Authenticator,
 ) Mutation {
 	return Mutation{
 		logger:            logger,
 		changeLog:         changeLog,
-		urlCreator:        urlCreator,
+		shortLinkCreator:  shortLinkCreator,
 		requesterVerifier: requesterVerifier,
 		authenticator:     authenticator,
 	}

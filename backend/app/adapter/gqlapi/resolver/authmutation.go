@@ -13,10 +13,10 @@ import (
 // AuthMutation represents GraphQL mutation resolver that acts differently based
 // on the identify of the user
 type AuthMutation struct {
-	authToken     *string
-	authenticator authenticator.Authenticator
-	changeLog     changelog.ChangeLog
-	urlCreator    shortlink.Creator
+	authToken        *string
+	authenticator    authenticator.Authenticator
+	changeLog        changelog.ChangeLog
+	shortLinkCreator shortlink.Creator
 }
 
 // URLInput represents possible ShortLink attributes
@@ -58,14 +58,14 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 	isPublic := args.IsPublic
 
-	newShortLink, err := a.urlCreator.CreateShortLink(u, customAlias, user, isPublic)
+	newShortLink, err := a.shortLinkCreator.CreateShortLink(u, customAlias, user, isPublic)
 	if err == nil {
 		return &URL{url: newShortLink}, nil
 	}
 
 	switch err.(type) {
 	case shortlink.ErrAliasExist:
-		return nil, ErrURLAliasExist(*customAlias)
+		return nil, ErrAliasExist(*customAlias)
 	case shortlink.ErrInvalidLongLink:
 		return nil, ErrInvalidLongLink(u.LongLink)
 	case shortlink.ErrInvalidCustomAlias:
@@ -98,12 +98,12 @@ func newAuthMutation(
 	authToken *string,
 	authenticator authenticator.Authenticator,
 	changeLog changelog.ChangeLog,
-	urlCreator shortlink.Creator,
+	shortLinkCreator shortlink.Creator,
 ) AuthMutation {
 	return AuthMutation{
-		authToken:     authToken,
-		authenticator: authenticator,
-		changeLog:     changeLog,
-		urlCreator:    urlCreator,
+		authToken:        authToken,
+		authenticator:    authenticator,
+		changeLog:        changeLog,
+		shortLinkCreator: shortLinkCreator,
 	}
 }

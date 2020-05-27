@@ -5,14 +5,14 @@ var _ IdentityProvider = (*IdentityProviderFake)(nil)
 // IdentityProviderFake represents in memory implementation of an external
 // authentication service.
 type IdentityProviderFake struct {
-	authShortLink string
-	accessToken   string
+	authURL     string
+	accessToken string
 }
 
-// GetAuthorizationShortLink retrieves the ShortLink where user can sign in and obtain
+// GetAuthorizationURL retrieves the URL where user can sign in and obtain
 // authorization code.
-func (i IdentityProviderFake) GetAuthorizationShortLink() string {
-	return i.authShortLink
+func (i IdentityProviderFake) GetAuthorizationURL() string {
+	return i.authURL
 }
 
 // RequestAccessToken retrieves access token given authorization code.
@@ -21,9 +21,9 @@ func (i IdentityProviderFake) RequestAccessToken(authorizationCode string) (acce
 }
 
 // NewIdentityProviderFake creates fake IdentityProvider.
-func NewIdentityProviderFake(authShortLink string, accessToken string) IdentityProviderFake {
+func NewIdentityProviderFake(authURL string, accessToken string) IdentityProviderFake {
 	return IdentityProviderFake{
-		authShortLink: authShortLink,
-		accessToken:   accessToken,
+		authURL:     authURL,
+		accessToken: accessToken,
 	}
 }
