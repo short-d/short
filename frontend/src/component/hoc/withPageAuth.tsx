@@ -33,11 +33,7 @@ export default function(
         if (!this.isComponentMounted) {
           return;
         }
-        this.setState({
-          decision: decision
-            ? AuthDecision.AUTHORIZED
-            : AuthDecision.UNAUTHORIZED
-        });
+        this.setState({ decision: this.toAuthDecision(decision) });
       });
     }
 
@@ -57,6 +53,13 @@ export default function(
 
       // TODO(issue#816): add loading page component
       return <div />;
+    }
+
+    private toAuthDecision(featureDecision: boolean): AuthDecision {
+      if (!featureDecision) {
+        return AuthDecision.UNAUTHORIZED;
+      }
+      return AuthDecision.AUTHORIZED;
     }
   };
 }
