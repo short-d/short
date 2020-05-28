@@ -20,12 +20,14 @@ import (
 )
 
 func TestUpdateURL(t *testing.T) {
+	t.Parallel()
 	now := time.Now().UTC()
-	newAlias := "myNewAlias"
+	newAlias := "NewAlias"
 	newLongLink := "https://www.short-d.com"
+	maliciousURL := "http://malware.wicar.org/data/ms14_064_ole_not_xp.html"
 	urls := urlMap{
-		"mySimpleAlias": entity.ShortLink{
-			Alias:    "mySimpleAlias",
+		"SimpleAlias": entity.ShortLink{
+			Alias:    "SimpleAlias",
 			LongLink: "https://www.google.com/",
 		},
 	}
@@ -42,7 +44,7 @@ func TestUpdateURL(t *testing.T) {
 		{
 			name: "empty update returns empty response",
 			args: &UpdateURLArgs{
-				OldAlias: "mySimpleAlias",
+				OldAlias: "SimpleAlias",
 				URL:      URLInput{},
 			},
 			user: entity.User{
@@ -58,7 +60,7 @@ func TestUpdateURL(t *testing.T) {
 			},
 			relationShortLinks: []entity.ShortLink{
 				entity.ShortLink{
-					Alias:    "mySimpleAlias",
+					Alias:    "SimpleAlias",
 					LongLink: "https://www.google.com/",
 				},
 			},
@@ -66,9 +68,9 @@ func TestUpdateURL(t *testing.T) {
 			shouldError:       false,
 		},
 		{
-			name: "update short link alias",
+			name: "update only alias",
 			args: &UpdateURLArgs{
-				OldAlias: "mySimpleAlias",
+				OldAlias: "SimpleAlias",
 				URL: URLInput{
 					CustomAlias: &newAlias,
 				},
@@ -86,7 +88,7 @@ func TestUpdateURL(t *testing.T) {
 			},
 			relationShortLinks: []entity.ShortLink{
 				entity.ShortLink{
-					Alias:    "mySimpleAlias",
+					Alias:    "SimpleAlias",
 					LongLink: "https://www.google.com/",
 				},
 			},
@@ -101,7 +103,7 @@ func TestUpdateURL(t *testing.T) {
 		{
 			name: "update only long link",
 			args: &UpdateURLArgs{
-				OldAlias: "mySimpleAlias",
+				OldAlias: "SimpleAlias",
 				URL: URLInput{
 					OriginalURL: &newLongLink,
 				},
@@ -119,13 +121,13 @@ func TestUpdateURL(t *testing.T) {
 			},
 			relationShortLinks: []entity.ShortLink{
 				entity.ShortLink{
-					Alias:    "mySimpleAlias",
+					Alias:    "SimpleAlias",
 					LongLink: "https://www.google.com/",
 				},
 			},
 			expectedShortLink: &URL{
 				url: entity.ShortLink{
-					Alias:    "mySimpleAlias",
+					Alias:    "SimpleAlias",
 					LongLink: newLongLink,
 				},
 			},
@@ -134,7 +136,7 @@ func TestUpdateURL(t *testing.T) {
 		{
 			name: "update both alias and long link",
 			args: &UpdateURLArgs{
-				OldAlias: "mySimpleAlias",
+				OldAlias: "SimpleAlias",
 				URL: URLInput{
 					CustomAlias: &newAlias,
 					OriginalURL: &newLongLink,
@@ -153,7 +155,7 @@ func TestUpdateURL(t *testing.T) {
 			},
 			relationShortLinks: []entity.ShortLink{
 				entity.ShortLink{
-					Alias:    "mySimpleAlias",
+					Alias:    "SimpleAlias",
 					LongLink: "https://www.google.com/",
 				},
 			},
@@ -165,9 +167,43 @@ func TestUpdateURL(t *testing.T) {
 			},
 			shouldError: false,
 		},
+		{
+			name: "update long link to malicious url",
+			args: &UpdateURLArgs{
+				OldAlias: "SimpleAlias",
+				URL: URLInput{
+					OriginalURL: &maliciousURL,
+				},
+			},
+			user: entity.User{
+				ID:    "1",
+				Email: "short@gmail.com",
+			},
+			urls: urls,
+			relationUsers: []entity.User{
+				entity.User{
+					ID:    "1",
+					Email: "short@gmail.com",
+				},
+			},
+			relationShortLinks: []entity.ShortLink{
+				entity.ShortLink{
+					Alias:    "SimpleAlias",
+					LongLink: "https://www.google.com/",
+				},
+			},
+			expectedShortLink: &URL{
+				url: entity.ShortLink{
+					Alias:    newAlias,
+					LongLink: newLongLink,
+				},
+			},
+			shouldError: true,
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
 			blockedHash := map[string]bool{
 				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": false,
 			}
@@ -223,6 +259,10 @@ func TestUpdateURL(t *testing.T) {
 				updater,
 			)
 			shortLink, err := authMutation.UpdateURL(testCase.args)
+			if testCase.shouldError {
+				assert.NotEqual(t, nil, err)
+				return
+			}
 			assert.Equal(t, nil, err)
 			if shortLink == nil {
 				return

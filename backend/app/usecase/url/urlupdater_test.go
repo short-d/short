@@ -25,7 +25,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 
 	testCases := []struct {
 		name          string
-		alias         *string
+		alias         string
 		availableKeys []keygen.Key
 		urls          urlMap
 		user          entity.User
@@ -37,7 +37,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 	}{
 		{
 			name:  "successfully update existing long link",
-			alias: &alias,
+			alias: alias,
 			urls: urlMap{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
@@ -70,7 +70,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 		},
 		{
 			name:  "alias doesn't exist",
-			alias: &validNewAlias,
+			alias: validNewAlias,
 			urls: urlMap{
 				"boGp9w35zzzz": entity.ShortLink{
 					Alias:     "boGp9w35zzzz",
@@ -100,7 +100,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 		},
 		{
 			name:  "long link is invalid",
-			alias: &alias,
+			alias: alias,
 			urls: urlMap{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
@@ -129,8 +129,8 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 			expectedURL: entity.ShortLink{},
 		},
 		{
-			name:  "short link is not owned by user",
-			alias: &alias,
+			name:  "short link is not owned by the user",
+			alias: alias,
 			urls: urlMap{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
@@ -160,7 +160,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 		},
 		{
 			name:  "malicious url update",
-			alias: &alias,
+			alias: alias,
 			user: entity.User{
 				Email: "gopher@golang.org",
 			},
@@ -203,7 +203,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				riskDetector,
 			)
 
-			url, err := updater.UpdateURL(*testCase.alias, testCase.urlUpdate, testCase.user)
+			url, err := updater.UpdateURL(testCase.alias, testCase.urlUpdate, testCase.user)
 			if testCase.expHasErr {
 				assert.NotEqual(t, nil, err)
 
