@@ -31,7 +31,7 @@ func TestAuthQuery_URL(t *testing.T) {
 		user        entity.User
 		alias       string
 		expireAfter *scalar.Time
-		urls        shortLinkMap
+		shortLinks  shortLinkMap
 		hasErr      bool
 		expectedURL *URL
 	}{
@@ -39,7 +39,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			name:        "alias not found with no expireAfter",
 			alias:       "220uFicCJj",
 			expireAfter: nil,
-			urls:        shortLinkMap{},
+			shortLinks:  shortLinkMap{},
 			hasErr:      true,
 		},
 		{
@@ -48,8 +48,8 @@ func TestAuthQuery_URL(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls:   shortLinkMap{},
-			hasErr: true,
+			shortLinks: shortLinkMap{},
+			hasErr:     true,
 		},
 		{
 			name:  "alias expired",
@@ -57,7 +57,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls: shortLinkMap{
+			shortLinks: shortLinkMap{
 				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &before,
 				},
@@ -70,7 +70,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls: shortLinkMap{
+			shortLinks: shortLinkMap{
 				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &after,
 				},
@@ -88,7 +88,7 @@ func TestAuthQuery_URL(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.urls)
+			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
 			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake(nil, nil)
 			retrieverFake := shortlink.NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 
