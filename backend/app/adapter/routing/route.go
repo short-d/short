@@ -11,8 +11,8 @@ import (
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/routing/analytics"
 	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
-	"github.com/short-d/short/backend/app/usecase/url"
 )
 
 // NewShort creates HTTP routing table.
@@ -20,7 +20,7 @@ func NewShort(
 	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL string,
 	timer timer.Timer,
-	urlRetriever url.Retriever,
+	shortLinkRetriever shortlink.Retriever,
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
 	githubSSO github.SingleSignOn,
 	facebookSSO facebook.SingleSignOn,
@@ -84,7 +84,7 @@ func NewShort(
 			Path:   "/r/:alias",
 			Handle: NewOriginalURL(
 				instrumentationFactory,
-				urlRetriever,
+				shortLinkRetriever,
 				timer,
 				*frontendURL,
 			),
