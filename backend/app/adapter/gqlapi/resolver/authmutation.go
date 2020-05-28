@@ -45,6 +45,19 @@ func (u *URLInput) customAlias() string {
 	return *u.CustomAlias
 }
 
+func (u *URLInput) createUpdate() *entity.ShortLink {
+	if u.isEmpty() {
+		return nil
+	}
+
+	return &entity.ShortLink{
+		Alias:    u.customAlias(),
+		LongLink: u.originalURL(),
+		ExpireAt: u.ExpireAt,
+	}
+
+}
+
 // CreateURLArgs represents the possible parameters for CreateURL endpoint
 type CreateURLArgs struct {
 	URL      URLInput
@@ -103,20 +116,7 @@ type UpdateURLArgs struct {
 	URL      URLInput
 }
 
-func (u *URLInput) createUpdate() *entity.ShortLink {
-	if u.isEmpty() {
-		return nil
-	}
-
-	return &entity.ShortLink{
-		Alias:    u.customAlias(),
-		LongLink: u.originalURL(),
-		ExpireAt: u.ExpireAt,
-	}
-
-}
-
-// UpdateURL updates a short link mapping that belongs to a user
+// UpdateURL updates the relationship between the short link and the user
 func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {
 	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
