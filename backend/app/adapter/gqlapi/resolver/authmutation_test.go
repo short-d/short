@@ -192,12 +192,6 @@ func TestUpdateURL(t *testing.T) {
 					LongLink: "https://www.google.com/",
 				},
 			},
-			expectedShortLink: &URL{
-				url: entity.ShortLink{
-					Alias:    newAlias,
-					LongLink: newLongLink,
-				},
-			},
 			shouldError: true,
 		},
 	}
