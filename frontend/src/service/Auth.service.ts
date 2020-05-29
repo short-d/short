@@ -30,8 +30,8 @@ export class AuthService {
     return this.cookieService.get('token');
   }
 
-  getAuthBearerToken() {
-    return 'Bearer ' + this.getAuthToken();
+  getBearerToken() {
+    return `Bearer  ${this.getAuthToken()}`;
   }
 
   signOut() {

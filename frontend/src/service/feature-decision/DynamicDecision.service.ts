@@ -37,14 +37,10 @@ export class DynamicDecisionService implements IFeatureDecisionService {
   }
 
   includeAdminPage(): Promise<boolean> {
-    return this.makeAuthDecision('admin-panel');
+    return this.makeDecision('admin-panel');
   }
 
   private makeDecision(featureID: string): Promise<boolean> {
     return this.shortHTTPApi.getFeatureToggle(featureID);
-  }
-
-  private makeAuthDecision(featureID: string): Promise<boolean> {
-    return this.shortHTTPApi.getAuthFeatureToggle(featureID);
   }
 }

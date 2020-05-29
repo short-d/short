@@ -15,12 +15,7 @@ export class ShortHTTPApi {
 
   getFeatureToggle(featureID: string): Promise<boolean> {
     const url = `${this.baseURL}/features/${featureID}`;
-    return this.httpService.getJSON<boolean>(url);
-  }
-
-  getAuthFeatureToggle(featureID: string): Promise<boolean> {
-    const url = `${this.baseURL}/features/${featureID}`;
-    const headers = { Authorization: this.authService.getAuthBearerToken() };
+    const headers = { Authorization: this.authService.getBearerToken() };
 
     return this.httpService.getJSON<boolean>(url, headers);
   }
