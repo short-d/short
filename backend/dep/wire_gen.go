@@ -37,8 +37,8 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
-	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
 	"github.com/short-d/short/backend/tool"
@@ -77,7 +77,7 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, entryRepository)
 	urlSql := sqldb.NewShortLinkSql(sqlDB)
 	userURLRelationSQL := sqldb.NewUserShortLinkSQL(sqlDB)
-	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
+	retrieverPersist := shortlink.NewRetrieverPersist(urlSql, userURLRelationSQL)
 	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
 		return service.GraphQL{}, err
@@ -90,7 +90,7 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	customAlias := validator.NewCustomAlias()
 	safeBrowsing := provider.NewSafeBrowsing(googleAPIKey, http)
 	detector := risk.NewDetector(safeBrowsing)
-	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias, system, detector)
+	creatorPersist := shortlink.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias, system, detector)
 	changeLogSQL := sqldb.NewChangeLogSQL(sqlDB)
 	userChangeLogSQL := sqldb.NewUserChangeLogSQL(sqlDB)
 	persist := changelog.NewPersist(keyGenerator, system, changeLogSQL, userChangeLogSQL)
@@ -130,7 +130,7 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	instrumentationFactory := request.NewInstrumentationFactory(loggerLogger, system, dataDog, segment, keyGenerator, requestClient)
 	urlSql := sqldb.NewShortLinkSql(sqlDB)
 	userURLRelationSQL := sqldb.NewUserShortLinkSQL(sqlDB)
-	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
+	retrieverPersist := shortlink.NewRetrieverPersist(urlSql, userURLRelationSQL)
 	featureToggleSQL := sqldb.NewFeatureToggleSQL(sqlDB)
 	userRoleSQL := sqldb.NewUserRoleSQL(sqlDB)
 	rbacRBAC := rbac.NewRBAC(userRoleSQL)
