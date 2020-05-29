@@ -1,5 +1,6 @@
 package search
 
+// put those in entity package?
 type Resource uint
 
 const (

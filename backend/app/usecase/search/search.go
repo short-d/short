@@ -15,7 +15,7 @@ type Result struct {
 	users      []entity.User
 }
 
-func (s Search) search(query Query, filter Filter) Result {
+func (s Search) Search(query Query, filter Filter) Result {
 	return Result{}
 }
 
