@@ -31,7 +31,7 @@ export class AuthService {
   }
 
   getBearerToken() {
-    return `Bearer  ${this.getAuthToken()}`;
+    return `Bearer ${this.getAuthToken()}`;
   }
 
   signOut() {
