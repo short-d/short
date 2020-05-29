@@ -65,8 +65,9 @@ func (u UserFake) GetUserByEmail(email string) (entity.User, error) {
 
 // CreateUser creates and persists user in the repository for future access.
 func (u *UserFake) CreateUser(user entity.User) error {
+	email := user.Email
 	for _, user := range u.users {
-		if user.Email == user.Email {
+		if user.Email == email {
 			return errors.New("user exists")
 		}
 	}
