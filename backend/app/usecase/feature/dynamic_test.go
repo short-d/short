@@ -59,7 +59,7 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 			expectedIsEnabled: true,
 		},
 		{
-			name: "permission not found",
+			name: "no permission",
 			toggles: map[string]entity.Toggle{
 				"example-feature": {
 					ID:        "example-feature",
@@ -95,7 +95,7 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 			expectedIsEnabled: false,
 		},
 		{
-			name: "permission enabled",
+			name: "has permission",
 			toggles: map[string]entity.Toggle{
 				"admin-panel": {
 					ID:        "admin-panel",

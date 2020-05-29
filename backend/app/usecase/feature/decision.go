@@ -6,7 +6,7 @@ import (
 )
 
 // PermissionChecker type is the signature for the checker method used to check
-// if the user has the privilege to access a feature
+// whether the user is allowed to access a feature
 type PermissionChecker func(user entity.User) (bool, error)
 
 type PermissionToggle string
