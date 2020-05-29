@@ -125,7 +125,7 @@ func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {
 
 	update := args.URL.createUpdate()
 	if update == nil {
-		return nil, err
+		return nil, nil
 	}
 
 	newURL, err := a.urlUpdater.UpdateURL(args.OldAlias, *update, user)
