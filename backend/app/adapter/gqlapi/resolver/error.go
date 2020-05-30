@@ -39,14 +39,14 @@ func (e ErrUnknown) Error() string {
 	return "unknown err"
 }
 
-// ErrURLAliasExist signifies a wanted short link alias is not available.
-type ErrURLAliasExist string
+// ErrAliasExist signifies a wanted short link alias is not available.
+type ErrAliasExist string
 
-var _ GraphQlError = (*ErrURLAliasExist)(nil)
+var _ GraphQlError = (*ErrAliasExist)(nil)
 
 // Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
-func (e ErrURLAliasExist) Extensions() map[string]interface{} {
+func (e ErrAliasExist) Extensions() map[string]interface{} {
 	return map[string]interface{}{
 		"code":  ErrCodeAliasAlreadyExist,
 		"alias": string(e),
@@ -54,8 +54,8 @@ func (e ErrURLAliasExist) Extensions() map[string]interface{} {
 }
 
 // Error retrieves the human readable error message.
-func (e ErrURLAliasExist) Error() string {
-	return "url alias already exists"
+func (e ErrAliasExist) Error() string {
+	return "shortlink alias already exists"
 }
 
 // ErrNotHuman signifies that the API consumer is not human.

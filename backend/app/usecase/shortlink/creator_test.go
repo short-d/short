@@ -1,6 +1,6 @@
 // +build !integration all
 
-package url
+package shortlink
 
 import (
 	"testing"
@@ -15,7 +15,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/validator"
 )
 
-func TestURLCreatorPersist_CreateURL(t *testing.T) {
+func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now()
@@ -24,21 +24,21 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 	alias := "220uFicCJj"
 
 	testCases := []struct {
-		name          string
-		urls          urlMap
-		alias         string
-		availableKeys []keygen.Key
-		user          entity.User
-		url           entity.ShortLink
-		relationUsers []entity.User
-		relationURLs  []entity.ShortLink
-		isPublic      bool
-		expHasErr     bool
-		expectedURL   entity.ShortLink
+		name               string
+		shortLinks         shortLinks
+		alias              string
+		availableKeys      []keygen.Key
+		user               entity.User
+		shortLink          entity.ShortLink
+		relationUsers      []entity.User
+		relationShortLinks []entity.ShortLink
+		isPublic           bool
+		expHasErr          bool
+		expectedShortLink  entity.ShortLink
 	}{
 		{
 			name: "alias exists",
-			urls: urlMap{
+			shortLinks: shortLinks{
 				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: &now,
@@ -48,13 +48,13 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url:       entity.ShortLink{},
+			shortLink: entity.ShortLink{},
 			isPublic:  false,
 			expHasErr: true,
 		},
 		{
 			name: "alias too long",
-			urls: urlMap{
+			shortLinks: shortLinks{
 				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: &now,
@@ -64,26 +64,26 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url: entity.ShortLink{
+			shortLink: entity.ShortLink{
 				LongLink: "https://www.google.com",
 			},
 			expHasErr: true,
 		},
 		{
-			name:  "create alias successfully",
-			urls:  urlMap{},
-			alias: alias,
+			name:       "create alias successfully",
+			shortLinks: shortLinks{},
+			alias:      alias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url: entity.ShortLink{
+			shortLink: entity.ShortLink{
 				Alias:    "220uFicCJj",
 				LongLink: "https://www.google.com",
 				ExpireAt: &now,
 			},
 			isPublic:  false,
 			expHasErr: false,
-			expectedURL: entity.ShortLink{
+			expectedShortLink: entity.ShortLink{
 				Alias:     "220uFicCJj",
 				LongLink:  "https://www.google.com",
 				ExpireAt:  &now,
@@ -91,8 +91,8 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			},
 		},
 		{
-			name: "automatically generate alias if empty string alias provided",
-			urls: urlMap{},
+			name:       "automatically generate alias if empty string alias provided",
+			shortLinks: shortLinks{},
 			availableKeys: []keygen.Key{
 				"test",
 			},
@@ -100,11 +100,11 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url: entity.ShortLink{
+			shortLink: entity.ShortLink{
 				LongLink: "https://www.google.com",
 			},
 			expHasErr: false,
-			expectedURL: entity.ShortLink{
+			expectedShortLink: entity.ShortLink{
 				Alias:     "test",
 				LongLink:  "https://www.google.com",
 				CreatedAt: &utc,
@@ -112,7 +112,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 		},
 		{
 			name: "no available key",
-			urls: urlMap{
+			shortLinks: shortLinks{
 				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: &now,
@@ -123,7 +123,7 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			url: entity.ShortLink{
+			shortLink: entity.ShortLink{
 				LongLink: "https://www.google.com",
 			},
 			expHasErr: true,
@@ -137,10 +137,10 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 
 			blockedURLs := map[string]bool{}
 			blacklist := risk.NewBlackListFake(blockedURLs)
-			shortLinkRepo := repository.NewShortLinkFake(testCase.urls)
+			shortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
 			userShortLinkRepo := repository.NewUserShortLinkRepoFake(
 				testCase.relationUsers,
-				testCase.relationURLs,
+				testCase.relationShortLinks,
 			)
 			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
@@ -160,31 +160,31 @@ func TestURLCreatorPersist_CreateURL(t *testing.T) {
 				riskDetector,
 			)
 
-			_, err = shortLinkRepo.GetShortLinkByAlias(testCase.url.Alias)
+			_, err = shortLinkRepo.GetShortLinkByAlias(testCase.shortLink.Alias)
 			assert.NotEqual(t, nil, err)
 
-			isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.url)
+			isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.shortLink)
 			assert.Equal(t, false, isExist)
 
-			shortLink, err := creator.CreateShortLink(testCase.url, testCase.alias, testCase.user, testCase.isPublic)
+			shortLink, err := creator.CreateShortLink(testCase.shortLink, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
 				assert.NotEqual(t, nil, err)
 
-				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.expectedURL.Alias)
+				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.expectedShortLink.Alias)
 				assert.NotEqual(t, nil, err)
 
-				isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.expectedURL)
+				isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.expectedShortLink)
 				assert.Equal(t, false, isExist)
 				return
 			}
 			assert.Equal(t, nil, err)
-			assert.Equal(t, testCase.expectedURL, shortLink)
+			assert.Equal(t, testCase.expectedShortLink, shortLink)
 
-			savedURL, err := shortLinkRepo.GetShortLinkByAlias(testCase.expectedURL.Alias)
+			savedShortLink, err := shortLinkRepo.GetShortLinkByAlias(testCase.expectedShortLink.Alias)
 			assert.Equal(t, nil, err)
-			assert.Equal(t, testCase.expectedURL, savedURL)
+			assert.Equal(t, testCase.expectedShortLink, savedShortLink)
 
-			isExist = userShortLinkRepo.IsRelationExist(testCase.user, testCase.expectedURL)
+			isExist = userShortLinkRepo.IsRelationExist(testCase.user, testCase.expectedShortLink)
 			assert.Equal(t, true, isExist)
 		})
 	}
