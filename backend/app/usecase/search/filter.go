@@ -1,6 +1,7 @@
 package search
 
-// put those in entity package?
+import "github.com/short-d/short/backend/app/usecase/search/order"
+
 type Resource uint
 
 const (
@@ -8,14 +9,8 @@ const (
 	User
 )
 
-type Order uint
-
-const (
-	CreatedTimeASC Order = iota
-)
-
 type Filter struct {
 	maxResults int
 	resources  []Resource
-	orders     []Order
+	orders     []order.By
 }
