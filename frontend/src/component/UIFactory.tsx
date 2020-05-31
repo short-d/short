@@ -24,6 +24,7 @@ import { ShortLinkService } from '../service/ShortLink.service';
 import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
 import { AnalyticsService } from '../service/Analytics.service';
 import { PreferenceTogglesSubSection } from './pages/shared/PreferenceTogglesSubSection';
+import withFeatureToggle from './hoc/withFeatureToggle';
 
 export class UIFactory {
   private ToggledGoogleSignInButton: ComponentType<any>;
@@ -165,48 +166,4 @@ export class UIFactory {
   public createApp(): ReactElement {
     return <App uiFactory={this} urlService={this.urlService} />;
   }
-}
-
-function withFeatureToggle(
-  WrappedComponent: React.ComponentType<any>,
-  featureDecision: Promise<boolean>
-): React.ComponentType<any> {
-  interface IState {
-    isFeatureEnabled: boolean;
-  }
-
-  return class extends React.Component<any, IState> {
-    private isComponentMounted: boolean;
-
-    constructor(props: any) {
-      super(props);
-      this.state = {
-        isFeatureEnabled: false
-      };
-      this.isComponentMounted = false;
-    }
-
-    componentDidMount(): void {
-      this.isComponentMounted = true;
-
-      featureDecision.then(decision => {
-        if (!this.isComponentMounted) {
-          return;
-        }
-        this.setState({ isFeatureEnabled: decision });
-      });
-    }
-
-    componentWillUnmount(): void {
-      this.isComponentMounted = false;
-    }
-
-    render() {
-      const { isFeatureEnabled } = this.state;
-      if (!isFeatureEnabled) {
-        return <div />;
-      }
-      return <WrappedComponent {...this.props} />;
-    }
-  };
 }

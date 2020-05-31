@@ -14,7 +14,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 func TestQuery_AuthQuery(t *testing.T) {
@@ -62,7 +62,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 			fakeShortLinkRepo := repository.NewShortLinkFake(map[string]entity.ShortLink{})
 			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake(nil, nil)
 			auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
-			retrieverFake := url.NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
+			retrieverFake := shortlink.NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 			entryRepo := logger.NewEntryRepoFake()
 			lg, err := logger.NewFake(logger.LogOff, &entryRepo)
 
