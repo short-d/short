@@ -7,16 +7,16 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 // AuthMutation represents GraphQL mutation resolver that acts differently based
 // on the identify of the user
 type AuthMutation struct {
-	authToken     *string
-	authenticator authenticator.Authenticator
-	changeLog     changelog.ChangeLog
-	urlCreator    url.Creator
+	authToken        *string
+	authenticator    authenticator.Authenticator
+	changeLog        changelog.ChangeLog
+	shortLinkCreator shortlink.Creator
 }
 
 // URLInput represents possible ShortLink attributes
@@ -26,7 +26,7 @@ type URLInput struct {
 	ExpireAt    *time.Time
 }
 
-// CreateURLArgs represents the possible parameters for CreateURL endpoint
+// CreateURLArgs represents the possible parameters for CreateShortLink endpoint
 type CreateURLArgs struct {
 	URL      URLInput
 	IsPublic bool
@@ -43,7 +43,7 @@ type ChangeInput struct {
 	SummaryMarkdown *string
 }
 
-// CreateURL creates mapping between an alias and a long link for a given user
+// CreateShortLink creates mapping between an alias and a long link for a given user
 func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
@@ -58,19 +58,19 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 
 	isPublic := args.IsPublic
 
-	newURL, err := a.urlCreator.CreateURL(u, customAlias, user, isPublic)
+	newShortLink, err := a.shortLinkCreator.CreateShortLink(u, customAlias, user, isPublic)
 	if err == nil {
-		return &URL{url: newURL}, nil
+		return &URL{url: newShortLink}, nil
 	}
 
 	switch err.(type) {
-	case url.ErrAliasExist:
-		return nil, ErrURLAliasExist(*customAlias)
-	case url.ErrInvalidLongLink:
-		return nil, ErrInvalidLongLink{u.LongLink, err.(url.ErrInvalidLongLink).Violation.String()}
-	case url.ErrInvalidCustomAlias:
-		return nil, ErrInvalidCustomAlias{*customAlias, err.(url.ErrInvalidCustomAlias).Violation.String()}
-	case url.ErrMaliciousLongLink:
+	case shortlink.ErrAliasExist:
+		return nil, ErrAliasExist(*customAlias)
+	case shortlink.ErrInvalidLongLink:
+		return nil, ErrInvalidLongLink{u.LongLink, err.(shortlink.ErrInvalidLongLink).Violation.String()}
+	case shortlink.ErrInvalidCustomAlias:
+		return nil, ErrInvalidCustomAlias{*customAlias, err.(shortlink.ErrInvalidCustomAlias).Violation.String()}
+	case shortlink.ErrMaliciousLongLink:
 		return nil, ErrMaliciousContent(u.LongLink)
 	default:
 		return nil, ErrUnknown{}
@@ -98,12 +98,12 @@ func newAuthMutation(
 	authToken *string,
 	authenticator authenticator.Authenticator,
 	changeLog changelog.ChangeLog,
-	urlCreator url.Creator,
+	shortLinkCreator shortlink.Creator,
 ) AuthMutation {
 	return AuthMutation{
-		authToken:     authToken,
-		authenticator: authenticator,
-		changeLog:     changeLog,
-		urlCreator:    urlCreator,
+		authToken:        authToken,
+		authenticator:    authenticator,
+		changeLog:        changeLog,
+		shortLinkCreator: shortLinkCreator,
 	}
 }

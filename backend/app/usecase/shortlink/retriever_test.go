@@ -1,6 +1,6 @@
 // +build !integration all
 
-package url
+package shortlink
 
 import (
 	"testing"
@@ -11,9 +11,9 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
-type urlMap = map[string]entity.ShortLink
+type shortLinks = map[string]entity.ShortLink
 
-func TestUrlRetriever_GetURL(t *testing.T) {
+func TestRetriever_GetShortLink(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now()
@@ -21,37 +21,37 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 	after := now.Add(5 * time.Second)
 
 	testCases := []struct {
-		name        string
-		urls        urlMap
-		alias       string
-		expiringAt  *time.Time
-		hasErr      bool
-		expectedURL entity.ShortLink
+		name              string
+		shortLinks        shortLinks
+		alias             string
+		expiringAt        *time.Time
+		hasErr            bool
+		expectedShortLink entity.ShortLink
 	}{
 		{
-			name:        "alias not found",
-			urls:        urlMap{},
-			alias:       "220uFicCJj",
-			expiringAt:  &now,
-			hasErr:      true,
-			expectedURL: entity.ShortLink{},
+			name:              "alias not found",
+			shortLinks:        shortLinks{},
+			alias:             "220uFicCJj",
+			expiringAt:        &now,
+			hasErr:            true,
+			expectedShortLink: entity.ShortLink{},
 		},
 		{
-			name: "url expired",
-			urls: urlMap{
+			name: "short link expired",
+			shortLinks: shortLinks{
 				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: &before,
 				},
 			},
-			alias:       "220uFicCJj",
-			expiringAt:  &now,
-			hasErr:      true,
-			expectedURL: entity.ShortLink{},
+			alias:             "220uFicCJj",
+			expiringAt:        &now,
+			hasErr:            true,
+			expectedShortLink: entity.ShortLink{},
 		},
 		{
-			name: "url never expire",
-			urls: urlMap{
+			name: "short link never expire",
+			shortLinks: shortLinks{
 				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: nil,
@@ -60,14 +60,14 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 			alias:      "220uFicCJj",
 			expiringAt: &now,
 			hasErr:     false,
-			expectedURL: entity.ShortLink{
+			expectedShortLink: entity.ShortLink{
 				Alias:    "220uFicCJj",
 				ExpireAt: nil,
 			},
 		},
 		{
-			name: "unexpired url found",
-			urls: urlMap{
+			name: "unexpired short link found",
+			shortLinks: shortLinks{
 				"220uFicCJj": entity.ShortLink{
 					Alias:    "220uFicCJj",
 					ExpireAt: &after,
@@ -76,7 +76,7 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 			alias:      "220uFicCJj",
 			expiringAt: &now,
 			hasErr:     false,
-			expectedURL: entity.ShortLink{
+			expectedShortLink: entity.ShortLink{
 				Alias:    "220uFicCJj",
 				ExpireAt: &after,
 			},
@@ -88,36 +88,36 @@ func TestUrlRetriever_GetURL(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			fakeURLRepo := repository.NewURLFake(testCase.urls)
-			fakeUserURLRelationRepo := repository.NewUserURLRepoFake([]entity.User{}, []entity.ShortLink{})
-			retriever := NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
-			url, err := retriever.GetURL(testCase.alias, testCase.expiringAt)
+			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
+			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake([]entity.User{}, []entity.ShortLink{})
+			retriever := NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
+			shortLink, err := retriever.GetShortLink(testCase.alias, testCase.expiringAt)
 
 			if testCase.hasErr {
 				assert.NotEqual(t, nil, err)
 				return
 			}
 			assert.Equal(t, nil, err)
-			assert.Equal(t, testCase.expectedURL, url)
+			assert.Equal(t, testCase.expectedShortLink, shortLink)
 		})
 	}
 }
 
-func TestRetrieverPersist_GetURLs(t *testing.T) {
+func TestRetrieverPersist_GetShortLinks(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		name         string
-		urls         urlMap
-		users        []entity.User
-		createdURLs  []entity.ShortLink
-		user         entity.User
-		hasErr       bool
-		expectedURLs []entity.ShortLink
+		name               string
+		shortLinks         shortLinks
+		users              []entity.User
+		createdShortLinks  []entity.ShortLink
+		user               entity.User
+		hasErr             bool
+		expectedShortLinks []entity.ShortLink
 	}{
 		{
-			name: "user created URLs",
-			urls: urlMap{
+			name: "user created short links",
+			shortLinks: shortLinks{
 				"google": entity.ShortLink{
 					Alias:    "google",
 					LongLink: "https://www.google.com/",
@@ -146,7 +146,7 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 					Email: "test2@gmail.com",
 				},
 			},
-			createdURLs: []entity.ShortLink{
+			createdShortLinks: []entity.ShortLink{
 				{
 					Alias:    "google",
 					LongLink: "https://www.google.com/",
@@ -166,7 +166,7 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 				Email: "test@gmail.com",
 			},
 			hasErr: false,
-			expectedURLs: []entity.ShortLink{
+			expectedShortLinks: []entity.ShortLink{
 				{
 					Alias:    "google",
 					LongLink: "https://www.google.com/",
@@ -179,7 +179,7 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 		},
 		{
 			name: "user has no ShortLink",
-			urls: urlMap{
+			shortLinks: shortLinks{
 				"google": entity.ShortLink{
 					Alias:    "google",
 					LongLink: "https://www.google.com/",
@@ -208,7 +208,7 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 					Email: "test@gmail.com",
 				},
 			},
-			createdURLs: []entity.ShortLink{
+			createdShortLinks: []entity.ShortLink{
 				{
 					Alias:    "google",
 					LongLink: "https://www.google.com/",
@@ -227,8 +227,8 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 				Name:  "Test User 2",
 				Email: "test2@gmail.com",
 			},
-			hasErr:       false,
-			expectedURLs: []entity.ShortLink{},
+			hasErr:             false,
+			expectedShortLinks: []entity.ShortLink{},
 		},
 	}
 
@@ -237,18 +237,18 @@ func TestRetrieverPersist_GetURLs(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			fakeURLRepo := repository.NewURLFake(testCase.urls)
-			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(testCase.users, testCase.createdURLs)
-			retriever := NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
+			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
+			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake(testCase.users, testCase.createdShortLinks)
+			retriever := NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 
-			urls, err := retriever.GetURLsByUser(testCase.user)
+			shortLinks, err := retriever.GetShortLinksByUser(testCase.user)
 			if testCase.hasErr {
 				assert.NotEqual(t, nil, err)
 				return
 			}
 
 			assert.Equal(t, nil, err)
-			assert.Equal(t, testCase.expectedURLs, urls)
+			assert.Equal(t, testCase.expectedShortLinks, shortLinks)
 		})
 	}
 }

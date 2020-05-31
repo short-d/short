@@ -15,10 +15,10 @@ import (
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
-type urlMap = map[string]entity.ShortLink
+type shortLinkMap = map[string]entity.ShortLink
 
 func TestAuthQuery_URL(t *testing.T) {
 	t.Parallel()
@@ -31,7 +31,7 @@ func TestAuthQuery_URL(t *testing.T) {
 		user        entity.User
 		alias       string
 		expireAfter *scalar.Time
-		urls        urlMap
+		shortLinks  shortLinkMap
 		hasErr      bool
 		expectedURL *URL
 	}{
@@ -39,7 +39,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			name:        "alias not found with no expireAfter",
 			alias:       "220uFicCJj",
 			expireAfter: nil,
-			urls:        urlMap{},
+			shortLinks:  shortLinkMap{},
 			hasErr:      true,
 		},
 		{
@@ -48,8 +48,8 @@ func TestAuthQuery_URL(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls:   urlMap{},
-			hasErr: true,
+			shortLinks: shortLinkMap{},
+			hasErr:     true,
 		},
 		{
 			name:  "alias expired",
@@ -57,7 +57,7 @@ func TestAuthQuery_URL(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls: urlMap{
+			shortLinks: shortLinkMap{
 				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &before,
 				},
@@ -65,12 +65,12 @@ func TestAuthQuery_URL(t *testing.T) {
 			hasErr: true,
 		},
 		{
-			name:  "url found",
+			name:  "shortlink found",
 			alias: "220uFicCJj",
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls: urlMap{
+			shortLinks: shortLinkMap{
 				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &after,
 				},
@@ -88,9 +88,9 @@ func TestAuthQuery_URL(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			fakeURLRepo := repository.NewURLFake(testCase.urls)
-			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
-			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
+			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
+			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake(nil, nil)
+			retrieverFake := shortlink.NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 
 			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)

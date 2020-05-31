@@ -9,7 +9,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
-var _ repository.UserURLRelation = (*UserShortLinkSQL)(nil)
+var _ repository.UserShortLink = (*UserShortLinkSQL)(nil)
 
 // UserShortLinkSQL accesses UserShortLink information in user_short_link
 // table.

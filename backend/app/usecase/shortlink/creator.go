@@ -1,4 +1,4 @@
-package url
+package shortlink
 
 import (
 	"github.com/short-d/app/fw/timer"
@@ -47,25 +47,25 @@ func (e ErrMaliciousLongLink) Error() string {
 
 // Creator represents a ShortLink alias creator
 type Creator interface {
-	CreateURL(url entity.ShortLink, alias *string, user entity.User, isPublic bool) (entity.ShortLink, error)
+	CreateShortLink(shortLink entity.ShortLink, alias *string, user entity.User, isPublic bool) (entity.ShortLink, error)
 }
 
 // CreatorPersist represents a ShortLink alias creator which persist the generated
 // alias in the repository
 type CreatorPersist struct {
-	urlRepo             repository.URL
-	userURLRelationRepo repository.UserURLRelation
-	keyGen              keygen.KeyGenerator
-	longLinkValidator   validator.LongLink
-	aliasValidator      validator.CustomAlias
-	timer               timer.Timer
-	riskDetector        risk.Detector
+	shortLinkRepo     repository.ShortLink
+	userShortLinkRepo repository.UserShortLink
+	keyGen            keygen.KeyGenerator
+	longLinkValidator validator.LongLink
+	aliasValidator    validator.CustomAlias
+	timer             timer.Timer
+	riskDetector      risk.Detector
 }
 
-// CreateURL persists a new url with a given or auto generated alias in the repository.
+// CreateShortLink persists a new short link with a given or auto generated alias in the repository.
 // TODO(issue#235): add functionality for public URLs
-func (c CreatorPersist) CreateURL(url entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
-	longLink := url.LongLink
+func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
+	longLink := shortLink.LongLink
 	isValid, violation := c.longLinkValidator.IsValid(&longLink)
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidLongLink{longLink, violation}
@@ -76,57 +76,57 @@ func (c CreatorPersist) CreateURL(url entity.ShortLink, customAlias *string, use
 	}
 
 	if !c.isAliasProvided(customAlias) {
-		return c.createURLWithAutoAlias(url, user)
+		return c.createShortLinkWithAutoAlias(shortLink, user)
 	}
 
 	isValid, violation = c.aliasValidator.IsValid(customAlias)
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidCustomAlias{*customAlias, violation}
 	}
-	return c.createURLWithCustomAlias(url, *customAlias, user)
+	return c.createShortLinkWithCustomAlias(shortLink, *customAlias, user)
 }
 
 func (c CreatorPersist) isAliasProvided(customAlias *string) bool {
 	return customAlias != nil && *customAlias != ""
 }
 
-func (c CreatorPersist) createURLWithAutoAlias(url entity.ShortLink, user entity.User) (entity.ShortLink, error) {
+func (c CreatorPersist) createShortLinkWithAutoAlias(shortLink entity.ShortLink, user entity.User) (entity.ShortLink, error) {
 	key, err := c.keyGen.NewKey()
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
 	randomAlias := string(key)
-	return c.createURLWithCustomAlias(url, randomAlias, user)
+	return c.createShortLinkWithCustomAlias(shortLink, randomAlias, user)
 }
 
-func (c CreatorPersist) createURLWithCustomAlias(url entity.ShortLink, alias string, user entity.User) (entity.ShortLink, error) {
-	url.Alias = alias
+func (c CreatorPersist) createShortLinkWithCustomAlias(shortLink entity.ShortLink, alias string, user entity.User) (entity.ShortLink, error) {
+	shortLink.Alias = alias
 
-	isExist, err := c.urlRepo.IsAliasExist(alias)
+	isExist, err := c.shortLinkRepo.IsAliasExist(alias)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
 
 	if isExist {
-		return entity.ShortLink{}, ErrAliasExist("url alias already exist")
+		return entity.ShortLink{}, ErrAliasExist("short link alias already exist")
 	}
 
 	now := c.timer.Now().UTC()
-	url.CreatedAt = &now
+	shortLink.CreatedAt = &now
 
-	err = c.urlRepo.Create(url)
+	err = c.shortLinkRepo.CreateShortLink(shortLink)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
 
-	err = c.userURLRelationRepo.CreateRelation(user, url)
-	return url, err
+	err = c.userShortLinkRepo.CreateRelation(user, shortLink)
+	return shortLink, err
 }
 
 // NewCreatorPersist creates CreatorPersist
 func NewCreatorPersist(
-	urlRepo repository.URL,
-	userURLRelationRepo repository.UserURLRelation,
+	shortLinkRepo repository.ShortLink,
+	userShortLinkRepo repository.UserShortLink,
 	keyGen keygen.KeyGenerator,
 	longLinkValidator validator.LongLink,
 	aliasValidator validator.CustomAlias,
@@ -134,12 +134,12 @@ func NewCreatorPersist(
 	riskDetector risk.Detector,
 ) CreatorPersist {
 	return CreatorPersist{
-		urlRepo:             urlRepo,
-		userURLRelationRepo: userURLRelationRepo,
-		keyGen:              keyGen,
-		longLinkValidator:   longLinkValidator,
-		aliasValidator:      aliasValidator,
-		timer:               timer,
-		riskDetector:        riskDetector,
+		shortLinkRepo:     shortLinkRepo,
+		userShortLinkRepo: userShortLinkRepo,
+		keyGen:            keyGen,
+		longLinkValidator: longLinkValidator,
+		aliasValidator:    aliasValidator,
+		timer:             timer,
+		riskDetector:      riskDetector,
 	}
 }
