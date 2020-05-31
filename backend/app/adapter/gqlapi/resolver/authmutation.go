@@ -63,6 +63,7 @@ func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
 		return &URL{url: newShortLink}, nil
 	}
 
+	// TODO(issue#823): refactor error type checking
 	switch err.(type) {
 	case shortlink.ErrAliasExist:
 		return nil, ErrAliasExist(*customAlias)

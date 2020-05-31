@@ -28,15 +28,15 @@ func (c CustomAlias) IsValid(alias *string) (bool, Violation) {
 		return false, AliasTooLong
 	}
 
-	if c.HasFragmentCharacter(*alias) {
+	if c.hasFragmentCharacter(*alias) {
 		return false, HasFragmentCharacter
 	}
 
 	return true, Valid
 }
 
-// HasFragmentCharacter returns whether the alias contains the '#' character which starts fragment identifiers in URLs
-func (c CustomAlias) HasFragmentCharacter(alias string) bool {
+// hasFragmentCharacter returns whether the alias contains the '#' character which starts fragment identifiers in URLs
+func (c CustomAlias) hasFragmentCharacter(alias string) bool {
 	return strings.ContainsRune(alias, rune('#'))
 }
 

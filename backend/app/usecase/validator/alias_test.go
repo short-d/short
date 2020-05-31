@@ -38,12 +38,13 @@ func TestCustomAlias_IsValid(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, testCase.expIsValid, validator.IsValid(&testCase.alias))
+			valid, _ := validator.IsValid(&testCase.alias)
+			assert.Equal(t, testCase.expIsValid, valid)
 		})
 	}
 }
 
-func TestCustomAlias_HasFragmentCharacter(t *testing.T) {
+func TestCustomAlias_hasFragmentCharacter(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
 		name       string
@@ -72,7 +73,7 @@ func TestCustomAlias_HasFragmentCharacter(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, testCase.expIsValid, validator.HasFragmentCharacter(testCase.alias))
+			assert.Equal(t, testCase.expIsValid, validator.hasFragmentCharacter(testCase.alias))
 		})
 	}
 }

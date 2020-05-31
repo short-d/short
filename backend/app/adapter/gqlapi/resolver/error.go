@@ -90,8 +90,8 @@ var _ GraphQlError = (*ErrInvalidLongLink)(nil)
 func (e ErrInvalidLongLink) Extensions() map[string]interface{} {
 	return map[string]interface{}{
 		"code":      ErrCodeInvalidLongLink,
-		"longLink":  string(e.longLink),
-		"violation": string(e.violation),
+		"longLink":  e.longLink,
+		"violation": e.violation,
 	}
 }
 
@@ -114,8 +114,8 @@ var _ GraphQlError = (*ErrInvalidCustomAlias)(nil)
 func (e ErrInvalidCustomAlias) Extensions() map[string]interface{} {
 	return map[string]interface{}{
 		"code":        ErrCodeInvalidCustomAlias,
-		"customAlias": string(e.customAlias),
-		"violation":   string(e.violation),
+		"customAlias": e.customAlias,
+		"violation":   e.violation,
 	}
 }
 

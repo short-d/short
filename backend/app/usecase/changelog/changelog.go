@@ -55,6 +55,7 @@ func (p Persist) GetLastViewedAt(user entity.User) (*time.Time, error) {
 		return &lastViewedAt, nil
 	}
 
+	// TODO(issue#823): refactor error type checking
 	switch err.(type) {
 	case repository.ErrEntryNotFound:
 		return nil, nil
@@ -71,6 +72,7 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 		return lastViewedAt, nil
 	}
 
+	// TODO(issue#823): refactor error type checking
 	switch err.(type) {
 	case repository.ErrEntryNotFound:
 		err = p.userChangeLogRepo.CreateRelation(user, now)
