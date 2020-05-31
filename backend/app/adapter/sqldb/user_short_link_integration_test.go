@@ -23,8 +23,8 @@ VALUES ($1, $2)`,
 )
 
 type userShortLinkTableRow struct {
-	alias     string
-	userEmail string
+	alias  string
+	userID string
 }
 
 func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
@@ -45,6 +45,7 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 			shortLinkTableRows: []shortLinkTableRow{},
 			relationTableRows:  []userShortLinkTableRow{},
 			user: entity.User{
+				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
 				LastSignedInAt: &now,
@@ -57,18 +58,23 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 		{
 			name: "aliases found",
 			userTableRows: []userTableRow{
-				{email: "test@example.com"},
+				{
+					id:    "test",
+					name:  "test user",
+					email: "test@example.com",
+				},
 			},
 			shortLinkTableRows: []shortLinkTableRow{
 				{alias: "abcd-123-xyz"},
 			},
 			relationTableRows: []userShortLinkTableRow{
 				{
-					alias:     "abcd-123-xyz",
-					userEmail: "test@example.com",
+					alias:  "abcd-123-xyz",
+					userID: "test",
 				},
 			},
 			user: entity.User{
+				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
 				LastSignedInAt: &now,
@@ -117,7 +123,7 @@ func insertUserShortLinkTableRows(
 		_, err := sqlDB.Exec(
 			insertUserShortLinkRowSQL,
 			tableRow.alias,
-			tableRow.userEmail,
+			tableRow.userID,
 		)
 		assert.Equal(t, nil, err)
 	}

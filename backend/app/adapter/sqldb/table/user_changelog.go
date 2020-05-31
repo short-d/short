@@ -4,11 +4,9 @@ package table
 var UserChangeLog = struct {
 	TableName          string
 	ColumnUserID       string
-	ColumnEmail        string
 	ColumnLastViewedAt string
 }{
 	TableName:          "user_changelog",
 	ColumnUserID:       "user_id",
-	ColumnEmail:        "email",
 	ColumnLastViewedAt: "last_viewed_at",
 }

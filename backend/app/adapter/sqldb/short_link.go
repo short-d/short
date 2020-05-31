@@ -72,7 +72,7 @@ WHERE "%s"=$5;`,
 		table.ShortLink.ColumnLongLink,
 		table.ShortLink.ColumnExpireAt,
 		table.ShortLink.ColumnUpdatedAt,
-		oldAlias,
+		table.ShortLink.ColumnAlias,
 	)
 
 	_, err := s.db.Exec(

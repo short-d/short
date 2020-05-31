@@ -22,18 +22,27 @@ type githubSSOTableRow struct {
 func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 	testCases := []struct {
 		name            string
+		userTableRows   []userTableRow
 		tableRows       []githubSSOTableRow
 		ssoUserID       string
 		expectedIsExist bool
 	}{
 		{
 			name:            "sso user not found",
+			userTableRows:   []userTableRow{},
 			tableRows:       []githubSSOTableRow{},
 			ssoUserID:       "220uFicCJj",
 			expectedIsExist: false,
 		},
 		{
 			name: "sso user exists",
+			userTableRows: []userTableRow{
+				{
+					id:    "alpha",
+					email: "alpha@gmail.com",
+					name:  "alpha",
+				},
+			},
 			tableRows: []githubSSOTableRow{
 				{
 					githubUserID: "220uFicCJj",
@@ -53,6 +62,7 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
 					insertGithubSSOTableRows(t, sqlDB, testCase.tableRows)
 
 					entryRepo := logger.NewEntryRepoFake()
@@ -71,14 +81,27 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 
 func TestGithubSSOSql_CreateMapping(t *testing.T) {
 	testCases := []struct {
-		name        string
-		tableRows   []githubSSOTableRow
-		ssoUserID   string
-		shortUserID string
-		hasErr      bool
+		name          string
+		userTableRows []userTableRow
+		tableRows     []githubSSOTableRow
+		ssoUserID     string
+		shortUserID   string
+		hasErr        bool
 	}{
 		{
 			name: "mapping exists",
+			userTableRows: []userTableRow{
+				{
+					id:    "short",
+					email: "short@gmail.com",
+					name:  "short",
+				},
+				{
+					id:    "alpha",
+					email: "alpha@gmail.com",
+					name:  "alpha",
+				},
+			},
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -88,6 +111,18 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 		},
 		{
 			name: "only SSO user ID exists",
+			userTableRows: []userTableRow{
+				{
+					id:    "short",
+					email: "short@gmail.com",
+					name:  "short",
+				},
+				{
+					id:    "alpha",
+					email: "alpha@gmail.com",
+					name:  "alpha",
+				},
+			},
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -97,6 +132,18 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 		},
 		{
 			name: "only Short user ID exists",
+			userTableRows: []userTableRow{
+				{
+					id:    "short",
+					email: "short@gmail.com",
+					name:  "short",
+				},
+				{
+					id:    "alpha",
+					email: "alpha@gmail.com",
+					name:  "alpha",
+				},
+			},
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -106,6 +153,18 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 		},
 		{
 			name: "neither SSO user ID nor Short user ID exists",
+			userTableRows: []userTableRow{
+				{
+					id:    "short",
+					email: "short@gmail.com",
+					name:  "short",
+				},
+				{
+					id:    "alpha",
+					email: "alpha@gmail.com",
+					name:  "alpha",
+				},
+			},
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -123,6 +182,7 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
 					insertGithubSSOTableRows(t, sqlDB, testCase.tableRows)
 
 					entryRepo := logger.NewEntryRepoFake()
@@ -131,7 +191,6 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 
 					githubSSORepo := sqldb.NewGithubSSOSql(sqlDB, lg)
 					err = githubSSORepo.CreateMapping(testCase.ssoUserID, testCase.shortUserID)
-					assert.Equal(t, nil, err)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
