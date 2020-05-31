@@ -59,7 +59,7 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 			expectedIsEnabled: true,
 		},
 		{
-			name: "permission not found",
+			name: "permission toggle, feature enabled, permission checker not defined",
 			toggles: map[string]entity.Toggle{
 				"example-feature": {
 					ID:        "example-feature",
@@ -77,7 +77,7 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 			expectedIsEnabled: false,
 		},
 		{
-			name: "permission disabled",
+			name: "permission toggle, feature enabled, user has no permission",
 			toggles: map[string]entity.Toggle{
 				"admin-panel": {
 					ID:        "admin-panel",
@@ -95,7 +95,7 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 			expectedIsEnabled: false,
 		},
 		{
-			name: "permission enabled",
+			name: "permission toggle, feature enabled, user has permission",
 			toggles: map[string]entity.Toggle{
 				"admin-panel": {
 					ID:        "admin-panel",
@@ -111,6 +111,36 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 				ID: "id",
 			},
 			expectedIsEnabled: true,
+		},
+		{
+			name: "permission toggle, feature disabled, user has permission",
+			toggles: map[string]entity.Toggle{
+				"admin-panel": {
+					ID:        "admin-panel",
+					IsEnabled: false,
+					Type:      entity.PermissionToggle,
+				},
+			},
+			featureID: "admin-panel",
+			roles: map[string][]role.Role{
+				"id": {role.Admin},
+			},
+			user: entity.User{
+				ID: "id",
+			},
+			expectedIsEnabled: false,
+		},
+		{
+			name: "permission toggle, feature enabled, user is nil",
+			toggles: map[string]entity.Toggle{
+				"admin-panel": {
+					ID:        "admin-panel",
+					IsEnabled: true,
+					Type:      entity.PermissionToggle,
+				},
+			},
+			featureID: "admin-panel",
+			expectedIsEnabled: false,
 		},
 	}
 
