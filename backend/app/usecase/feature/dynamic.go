@@ -33,16 +33,15 @@ func (d DynamicDecisionMaker) IsFeatureEnable(featureID string, user *entity.Use
 }
 
 func (d DynamicDecisionMaker) makeDecision(toggle entity.Toggle, user *entity.User) bool {
-	if toggle.Type == entity.ManualToggle {
+	switch toggle.Type:
+	    case entity.ManualToggle:
 		return d.makeManualDecision(toggle)
+	    case entity.PermissionToggle:
+	        return d.makePermissionDecision(toggle, user)
+	     default:
+	         	// deny access by default if the toggle type's value is unexpected
+	         return false
 	}
-
-	if toggle.Type == entity.PermissionToggle {
-		return d.makePermissionDecision(toggle, user)
-	}
-
-	// deny access by default if the toggle type's value is unexpected
-	return false
 }
 
 func (d DynamicDecisionMaker) makeManualDecision(toggle entity.Toggle) bool {
