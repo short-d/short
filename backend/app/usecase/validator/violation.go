@@ -1,25 +1,13 @@
 package validator
 
 // Violation represents a type of invalid error encountered by the validator.
-type Violation int
+type Violation string
 
 const (
-	Valid Violation = iota
-	InvalidAlias
-	InvalidLongLink
-	AliasTooLong
-	LongLinkTooLong
-	HasFragmentCharacter
+	Valid                Violation = "Valid"
+	EmptyLongLink                  = "EmptyLongLink"
+	LongLinkNotURL                 = "LongLinkNotURL"
+	AliasTooLong                   = "AliasTooLong"
+	LongLinkTooLong                = "LongLinkTooLong"
+	HasFragmentCharacter           = "HasFragmentCharacter"
 )
-
-// Returns a string representation of the violation.
-func (v Violation) String() string {
-	return [...]string{
-		"Valid",
-		"InvalidAlias",
-		"InvalidLongLink",
-		"AliasTooLong",
-		"LongLinkTooLong",
-		"HasFragmentCharacter",
-	}[v]
-}
