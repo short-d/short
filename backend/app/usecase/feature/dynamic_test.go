@@ -108,7 +108,7 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 				"id": {role.Admin},
 			},
 			user: entity.User{
-				ID: "id",
+				ID: "alpha",
 			},
 			expectedIsEnabled: true,
 		},
@@ -126,7 +126,7 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 				"id": {role.Admin},
 			},
 			user: entity.User{
-				ID: "id",
+				ID: "alpha",
 			},
 			expectedIsEnabled: false,
 		},
