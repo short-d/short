@@ -105,7 +105,7 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 			},
 			featureID: "admin-panel",
 			roles: map[string][]role.Role{
-				"id": {role.Admin},
+				"alpha": {role.Admin},
 			},
 			user: entity.User{
 				ID: "alpha",
