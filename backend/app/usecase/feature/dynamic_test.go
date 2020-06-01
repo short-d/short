@@ -139,7 +139,7 @@ func TestDynamicDecisionMaker_IsFeatureEnable(t *testing.T) {
 					Type:      entity.PermissionToggle,
 				},
 			},
-			featureID: "admin-panel",
+			featureID:         "admin-panel",
 			expectedIsEnabled: false,
 		},
 	}
