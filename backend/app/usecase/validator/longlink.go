@@ -12,11 +12,11 @@ type LongLink struct {
 // IsValid checks whether the given long link has valid format.
 func (l LongLink) IsValid(longLink *string) (bool, Violation) {
 	if longLink == nil {
-		return false, InvalidLongLink
+		return false, EmptyLongLink
 	}
 
 	if *longLink == "" {
-		return false, InvalidLongLink
+		return false, EmptyLongLink
 	}
 
 	if len(*longLink) >= longLinkMaxLength {
@@ -24,7 +24,7 @@ func (l LongLink) IsValid(longLink *string) (bool, Violation) {
 	}
 
 	if !l.uriPattern.MatchString(*longLink) {
-		return false, InvalidLongLink
+		return false, LongLinkNotURL
 	}
 
 	return true, Valid
