@@ -102,7 +102,7 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 		hasErr        bool
 	}{
 		{
-			name: "mapping exists",
+			name:          "mapping exists",
 			userTableRows: defaultUserTableRows,
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
@@ -112,7 +112,7 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 			hasErr:      true,
 		},
 		{
-			name: "only SSO user ID exists",
+			name:          "only SSO user ID exists",
 			userTableRows: defaultUserTableRows,
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
@@ -122,7 +122,7 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 			hasErr:      true,
 		},
 		{
-			name: "only Short user ID exists",
+			name:          "only Short user ID exists",
 			userTableRows: defaultUserTableRows,
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
@@ -132,7 +132,7 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 			hasErr:      true,
 		},
 		{
-			name: "neither SSO user ID nor Short user ID exists",
+			name:          "neither SSO user ID nor Short user ID exists",
 			userTableRows: defaultUserTableRows,
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
