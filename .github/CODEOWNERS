@@ -10,7 +10,7 @@
 # precedence.
 
 # Backend
-*.go    @alldroll @arberiii @byliuyang
+*.go    @arberiii @byliuyang
 
 # Frontend
 *.ts    @rohithbalaji123 @byliuyang

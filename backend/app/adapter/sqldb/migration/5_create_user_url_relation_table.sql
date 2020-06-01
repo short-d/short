@@ -1,9 +1,10 @@
 -- +migrate Up
 CREATE TABLE user_url_relation
 (
-    user_email CHARACTER VARYING(254) NOT NULL,
+    -- TODO(issue#824): Add Primary Key Constraint to user_email and url_alias on migrate up
+    -- TODO(issue#824): Set user_email to NOT NULL on migrate up
+    user_email CHARACTER VARYING(254),
     url_alias  CHARACTER VARYING(50)  NOT NULL,
-    CONSTRAINT pk_user_url_relation PRIMARY KEY (user_email, url_alias),
     FOREIGN KEY (user_email) REFERENCES "user" (email) ON UPDATE CASCADE,
     FOREIGN KEY (url_alias) REFERENCES url (alias) ON DELETE CASCADE ON UPDATE CASCADE
 );

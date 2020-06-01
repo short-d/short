@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"net/http"
 	netURL "net/url"
+	"strings"
 
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
@@ -85,13 +88,15 @@ func NewSSOSignInCallback(
 func FeatureHandle(
 	instrumentationFactory request.InstrumentationFactory,
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
+	authenticator authenticator.Authenticator,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
 		i := instrumentationFactory.NewRequest()
 		featureID := params["featureID"]
+		user := getUser(r, authenticator)
 
 		decision := featureDecisionMakerFactory.NewDecision(i)
-		isEnable := decision.IsFeatureEnable(featureID)
+		isEnable := decision.IsFeatureEnable(featureID, user)
 
 		body, err := json.Marshal(isEnable)
 		if err != nil {
@@ -100,4 +105,29 @@ func FeatureHandle(
 
 		w.Write(body)
 	}
+}
+
+func getUser(r *http.Request, authenticator authenticator.Authenticator) *entity.User {
+	authToken := getBearerToken(r)
+	user, err := authenticator.GetUser(authToken)
+	if err != nil {
+		return nil
+	}
+	return &user
+}
+
+// getBearerToken parses Authorization token with format "Bearer <token>"
+func getBearerToken(r *http.Request) string {
+	authHeader := r.Header.Get("Authorization")
+	if len(authHeader) < 1 {
+		return ""
+	}
+	words := strings.Split(authHeader, " ")
+	if len(words) != 2 {
+		return ""
+	}
+	if words[0] != "Bearer" {
+		return ""
+	}
+	return words[1]
 }

@@ -46,6 +46,7 @@ func TestFeatureToggleSQL_FindToggleByID(t *testing.T) {
 			expectToggle: entity.Toggle{
 				ID:        "example-feature",
 				IsEnabled: true,
+				Type:      entity.ManualToggle,
 			},
 		},
 		{
@@ -61,6 +62,7 @@ func TestFeatureToggleSQL_FindToggleByID(t *testing.T) {
 			expectToggle: entity.Toggle{
 				ID:        "example-feature",
 				IsEnabled: false,
+				Type:      entity.ManualToggle,
 			},
 		},
 	}
