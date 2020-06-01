@@ -80,6 +80,19 @@ func TestGithubSSOSql_IsSSOUserExist(t *testing.T) {
 }
 
 func TestGithubSSOSql_CreateMapping(t *testing.T) {
+	defaultUserTableRows := []userTableRow{
+		{
+			id:    "short",
+			email: "short@gmail.com",
+			name:  "short",
+		},
+		{
+			id:    "alpha",
+			email: "alpha@gmail.com",
+			name:  "alpha",
+		},
+	}
+
 	testCases := []struct {
 		name          string
 		userTableRows []userTableRow
@@ -90,18 +103,7 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 	}{
 		{
 			name: "mapping exists",
-			userTableRows: []userTableRow{
-				{
-					id:    "short",
-					email: "short@gmail.com",
-					name:  "short",
-				},
-				{
-					id:    "alpha",
-					email: "alpha@gmail.com",
-					name:  "alpha",
-				},
-			},
+			userTableRows: defaultUserTableRows,
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -111,18 +113,7 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 		},
 		{
 			name: "only SSO user ID exists",
-			userTableRows: []userTableRow{
-				{
-					id:    "short",
-					email: "short@gmail.com",
-					name:  "short",
-				},
-				{
-					id:    "alpha",
-					email: "alpha@gmail.com",
-					name:  "alpha",
-				},
-			},
+			userTableRows: defaultUserTableRows,
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -132,18 +123,7 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 		},
 		{
 			name: "only Short user ID exists",
-			userTableRows: []userTableRow{
-				{
-					id:    "short",
-					email: "short@gmail.com",
-					name:  "short",
-				},
-				{
-					id:    "alpha",
-					email: "alpha@gmail.com",
-					name:  "alpha",
-				},
-			},
+			userTableRows: defaultUserTableRows,
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -153,18 +133,7 @@ func TestGithubSSOSql_CreateMapping(t *testing.T) {
 		},
 		{
 			name: "neither SSO user ID nor Short user ID exists",
-			userTableRows: []userTableRow{
-				{
-					id:    "short",
-					email: "short@gmail.com",
-					name:  "short",
-				},
-				{
-					id:    "alpha",
-					email: "alpha@gmail.com",
-					name:  "alpha",
-				},
-			},
+			userTableRows: defaultUserTableRows,
 			tableRows: []githubSSOTableRow{
 				{githubUserID: "long_user_id", shortUserID: "short"},
 			},
