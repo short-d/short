@@ -16,17 +16,15 @@ import (
 )
 
 var insertUserChangeLogRowSQL = fmt.Sprintf(`
-INSERT INTO %s (%s, %s, %s)
-VALUES ($1, $2, $3);`,
+INSERT INTO %s (%s, %s)
+VALUES ($1, $2);`,
 	table.UserChangeLog.TableName,
 	table.UserChangeLog.ColumnUserID,
-	table.UserChangeLog.ColumnEmail,
 	table.UserChangeLog.ColumnLastViewedAt,
 )
 
 type userChangeLogTableRow struct {
 	userID       string
-	email        string
 	lastViewedAt time.Time
 }
 
@@ -36,6 +34,7 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 
 	testCases := []struct {
 		name                   string
+		userTableRows          []userTableRow
 		userChangeLogTableRows []userChangeLogTableRow
 		user                   entity.User
 		expectedLastViewedAt   time.Time
@@ -43,15 +42,25 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 	}{
 		{
 			name: "user last viewed at time is one month ago",
+			userTableRows: []userTableRow{
+				{
+					id:    "12345",
+					name:  "Test User",
+					email: "test@gmail.com",
+				},
+				{
+					id:    "12346",
+					name:  "Test User 2",
+					email: "test2@gmail.com",
+				},
+			},
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
-					email:        "test2@gmail.com",
 					lastViewedAt: now,
 				},
 				{
 					userID:       "12345",
-					email:        "test@gmail.com",
 					lastViewedAt: monthAgo,
 				},
 			},
@@ -65,10 +74,21 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 		},
 		{
 			name: "user does not exist",
+			userTableRows: []userTableRow{
+				{
+					id:    "12345",
+					name:  "Test User",
+					email: "test@gmail.com",
+				},
+				{
+					id:    "12346",
+					name:  "Test User 2",
+					email: "test2@gmail.com",
+				},
+			},
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
-					email:        "test2@gmail.com",
 					lastViewedAt: now,
 				},
 			},
@@ -90,6 +110,7 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
 					userChangeLogRepo := sqldb.NewUserChangeLogSQL(sqlDB)
@@ -113,6 +134,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 
 	testCases := []struct {
 		name                   string
+		userTableRows          []userTableRow
 		userChangeLogTableRows []userChangeLogTableRow
 		user                   entity.User
 		expectedLastViewedAt   time.Time
@@ -120,10 +142,21 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 	}{
 		{
 			name: "user does not exist",
+			userTableRows: []userTableRow{
+				{
+					id:    "12345",
+					name:  "Test User",
+					email: "test@gmail.com",
+				},
+				{
+					id:    "12346",
+					name:  "Test User 2",
+					email: "test2@gmail.com",
+				},
+			},
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
-					email:        "test2@gmail.com",
 					lastViewedAt: monthAgo,
 				},
 			},
@@ -137,10 +170,21 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 		},
 		{
 			name: "user has last viewed time",
+			userTableRows: []userTableRow{
+				{
+					id:    "12345",
+					name:  "Test User",
+					email: "test@gmail.com",
+				},
+				{
+					id:    "12346",
+					name:  "Test User 2",
+					email: "test2@gmail.com",
+				},
+			},
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12345",
-					email:        "test@gmail.com",
 					lastViewedAt: monthAgo,
 				},
 			},
@@ -162,6 +206,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
 					userChangeLogRepo := sqldb.NewUserChangeLogSQL(sqlDB)
@@ -190,6 +235,7 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 
 	testCases := []struct {
 		name                   string
+		userTableRows          []userTableRow
 		userChangeLogTableRows []userChangeLogTableRow
 		user                   entity.User
 		expectedLastViewedAt   time.Time
@@ -197,10 +243,21 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 	}{
 		{
 			name: "user does not exist",
+			userTableRows: []userTableRow{
+				{
+					id:    "12345",
+					name:  "Test User",
+					email: "test@gmail.com",
+				},
+				{
+					id:    "12346",
+					name:  "Test User 2",
+					email: "test2@gmail.com",
+				},
+			},
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
-					email:        "test2@gmail.com",
 					lastViewedAt: monthAgo,
 				},
 			},
@@ -214,15 +271,25 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 		},
 		{
 			name: "user already exists",
+			userTableRows: []userTableRow{
+				{
+					id:    "12345",
+					name:  "Test User",
+					email: "test@gmail.com",
+				},
+				{
+					id:    "12346",
+					name:  "Test User 2",
+					email: "test2@gmail.com",
+				},
+			},
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
-					email:        "test2@gmail.com",
 					lastViewedAt: twoMonthsAgo,
 				},
 				{
 					userID:       "12345",
-					email:        "test@gmail.com",
 					lastViewedAt: monthAgo,
 				},
 			},
@@ -244,6 +311,7 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
 					userChangeLogRepo := sqldb.NewUserChangeLogSQL(sqlDB)
@@ -272,7 +340,6 @@ func insertUserChangeLogTableRows(
 		_, err := sqlDB.Exec(
 			insertUserChangeLogRowSQL,
 			tableRow.userID,
-			tableRow.email,
 			tableRow.lastViewedAt,
 		)
 		assert.Equal(t, nil, err)
