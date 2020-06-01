@@ -11,6 +11,6 @@ ALTER TABLE "user_changelog"
     DROP CONSTRAINT "user_changelog_pkey";
 ALTER TABLE "user_changelog"
     ADD COLUMN email CHARACTER VARYING(254);
--- TODO: Add Primary Key Constraint to email on migrate down
+-- TODO(issue#824): Add Primary Key Constraint to email on migrate down
 ALTER TABLE "user_changelog"
     DROP CONSTRAINT "user_id_fkey";

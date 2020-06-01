@@ -29,5 +29,5 @@ ALTER TABLE "user_url_relation"
     ADD COLUMN user_email CHARACTER VARYING(254);
 ALTER TABLE "user_url_relation"
     ADD CONSTRAINT "user_url_relation_user_email_fkey" FOREIGN KEY (user_email) REFERENCES "user"(email);
--- TODO: Add Primary Key Constraint to user_email and url_alias on migrate down
--- TODO: Set user_email to NOT NULL on migrate down
+-- TODO(issue#824): Add Primary Key Constraint to user_email and url_alias on migrate down
+-- TODO(issue#824): Set user_email to NOT NULL on migrate down

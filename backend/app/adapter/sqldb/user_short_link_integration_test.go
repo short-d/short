@@ -60,7 +60,7 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 			userTableRows: []userTableRow{
 				{
 					id:    "test",
-					name:  "test user",
+					name:  "mockedUser",
 					email: "test@example.com",
 				},
 			},
