@@ -81,28 +81,54 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 		return Result{}, err
 	}
 
-	var matchedByAlias []entity.ShortLink
+	var matchedAliasByAnd, matchedAliasByOr []entity.ShortLink
 	for _, shortLink := range shortLinks {
-		if strings.Contains(shortLink.Alias, query.query) {
-			matchedByAlias = append(matchedByAlias, shortLink)
+		and, or := stringContains(shortLink.Alias, strings.Split(query.query, " "))
+		if and {
+			matchedAliasByAnd = append(matchedAliasByAnd, shortLink)
+		} else if or {
+			matchedAliasByOr = append(matchedAliasByOr, shortLink)
 		}
 	}
-	matchedByAlias = orderBy.ArrangeShortLinks(matchedByAlias)
+	matchedAliasByAnd = orderBy.ArrangeShortLinks(matchedAliasByAnd)
+	matchedAliasByOr = orderBy.ArrangeShortLinks(matchedAliasByOr)
 
-	var matchedByLongLink []entity.ShortLink
+	var matchedLongLinkByAnd, matchedLongLinkByOr []entity.ShortLink
 	for _, shortLink := range shortLinks {
-		if strings.Contains(shortLink.LongLink, query.query) {
-			matchedByLongLink = append(matchedByLongLink, shortLink)
+		and, or := stringContains(shortLink.LongLink, strings.Split(query.query, " "))
+		if and {
+			matchedLongLinkByAnd = append(matchedLongLinkByAnd, shortLink)
+		} else if or {
+			matchedLongLinkByOr = append(matchedLongLinkByOr, shortLink)
 		}
 	}
-	matchedByLongLink = orderBy.ArrangeShortLinks(matchedByLongLink)
+	matchedLongLinkByAnd = orderBy.ArrangeShortLinks(matchedLongLinkByAnd)
+	matchedLongLinkByOr = orderBy.ArrangeShortLinks(matchedLongLinkByOr)
 
-	mergedShortLinks := append(matchedByAlias, matchedByLongLink...)
+	mergedShortLinks := append(matchedAliasByAnd, matchedAliasByOr...)
+	mergedShortLinks = append(mergedShortLinks, matchedLongLinkByAnd...)
+	mergedShortLinks = append(mergedShortLinks, matchedLongLinkByOr...)
 
 	return Result{
 		shortLinks: mergedShortLinks,
 		users:      nil,
 	}, nil
+}
+
+func stringContains(s string, words []string) (bool, bool) {
+	and := true
+	or := false
+	for _, word := range words {
+		if !and && or {
+			return and, or
+		}
+		if strings.Contains(s, word) {
+			or = true
+		} else {
+			and = false
+		}
+	}
+	return and, or
 }
 
 func (s Search) searchUser(query Query, orderBy order.Order, filter Filter) (Result, error) {
