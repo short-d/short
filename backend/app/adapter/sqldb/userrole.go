@@ -30,7 +30,7 @@ WHERE "%s"=$1;
 		table.UserRole.ColumnUserID,
 	)
 
-	var roles []role.Role
+	roles := []role.Role{}
 	rows, err := u.db.Query(statement, user.ID)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, repository.ErrEntryNotFound("user not found")

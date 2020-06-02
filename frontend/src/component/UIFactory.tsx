@@ -24,7 +24,9 @@ import { ShortLinkService } from '../service/ShortLink.service';
 import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
 import { AnalyticsService } from '../service/Analytics.service';
 import { PreferenceTogglesSubSection } from './pages/shared/PreferenceTogglesSubSection';
+import { AdminPage } from './pages/AdminPage';
 import withFeatureToggle from './hoc/withFeatureToggle';
+import withPageAuth from './hoc/withPageAuth';
 
 export class UIFactory {
   private ToggledGoogleSignInButton: ComponentType<any>;
@@ -35,6 +37,8 @@ export class UIFactory {
   private ToggledPreferenceTogglesSubSection: ComponentType<any>;
   private ToggledPublicListingToggle: ComponentType<any>;
   private ToggledUserShortLinksSection: ComponentType<any>;
+
+  private AuthedAdminPage: ComponentType<any>;
 
   constructor(
     private authService: AuthService,
@@ -95,6 +99,9 @@ export class UIFactory {
       UserShortLinksSection,
       includeUserShortLinksSection
     );
+
+    const includeAdminPage = this.featureDecisionService.includeAdminPage();
+    this.AuthedAdminPage = withPageAuth(AdminPage, includeAdminPage);
   }
 
   public createHomePage(location: H.Location<any>): ReactElement {
@@ -117,6 +124,10 @@ export class UIFactory {
         location={location}
       />
     );
+  }
+
+  public createAdminPage(): ReactElement {
+    return <this.AuthedAdminPage />;
   }
 
   public createViewChangeLogButton(props: any): ReactElement {

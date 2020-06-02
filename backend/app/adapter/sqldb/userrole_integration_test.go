@@ -31,6 +31,7 @@ type userRoleTableRow struct {
 func TestUserRoleSQL_GetRoles(t *testing.T) {
 	testCases := []struct {
 		name          string
+		userTableRows []userTableRow
 		user          entity.User
 		userRoleRows  []userRoleTableRow
 		expectedRoles []role.Role
@@ -38,6 +39,13 @@ func TestUserRoleSQL_GetRoles(t *testing.T) {
 	}{
 		{
 			name: "get roles for user has no role",
+			userTableRows: []userTableRow{
+				{
+					id:    "1343",
+					email: "test@gmail.com",
+					name:  "test",
+				},
+			},
 			user: entity.User{
 				ID: "1343",
 			},
@@ -47,6 +55,13 @@ func TestUserRoleSQL_GetRoles(t *testing.T) {
 		},
 		{
 			name: "get roles for user with existing roles",
+			userTableRows: []userTableRow{
+				{
+					id:    "1343",
+					email: "test@gmail.com",
+					name:  "test",
+				},
+			},
 			user: entity.User{
 				ID: "1343",
 			},
@@ -67,6 +82,7 @@ func TestUserRoleSQL_GetRoles(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
 					insertUserRoleRow(t, sqlDB, testCase.userRoleRows)
 
 					userRoleRepo := sqldb.NewUserRoleSQL(sqlDB)
@@ -87,6 +103,7 @@ func TestUserRoleSQL_GetRoles(t *testing.T) {
 func TestUserRoleSQL_AddRole(t *testing.T) {
 	testCases := []struct {
 		name          string
+		userTableRows []userTableRow
 		user          entity.User
 		userRoleRows  []userRoleTableRow
 		newRoles      []role.Role
@@ -95,6 +112,18 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 	}{
 		{
 			name: "add 1 role for nonexistent user",
+			userTableRows: []userTableRow{
+				{
+					id:    "1343",
+					email: "test@gmail.com",
+					name:  "test",
+				},
+				{
+					id:    "4444",
+					email: "test2@gmail.com",
+					name:  "test 2",
+				},
+			},
 			user: entity.User{
 				ID: "1343",
 			},
@@ -107,6 +136,18 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 		},
 		{
 			name: "add 1 role for user with existing roles",
+			userTableRows: []userTableRow{
+				{
+					id:    "1343",
+					email: "test@gmail.com",
+					name:  "test",
+				},
+				{
+					id:    "4444",
+					email: "test2@gmail.com",
+					name:  "test 2",
+				},
+			},
 			user: entity.User{
 				ID: "1343",
 			},
@@ -120,6 +161,18 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 		},
 		{
 			name: "add multiple roles for a give user",
+			userTableRows: []userTableRow{
+				{
+					id:    "1343",
+					email: "test@gmail.com",
+					name:  "test",
+				},
+				{
+					id:    "4444",
+					email: "test2@gmail.com",
+					name:  "test 2",
+				},
+			},
 			user: entity.User{
 				ID: "1343",
 			},
@@ -141,6 +194,7 @@ func TestUserRoleSQL_AddRole(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
 					insertUserRoleRow(t, sqlDB, testCase.userRoleRows)
 
 					userRoleRepo := sqldb.NewUserRoleSQL(sqlDB)
@@ -172,6 +226,7 @@ func TestUserRoleSQL_DeleteRole(t *testing.T) {
 	// TODO(issue#755) Add integration test for foreign key constraint
 	testCases := []struct {
 		name          string
+		userTableRows []userTableRow
 		user          entity.User
 		userRoleRows  []userRoleTableRow
 		toDelete      role.Role
@@ -180,6 +235,13 @@ func TestUserRoleSQL_DeleteRole(t *testing.T) {
 	}{
 		{
 			name: "should remove a role from the given",
+			userTableRows: []userTableRow{
+				{
+					id:    "1343",
+					email: "test@gmail.com",
+					name:  "test",
+				},
+			},
 			user: entity.User{
 				ID: "1343",
 			},
@@ -192,6 +254,13 @@ func TestUserRoleSQL_DeleteRole(t *testing.T) {
 		},
 		{
 			name: "should do nothing if a user doesn't have the role",
+			userTableRows: []userTableRow{
+				{
+					id:    "1343",
+					email: "test@gmail.com",
+					name:  "test",
+				},
+			},
 			user: entity.User{
 				ID: "1343",
 			},
@@ -206,6 +275,18 @@ func TestUserRoleSQL_DeleteRole(t *testing.T) {
 		},
 		{
 			name: "should do nothing for nonexistent user",
+			userTableRows: []userTableRow{
+				{
+					id:    "1343",
+					email: "test@gmail.com",
+					name:  "test",
+				},
+				{
+					id:    "0000",
+					email: "test3@gmail.com",
+					name:  "test 3",
+				},
+			},
 			user: entity.User{
 				ID: "1343",
 			},
@@ -228,6 +309,7 @@ func TestUserRoleSQL_DeleteRole(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
 					userRoleRepo := sqldb.NewUserRoleSQL(sqlDB)
 					insertUserRoleRow(t, sqlDB, testCase.userRoleRows)
 
