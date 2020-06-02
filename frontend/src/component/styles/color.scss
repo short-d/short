@@ -4,9 +4,9 @@ $color-modal-background: #f5f5f5;
 $color-dark-gray: #343434;
 $color-light-gray: #dedede;
 $color-highlight: lightblue;
-$color-scrollbar-track: #cccccc;
+$color-scrollbar-track: #ccc;
 $color-divider: #dbdbdb;
-$color-time: #999999;
+$color-time: #999;
 $color-toast-background: $color-dark-gray;
 $color-toast-text: $color-light-gray;
 $color-table-header-background: $color-light-gray;
@@ -21,6 +21,8 @@ $color-page-indicator-active-background: #303030;
 $color-page-indicator-active-text: white;
 $color-page-indicator-active-hover-background: #464646;
 $color-page-indicator-active-hover-text: white;
+
+$color-admin-panel-background: #f6f6f6;
 
 @function color-transparent-white($opacity) {
   @return rgba(255, 255, 255, $opacity);
