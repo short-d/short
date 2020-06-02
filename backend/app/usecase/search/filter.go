@@ -2,6 +2,7 @@ package search
 
 import "github.com/short-d/short/backend/app/usecase/search/order"
 
+// Resource represents Short's Resources
 type Resource uint
 
 const (
@@ -9,8 +10,9 @@ const (
 	User
 )
 
+// Filter represents the filters for a search request
 type Filter struct {
-	maxResults int
-	resources  []Resource
-	orders     []order.By
+	MaxResults int
+	Resources  []Resource
+	Orders     []order.By
 }

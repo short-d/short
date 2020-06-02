@@ -27,13 +27,13 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 	defer close(resultCh)
 
 	var orders []order.Order
-	for _, orderBy := range filter.orders {
+	for _, orderBy := range filter.Orders {
 		orders = append(orders, order.NewOrder(orderBy))
 	}
 
-	for i := range filter.resources {
+	for i := range filter.Resources {
 		go func() {
-			result, err := s.searchResource(filter.resources[i], orders[i], query, filter)
+			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
 			if err != nil {
 				resultCh <- nil
 				return
@@ -44,7 +44,7 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 
 	timeout := time.After(s.timeout)
 	var results []Result
-	for i := 0; i < len(filter.resources); i++ {
+	for i := 0; i < len(filter.Resources); i++ {
 		select {
 		case result := <-resultCh:
 			results = append(results, result)
@@ -68,11 +68,11 @@ func mergeResults(results []Result) Result {
 }
 
 func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (Result, error) {
-	if query.user == nil {
-		return Result{}, errors.New("user not provided")
+	if query.User == nil {
+		return Result{}, errors.New("User not provided")
 	}
 
-	aliases, err := s.userShortLinkRepo.FindAliasesByUser(*query.user)
+	aliases, err := s.userShortLinkRepo.FindAliasesByUser(*query.User)
 	if err != nil {
 		return Result{}, err
 	}
@@ -83,7 +83,7 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 
 	var matchedAliasByAnd, matchedAliasByOr []entity.ShortLink
 	for _, shortLink := range shortLinks {
-		and, or := stringContains(shortLink.Alias, strings.Split(query.query, " "))
+		and, or := stringContains(shortLink.Alias, strings.Split(query.Query, " "))
 		if and {
 			matchedAliasByAnd = append(matchedAliasByAnd, shortLink)
 		} else if or {
@@ -95,7 +95,7 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 
 	var matchedLongLinkByAnd, matchedLongLinkByOr []entity.ShortLink
 	for _, shortLink := range shortLinks {
-		and, or := stringContains(shortLink.LongLink, strings.Split(query.query, " "))
+		and, or := stringContains(shortLink.LongLink, strings.Split(query.Query, " "))
 		if and {
 			matchedLongLinkByAnd = append(matchedLongLinkByAnd, shortLink)
 		} else if or {

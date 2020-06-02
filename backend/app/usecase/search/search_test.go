@@ -67,7 +67,7 @@ func TestMerging(t *testing.T) {
 //	testCases := []struct {
 //		name               string
 //		shortLinks         shortLinks
-//		query              Query
+//		Query              Query
 //		filter             Filter
 //		relationUsers      []entity.User
 //		relationShortLinks []entity.ShortLink
@@ -76,14 +76,14 @@ func TestMerging(t *testing.T) {
 //		{
 //			name:       "valid Search",
 //			shortLinks: shortLinksMap,
-//			query: Query{
-//				query: "http google",
-//				user:  entity.User{},
+//			Query: Query{
+//				Query: "http google",
+//				User:  entity.User{},
 //			},
 //			filter: Filter{
-//				maxResults: 2,
-//				resources:  []Resource{ShortLink},
-//				orders:     []OrderBy{CreatedTimeASC},
+//				MaxResults: 2,
+//				Resources:  []Resource{ShortLink},
+//				Orders:     []OrderBy{CreatedTimeASC},
 //			},
 //			relationUsers:      users,
 //			relationShortLinks: userShortLinks,
@@ -111,7 +111,7 @@ func TestMerging(t *testing.T) {
 //			shortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
 //
 //			search := NewSearch(&shortLinkRepo, &userShortLinkRepo)
-//			result := search.Search(testCase.query, testCase.filter)
+//			result := search.Search(testCase.Query, testCase.filter)
 //			assert.Equal(t, testCase.expectedResult, result)
 //		})
 //	}
