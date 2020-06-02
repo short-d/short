@@ -36,6 +36,10 @@ export class DynamicDecisionService implements IFeatureDecisionService {
     return this.makeDecision('user-short-links-section');
   }
 
+  includeAdminPage(): Promise<boolean> {
+    return this.makeDecision('admin-panel');
+  }
+
   private makeDecision(featureID: string): Promise<boolean> {
     return this.shortHTTPApi.getFeatureToggle(featureID);
   }

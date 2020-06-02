@@ -46,7 +46,7 @@ export function initUIFactory(
   );
   const errorService = new ErrorService();
   const httpService = new FetchHTTPService();
-  const shortHTTPApi = new ShortHTTPApi(httpService, envService);
+  const shortHTTPApi = new ShortHTTPApi(authService, httpService, envService);
   const dynamicDecisionService = new DynamicDecisionService(shortHTTPApi);
 
   const graphQLService = new GraphQLService(httpService);
