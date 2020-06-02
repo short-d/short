@@ -7,6 +7,9 @@ $drawer-width: 240px;
   width: $drawer-width;
   margin-left: -$drawer-width;
   transition: margin-left 300ms $ease-in-out-quart;
+  height: 100%;
+  margin-top: 0;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 
   &.open {
     margin-left: 0;

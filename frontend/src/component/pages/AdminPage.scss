@@ -65,12 +65,13 @@
 
     > .menu {
       flex: 0 0;
+      z-index: 10;
     }
 
     > .content {
       flex: 1;
       overflow-x: hidden;
-      background-color: $color-dark-gray;
+      background-color: $color-admin-panel-background;
       padding: 20px;
       box-sizing: border-box;
     }
