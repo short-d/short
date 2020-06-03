@@ -11,26 +11,32 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
+// Search represents the search handler of short links and users
+// from a persistent storage
 type Search struct {
 	shortLinkRepo     repository.ShortLink
 	userShortLinkRepo repository.UserShortLink
 	timeout           time.Duration
 }
 
+// Result represents the result of a search
 type Result struct {
 	shortLinks []entity.ShortLink
 	users      []entity.User
 }
 
+// Search searches the short links and users for given query and filter
 func (s Search) Search(query Query, filter Filter) (Result, error) {
 	resultCh := make(chan Result)
 	defer close(resultCh)
 
 	var orders []order.Order
+	// register orders
 	for _, orderBy := range filter.Orders {
 		orders = append(orders, order.NewOrder(orderBy))
 	}
 
+	// search resources in concurrently
 	for i := range filter.Resources {
 		go func() {
 			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
@@ -67,9 +73,20 @@ func mergeResults(results []Result) Result {
 	return mergedResult
 }
 
+func (s Search) searchResource(resource Resource, orderBy order.Order, query Query, filter Filter) (Result, error) {
+	switch resource {
+	case ShortLink:
+		return s.searchShortLink(query, orderBy, filter)
+	case User:
+		return s.searchUser(query, orderBy, filter)
+	default:
+		return Result{}, errors.New("unknown resource")
+	}
+}
+
 func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (Result, error) {
 	if query.User == nil {
-		return Result{}, errors.New("User not provided")
+		return Result{}, errors.New("user not provided")
 	}
 
 	aliases, err := s.userShortLinkRepo.FindAliasesByUser(*query.User)
@@ -83,6 +100,7 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 
 	var matchedAliasByAnd, matchedAliasByOr []entity.ShortLink
 	for _, shortLink := range shortLinks {
+		// check if string is contained by "and" operator and by "or" operator
 		and, or := stringContains(shortLink.Alias, strings.Split(query.Query, " "))
 		if and {
 			matchedAliasByAnd = append(matchedAliasByAnd, shortLink)
@@ -90,6 +108,8 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 			matchedAliasByOr = append(matchedAliasByOr, shortLink)
 		}
 	}
+
+	// sort short links
 	matchedAliasByAnd = orderBy.ArrangeShortLinks(matchedAliasByAnd)
 	matchedAliasByOr = orderBy.ArrangeShortLinks(matchedAliasByOr)
 
@@ -102,9 +122,12 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 			matchedLongLinkByOr = append(matchedLongLinkByOr, shortLink)
 		}
 	}
+
+	// sort short links
 	matchedLongLinkByAnd = orderBy.ArrangeShortLinks(matchedLongLinkByAnd)
 	matchedLongLinkByOr = orderBy.ArrangeShortLinks(matchedLongLinkByOr)
 
+	// merge all the short links
 	mergedShortLinks := append(matchedAliasByAnd, matchedAliasByOr...)
 	mergedShortLinks = append(mergedShortLinks, matchedLongLinkByAnd...)
 	mergedShortLinks = append(mergedShortLinks, matchedLongLinkByOr...)
@@ -135,16 +158,7 @@ func (s Search) searchUser(query Query, orderBy order.Order, filter Filter) (Res
 	return Result{}, nil
 }
 
-func (s Search) searchResource(resource Resource, orderBy order.Order, query Query, filter Filter) (Result, error) {
-	switch resource {
-	case ShortLink:
-		return s.searchShortLink(query, orderBy, filter)
-	case User:
-		return s.searchUser(query, orderBy, filter)
-	}
-	return Result{}, errors.New("error")
-}
-
+// NewSearch creates Search
 func NewSearch(
 	shortLinkRepo repository.ShortLink,
 	userShortLinkRepo repository.UserShortLink,
