@@ -16,14 +16,20 @@ import (
 )
 
 var insertShortLinkRowSQL = fmt.Sprintf(`
-INSERT INTO %s (%s, %s, %s, %s, %s)
-VALUES ($1, $2, $3, $4, $5)`,
+INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
 	table.ShortLink.TableName,
 	table.ShortLink.ColumnAlias,
 	table.ShortLink.ColumnLongLink,
 	table.ShortLink.ColumnCreatedAt,
 	table.ShortLink.ColumnExpireAt,
 	table.ShortLink.ColumnUpdatedAt,
+	table.ShortLink.ColumnOGTitle,
+	table.ShortLink.ColumnOGDescription,
+	table.ShortLink.ColumnOGImageURL,
+	table.ShortLink.ColumnTwitterTitle,
+	table.ShortLink.ColumnTwitterDescription,
+	table.ShortLink.ColumnTwitterImageURL,
 )
 
 type shortLinkTableRow struct {
@@ -79,6 +85,12 @@ func TestShortLinkSql_IsAliasExist(t *testing.T) {
 func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
+	title1 := "title1"
+	description1 := "description1"
+	imageURL1 := "url1"
+	title2 := "title2"
+	description2 := "description2"
+	imageURL2 := "url2"
 
 	testCases := []struct {
 		name              string
@@ -97,18 +109,30 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 			name: "found short link",
 			tableRows: []shortLinkTableRow{
 				{
-					alias:     "220uFicCJj",
-					longLink:  "http://www.google.com",
-					createdAt: &twoYearsAgo,
-					expireAt:  &now,
-					updatedAt: &now,
+					alias:              "220uFicCJj",
+					longLink:           "http://www.google.com",
+					createdAt:          &twoYearsAgo,
+					expireAt:           &now,
+					updatedAt:          &now,
+					ogTitle:            &title1,
+					ogDescription:      &description1,
+					ogImageURL:         &imageURL1,
+					twitterTitle:       &title1,
+					twitterDescription: &description1,
+					twitterImageURL:    &imageURL1,
 				},
 				{
-					alias:     "yDOBcj5HIPbUAsw",
-					longLink:  "http://www.facebook.com",
-					createdAt: &twoYearsAgo,
-					expireAt:  &now,
-					updatedAt: &now,
+					alias:              "yDOBcj5HIPbUAsw",
+					longLink:           "http://www.facebook.com",
+					createdAt:          &twoYearsAgo,
+					expireAt:           &now,
+					updatedAt:          &now,
+					ogTitle:            &title2,
+					ogDescription:      &description2,
+					ogImageURL:         &imageURL2,
+					twitterTitle:       &title2,
+					twitterDescription: &description2,
+					twitterImageURL:    &imageURL2,
 				},
 			},
 			alias:  "220uFicCJj",
@@ -119,24 +143,48 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 				CreatedAt: &twoYearsAgo,
 				ExpireAt:  &now,
 				UpdatedAt: &now,
+				MetaTags: entity.MetaTags{
+					entity.OpenGraphTags{
+						OpenGraphTitle:       &title1,
+						OpenGraphDescription: &description1,
+						OpenGraphImageURL:    &imageURL1,
+					},
+					entity.TwitterTags{
+						TwitterTitle:       &title1,
+						TwitterDescription: &description1,
+						TwitterImageURL:    &imageURL1,
+					},
+				},
 			},
 		},
 		{
 			name: "nil time",
 			tableRows: []shortLinkTableRow{
 				{
-					alias:     "220uFicCJj",
-					longLink:  "http://www.google.com",
-					createdAt: nil,
-					expireAt:  nil,
-					updatedAt: nil,
+					alias:              "220uFicCJj",
+					longLink:           "http://www.google.com",
+					createdAt:          nil,
+					expireAt:           nil,
+					updatedAt:          nil,
+					ogTitle:            &title1,
+					ogDescription:      &description1,
+					ogImageURL:         &imageURL1,
+					twitterTitle:       &title1,
+					twitterDescription: &description1,
+					twitterImageURL:    &imageURL1,
 				},
 				{
-					alias:     "yDOBcj5HIPbUAsw",
-					longLink:  "http://www.facebook.com",
-					createdAt: &twoYearsAgo,
-					expireAt:  &now,
-					updatedAt: &now,
+					alias:              "yDOBcj5HIPbUAsw",
+					longLink:           "http://www.facebook.com",
+					createdAt:          &twoYearsAgo,
+					expireAt:           &now,
+					updatedAt:          &now,
+					ogTitle:            &title2,
+					ogDescription:      &description2,
+					ogImageURL:         &imageURL2,
+					twitterTitle:       &title2,
+					twitterDescription: &description2,
+					twitterImageURL:    &imageURL2,
 				},
 			},
 			alias:  "220uFicCJj",
@@ -147,6 +195,18 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 				CreatedAt: nil,
 				ExpireAt:  nil,
 				UpdatedAt: nil,
+				MetaTags: entity.MetaTags{
+					entity.OpenGraphTags{
+						OpenGraphTitle:       &title1,
+						OpenGraphDescription: &description1,
+						OpenGraphImageURL:    &imageURL1,
+					},
+					entity.TwitterTags{
+						TwitterTitle:       &title1,
+						TwitterDescription: &description1,
+						TwitterImageURL:    &imageURL1,
+					},
+				},
 			},
 		},
 	}
@@ -178,6 +238,12 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 
 func TestShortLinkSql_CreateShortLink(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
+	title1 := "title1"
+	description1 := "description1"
+	imageURL1 := "url1"
+	title2 := "title2"
+	description2 := "description2"
+	imageURL2 := "url2"
 
 	testCases := []struct {
 		name      string
@@ -189,15 +255,33 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 			name: "alias exists",
 			tableRows: []shortLinkTableRow{
 				{
-					alias:    "220uFicCJj",
-					longLink: "http://www.facebook.com",
-					expireAt: &now,
+					alias:              "220uFicCJj",
+					longLink:           "http://www.facebook.com",
+					expireAt:           &now,
+					ogTitle:            &title1,
+					ogDescription:      &description1,
+					ogImageURL:         &imageURL1,
+					twitterTitle:       &title1,
+					twitterDescription: &description1,
+					twitterImageURL:    &imageURL1,
 				},
 			},
 			shortLink: entity.ShortLink{
 				Alias:    "220uFicCJj",
 				LongLink: "http://www.google.com",
 				ExpireAt: &now,
+				MetaTags: entity.MetaTags{
+					entity.OpenGraphTags{
+						OpenGraphTitle:       &title2,
+						OpenGraphDescription: &description2,
+						OpenGraphImageURL:    &imageURL2,
+					},
+					entity.TwitterTags{
+						TwitterTitle:       &title2,
+						TwitterDescription: &description2,
+						TwitterImageURL:    &imageURL2,
+					},
+				},
 			},
 			hasErr: true,
 		},
@@ -205,15 +289,33 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 			name: "successfully create short link",
 			tableRows: []shortLinkTableRow{
 				{
-					alias:    "abc",
-					longLink: "http://www.google.com",
-					expireAt: &now,
+					alias:              "abc",
+					longLink:           "http://www.google.com",
+					expireAt:           &now,
+					ogTitle:            &title1,
+					ogDescription:      &description1,
+					ogImageURL:         &imageURL1,
+					twitterTitle:       &title1,
+					twitterDescription: &description1,
+					twitterImageURL:    &imageURL1,
 				},
 			},
 			shortLink: entity.ShortLink{
 				Alias:    "220uFicCJj",
 				LongLink: "http://www.google.com",
 				ExpireAt: &now,
+				MetaTags: entity.MetaTags{
+					entity.OpenGraphTags{
+						OpenGraphTitle:       &title2,
+						OpenGraphDescription: &description2,
+						OpenGraphImageURL:    &imageURL2,
+					},
+					entity.TwitterTags{
+						TwitterTitle:       &title2,
+						TwitterDescription: &description2,
+						TwitterImageURL:    &imageURL2,
+					},
+				},
 			},
 			hasErr: false,
 		},
@@ -236,7 +338,12 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 						assert.NotEqual(t, nil, err)
 						return
 					}
+
 					assert.Equal(t, nil, err)
+
+					shortLink, err := shortLinkRepo.GetShortLinkByAlias(testCase.shortLink.Alias)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, testCase.shortLink, shortLink)
 				},
 			)
 		})
@@ -348,6 +455,12 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
+	title1 := "title1"
+	description1 := "description1"
+	imageURL1 := "url1"
+	title2 := "title2"
+	description2 := "description2"
+	imageURL2 := "url2"
 
 	testCases := []struct {
 		name               string
@@ -366,18 +479,30 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 			name: "found short link",
 			tableRows: []shortLinkTableRow{
 				{
-					alias:     "220uFicCJj",
-					longLink:  "http://www.google.com",
-					createdAt: &twoYearsAgo,
-					expireAt:  &now,
-					updatedAt: &now,
+					alias:              "220uFicCJj",
+					longLink:           "http://www.google.com",
+					createdAt:          &twoYearsAgo,
+					expireAt:           &now,
+					updatedAt:          &now,
+					ogTitle:            &title1,
+					ogDescription:      &description1,
+					ogImageURL:         &imageURL1,
+					twitterTitle:       &title1,
+					twitterDescription: &description1,
+					twitterImageURL:    &imageURL1,
 				},
 				{
-					alias:     "yDOBcj5HIPbUAsw",
-					longLink:  "http://www.facebook.com",
-					createdAt: &twoYearsAgo,
-					expireAt:  &now,
-					updatedAt: &now,
+					alias:              "yDOBcj5HIPbUAsw",
+					longLink:           "http://www.facebook.com",
+					createdAt:          &twoYearsAgo,
+					expireAt:           &now,
+					updatedAt:          &now,
+					ogTitle:            &title2,
+					ogDescription:      &description2,
+					ogImageURL:         &imageURL2,
+					twitterTitle:       &title2,
+					twitterDescription: &description2,
+					twitterImageURL:    &imageURL2,
 				},
 			},
 			aliases: []string{"220uFicCJj", "yDOBcj5HIPbUAsw"},
@@ -389,6 +514,18 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 					CreatedAt: &twoYearsAgo,
 					ExpireAt:  &now,
 					UpdatedAt: &now,
+					MetaTags: entity.MetaTags{
+						entity.OpenGraphTags{
+							OpenGraphTitle:       &title1,
+							OpenGraphDescription: &description1,
+							OpenGraphImageURL:    &imageURL1,
+						},
+						entity.TwitterTags{
+							TwitterTitle:       &title1,
+							TwitterDescription: &description1,
+							TwitterImageURL:    &imageURL1,
+						},
+					},
 				},
 				{
 					Alias:     "yDOBcj5HIPbUAsw",
@@ -396,6 +533,18 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 					CreatedAt: &twoYearsAgo,
 					ExpireAt:  &now,
 					UpdatedAt: &now,
+					MetaTags: entity.MetaTags{
+						entity.OpenGraphTags{
+							OpenGraphTitle:       &title2,
+							OpenGraphDescription: &description2,
+							OpenGraphImageURL:    &imageURL2,
+						},
+						entity.TwitterTags{
+							TwitterTitle:       &title2,
+							TwitterDescription: &description2,
+							TwitterImageURL:    &imageURL2,
+						},
+					},
 				},
 			},
 		},
@@ -435,6 +584,12 @@ func insertShortLinkTableRows(t *testing.T, sqlDB *sql.DB, tableRows []shortLink
 			tableRow.createdAt,
 			tableRow.expireAt,
 			tableRow.updatedAt,
+			tableRow.ogTitle,
+			tableRow.ogDescription,
+			tableRow.ogImageURL,
+			tableRow.twitterTitle,
+			tableRow.twitterDescription,
+			tableRow.twitterImageURL,
 		)
 		assert.Equal(t, nil, err)
 	}
