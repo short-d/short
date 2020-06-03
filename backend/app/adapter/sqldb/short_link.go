@@ -95,7 +95,7 @@ WHERE "%s"=$1;`,
 // CreateShortLink inserts a new ShortLink into short_link table.
 func (s *ShortLinkSql) CreateShortLink(shortLink entity.ShortLink) error {
 	statement := fmt.Sprintf(`
-INSERT INTO "%s" ("%s","%s","%s","%s","%s", "%s", "%s", "%s", "%s", "%s", "%s")
+INSERT INTO "%s" ("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
 		table.ShortLink.TableName,
 		table.ShortLink.ColumnAlias,
@@ -223,7 +223,7 @@ func (s ShortLinkSql) GetShortLinksByAliases(aliases []string) ([]entity.ShortLi
 
 	// TODO: compare performance between Query and QueryRow. Prefer QueryRow for readability
 	statement := fmt.Sprintf(`
-SELECT "%s","%s","%s","%s","%s","%s","%s","%s" ,"%s","%s","%s" 
+SELECT "%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s" 
 FROM "%s"
 WHERE "%s" IN (%s);`,
 		table.ShortLink.ColumnAlias,
