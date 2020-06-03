@@ -12,7 +12,7 @@ func (u Unchanged) ArrangeShortLinks(shortLinks []entity.ShortLink) []entity.Sho
 	return shortLinks
 }
 
-// ArrangeShortLinks keeps the same arrangement of users.
+// ArrangeUsers keeps the same arrangement of users.
 func (u Unchanged) ArrangeUsers(users []entity.User) []entity.User {
 	return users
 }
