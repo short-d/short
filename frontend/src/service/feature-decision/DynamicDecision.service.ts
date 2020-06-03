@@ -4,41 +4,41 @@ import { ShortHTTPApi } from '../ShortHTTP.api';
 export class DynamicDecisionService implements IFeatureDecisionService {
   constructor(private shortHTTPApi: ShortHTTPApi) {}
 
-  includeFacebookSignInButton(): Promise<boolean> {
+  includeFacebookSignInButton = (): Promise<boolean> => {
     return this.makeDecision('facebook-sign-in');
-  }
+  };
 
-  includeGithubSignInButton(): Promise<boolean> {
+  includeGithubSignInButton = (): Promise<boolean> => {
     return this.makeDecision('github-sign-in');
-  }
+  };
 
-  includeGoogleSignInButton(): Promise<boolean> {
+  includeGoogleSignInButton = (): Promise<boolean> => {
     return this.makeDecision('google-sign-in');
-  }
+  };
 
-  includeSearchBar(): Promise<boolean> {
+  includeSearchBar = (): Promise<boolean> => {
     return this.makeDecision('search-bar');
-  }
+  };
 
-  includeViewChangeLogButton(): Promise<boolean> {
+  includeViewChangeLogButton = (): Promise<boolean> => {
     return this.makeDecision('change-log');
-  }
+  };
 
-  includePreferenceTogglesSubSection(): Promise<boolean> {
+  includePreferenceTogglesSubSection = (): Promise<boolean> => {
     return this.makeDecision('preference-toggles');
-  }
+  };
 
-  includePublicListingToggle(): Promise<boolean> {
+  includePublicListingToggle = (): Promise<boolean> => {
     return this.makeDecision('public-listing');
-  }
+  };
 
-  includeUserShortLinksSection(): Promise<boolean> {
+  includeUserShortLinksSection = (): Promise<boolean> => {
     return this.makeDecision('user-short-links-section');
-  }
+  };
 
-  includeAdminPage(): Promise<boolean> {
+  includeAdminPage = (): Promise<boolean> => {
     return this.makeDecision('admin-panel');
-  }
+  };
 
   private makeDecision(featureID: string): Promise<boolean> {
     return this.shortHTTPApi.getFeatureToggle(featureID);
