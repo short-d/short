@@ -57,7 +57,7 @@ type CreatorPersist struct {
 }
 
 // CreateShortLink persists a new short link with a given or auto generated alias in the repository.
-// TODO(issue#235): add functionality for public URLs
+// TODO(issue#235): add functionality for public ShortLinks
 func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
 	longLink := shortLink.LongLink
 	if !c.longLinkValidator.IsValid(&longLink) {

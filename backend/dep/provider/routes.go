@@ -13,7 +13,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
-// WebFrontendURL represents the URL of the web frontend
+// WebFrontendURL represents the ShortLink of the web frontend
 type WebFrontendURL string
 
 // NewShortRoutes creates HTTP routes for Short API with WwwRoot to uniquely identify WwwRoot during dependency injection.
