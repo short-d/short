@@ -14,13 +14,3 @@ type Order interface {
 	ArrangeShortLinks(shortLinks []entity.ShortLink) []entity.ShortLink
 	ArrangeUsers(users []entity.User) []entity.User
 }
-
-// NewOrder creates Order based on by variable.
-func NewOrder(by By) Order {
-	switch by {
-	case ByCreatedTimeASC:
-		return CreatedTime{}
-	default:
-		return Unchanged{}
-	}
-}
