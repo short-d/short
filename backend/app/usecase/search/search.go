@@ -32,7 +32,6 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 		orders = append(orders, order.NewOrder(orderBy))
 	}
 
-	// search resources in concurrently
 	for i := range filter.Resources {
 		go func() {
 			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
