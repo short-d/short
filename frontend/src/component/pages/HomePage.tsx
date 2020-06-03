@@ -9,7 +9,7 @@ import { Modal } from '../ui/Modal';
 import { ExtPromo } from './shared/promos/ExtPromo';
 import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
-import { Location } from 'history';
+import { Location, History } from 'history';
 import { AuthService } from '../../service/Auth.service';
 import { IBrowserExtensionService } from '../../service/extensionService/BrowserExtension.service';
 import { VersionService } from '../../service/Version.service';
@@ -44,6 +44,7 @@ import { AnalyticsService } from '../../service/Analytics.service';
 import { Icon, IconID } from '../ui/Icon';
 import { Change } from '../../entity/Change';
 import { IFeatureDecisionService } from '../../service/feature-decision/FeatureDecision.service';
+import { ShortHTTPApi } from '../../service/ShortHTTP.api';
 
 interface Props {
   uiFactory: UIFactory;
@@ -59,12 +60,15 @@ interface Props {
   changeLogService: ChangeLogService;
   shortLinkService: ShortLinkService;
   analyticsService: AnalyticsService;
+  shortHTTPApi: ShortHTTPApi;
   store: Store<IAppState>;
   location: Location;
+  history: History;
 }
 
 interface State {
   isUserSignedIn?: boolean;
+  isUserAdmin?: boolean;
   shouldShowPromo?: boolean;
   longLink?: string;
   alias?: string;
@@ -108,10 +112,18 @@ export class HomePage extends Component<Props, State> {
     this.setState({
       isUserSignedIn: true
     });
+    this.setUserAdminStatus();
     this.handleStateChange();
     this.autoFillLongLink();
     this.autoShowChangeLog();
   }
+
+  private setUserAdminStatus = async () => {
+    const isUserAdmin = await this.props.shortHTTPApi.isUserAdmin();
+    this.setState({
+      isUserAdmin: isUserAdmin
+    });
+  };
 
   autoShowChangeLog = async () => {
     const showChangeLog = await this.props.featureDecisionService.includeViewChangeLogButton();
@@ -195,7 +207,8 @@ export class HomePage extends Component<Props, State> {
 
   requestSignIn = () => {
     this.setState({
-      isUserSignedIn: false
+      isUserSignedIn: false,
+      isUserAdmin: false
     });
     this.props.authService.signOut();
     this.showSignInModal();
@@ -212,6 +225,10 @@ export class HomePage extends Component<Props, State> {
 
   handleSignOutButtonClick = () => {
     this.requestSignIn();
+  };
+
+  handleAdminNavButtonClick = () => {
+    this.props.history.push('/admin');
   };
 
   handleLongLinkChange = (newLongLink: string) => {
@@ -356,7 +373,9 @@ export class HomePage extends Component<Props, State> {
           onSearchBarInputChange={this.handleSearchBarInputChange}
           autoCompleteSuggestions={this.state.autoCompleteSuggestions}
           shouldShowSignOutButton={this.state.isUserSignedIn}
+          shouldShowAdminNavButton={this.state.isUserAdmin}
           onSignOutButtonClick={this.handleSignOutButtonClick}
+          onAdminNavButtonClick={this.handleAdminNavButtonClick}
         />
         <div className={'main'}>
           <CreateShortLinkSection

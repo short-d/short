@@ -27,6 +27,7 @@ import { PreferenceTogglesSubSection } from './pages/shared/PreferenceTogglesSub
 import { AdminPage } from './pages/AdminPage';
 import withFeatureToggle from './hoc/withFeatureToggle';
 import withPageAuth from './hoc/withPageAuth';
+import { ShortHTTPApi } from '../service/ShortHTTP.api';
 
 export class UIFactory {
   private ToggledGoogleSignInButton: ComponentType<any>;
@@ -53,7 +54,8 @@ export class UIFactory {
     private store: Store<IAppState>,
     private featureDecisionService: IFeatureDecisionService,
     private shortLinkService: ShortLinkService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private shortHTTPApi: ShortHTTPApi
   ) {
     const includeGoogleSignInButton = this.featureDecisionService.includeGoogleSignInButton();
     this.ToggledGoogleSignInButton = withFeatureToggle(
@@ -100,11 +102,14 @@ export class UIFactory {
       includeUserShortLinksSection
     );
 
-    const includeAdminPage = this.featureDecisionService.includeAdminPage();
+    const includeAdminPage = this.featureDecisionService.includeAdminPage;
     this.AuthedAdminPage = withPageAuth(AdminPage, includeAdminPage);
   }
 
-  public createHomePage(location: H.Location<any>): ReactElement {
+  public createHomePage(
+    location: H.Location<any>,
+    history: H.History<any>
+  ): ReactElement {
     return (
       <HomePage
         uiFactory={this}
@@ -120,8 +125,10 @@ export class UIFactory {
         changeLogService={this.changeLogService}
         shortLinkService={this.shortLinkService}
         analyticsService={this.analyticsService}
+        shortHTTPApi={this.shortHTTPApi}
         store={this.store}
         location={location}
+        history={history}
       />
     );
   }
