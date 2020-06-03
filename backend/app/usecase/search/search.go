@@ -41,7 +41,7 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 		go func() {
 			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
 			if err != nil {
-				resultCh <- nil
+				resultCh <- Result{}
 				return
 			}
 			resultCh <- result
@@ -87,8 +87,9 @@ func (s Search) searchResource(resource Resource, orderBy order.Order, query Que
 func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (Result, error) {
 	if query.User == nil {
 		return Result{}, errors.New("user not provided")
+	} else if len(query.Query) == 0 {
+		return Result{}, errors.New("query not provided")
 	}
-
 	aliases, err := s.userShortLinkRepo.FindAliasesByUser(*query.User)
 	if err != nil {
 		return Result{}, err
@@ -99,29 +100,30 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 	}
 
 	var matchedAliasByAnd, matchedAliasByOr []entity.ShortLink
+	var matchedLongLinkByAnd, matchedLongLinkByOr []entity.ShortLink
 	for _, shortLink := range shortLinks {
-		// check if string is contained by "and" operator and by "or" operator
-		and, or := stringContains(shortLink.Alias, strings.Split(query.Query, " "))
-		if and {
+		// check if query is contained in alias by "and" operator and by "or" operator
+		aliasByAnd, aliasByOr := stringContains(shortLink.Alias, strings.Split(query.Query, " "))
+		if aliasByAnd {
 			matchedAliasByAnd = append(matchedAliasByAnd, shortLink)
-		} else if or {
+			continue
+		} else if aliasByOr {
 			matchedAliasByOr = append(matchedAliasByOr, shortLink)
+			continue
+		}
+
+		// check if query is contained in long link by "and" operator and by "or" operator
+		longLinkByAnd, longLinkByOr := stringContains(shortLink.LongLink, strings.Split(query.Query, " "))
+		if longLinkByAnd {
+			matchedLongLinkByAnd = append(matchedLongLinkByAnd, shortLink)
+		} else if longLinkByOr {
+			matchedLongLinkByOr = append(matchedLongLinkByOr, shortLink)
 		}
 	}
 
 	// sort short links
 	matchedAliasByAnd = orderBy.ArrangeShortLinks(matchedAliasByAnd)
 	matchedAliasByOr = orderBy.ArrangeShortLinks(matchedAliasByOr)
-
-	var matchedLongLinkByAnd, matchedLongLinkByOr []entity.ShortLink
-	for _, shortLink := range shortLinks {
-		and, or := stringContains(shortLink.LongLink, strings.Split(query.Query, " "))
-		if and {
-			matchedLongLinkByAnd = append(matchedLongLinkByAnd, shortLink)
-		} else if or {
-			matchedLongLinkByOr = append(matchedLongLinkByOr, shortLink)
-		}
-	}
 
 	// sort short links
 	matchedLongLinkByAnd = orderBy.ArrangeShortLinks(matchedLongLinkByAnd)
@@ -131,6 +133,10 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 	mergedShortLinks := append(matchedAliasByAnd, matchedAliasByOr...)
 	mergedShortLinks = append(mergedShortLinks, matchedLongLinkByAnd...)
 	mergedShortLinks = append(mergedShortLinks, matchedLongLinkByOr...)
+
+	if len(mergedShortLinks) > filter.MaxResults {
+		mergedShortLinks = mergedShortLinks[:filter.MaxResults]
+	}
 
 	return Result{
 		shortLinks: mergedShortLinks,
