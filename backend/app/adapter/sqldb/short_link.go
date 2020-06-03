@@ -17,6 +17,60 @@ type ShortLinkSql struct {
 	db *sql.DB
 }
 
+func (s *ShortLinkSql) UpdateOGMetaTags(alias string, openGraphTags entity.OpenGraphTags) (entity.ShortLink, error) {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1, "%s"=$2, "%s"=$3
+WHERE "%s"=$4;`,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnOGTitle,
+		table.ShortLink.ColumnOGDescription,
+		table.ShortLink.ColumnOGImageURL,
+		table.ShortLink.ColumnAlias,
+	)
+
+	_, err := s.db.Exec(
+		statement,
+		openGraphTags.OpenGraphTitle,
+		openGraphTags.OpenGraphDescription,
+		openGraphTags.OpenGraphImageURL,
+		alias,
+	)
+
+	if err != nil {
+		return entity.ShortLink{}, err
+	}
+
+	return s.GetShortLinkByAlias(alias)
+}
+
+func (s *ShortLinkSql) UpdateTwitterMetaTags(alias string, twitterTags entity.TwitterTags) (entity.ShortLink, error) {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1, "%s"=$2, "%s"=$3
+WHERE "%s"=$4;`,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnTwitterTitle,
+		table.ShortLink.ColumnTwitterDescription,
+		table.ShortLink.ColumnTwitterImageURL,
+		table.ShortLink.ColumnAlias,
+	)
+
+	_, err := s.db.Exec(
+		statement,
+		twitterTags.TwitterTitle,
+		twitterTags.TwitterDescription,
+		twitterTags.TwitterImageURL,
+		alias,
+	)
+
+	if err != nil {
+		return entity.ShortLink{}, err
+	}
+
+	return s.GetShortLinkByAlias(alias)
+}
+
 // IsAliasExist checks whether a given alias exist in short_link table.
 func (s ShortLinkSql) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
@@ -41,14 +95,20 @@ WHERE "%s"=$1;`,
 // CreateShortLink inserts a new ShortLink into short_link table.
 func (s *ShortLinkSql) CreateShortLink(shortLink entity.ShortLink) error {
 	statement := fmt.Sprintf(`
-INSERT INTO "%s" ("%s","%s","%s","%s","%s")
-VALUES ($1, $2, $3, $4, $5);`,
+INSERT INTO "%s" ("%s","%s","%s","%s","%s", "%s", "%s", "%s", "%s", "%s", "%s")
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
 		table.ShortLink.TableName,
 		table.ShortLink.ColumnAlias,
 		table.ShortLink.ColumnLongLink,
 		table.ShortLink.ColumnExpireAt,
 		table.ShortLink.ColumnCreatedAt,
 		table.ShortLink.ColumnUpdatedAt,
+		table.ShortLink.ColumnOGTitle,
+		table.ShortLink.ColumnOGDescription,
+		table.ShortLink.ColumnOGImageURL,
+		table.ShortLink.ColumnTwitterTitle,
+		table.ShortLink.ColumnTwitterDescription,
+		table.ShortLink.ColumnTwitterImageURL,
 	)
 	_, err := s.db.Exec(
 		statement,
@@ -57,6 +117,12 @@ VALUES ($1, $2, $3, $4, $5);`,
 		shortLink.ExpireAt,
 		shortLink.CreatedAt,
 		shortLink.UpdatedAt,
+		shortLink.OpenGraphTitle,
+		shortLink.OpenGraphDescription,
+		shortLink.OpenGraphImageURL,
+		shortLink.TwitterTitle,
+		shortLink.TwitterDescription,
+		shortLink.TwitterImageURL,
 	)
 	return err
 }
@@ -94,7 +160,7 @@ WHERE "%s"=$5;`,
 // GetShortLinkByAlias finds an ShortLink in short_link table given alias.
 func (s ShortLinkSql) GetShortLinkByAlias(alias string) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
-SELECT "%s","%s","%s","%s","%s" 
+SELECT "%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"
 FROM "%s" 
 WHERE "%s"=$1;`,
 		table.ShortLink.ColumnAlias,
@@ -102,6 +168,12 @@ WHERE "%s"=$1;`,
 		table.ShortLink.ColumnExpireAt,
 		table.ShortLink.ColumnCreatedAt,
 		table.ShortLink.ColumnUpdatedAt,
+		table.ShortLink.ColumnOGTitle,
+		table.ShortLink.ColumnOGDescription,
+		table.ShortLink.ColumnOGImageURL,
+		table.ShortLink.ColumnTwitterTitle,
+		table.ShortLink.ColumnTwitterDescription,
+		table.ShortLink.ColumnTwitterImageURL,
 		table.ShortLink.TableName,
 		table.ShortLink.ColumnAlias,
 	)
@@ -115,6 +187,12 @@ WHERE "%s"=$1;`,
 		&shortLink.ExpireAt,
 		&shortLink.CreatedAt,
 		&shortLink.UpdatedAt,
+		&shortLink.OpenGraphTitle,
+		&shortLink.OpenGraphDescription,
+		&shortLink.OpenGraphImageURL,
+		&shortLink.TwitterTitle,
+		&shortLink.TwitterDescription,
+		&shortLink.TwitterImageURL,
 	)
 	if err != nil {
 		return entity.ShortLink{}, err
@@ -145,7 +223,7 @@ func (s ShortLinkSql) GetShortLinksByAliases(aliases []string) ([]entity.ShortLi
 
 	// TODO: compare performance between Query and QueryRow. Prefer QueryRow for readability
 	statement := fmt.Sprintf(`
-SELECT "%s","%s","%s","%s","%s" 
+SELECT "%s","%s","%s","%s","%s","%s","%s","%s" ,"%s","%s","%s" 
 FROM "%s"
 WHERE "%s" IN (%s);`,
 		table.ShortLink.ColumnAlias,
@@ -153,6 +231,12 @@ WHERE "%s" IN (%s);`,
 		table.ShortLink.ColumnExpireAt,
 		table.ShortLink.ColumnCreatedAt,
 		table.ShortLink.ColumnUpdatedAt,
+		table.ShortLink.ColumnOGTitle,
+		table.ShortLink.ColumnOGDescription,
+		table.ShortLink.ColumnOGImageURL,
+		table.ShortLink.ColumnTwitterTitle,
+		table.ShortLink.ColumnTwitterDescription,
+		table.ShortLink.ColumnTwitterImageURL,
 		table.ShortLink.TableName,
 		table.ShortLink.ColumnAlias,
 		parameterStr,
@@ -178,6 +262,12 @@ WHERE "%s" IN (%s);`,
 			&shortLink.ExpireAt,
 			&shortLink.CreatedAt,
 			&shortLink.UpdatedAt,
+			&shortLink.OpenGraphTitle,
+			&shortLink.OpenGraphDescription,
+			&shortLink.OpenGraphImageURL,
+			&shortLink.TwitterTitle,
+			&shortLink.TwitterDescription,
+			&shortLink.TwitterImageURL,
 		)
 		if err != nil {
 			return shortLinks, err
