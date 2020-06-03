@@ -4,6 +4,7 @@
 @import '../styles/easing';
 @import '../styles/shadow';
 @import '../styles/corner';
+@import '../styles/layer';
 
 #admin-page {
   font-family: $font-family-primary;
@@ -31,7 +32,7 @@
 
       &:hover {
         cursor: pointer;
-        background-color: color-transparent-black(0.15);
+        background-color: $shadow-drawer;
       }
     }
 
@@ -65,12 +66,13 @@
 
     > .menu {
       flex: 0 0;
+      z-index: $layer-drawer;
     }
 
     > .content {
       flex: 1;
       overflow-x: hidden;
-      background-color: $color-dark-gray;
+      background-color: $color-admin-panel-background;
       padding: 20px;
       box-sizing: border-box;
     }
