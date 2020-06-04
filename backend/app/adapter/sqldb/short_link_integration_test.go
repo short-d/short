@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/short/backend/app/entity/metatag"
+
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/db/dbtest"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -24,20 +26,26 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
 	table.ShortLink.ColumnCreatedAt,
 	table.ShortLink.ColumnExpireAt,
 	table.ShortLink.ColumnUpdatedAt,
-	table.ShortLink.ColumnOGTitle,
-	table.ShortLink.ColumnOGDescription,
-	table.ShortLink.ColumnOGImageURL,
+	table.ShortLink.ColumnOpenGraphTitle,
+	table.ShortLink.ColumnOpenGraphDescription,
+	table.ShortLink.ColumnOpenGraphImageURL,
 	table.ShortLink.ColumnTwitterTitle,
 	table.ShortLink.ColumnTwitterDescription,
 	table.ShortLink.ColumnTwitterImageURL,
 )
 
 type shortLinkTableRow struct {
-	alias     string
-	longLink  string
-	createdAt *time.Time
-	expireAt  *time.Time
-	updatedAt *time.Time
+	alias              string
+	longLink           string
+	createdAt          *time.Time
+	expireAt           *time.Time
+	updatedAt          *time.Time
+	ogTitle            *string
+	ogDescription      *string
+	ogImageURL         *string
+	twitterTitle       *string
+	twitterDescription *string
+	twitterImageURL    *string
 }
 
 func TestShortLinkSql_IsAliasExist(t *testing.T) {
@@ -143,17 +151,15 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 				CreatedAt: &twoYearsAgo,
 				ExpireAt:  &now,
 				UpdatedAt: &now,
-				MetaTags: entity.MetaTags{
-					entity.OpenGraphTags{
-						OpenGraphTitle:       &title1,
-						OpenGraphDescription: &description1,
-						OpenGraphImageURL:    &imageURL1,
-					},
-					entity.TwitterTags{
-						TwitterTitle:       &title1,
-						TwitterDescription: &description1,
-						TwitterImageURL:    &imageURL1,
-					},
+				OpenGraphTags: metatag.OpenGraph{
+					Title:       &title1,
+					Description: &description1,
+					ImageURL:    &imageURL1,
+				},
+				TwitterTags: metatag.Twitter{
+					Title:       &title1,
+					Description: &description1,
+					ImageURL:    &imageURL1,
 				},
 			},
 		},
@@ -195,17 +201,15 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 				CreatedAt: nil,
 				ExpireAt:  nil,
 				UpdatedAt: nil,
-				MetaTags: entity.MetaTags{
-					entity.OpenGraphTags{
-						OpenGraphTitle:       &title1,
-						OpenGraphDescription: &description1,
-						OpenGraphImageURL:    &imageURL1,
-					},
-					entity.TwitterTags{
-						TwitterTitle:       &title1,
-						TwitterDescription: &description1,
-						TwitterImageURL:    &imageURL1,
-					},
+				OpenGraphTags: metatag.OpenGraph{
+					Title:       &title1,
+					Description: &description1,
+					ImageURL:    &imageURL1,
+				},
+				TwitterTags: metatag.Twitter{
+					Title:       &title1,
+					Description: &description1,
+					ImageURL:    &imageURL1,
 				},
 			},
 		},
@@ -270,17 +274,15 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 				Alias:    "220uFicCJj",
 				LongLink: "http://www.google.com",
 				ExpireAt: &now,
-				MetaTags: entity.MetaTags{
-					entity.OpenGraphTags{
-						OpenGraphTitle:       &title2,
-						OpenGraphDescription: &description2,
-						OpenGraphImageURL:    &imageURL2,
-					},
-					entity.TwitterTags{
-						TwitterTitle:       &title2,
-						TwitterDescription: &description2,
-						TwitterImageURL:    &imageURL2,
-					},
+				OpenGraphTags: metatag.OpenGraph{
+					Title:       &title2,
+					Description: &description2,
+					ImageURL:    &imageURL2,
+				},
+				TwitterTags: metatag.Twitter{
+					Title:       &title2,
+					Description: &description2,
+					ImageURL:    &imageURL2,
 				},
 			},
 			hasErr: true,
@@ -304,17 +306,15 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 				Alias:    "220uFicCJj",
 				LongLink: "http://www.google.com",
 				ExpireAt: &now,
-				MetaTags: entity.MetaTags{
-					entity.OpenGraphTags{
-						OpenGraphTitle:       &title2,
-						OpenGraphDescription: &description2,
-						OpenGraphImageURL:    &imageURL2,
-					},
-					entity.TwitterTags{
-						TwitterTitle:       &title2,
-						TwitterDescription: &description2,
-						TwitterImageURL:    &imageURL2,
-					},
+				OpenGraphTags: metatag.OpenGraph{
+					Title:       &title2,
+					Description: &description2,
+					ImageURL:    &imageURL2,
+				},
+				TwitterTags: metatag.Twitter{
+					Title:       &title2,
+					Description: &description2,
+					ImageURL:    &imageURL2,
 				},
 			},
 			hasErr: false,
@@ -514,17 +514,15 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 					CreatedAt: &twoYearsAgo,
 					ExpireAt:  &now,
 					UpdatedAt: &now,
-					MetaTags: entity.MetaTags{
-						entity.OpenGraphTags{
-							OpenGraphTitle:       &title1,
-							OpenGraphDescription: &description1,
-							OpenGraphImageURL:    &imageURL1,
-						},
-						entity.TwitterTags{
-							TwitterTitle:       &title1,
-							TwitterDescription: &description1,
-							TwitterImageURL:    &imageURL1,
-						},
+					OpenGraphTags: metatag.OpenGraph{
+						Title:       &title1,
+						Description: &description1,
+						ImageURL:    &imageURL1,
+					},
+					TwitterTags: metatag.Twitter{
+						Title:       &title1,
+						Description: &description1,
+						ImageURL:    &imageURL1,
 					},
 				},
 				{
@@ -533,17 +531,15 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 					CreatedAt: &twoYearsAgo,
 					ExpireAt:  &now,
 					UpdatedAt: &now,
-					MetaTags: entity.MetaTags{
-						entity.OpenGraphTags{
-							OpenGraphTitle:       &title2,
-							OpenGraphDescription: &description2,
-							OpenGraphImageURL:    &imageURL2,
-						},
-						entity.TwitterTags{
-							TwitterTitle:       &title2,
-							TwitterDescription: &description2,
-							TwitterImageURL:    &imageURL2,
-						},
+					OpenGraphTags: metatag.OpenGraph{
+						Title:       &title2,
+						Description: &description2,
+						ImageURL:    &imageURL2,
+					},
+					TwitterTags: metatag.Twitter{
+						Title:       &title2,
+						Description: &description2,
+						ImageURL:    &imageURL2,
 					},
 				},
 			},
