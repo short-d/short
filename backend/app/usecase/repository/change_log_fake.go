@@ -30,6 +30,31 @@ func (c *ChangeLogFake) CreateChange(newChange entity.Change) (entity.Change, er
 	return newChange, nil
 }
 
+// DeleteChange removes a change based on a given ID
+func (c *ChangeLogFake) DeleteChange(ID string) error {
+	foundIdx := -1
+	for idx, change := range c.changeLog {
+		if change.ID == ID {
+			foundIdx = idx
+		}
+	}
+
+	if foundIdx == -1 {
+		return nil
+	}
+
+	return c.removeChangeAt(foundIdx)
+}
+
+func (c *ChangeLogFake) removeChangeAt(idx int) error {
+	if idx < 0 || idx >= len(c.changeLog) {
+		return errors.New("index not in range for removing change")
+	}
+
+	c.changeLog = append(c.changeLog[:idx], c.changeLog[idx+1:]...)
+	return nil
+}
+
 // NewChangeLogFake creates ChangeLogFake
 func NewChangeLogFake(changeLog []entity.Change) ChangeLogFake {
 	return ChangeLogFake{

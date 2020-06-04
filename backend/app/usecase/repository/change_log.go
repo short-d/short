@@ -8,4 +8,5 @@ import (
 type ChangeLog interface {
 	GetChangeLog() ([]entity.Change, error)
 	CreateChange(newChange entity.Change) (entity.Change, error)
+	DeleteChange(ID string) error
 }
