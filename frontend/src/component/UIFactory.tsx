@@ -55,19 +55,22 @@ export class UIFactory {
     private shortLinkService: ShortLinkService,
     private analyticsService: AnalyticsService
   ) {
-    const includeGoogleSignInButton = this.featureDecisionService.includeGoogleSignInButton;
+    const includeGoogleSignInButton = this.featureDecisionService
+      .includeGoogleSignInButton;
     this.ToggledGoogleSignInButton = withFeatureToggle(
       GoogleSignInButton,
       includeGoogleSignInButton
     );
 
-    const includeGithubSignInButton = this.featureDecisionService.includeGithubSignInButton;
+    const includeGithubSignInButton = this.featureDecisionService
+      .includeGithubSignInButton;
     this.ToggledGithubSignInButton = withFeatureToggle(
       GithubSignInButton,
       includeGithubSignInButton
     );
 
-    const includeFacebookSignInButton = this.featureDecisionService.includeFacebookSignInButton;
+    const includeFacebookSignInButton = this.featureDecisionService
+      .includeFacebookSignInButton;
     this.ToggledFacebookSignInButton = withFeatureToggle(
       FacebookSignInButton,
       includeFacebookSignInButton
@@ -76,25 +79,29 @@ export class UIFactory {
     const includeSearchBar = this.featureDecisionService.includeSearchBar;
     this.ToggledSearchBar = withFeatureToggle(SearchBar, includeSearchBar);
 
-    const includeViewChangeLogButton = this.featureDecisionService.includeViewChangeLogButton;
+    const includeViewChangeLogButton = this.featureDecisionService
+      .includeViewChangeLogButton;
     this.ToggledViewChangeLogButton = withFeatureToggle(
       ViewChangeLogButton,
       includeViewChangeLogButton
     );
 
-    const includePreferenceTogglesSubSection = this.featureDecisionService.includePreferenceTogglesSubSection;
+    const includePreferenceTogglesSubSection = this.featureDecisionService
+      .includePreferenceTogglesSubSection;
     this.ToggledPreferenceTogglesSubSection = withFeatureToggle(
       PreferenceTogglesSubSection,
       includePreferenceTogglesSubSection
     );
 
-    const includePublicListingToggle = this.featureDecisionService.includePublicListingToggle;
+    const includePublicListingToggle = this.featureDecisionService
+      .includePublicListingToggle;
     this.ToggledPublicListingToggle = withFeatureToggle(
       PublicListingToggle,
       includePublicListingToggle
     );
 
-    const includeUserShortLinksSection = this.featureDecisionService.includeUserShortLinksSection;
+    const includeUserShortLinksSection = this.featureDecisionService
+      .includeUserShortLinksSection;
     this.ToggledUserShortLinksSection = withFeatureToggle(
       UserShortLinksSection,
       includeUserShortLinksSection
@@ -104,7 +111,10 @@ export class UIFactory {
     this.AuthedAdminPage = withPageAuth(AdminPage, includeAdminPage);
   }
 
-  public createHomePage(location: H.Location<any>): ReactElement {
+  public createHomePage(
+    location: H.Location<any>,
+    history: H.History<any>
+  ): ReactElement {
     return (
       <HomePage
         uiFactory={this}
@@ -122,6 +132,7 @@ export class UIFactory {
         analyticsService={this.analyticsService}
         store={this.store}
         location={location}
+        history={history}
       />
     );
   }
