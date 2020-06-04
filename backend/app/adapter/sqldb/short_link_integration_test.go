@@ -245,7 +245,7 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 
 func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 	createdAt := mustParseTime(t, "2017-05-01T08:02:16-07:00")
-	now := time.Now()
+	now := mustParseTime(t, "2020-05-01T08:02:16-07:00")
 
 	testCases := []struct {
 		name              string
@@ -326,11 +326,14 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 						testCase.oldAlias,
 						testCase.newShortLink,
 					)
+					assert.Equal(t, nil, err)
 
+					shortLink, err = shortLinkRepo.GetShortLinkByAlias(testCase.newShortLink.Alias)
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 						return
 					}
+
 					assert.Equal(t, nil, err)
 					assert.Equal(t, expectedShortLink.Alias, shortLink.Alias)
 					assert.Equal(t, expectedShortLink.LongLink, shortLink.LongLink)
