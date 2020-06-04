@@ -13,7 +13,7 @@ type GoogleClientID string
 // GoogleClientSecret represents client secret used for Google OAuth.
 type GoogleClientSecret string
 
-// GoogleRedirectURI represents redirect ShortLink for Google single sign on.
+// GoogleRedirectURI represents redirect URL for Google single sign on.
 type GoogleRedirectURI string
 
 // NewGoogleIdentityProvider creates a new Google OAuth client with

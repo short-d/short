@@ -9,7 +9,7 @@ type IdentityProviderFake struct {
 	accessToken string
 }
 
-// GetAuthorizationURL retrieves the ShortLink where user can sign in and obtain
+// GetAuthorizationURL retrieves the URL where user can sign in and obtain
 // authorization code.
 func (i IdentityProviderFake) GetAuthorizationURL() string {
 	return i.authURL

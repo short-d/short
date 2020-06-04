@@ -5,7 +5,7 @@ type Detector struct {
 	blacklist BlackList
 }
 
-// IsURLMalicious checks whether the given ShortLink is malicious.
+// IsURLMalicious checks whether the given URL is malicious.
 func (r Detector) IsURLMalicious(url string) bool {
 	hasURL, err := r.blacklist.HasURL(url)
 	if err != nil {
