@@ -114,13 +114,13 @@ func TestAuthQuery_ShortLink(t *testing.T) {
 				ExpireAfter: testCase.expireAfter,
 			}
 
-			u, err := query.ShortLink(shortLinkArgs)
+			s, err := query.ShortLink(shortLinkArgs)
 
 			if testCase.hasErr {
 				assert.NotEqual(t, nil, err)
 				return
 			}
-			assert.Equal(t, testCase.expectedShortLink, u)
+			assert.Equal(t, testCase.expectedShortLink, s)
 		})
 	}
 }
