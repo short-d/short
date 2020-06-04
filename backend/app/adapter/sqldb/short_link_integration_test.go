@@ -8,13 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/short/backend/app/entity/metatag"
-
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/db/dbtest"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/entity/metatag"
 )
 
 var insertShortLinkRowSQL = fmt.Sprintf(`
