@@ -68,7 +68,7 @@ interface Props {
 
 interface State {
   isUserSignedIn?: boolean;
-  isUserAdmin?: boolean;
+  shouldShowAdminButton?: boolean;
   shouldShowPromo?: boolean;
   longLink?: string;
   alias?: string;
@@ -112,16 +112,16 @@ export class HomePage extends Component<Props, State> {
     this.setState({
       isUserSignedIn: true
     });
-    this.setUserAdminStatus();
+    this.showAdminButton();
     this.handleStateChange();
     this.autoFillLongLink();
     this.autoShowChangeLog();
   }
 
-  private setUserAdminStatus = async () => {
-    const isUserAdmin = await this.props.shortHTTPApi.isUserAdmin();
+  private showAdminButton = async () => {
+    const decision = await this.props.featureDecisionService.includeAdminPage();
     this.setState({
-      isUserAdmin: isUserAdmin
+      shouldShowAdminButton: decision
     });
   };
 
@@ -206,9 +206,10 @@ export class HomePage extends Component<Props, State> {
   }
 
   requestSignIn = () => {
+    // TODO(issue#833): make feature Toggle handle dynamic rendering condition.
     this.setState({
       isUserSignedIn: false,
-      isUserAdmin: false
+      shouldShowAdminButton: false
     });
     this.props.authService.signOut();
     this.showSignInModal();
@@ -227,7 +228,7 @@ export class HomePage extends Component<Props, State> {
     this.requestSignIn();
   };
 
-  handleAdminNavButtonClick = () => {
+  handleAdminButtonClick = () => {
     this.props.history.push('/admin');
   };
 
@@ -373,9 +374,9 @@ export class HomePage extends Component<Props, State> {
           onSearchBarInputChange={this.handleSearchBarInputChange}
           autoCompleteSuggestions={this.state.autoCompleteSuggestions}
           shouldShowSignOutButton={this.state.isUserSignedIn}
-          shouldShowAdminNavButton={this.state.isUserAdmin}
+          shouldShowAdminButton={this.state.shouldShowAdminButton}
           onSignOutButtonClick={this.handleSignOutButtonClick}
-          onAdminNavButtonClick={this.handleAdminNavButtonClick}
+          onAdminButtonClick={this.handleAdminButtonClick}
         />
         <div className={'main'}>
           <CreateShortLinkSection

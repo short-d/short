@@ -24,11 +24,4 @@ export class ShortHTTPApi {
     const url = `${this.baseURL}/analytics/track/${event}`;
     return this.httpService.get(url);
   }
-
-  isUserAdmin(): Promise<boolean> {
-    const url = `${this.baseURL}/features/admin-panel`;
-    const headers = { Authorization: this.authService.getBearerToken() };
-
-    return this.httpService.getJSON<boolean>(url, headers);
-  }
 }
