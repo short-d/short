@@ -75,7 +75,7 @@ VALUES ($1, $2, $3, $4);
 	return newChange, nil
 }
 
-// DeleteChange removes a change based on a given ID
+// DeleteChange removes a change with the given ID
 func (c ChangeLogSQL) DeleteChange(ID string) error {
 	statement := fmt.Sprintf(`
 DELETE FROM "%s"

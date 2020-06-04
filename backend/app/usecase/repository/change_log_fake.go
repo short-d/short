@@ -32,18 +32,13 @@ func (c *ChangeLogFake) CreateChange(newChange entity.Change) (entity.Change, er
 
 // DeleteChange removes a change based on a given ID
 func (c *ChangeLogFake) DeleteChange(ID string) error {
-	foundIdx := -1
 	for idx, change := range c.changeLog {
 		if change.ID == ID {
-			foundIdx = idx
+			return c.removeChangeAt(idx)
 		}
 	}
 
-	if foundIdx == -1 {
-		return nil
-	}
-
-	return c.removeChangeAt(foundIdx)
+	return nil
 }
 
 func (c *ChangeLogFake) removeChangeAt(idx int) error {
