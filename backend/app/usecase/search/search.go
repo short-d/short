@@ -27,10 +27,7 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 	resultCh := make(chan Result)
 	defer close(resultCh)
 
-	var orders []order.Order
-	for _, orderBy := range filter.Orders {
-		orders = append(orders, order.NewOrder(orderBy))
-	}
+	orders := toOrders(filter.Orders)
 
 	for i := range filter.Resources {
 		go func() {
@@ -74,6 +71,14 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 
 func (s Search) searchUser(query Query, orderBy order.Order, filter Filter) (Result, error) {
 	return Result{}, nil
+}
+
+func toOrders(ordersBy []order.By) []order.Order {
+	var orders []order.Order
+	for _, orderBy := range ordersBy {
+		orders = append(orders, order.NewOrder(orderBy))
+	}
+	return orders
 }
 
 func mergeResults(results []Result) Result {
