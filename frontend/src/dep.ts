@@ -98,8 +98,7 @@ export function initUIFactory(
     store,
     dynamicDecisionService,
     shortLinkService,
-    analyticsService,
-    shortHTTPApi
+    analyticsService
   );
 }
 

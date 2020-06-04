@@ -44,7 +44,6 @@ import { AnalyticsService } from '../../service/Analytics.service';
 import { Icon, IconID } from '../ui/Icon';
 import { Change } from '../../entity/Change';
 import { IFeatureDecisionService } from '../../service/feature-decision/FeatureDecision.service';
-import { ShortHTTPApi } from '../../service/ShortHTTP.api';
 
 interface Props {
   uiFactory: UIFactory;
@@ -60,7 +59,6 @@ interface Props {
   changeLogService: ChangeLogService;
   shortLinkService: ShortLinkService;
   analyticsService: AnalyticsService;
-  shortHTTPApi: ShortHTTPApi;
   store: Store<IAppState>;
   location: Location;
   history: History;
