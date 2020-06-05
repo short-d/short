@@ -2,7 +2,6 @@ package shortlink
 
 import (
 	"errors"
-	"sort"
 
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
@@ -16,27 +15,31 @@ var _ Updater = (*UpdaterPersist)(nil)
 
 // Updater modifies the properties of existing short links.
 type Updater interface {
-	UpdateURL(oldAlias string, update entity.ShortLink, user entity.User) (entity.ShortLink, error)
+	UpdateShortLink(oldAlias string, update entity.ShortLink, user entity.User) (entity.ShortLink, error)
 }
 
 // UpdaterPersist persists the given changes to a short link in the database store.
 type UpdaterPersist struct {
-	urlRepo             repository.ShortLink
-	userURLRelationRepo repository.UserShortLink
-	keyGen              keygen.KeyGenerator
-	longLinkValidator   validator.LongLink
-	aliasValidator      validator.CustomAlias
-	timer               timer.Timer
-	riskDetector        risk.Detector
+	urlRepo                   repository.ShortLink
+	userShortLinkRelationRepo repository.UserShortLink
+	keyGen                    keygen.KeyGenerator
+	longLinkValidator         validator.LongLink
+	aliasValidator            validator.CustomAlias
+	timer                     timer.Timer
+	riskDetector              risk.Detector
 }
 
-// UpdateURL persists mutations for a given short link in the repository.
-func (u UpdaterPersist) UpdateURL(
+// UpdateShortLink persists mutations for a given short link in the repository.
+func (u UpdaterPersist) UpdateShortLink(
 	oldAlias string,
 	update entity.ShortLink,
 	user entity.User,
 ) (entity.ShortLink, error) {
-	if !u.isURLRelated(oldAlias, user) {
+	found, err := u.userShortLinkRelationRepo.FindAliasByUser(user, oldAlias)
+	if err != nil {
+		return entity.ShortLink{}, err
+	}
+	if !found {
 		return entity.ShortLink{}, errors.New("short link not found")
 	}
 
@@ -84,29 +87,10 @@ func (u *UpdaterPersist) updateLongLink(url, update entity.ShortLink) entity.Sho
 	return url
 }
 
-func (u *UpdaterPersist) isURLRelated(shortlink string, user entity.User) bool {
-	userShortLinks, err := u.userURLRelationRepo.FindAliasesByUser(user)
-	if err != nil {
-		return false
-	}
-
-	if len(userShortLinks) == 0 {
-		return false
-	}
-
-	idx := sort.Search(len(userShortLinks), func(i int) bool {
-		return userShortLinks[i] == shortlink
-	})
-
-	// sort.Search uses a binary search to find the index of the first
-	// match and returns length of the slice if no match is found.
-	return idx != len(userShortLinks)
-}
-
 // NewUpdaterPersist creates a new UpdaterPersist instance.
 func NewUpdaterPersist(
 	urlRepo repository.ShortLink,
-	userURLRelationRepo repository.UserShortLink,
+	userShortLinkRelationRepo repository.UserShortLink,
 	keyGen keygen.KeyGenerator,
 	longLinkValidator validator.LongLink,
 	aliasValidator validator.CustomAlias,
@@ -115,7 +99,7 @@ func NewUpdaterPersist(
 ) UpdaterPersist {
 	return UpdaterPersist{
 		urlRepo,
-		userURLRelationRepo,
+		userShortLinkRelationRepo,
 		keyGen,
 		longLinkValidator,
 		aliasValidator,

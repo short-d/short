@@ -36,6 +36,16 @@ func (u UserShortLinkFake) FindAliasesByUser(user entity.User) ([]string, error)
 	return aliases, nil
 }
 
+// FindAliasByUser checks to see if the given user owns a short link with the provided alias.
+func (u UserShortLinkFake) FindAliasByUser(user entity.User, alias string) (bool, error) {
+	for idx, currUser := range u.users {
+		if currUser.ID == user.ID && u.shortLinks[idx].Alias == alias {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 // IsShortLinkRelated checks whether the ShortLink is owned by a given user.
 func (u UserShortLinkFake) IsShortLinkRelated(alias string, user entity.User) (bool, error) {
 	for idx, currUser := range u.users {

@@ -15,7 +15,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/validator"
 )
 
-func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
+func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now().UTC()
@@ -24,16 +24,16 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 	validNewLongLink := "https://httpbin.org/get?p1=v1"
 
 	testCases := []struct {
-		name          string
-		alias         string
-		availableKeys []keygen.Key
-		shortlinks    shortLinks
-		user          entity.User
-		urlUpdate     entity.ShortLink
-		relationUsers []entity.User
-		relationURLs  []entity.ShortLink
-		expHasErr     bool
-		expectedURL   entity.ShortLink
+		name               string
+		alias              string
+		availableKeys      []keygen.Key
+		shortlinks         shortLinks
+		user               entity.User
+		urlUpdate          entity.ShortLink
+		relationUsers      []entity.User
+		relationShortLinks []entity.ShortLink
+		expHasErr          bool
+		expectedShortLink  entity.ShortLink
 	}{
 		{
 			name:  "successfully update existing long link",
@@ -55,7 +55,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 			relationUsers: []entity.User{
 				{ID: "1"},
 			},
-			relationURLs: []entity.ShortLink{
+			relationShortLinks: []entity.ShortLink{
 				{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
@@ -63,7 +63,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				},
 			},
 			expHasErr: false,
-			expectedURL: entity.ShortLink{
+			expectedShortLink: entity.ShortLink{
 				Alias:    "boGp9w35",
 				LongLink: validNewLongLink,
 			},
@@ -88,15 +88,15 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 			relationUsers: []entity.User{
 				{ID: "1"},
 			},
-			relationURLs: []entity.ShortLink{
+			relationShortLinks: []entity.ShortLink{
 				{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
 					UpdatedAt: &now,
 				},
 			},
-			expHasErr:   true,
-			expectedURL: entity.ShortLink{},
+			expHasErr:         true,
+			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:  "long link is invalid",
@@ -118,15 +118,15 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 			relationUsers: []entity.User{
 				{ID: "1"},
 			},
-			relationURLs: []entity.ShortLink{
+			relationShortLinks: []entity.ShortLink{
 				{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
 					UpdatedAt: &now,
 				},
 			},
-			expHasErr:   true,
-			expectedURL: entity.ShortLink{},
+			expHasErr:         true,
+			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:  "short link is not owned by the user",
@@ -148,15 +148,15 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 			relationUsers: []entity.User{
 				{ID: "2"},
 			},
-			relationURLs: []entity.ShortLink{
+			relationShortLinks: []entity.ShortLink{
 				{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
 					UpdatedAt: &now,
 				},
 			},
-			expHasErr:   true,
-			expectedURL: entity.ShortLink{},
+			expHasErr:         true,
+			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:  "malicious url update",
@@ -167,8 +167,8 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 			urlUpdate: entity.ShortLink{
 				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
 			},
-			expHasErr:   true,
-			expectedURL: entity.ShortLink{},
+			expHasErr:         true,
+			expectedShortLink: entity.ShortLink{},
 		},
 	}
 
@@ -181,9 +181,9 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 			}
 			tm := timer.NewStub(now)
 			urlRepo := repository.NewShortLinkFake(testCase.shortlinks)
-			userURLRepo := repository.NewUserShortLinkRepoFake(
+			userShortLinkRepo := repository.NewUserShortLinkRepoFake(
 				testCase.relationUsers,
-				testCase.relationURLs,
+				testCase.relationShortLinks,
 			)
 			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
@@ -195,7 +195,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 			riskDetector := risk.NewDetector(blacklist)
 			updater := NewUpdaterPersist(
 				&urlRepo,
-				&userURLRepo,
+				&userShortLinkRepo,
 				keyGen,
 				longLinkValidator,
 				aliasValidator,
@@ -203,23 +203,23 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				riskDetector,
 			)
 
-			url, err := updater.UpdateURL(testCase.alias, testCase.urlUpdate, testCase.user)
+			url, err := updater.UpdateShortLink(testCase.alias, testCase.urlUpdate, testCase.user)
 			if testCase.expHasErr {
 				assert.NotEqual(t, nil, err)
 
-				_, err = urlRepo.GetShortLinkByAlias(testCase.expectedURL.Alias)
+				_, err = urlRepo.GetShortLinkByAlias(testCase.expectedShortLink.Alias)
 				assert.NotEqual(t, nil, err)
 
-				isExist := userURLRepo.IsRelationExist(testCase.user, testCase.expectedURL)
+				isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.expectedShortLink)
 				assert.Equal(t, false, isExist)
 				return
 			}
 			assert.Equal(t, nil, err)
-			assert.Equal(t, testCase.expectedURL.LongLink, url.LongLink)
-			assert.Equal(t, testCase.expectedURL.Alias, url.Alias)
-			assert.Equal(t, testCase.expectedURL.CreatedAt, url.CreatedAt)
+			assert.Equal(t, testCase.expectedShortLink.LongLink, url.LongLink)
+			assert.Equal(t, testCase.expectedShortLink.Alias, url.Alias)
+			assert.Equal(t, testCase.expectedShortLink.CreatedAt, url.CreatedAt)
 			assert.Equal(t, true, url.UpdatedAt.After(now))
-			assert.Equal(t, true, userURLRepo.IsRelationExist(testCase.user, url))
+			assert.Equal(t, true, userShortLinkRepo.IsRelationExist(testCase.user, url))
 		})
 	}
 }

@@ -27,10 +27,12 @@ type URLInput struct {
 	ExpireAt    *time.Time
 }
 
+// TODO(#840): remove this business logic and move it to use cases
 func (u *URLInput) isEmpty() bool {
 	return *u == URLInput{}
 }
 
+// TODO(#840): remove this business logic and move it to use cases
 func (u *URLInput) originalURL() string {
 	if u.OriginalURL == nil {
 		return ""
@@ -38,6 +40,7 @@ func (u *URLInput) originalURL() string {
 	return *u.OriginalURL
 }
 
+// TODO(#840): remove this business logic and move it to use cases
 func (u *URLInput) customAlias() string {
 	if u.CustomAlias == nil {
 		return ""
@@ -45,6 +48,7 @@ func (u *URLInput) customAlias() string {
 	return *u.CustomAlias
 }
 
+// TODO(#840): remove this business logic and move it to use cases
 func (u *URLInput) createUpdate() *entity.ShortLink {
 	if u.isEmpty() {
 		return nil
@@ -128,7 +132,7 @@ func (a AuthMutation) UpdateURL(args *UpdateURLArgs) (*URL, error) {
 		return nil, nil
 	}
 
-	newURL, err := a.shortLinkUpdater.UpdateURL(args.OldAlias, *update, user)
+	newURL, err := a.shortLinkUpdater.UpdateShortLink(args.OldAlias, *update, user)
 	if err != nil {
 		return nil, err
 	}
