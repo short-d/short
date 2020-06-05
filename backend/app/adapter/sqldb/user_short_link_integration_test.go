@@ -108,6 +108,128 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 	}
 }
 
+func TestListShortLinkSql_IsShortLinkRelated(t *testing.T) {
+	now := mustParseTime(t, "2019-05-01T08:02:16Z")
+	user := entity.User{
+		Name:           "mockedUser",
+		Email:          "test@example.com",
+		LastSignedInAt: &now,
+		CreatedAt:      &now,
+		UpdatedAt:      &now,
+	}
+
+	testCases := []struct {
+		name               string
+		userTableRows      []userTableRow
+		shortLinkTableRows []shortLinkTableRow
+		relationTableRows  []userShortLinkTableRow
+		alias              string
+		user               entity.User
+		hasErr             bool
+		isFound            bool
+	}{
+		{
+			name: "alias does not exist",
+			userTableRows: []userTableRow{
+				{
+					id:           "1",
+					email:        "test@example.com",
+					name:         "mockedUser",
+					lastSignedIn: &now,
+					createdAt:    &now,
+					updatedAt:    &now,
+				},
+			},
+			shortLinkTableRows: []shortLinkTableRow{},
+			relationTableRows:  []userShortLinkTableRow{},
+			alias:              "fizzbuzz",
+			user:               user,
+			hasErr:             false,
+			isFound:            false,
+		},
+		{
+			name: "alias does not belong to the user",
+			userTableRows: []userTableRow{
+				{
+					id:           "1",
+					email:        "test@example.com",
+					name:         "mockedUser",
+					lastSignedIn: &now,
+					createdAt:    &now,
+					updatedAt:    &now,
+				},
+			},
+			shortLinkTableRows: []shortLinkTableRow{
+				{
+					alias: "fizzbuzz",
+				},
+			},
+			relationTableRows: []userShortLinkTableRow{
+				{
+					alias:     "fizzbuzz",
+					userEmail: "admin@example.com",
+				},
+			},
+			alias:   "fizzbuzz",
+			user:    user,
+			hasErr:  false,
+			isFound: false,
+		},
+		{
+			name: "alias belongs to the user",
+			userTableRows: []userTableRow{
+				{
+					id:           "1",
+					email:        "test@example.com",
+					name:         "mockedUser",
+					lastSignedIn: &now,
+					createdAt:    &now,
+					updatedAt:    &now,
+				},
+			},
+			shortLinkTableRows: []shortLinkTableRow{
+				{
+					alias: "fizzbuzz",
+				},
+			},
+			relationTableRows: []userShortLinkTableRow{
+				{
+					alias:     "fizzbuzz",
+					userEmail: "test@example.com",
+				},
+			},
+			alias:   "fizzbuzz",
+			user:    user,
+			hasErr:  false,
+			isFound: true,
+		},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			dbtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
+					insertShortLinkTableRows(t, sqlDB, testCase.shortLinkTableRows)
+					insertUserShortLinkTableRows(t, sqlDB, testCase.relationTableRows)
+
+					userShortLinkRepo := sqldb.NewUserShortLinkSQL(sqlDB)
+					result, err := userShortLinkRepo.IsShortLinkRelated(testCase.alias, testCase.user)
+
+					if testCase.hasErr {
+						assert.NotEqual(t, nil, err)
+						return
+					}
+					assert.Equal(t, nil, err)
+					assert.Equal(t, testCase.isFound, result)
+				})
+		})
+	}
+}
+
 func insertUserShortLinkTableRows(
 	t *testing.T,
 	sqlDB *sql.DB,

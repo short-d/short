@@ -53,13 +53,13 @@ func TestUpdateURL(t *testing.T) {
 			},
 			urls: urls,
 			relationUsers: []entity.User{
-				entity.User{
+				{
 					ID:    "1",
 					Email: "short@gmail.com",
 				},
 			},
 			relationShortLinks: []entity.ShortLink{
-				entity.ShortLink{
+				{
 					Alias:    "SimpleAlias",
 					LongLink: "https://www.google.com/",
 				},
@@ -81,13 +81,13 @@ func TestUpdateURL(t *testing.T) {
 			},
 			urls: urls,
 			relationUsers: []entity.User{
-				entity.User{
+				{
 					ID:    "1",
 					Email: "short@gmail.com",
 				},
 			},
 			relationShortLinks: []entity.ShortLink{
-				entity.ShortLink{
+				{
 					Alias:    "SimpleAlias",
 					LongLink: "https://www.google.com/",
 				},
@@ -114,13 +114,13 @@ func TestUpdateURL(t *testing.T) {
 			},
 			urls: urls,
 			relationUsers: []entity.User{
-				entity.User{
+				{
 					ID:    "1",
 					Email: "short@gmail.com",
 				},
 			},
 			relationShortLinks: []entity.ShortLink{
-				entity.ShortLink{
+				{
 					Alias:    "SimpleAlias",
 					LongLink: "https://www.google.com/",
 				},
@@ -148,13 +148,13 @@ func TestUpdateURL(t *testing.T) {
 			},
 			urls: urls,
 			relationUsers: []entity.User{
-				entity.User{
+				{
 					ID:    "1",
 					Email: "short@gmail.com",
 				},
 			},
 			relationShortLinks: []entity.ShortLink{
-				entity.ShortLink{
+				{
 					Alias:    "SimpleAlias",
 					LongLink: "https://www.google.com/",
 				},
@@ -181,13 +181,13 @@ func TestUpdateURL(t *testing.T) {
 			},
 			urls: urls,
 			relationUsers: []entity.User{
-				entity.User{
+				{
 					ID:    "1",
 					Email: "short@gmail.com",
 				},
 			},
 			relationShortLinks: []entity.ShortLink{
-				entity.ShortLink{
+				{
 					Alias:    "SimpleAlias",
 					LongLink: "https://www.google.com/",
 				},

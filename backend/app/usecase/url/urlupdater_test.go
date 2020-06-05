@@ -53,10 +53,10 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				LongLink: validNewLongLink,
 			},
 			relationUsers: []entity.User{
-				entity.User{ID: "1"},
+				{ID: "1"},
 			},
 			relationURLs: []entity.ShortLink{
-				entity.ShortLink{
+				{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
 					UpdatedAt: &now,
@@ -86,10 +86,10 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				LongLink: validNewLongLink,
 			},
 			relationUsers: []entity.User{
-				entity.User{ID: "1"},
+				{ID: "1"},
 			},
 			relationURLs: []entity.ShortLink{
-				entity.ShortLink{
+				{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
 					UpdatedAt: &now,
@@ -116,10 +116,10 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				LongLink: "aaaaaaaaaaaaaaaaaaa",
 			},
 			relationUsers: []entity.User{
-				entity.User{ID: "1"},
+				{ID: "1"},
 			},
 			relationURLs: []entity.ShortLink{
-				entity.ShortLink{
+				{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
 					UpdatedAt: &now,
@@ -146,10 +146,10 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				LongLink: "https://google.com/",
 			},
 			relationUsers: []entity.User{
-				entity.User{ID: "2"},
+				{ID: "2"},
 			},
 			relationURLs: []entity.ShortLink{
-				entity.ShortLink{
+				{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
 					UpdatedAt: &now,
