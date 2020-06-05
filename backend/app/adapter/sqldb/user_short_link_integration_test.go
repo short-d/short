@@ -117,6 +117,7 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 func TestListShortLinkSql_IsShortLinkRelated(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16Z")
 	user := entity.User{
+		ID:             "test",
 		Name:           "mockedUser",
 		Email:          "test@example.com",
 		LastSignedInAt: &now,
@@ -138,7 +139,7 @@ func TestListShortLinkSql_IsShortLinkRelated(t *testing.T) {
 			name: "alias does not exist",
 			userTableRows: []userTableRow{
 				{
-					id:           "1",
+					id:           "test",
 					email:        "test@example.com",
 					name:         "mockedUser",
 					lastSignedIn: &now,
@@ -157,9 +158,17 @@ func TestListShortLinkSql_IsShortLinkRelated(t *testing.T) {
 			name: "alias does not belong to the user",
 			userTableRows: []userTableRow{
 				{
-					id:           "1",
+					id:           "test",
 					email:        "test@example.com",
 					name:         "mockedUser",
+					lastSignedIn: &now,
+					createdAt:    &now,
+					updatedAt:    &now,
+				},
+				{
+					id:           "test2",
+					email:        "test2@example.com",
+					name:         "mockedUser2",
 					lastSignedIn: &now,
 					createdAt:    &now,
 					updatedAt:    &now,
@@ -172,8 +181,8 @@ func TestListShortLinkSql_IsShortLinkRelated(t *testing.T) {
 			},
 			relationTableRows: []userShortLinkTableRow{
 				{
-					alias:     "fizzbuzz",
-					userEmail: "admin@example.com",
+					alias:  "fizzbuzz",
+					userID: "test2",
 				},
 			},
 			alias:   "fizzbuzz",
@@ -185,7 +194,7 @@ func TestListShortLinkSql_IsShortLinkRelated(t *testing.T) {
 			name: "alias belongs to the user",
 			userTableRows: []userTableRow{
 				{
-					id:           "1",
+					id:           "test",
 					email:        "test@example.com",
 					name:         "mockedUser",
 					lastSignedIn: &now,
@@ -200,8 +209,8 @@ func TestListShortLinkSql_IsShortLinkRelated(t *testing.T) {
 			},
 			relationTableRows: []userShortLinkTableRow{
 				{
-					alias:     "fizzbuzz",
-					userEmail: "test@example.com",
+					alias:  "fizzbuzz",
+					userID: "test",
 				},
 			},
 			alias:   "fizzbuzz",
