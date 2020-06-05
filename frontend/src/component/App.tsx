@@ -18,9 +18,16 @@ export class App extends Component<IProps> {
           <Route
             path={'/'}
             exact
-            render={({ location }) =>
-              this.props.uiFactory.createHomePage(location)
+            render={({ location, history }) =>
+              this.props.uiFactory.createHomePage(location, history)
             }
+          />
+          <Route
+            path={'/admin'}
+            exact
+            render={() => {
+              return this.props.uiFactory.createAdminPage();
+            }}
           />
           <Route
             path={'/r/:alias'}

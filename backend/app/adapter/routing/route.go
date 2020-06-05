@@ -84,7 +84,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/r/:alias",
-			Handle: NewOriginalURL(
+			Handle: NewLongLink(
 				instrumentationFactory,
 				shortLinkRetriever,
 				timer,

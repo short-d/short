@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function(
   WrappedComponent: React.ComponentType<any>,
-  featureDecision: Promise<boolean>
+  makeFeatureDecision: () => Promise<boolean>
 ): React.ComponentType<any> {
   interface IState {
     isFeatureEnabled: boolean;
@@ -22,7 +22,7 @@ export default function(
     componentDidMount(): void {
       this.isComponentMounted = true;
 
-      featureDecision.then(decision => {
+      makeFeatureDecision().then(decision => {
         if (!this.isComponentMounted) {
           return;
         }
