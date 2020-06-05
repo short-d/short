@@ -13,6 +13,8 @@ type CreatedTime struct {
 }
 
 // ArrangeShortLinks arranges shortLinks based on CreatedAt.
+// The returned short links satisfies the created before comparision if CreatedAt
+// is not nil, otherwise it sits on the end of the slices if CreatedAt is nil.
 func (c CreatedTime) ArrangeShortLinks(shortLinks []entity.ShortLink) []entity.ShortLink {
 	sort.SliceStable(shortLinks, func(i, j int) bool {
 		if shortLinks[j].CreatedAt == nil {
@@ -26,6 +28,8 @@ func (c CreatedTime) ArrangeShortLinks(shortLinks []entity.ShortLink) []entity.S
 }
 
 // ArrangeUsers arranges users based on CreatedAt.
+// The returned users satisfies the created before comparision if CreatedAt
+// is not nil, otherwise it sits on the end of the slices if CreatedAt is nil.
 func (c CreatedTime) ArrangeUsers(users []entity.User) []entity.User {
 	sort.SliceStable(users, func(i, j int) bool {
 		if users[j].CreatedAt == nil {
