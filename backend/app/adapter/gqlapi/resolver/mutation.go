@@ -5,14 +5,14 @@ import (
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/requester"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 // Mutation represents GraphQL mutation resolver
 type Mutation struct {
 	logger            logger.Logger
-	urlCreator        url.Creator
-	urlUpdater        url.Updater
+	shortLinkCreator  shortlink.Creator
+	shortLinkUpdater  shortlink.Updater
 	requesterVerifier requester.Verifier
 	authenticator     authenticator.Authenticator
 	changeLog         changelog.ChangeLog
@@ -36,23 +36,23 @@ func (m Mutation) AuthMutation(args *AuthMutationArgs) (*AuthMutation, error) {
 		return nil, ErrNotHuman{}
 	}
 
-	authMutation := newAuthMutation(args.AuthToken, m.authenticator, m.changeLog, m.urlCreator, m.urlUpdater)
+	authMutation := newAuthMutation(args.AuthToken, m.authenticator, m.changeLog, m.shortLinkCreator, m.shortLinkUpdater)
 	return &authMutation, nil
 }
 
 func newMutation(
 	logger logger.Logger,
 	changeLog changelog.ChangeLog,
-	urlCreator url.Creator,
-	urlUpdater url.Updater,
+	shortLinkCreator shortlink.Creator,
+	shortLinkUpdater shortlink.Updater,
 	requesterVerifier requester.Verifier,
 	authenticator authenticator.Authenticator,
 ) Mutation {
 	return Mutation{
 		logger:            logger,
 		changeLog:         changeLog,
-		urlCreator:        urlCreator,
-		urlUpdater:        urlUpdater,
+		shortLinkCreator:  shortLinkCreator,
+		shortLinkUpdater:  shortLinkUpdater,
 		requesterVerifier: requesterVerifier,
 		authenticator:     authenticator,
 	}

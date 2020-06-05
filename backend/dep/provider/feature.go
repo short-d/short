@@ -2,6 +2,7 @@ package provider
 
 import (
 	"github.com/short-d/app/fw/env"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/feature"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
@@ -11,9 +12,10 @@ import (
 func NewFeatureDecisionMakerFactorySwitch(
 	deployment env.Deployment,
 	toggleRepo repository.FeatureToggle,
+	authorizer authorizer.Authorizer,
 ) feature.DecisionMakerFactory {
 	if deployment.IsDevelopment() {
-		return feature.NewStaticDecisionMakerFactory()
+		return feature.NewStaticDecisionMakerFactory(authorizer)
 	}
-	return feature.NewDynamicDecisionMakerFactory(toggleRepo)
+	return feature.NewDynamicDecisionMakerFactory(toggleRepo, authorizer)
 }

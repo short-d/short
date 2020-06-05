@@ -22,18 +22,27 @@ type GoogleSSOTableRow struct {
 func TestGoogleSSOSql_IsSSOUserExist(t *testing.T) {
 	testCases := []struct {
 		name            string
+		userTableRows   []userTableRow
 		tableRows       []GoogleSSOTableRow
 		ssoUserID       string
 		expectedIsExist bool
 	}{
 		{
 			name:            "sso user not found",
+			userTableRows:   []userTableRow{},
 			tableRows:       []GoogleSSOTableRow{},
 			ssoUserID:       "220uFicCJj",
 			expectedIsExist: false,
 		},
 		{
 			name: "sso user exists",
+			userTableRows: []userTableRow{
+				{
+					id:    "alpha",
+					email: "alpha@gmail.com",
+					name:  "alpha",
+				},
+			},
 			tableRows: []GoogleSSOTableRow{
 				{
 					googleUserID: "220uFicCJj",
@@ -53,6 +62,7 @@ func TestGoogleSSOSql_IsSSOUserExist(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
 					insertGoogleSSOTableRows(t, sqlDB, testCase.tableRows)
 
 					entryRepo := logger.NewEntryRepoFake()
@@ -70,15 +80,30 @@ func TestGoogleSSOSql_IsSSOUserExist(t *testing.T) {
 }
 
 func TestGoogleSSOSql_CreateMapping(t *testing.T) {
+	defaultUserTableRows := []userTableRow{
+		{
+			id:    "short",
+			email: "short@gmail.com",
+			name:  "short",
+		},
+		{
+			id:    "alpha",
+			email: "alpha@gmail.com",
+			name:  "alpha",
+		},
+	}
+
 	testCases := []struct {
-		name        string
-		tableRows   []GoogleSSOTableRow
-		ssoUserID   string
-		shortUserID string
-		hasErr      bool
+		name          string
+		userTableRows []userTableRow
+		tableRows     []GoogleSSOTableRow
+		ssoUserID     string
+		shortUserID   string
+		hasErr        bool
 	}{
 		{
-			name: "mapping exists",
+			name:          "mapping exists",
+			userTableRows: defaultUserTableRows,
 			tableRows: []GoogleSSOTableRow{
 				{googleUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -87,7 +112,8 @@ func TestGoogleSSOSql_CreateMapping(t *testing.T) {
 			hasErr:      true,
 		},
 		{
-			name: "only SSO user ID exists",
+			name:          "only SSO user ID exists",
+			userTableRows: defaultUserTableRows,
 			tableRows: []GoogleSSOTableRow{
 				{googleUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -96,7 +122,8 @@ func TestGoogleSSOSql_CreateMapping(t *testing.T) {
 			hasErr:      true,
 		},
 		{
-			name: "only Short user ID exists",
+			name:          "only Short user ID exists",
+			userTableRows: defaultUserTableRows,
 			tableRows: []GoogleSSOTableRow{
 				{googleUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -105,7 +132,8 @@ func TestGoogleSSOSql_CreateMapping(t *testing.T) {
 			hasErr:      true,
 		},
 		{
-			name: "neither SSO user ID nor Short user ID exists",
+			name:          "neither SSO user ID nor Short user ID exists",
+			userTableRows: defaultUserTableRows,
 			tableRows: []GoogleSSOTableRow{
 				{googleUserID: "long_user_id", shortUserID: "short"},
 			},
@@ -123,6 +151,7 @@ func TestGoogleSSOSql_CreateMapping(t *testing.T) {
 				dbMigrationRoot,
 				dbConfig,
 				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
 					insertGoogleSSOTableRows(t, sqlDB, testCase.tableRows)
 
 					entryRepo := logger.NewEntryRepoFake()
@@ -131,7 +160,6 @@ func TestGoogleSSOSql_CreateMapping(t *testing.T) {
 
 					GoogleSSORepo := sqldb.NewGoogleSSOSql(sqlDB, lg)
 					err = GoogleSSORepo.CreateMapping(testCase.ssoUserID, testCase.shortUserID)
-					assert.Equal(t, nil, err)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)

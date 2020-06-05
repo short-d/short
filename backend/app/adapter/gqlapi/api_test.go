@@ -18,7 +18,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/validator"
 )
 
@@ -30,7 +30,7 @@ func TestGraphQlAPI(t *testing.T) {
 
 	shortLinkRepo := repository.NewShortLinkFake(map[string]entity.ShortLink{})
 	userShortLinkRepo := repository.NewUserShortLinkRepoFake([]entity.User{}, []entity.ShortLink{})
-	retriever := url.NewRetrieverPersist(&shortLinkRepo, &userShortLinkRepo)
+	retriever := shortlink.NewRetrieverPersist(&shortLinkRepo, &userShortLinkRepo)
 	keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 	keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 	assert.Equal(t, nil, err)
@@ -40,7 +40,7 @@ func TestGraphQlAPI(t *testing.T) {
 	tm := timer.NewStub(now)
 	riskDetector := risk.NewDetector(blacklist)
 
-	creator := url.NewCreatorPersist(
+	creator := shortlink.NewCreatorPersist(
 		&shortLinkRepo,
 		&userShortLinkRepo,
 		keyGen,
@@ -50,7 +50,7 @@ func TestGraphQlAPI(t *testing.T) {
 		riskDetector,
 	)
 
-	updater := url.NewUpdaterPersist(
+	updater := shortlink.NewUpdaterPersist(
 		&shortLinkRepo,
 		&userShortLinkRepo,
 		keyGen,

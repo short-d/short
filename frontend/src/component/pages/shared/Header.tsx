@@ -9,7 +9,9 @@ interface Props {
   onSearchBarInputChange: (searchBarInput: String) => void;
   autoCompleteSuggestions?: Array<Url>;
   shouldShowSignOutButton?: boolean;
+  shouldShowAdminButton?: boolean;
   onSignOutButtonClick: () => void;
+  onAdminButtonClick: () => void;
 }
 
 export class Header extends Component<Props> {
@@ -24,13 +26,20 @@ export class Header extends Component<Props> {
               autoCompleteSuggestions: this.props.autoCompleteSuggestions
             })}
           </div>
-          {this.props.shouldShowSignOutButton && (
-            <div className={'sign-out'}>
-              <Button onClick={this.props.onSignOutButtonClick}>
-                Sign out
-              </Button>
-            </div>
-          )}
+          <nav>
+            {this.props.shouldShowAdminButton && (
+              <div className={'nav-item'}>
+                <Button onClick={this.props.onAdminButtonClick}>Admin</Button>
+              </div>
+            )}
+            {this.props.shouldShowSignOutButton && (
+              <div className={'nav-item'}>
+                <Button onClick={this.props.onSignOutButtonClick}>
+                  Sign out
+                </Button>
+              </div>
+            )}
+          </nav>
         </div>
       </header>
     );

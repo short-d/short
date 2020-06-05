@@ -15,7 +15,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/risk"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/validator"
 )
 
@@ -25,7 +25,7 @@ func TestUpdateURL(t *testing.T) {
 	newAlias := "NewAlias"
 	newLongLink := "https://www.short-d.com"
 	maliciousURL := "http://malware.wicar.org/data/ms14_064_ole_not_xp.html"
-	urls := urlMap{
+	urls := shortLinkMap{
 		"SimpleAlias": entity.ShortLink{
 			Alias:    "SimpleAlias",
 			LongLink: "https://www.google.com/",
@@ -35,7 +35,7 @@ func TestUpdateURL(t *testing.T) {
 		name               string
 		args               *UpdateURLArgs
 		user               entity.User
-		urls               urlMap
+		urls               shortLinkMap
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
 		expectedShortLink  *URL
@@ -227,7 +227,7 @@ func TestUpdateURL(t *testing.T) {
 			authToken, err := auth.GenerateToken(testCase.user)
 			assert.Equal(t, nil, err)
 
-			creator := url.NewCreatorPersist(
+			creator := shortlink.NewCreatorPersist(
 				&shortLinkRepo,
 				&userShortLinkRepo,
 				keyGen,
@@ -236,7 +236,7 @@ func TestUpdateURL(t *testing.T) {
 				tm,
 				riskDetector,
 			)
-			updater := url.NewUpdaterPersist(
+			updater := shortlink.NewUpdaterPersist(
 				&shortLinkRepo,
 				&userShortLinkRepo,
 				keyGen,

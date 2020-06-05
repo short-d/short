@@ -182,6 +182,93 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 	}
 }
 
+func TestChangeLogSql_DeleteChange(t *testing.T) {
+	summaryMarkdown1 := "summary 1"
+	summaryMarkdown2 := "summary 2"
+
+	testCases := []struct {
+		name                  string
+		tableRows             []changeLogTableRow
+		deleteChangeId        string
+		expectedChangeLogSize int
+		expectedChangeLog     []entity.Change
+	}{
+		{
+			name: "delete an existing change",
+			tableRows: []changeLogTableRow{
+				{
+					id:              "12345",
+					title:           "title 1",
+					summaryMarkdown: summaryMarkdown1,
+				},
+				{
+					id:              "67890",
+					title:           "title 2",
+					summaryMarkdown: summaryMarkdown2,
+				},
+			},
+			deleteChangeId:        "67890",
+			expectedChangeLogSize: 1,
+			expectedChangeLog: []entity.Change{
+				{
+					ID:              "12346",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+			},
+		}, {
+			name: "delete a non existent change",
+			tableRows: []changeLogTableRow{
+				{
+					id:              "12345",
+					title:           "title 1",
+					summaryMarkdown: summaryMarkdown1,
+				},
+				{
+					id:              "67890",
+					title:           "title 2",
+					summaryMarkdown: summaryMarkdown2,
+				},
+			},
+			deleteChangeId:        "34567",
+			expectedChangeLogSize: 2,
+			expectedChangeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "67890",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			dbtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertChangeLogTableRows(t, sqlDB, testCase.tableRows)
+
+					changeLogRepo := sqldb.NewChangeLogSQL(sqlDB)
+
+					err := changeLogRepo.DeleteChange(testCase.deleteChangeId)
+					changeLog, _ := changeLogRepo.GetChangeLog()
+
+					assert.Equal(t, nil, err)
+					assert.Equal(t, testCase.expectedChangeLogSize, len(changeLog))
+				})
+		})
+	}
+}
+
 func insertChangeLogTableRows(t *testing.T, sqlDB *sql.DB, tableRows []changeLogTableRow) {
 	for _, tableRow := range tableRows {
 		_, err := sqlDB.Exec(

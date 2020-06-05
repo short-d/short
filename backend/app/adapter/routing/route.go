@@ -10,9 +10,10 @@ import (
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/routing/analytics"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
-	"github.com/short-d/short/backend/app/usecase/url"
 )
 
 // NewShort creates HTTP routing table.
@@ -20,11 +21,12 @@ func NewShort(
 	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL string,
 	timer timer.Timer,
-	urlRetriever url.Retriever,
+	shortLinkRetriever shortlink.Retriever,
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
 	githubSSO github.SingleSignOn,
 	facebookSSO facebook.SingleSignOn,
 	googleSSO google.SingleSignOn,
+	authenticator authenticator.Authenticator,
 ) []router.Route {
 	frontendURL, err := netURL.Parse(webFrontendURL)
 	if err != nil {
@@ -84,7 +86,7 @@ func NewShort(
 			Path:   "/r/:alias",
 			Handle: NewOriginalURL(
 				instrumentationFactory,
-				urlRetriever,
+				shortLinkRetriever,
 				timer,
 				*frontendURL,
 			),
@@ -92,7 +94,11 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/features/:featureID",
-			Handle: FeatureHandle(instrumentationFactory, featureDecisionMakerFactory),
+			Handle: FeatureHandle(
+				instrumentationFactory,
+				featureDecisionMakerFactory,
+				authenticator,
+			),
 		},
 		{
 			Method: "GET",

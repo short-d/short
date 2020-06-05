@@ -1,6 +1,6 @@
 // +build !integration all
 
-package url
+package shortlink
 
 import (
 	"testing"
@@ -27,7 +27,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 		name          string
 		alias         string
 		availableKeys []keygen.Key
-		urls          urlMap
+		shortlinks    shortLinks
 		user          entity.User
 		urlUpdate     entity.ShortLink
 		relationUsers []entity.User
@@ -38,7 +38,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 		{
 			name:  "successfully update existing long link",
 			alias: alias,
-			urls: urlMap{
+			shortlinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
@@ -71,7 +71,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 		{
 			name:  "alias doesn't exist",
 			alias: validNewAlias,
-			urls: urlMap{
+			shortlinks: shortLinks{
 				"boGp9w35zzzz": entity.ShortLink{
 					Alias:     "boGp9w35zzzz",
 					LongLink:  "https://httpbin.org",
@@ -101,7 +101,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 		{
 			name:  "long link is invalid",
 			alias: alias,
-			urls: urlMap{
+			shortlinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
@@ -131,7 +131,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 		{
 			name:  "short link is not owned by the user",
 			alias: alias,
-			urls: urlMap{
+			shortlinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
@@ -180,7 +180,7 @@ func TestURLUpdaterPersist_UpdateURL(t *testing.T) {
 				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": false,
 			}
 			tm := timer.NewStub(now)
-			urlRepo := repository.NewShortLinkFake(testCase.urls)
+			urlRepo := repository.NewShortLinkFake(testCase.shortlinks)
 			userURLRepo := repository.NewUserShortLinkRepoFake(
 				testCase.relationUsers,
 				testCase.relationURLs,

@@ -1,7 +1,5 @@
 -- +migrate Up
 ALTER TABLE "user_url_relation"
-    DROP CONSTRAINT "pk_user_url_relation";
-ALTER TABLE "user_url_relation"
     DROP CONSTRAINT "user_url_relation_user_email_fkey";
 ALTER TABLE "user_url_relation"
     DROP COLUMN user_email;
@@ -28,8 +26,8 @@ ALTER TABLE "user"
     ADD CONSTRAINT "User_pkey" PRIMARY KEY (email);
 
 ALTER TABLE "user_url_relation"
-    ADD COLUMN user_email CHARACTER VARYING(254) NOT NULL;
+    ADD COLUMN user_email CHARACTER VARYING(254);
 ALTER TABLE "user_url_relation"
     ADD CONSTRAINT "user_url_relation_user_email_fkey" FOREIGN KEY (user_email) REFERENCES "user"(email);
-ALTER TABLE "user_url_relation"
-    ADD CONSTRAINT "pk_user_url_relation" PRIMARY KEY (url_alias, user_email);
+-- TODO(issue#824): Add Primary Key Constraint to user_email and url_alias on migrate down
+-- TODO(issue#824): Set user_email to NOT NULL on migrate down

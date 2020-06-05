@@ -4,15 +4,15 @@ import (
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 // Query represents GraphQL query resolver
 type Query struct {
-	logger        logger.Logger
-	authenticator authenticator.Authenticator
-	changeLog     changelog.ChangeLog
-	urlRetriever  url.Retriever
+	logger             logger.Logger
+	authenticator      authenticator.Authenticator
+	changeLog          changelog.ChangeLog
+	shortLinkRetriever shortlink.Retriever
 }
 
 // AuthQueryArgs represents possible parameters for AuthQuery endpoint
@@ -22,7 +22,7 @@ type AuthQueryArgs struct {
 
 // AuthQuery extracts user information from authentication token
 func (q Query) AuthQuery(args *AuthQueryArgs) (*AuthQuery, error) {
-	authQuery := newAuthQuery(args.AuthToken, q.authenticator, q.changeLog, q.urlRetriever)
+	authQuery := newAuthQuery(args.AuthToken, q.authenticator, q.changeLog, q.shortLinkRetriever)
 	return &authQuery, nil
 }
 
@@ -30,12 +30,12 @@ func newQuery(
 	logger logger.Logger,
 	authenticator authenticator.Authenticator,
 	changeLog changelog.ChangeLog,
-	urlRetriever url.Retriever,
+	shortLinkRetriever shortlink.Retriever,
 ) Query {
 	return Query{
-		logger:        logger,
-		authenticator: authenticator,
-		changeLog:     changeLog,
-		urlRetriever:  urlRetriever,
+		logger:             logger,
+		authenticator:      authenticator,
+		changeLog:          changeLog,
+		shortLinkRetriever: shortLinkRetriever,
 	}
 }
