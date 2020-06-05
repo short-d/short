@@ -19,14 +19,14 @@ type AuthQuery struct {
 	shortLinkRetriever shortlink.Retriever
 }
 
-// URLArgs represents possible parameters for ShortLink endpoint
-type URLArgs struct {
+// ShortLinkArgs represents possible parameters for ShortLink endpoint
+type ShortLinkArgs struct {
 	Alias       string
 	ExpireAfter *scalar.Time
 }
 
 // ShortLink retrieves an ShortLink persistent storage given alias and expiration time.
-func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
+func (v AuthQuery) ShortLink(args *ShortLinkArgs) (*ShortLink, error) {
 	var expireAt *time.Time
 	if args.ExpireAfter != nil {
 		expireAt = &args.ExpireAfter.Time
@@ -36,7 +36,7 @@ func (v AuthQuery) URL(args *URLArgs) (*URL, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &URL{url: s}, nil
+	return &ShortLink{shortLink: s}, nil
 }
 
 // ChangeLog retrieves full ChangeLog from persistent storage
@@ -55,24 +55,24 @@ func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	return newChangeLog(changeLog, lastViewedAt), err
 }
 
-// URLs retrieves urls created by a given user from persistent storage
-func (v AuthQuery) URLs() ([]URL, error) {
+// ShortLinks retrieves short links created by a given user from persistent storage
+func (v AuthQuery) ShortLinks() ([]ShortLink, error) {
 	user, err := viewer(v.authToken, v.authenticator)
 	if err != nil {
-		return []URL{}, ErrInvalidAuthToken{}
+		return []ShortLink{}, ErrInvalidAuthToken{}
 	}
 
 	shortLinks, err := v.shortLinkRetriever.GetShortLinksByUser(user)
 	if err != nil {
-		return []URL{}, err
+		return []ShortLink{}, err
 	}
 
-	var gqlURLs []URL
+	var gqlShortLinks []ShortLink
 	for _, v := range shortLinks {
-		gqlURLs = append(gqlURLs, newURL(v))
+		gqlShortLinks = append(gqlShortLinks, newShortLink(v))
 	}
 
-	return gqlURLs, nil
+	return gqlShortLinks, nil
 }
 
 func newAuthQuery(
