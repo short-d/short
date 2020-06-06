@@ -14,11 +14,11 @@ import {
 
 interface ICreatedUrl {
   alias: string;
-  originalURL: string;
+  longLink: string;
 }
 
 interface IAuthMutation {
-  createURL: ICreatedUrl;
+  createShortLink: ICreatedUrl;
 }
 
 interface ICreateURLData {
@@ -34,13 +34,13 @@ const gqlCreateURL = `
   mutation params(
     $captchaResponse: String!
     $authToken: String!
-    $urlInput: URLInput!
+    $shortLinkInput: ShortLinkInput!
     $isPublic: Boolean!
   ) {
     authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
-      createURL(url: $urlInput, isPublic: $isPublic) {
+      createShortLink(shortLink: $shortLinkInput, isPublic: $isPublic) {
         alias
-        originalURL
+        longLink
       }
     }
   }
@@ -151,7 +151,9 @@ export class UrlService {
             variables: variables
           })
           .then((res: ICreateURLData) => {
-            const url = this.getUrlFromCreatedUrl(res.authMutation.createURL);
+            const url = this.getUrlFromCreatedUrl(
+              res.authMutation.createShortLink
+            );
             resolve(url);
           })
           .catch((err: IGraphQLRequestError) => {
@@ -177,7 +179,7 @@ export class UrlService {
 
   private getUrlFromCreatedUrl(createdUrl: ICreatedUrl): Url {
     return {
-      originalUrl: createdUrl.originalURL,
+      originalUrl: createdUrl.longLink,
       alias: createdUrl.alias
     };
   }
@@ -190,8 +192,8 @@ export class UrlService {
     return {
       captchaResponse: captchaResponse,
       authToken: this.authService.getAuthToken(),
-      urlInput: {
-        originalURL: link.originalUrl,
+      shortLinkInput: {
+        longLink: link.originalUrl,
         customAlias: link.alias
       },
       isPublic

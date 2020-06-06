@@ -20,20 +20,20 @@ import (
 
 type shortLinkMap = map[string]entity.ShortLink
 
-func TestAuthQuery_URL(t *testing.T) {
+func TestAuthQuery_ShortLink(t *testing.T) {
 	t.Parallel()
 	now := time.Now()
 	before := now.Add(-5 * time.Second)
 	after := now.Add(5 * time.Second)
 
 	testCases := []struct {
-		name        string
-		user        entity.User
-		alias       string
-		expireAfter *scalar.Time
-		shortLinks  shortLinkMap
-		hasErr      bool
-		expectedURL *URL
+		name              string
+		user              entity.User
+		alias             string
+		expireAfter       *scalar.Time
+		shortLinks        shortLinkMap
+		hasErr            bool
+		expectedShortLink *ShortLink
 	}{
 		{
 			name:        "alias not found with no expireAfter",
@@ -76,8 +76,8 @@ func TestAuthQuery_URL(t *testing.T) {
 				},
 			},
 			hasErr: false,
-			expectedURL: &URL{
-				url: entity.ShortLink{
+			expectedShortLink: &ShortLink{
+				shortLink: entity.ShortLink{
 					ExpireAt: &after,
 				},
 			},
@@ -109,18 +109,18 @@ func TestAuthQuery_URL(t *testing.T) {
 
 			query := newAuthQuery(&authToken, auth, changeLog, retrieverFake)
 
-			urlArgs := &URLArgs{
+			shortLinkArgs := &ShortLinkArgs{
 				Alias:       testCase.alias,
 				ExpireAfter: testCase.expireAfter,
 			}
 
-			u, err := query.URL(urlArgs)
+			s, err := query.ShortLink(shortLinkArgs)
 
 			if testCase.hasErr {
 				assert.NotEqual(t, nil, err)
 				return
 			}
-			assert.Equal(t, testCase.expectedURL, u)
+			assert.Equal(t, testCase.expectedShortLink, s)
 		})
 	}
 }

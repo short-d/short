@@ -19,17 +19,17 @@ type AuthMutation struct {
 	shortLinkCreator shortlink.Creator
 }
 
-// URLInput represents possible ShortLink attributes
-type URLInput struct {
-	OriginalURL string
+// ShortLinkInput represents possible ShortLink attributes
+type ShortLinkInput struct {
+	LongLink    string
 	CustomAlias *string
 	ExpireAt    *time.Time
 }
 
-// CreateURLArgs represents the possible parameters for CreateShortLink endpoint
-type CreateURLArgs struct {
-	URL      URLInput
-	IsPublic bool
+// CreateShortLinkArgs represents the possible parameters for CreateShortLink endpoint
+type CreateShortLinkArgs struct {
+	ShortLink ShortLinkInput
+	IsPublic  bool
 }
 
 // CreateChangeArgs represents the possible parameters for CreateChange endpoint
@@ -44,23 +44,23 @@ type ChangeInput struct {
 }
 
 // CreateShortLink creates mapping between an alias and a long link for a given user
-func (a AuthMutation) CreateURL(args *CreateURLArgs) (*URL, error) {
+func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, error) {
 	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	customAlias := args.URL.CustomAlias
+	customAlias := args.ShortLink.CustomAlias
 	u := entity.ShortLink{
-		LongLink: args.URL.OriginalURL,
-		ExpireAt: args.URL.ExpireAt,
+		LongLink: args.ShortLink.LongLink,
+		ExpireAt: args.ShortLink.ExpireAt,
 	}
 
 	isPublic := args.IsPublic
 
 	newShortLink, err := a.shortLinkCreator.CreateShortLink(u, customAlias, user, isPublic)
 	if err == nil {
-		return &URL{url: newShortLink}, nil
+		return &ShortLink{shortLink: newShortLink}, nil
 	}
 
 	switch err.(type) {
