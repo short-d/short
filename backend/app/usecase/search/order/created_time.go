@@ -2,42 +2,45 @@ package order
 
 import (
 	"sort"
+	"time"
 
 	"github.com/short-d/short/backend/app/entity"
 )
 
 var _ Order = (*CreatedTime)(nil)
 
-// CreatedTime arranges searchable resources based on their created time.
+// CreatedTime arranges searchable resources based on when they are created.
 type CreatedTime struct {
 }
 
 // ArrangeShortLinks arranges shortLinks based on CreatedAt.
-// The returned short links satisfies the created before comparision if CreatedAt
-// is not nil, otherwise it sits on the end of the slices if CreatedAt is nil.
 func (c CreatedTime) ArrangeShortLinks(shortLinks []entity.ShortLink) []entity.ShortLink {
-	sort.SliceStable(shortLinks, func(i, j int) bool {
-		if shortLinks[j].CreatedAt == nil {
-			return true
-		} else if shortLinks[i].CreatedAt == nil {
-			return false
-		}
-		return shortLinks[i].CreatedAt.Before(*shortLinks[j].CreatedAt)
+	sort.SliceStable(shortLinks, func(firstIdx, secondIdx int) bool {
+		return lessTime(shortLinks[firstIdx].CreatedAt, shortLinks[secondIdx].CreatedAt)
 	})
 	return shortLinks
 }
 
 // ArrangeUsers arranges users based on CreatedAt.
-// The returned users satisfies the created before comparision if CreatedAt
-// is not nil, otherwise it sits on the end of the slices if CreatedAt is nil.
 func (c CreatedTime) ArrangeUsers(users []entity.User) []entity.User {
-	sort.SliceStable(users, func(i, j int) bool {
-		if users[j].CreatedAt == nil {
-			return true
-		} else if users[i].CreatedAt == nil {
-			return false
-		}
-		return users[i].CreatedAt.Before(*users[j].CreatedAt)
+	sort.SliceStable(users, func(firstIdx, secondIdx int) bool {
+		return lessTime(users[firstIdx].CreatedAt, users[secondIdx].CreatedAt)
 	})
 	return users
+}
+
+func lessTime(first, second *time.Time) bool {
+	if first == nil && second == nil {
+		return true
+	}
+
+	if first == nil {
+		return false
+	}
+
+	if second == nil {
+		return true
+	}
+
+	return first.Before(*second)
 }
