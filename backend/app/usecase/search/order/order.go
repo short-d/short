@@ -14,3 +14,11 @@ type Order interface {
 	ArrangeShortLinks(shortLinks []entity.ShortLink) []entity.ShortLink
 	ArrangeUsers(users []entity.User) []entity.User
 }
+
+// NewOrder creates Order.
+func NewOrder(by By) Order {
+	switch by {
+	default:
+		return Unchanged{}
+	}
+}

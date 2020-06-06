@@ -9,12 +9,12 @@ interface IShortGraphQLQuery {
 }
 
 interface IShortGraphQLAuthQuery {
-  URLs: IShortGraphQLURL[];
+  ShortLinks: IShortGraphQLURL[];
 }
 
 interface IShortGraphQLURL {
   alias: string;
-  originalURL: string;
+  longLink: string;
 }
 
 export class ShortLinkGraphQLApi {
@@ -32,9 +32,9 @@ export class ShortLinkGraphQLApi {
     const getUserShortLinksQuery = `
       query params($authToken: String!) {
         authQuery(authToken: $authToken) {
-          URLs {
+          ShortLinks {
             alias
-            originalURL
+            longLink
           }
         }
       }
@@ -47,8 +47,8 @@ export class ShortLinkGraphQLApi {
           variables: variables
         })
         .then((res: IShortGraphQLQuery) => {
-          const { URLs } = res.authQuery;
-          resolve(URLs.map(this.parseUrl));
+          const { ShortLinks } = res.authQuery;
+          resolve(ShortLinks.map(this.parseUrl));
         })
         .catch((err: IGraphQLRequestError) => {
           const errCodes = getErrorCodes(err);
@@ -59,7 +59,7 @@ export class ShortLinkGraphQLApi {
 
   private parseUrl(url: IShortGraphQLURL): Url {
     return {
-      originalUrl: url.originalURL,
+      originalUrl: url.longLink,
       alias: url.alias
     };
   }

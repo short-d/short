@@ -6,29 +6,29 @@ import (
 )
 
 // ShortLink retrieves requested fields of ShortLink entity.
-type URL struct {
-	url entity.ShortLink
+type ShortLink struct {
+	shortLink entity.ShortLink
 }
 
 // Alias retrieves the alias of ShortLink entity.
-func (u URL) Alias() *string {
-	return &u.url.Alias
+func (s ShortLink) Alias() *string {
+	return &s.shortLink.Alias
 }
 
 // LongLink retrieves the long link of ShortLink entity.
-func (u URL) OriginalURL() *string {
-	return &u.url.LongLink
+func (s ShortLink) LongLink() *string {
+	return &s.shortLink.LongLink
 }
 
 // ExpireAt retrieves the expiration time of ShortLink entity.
-func (u URL) ExpireAt() *scalar.Time {
-	if u.url.ExpireAt == nil {
+func (s ShortLink) ExpireAt() *scalar.Time {
+	if s.shortLink.ExpireAt == nil {
 		return nil
 	}
 
-	return &scalar.Time{Time: *u.url.ExpireAt}
+	return &scalar.Time{Time: *s.shortLink.ExpireAt}
 }
 
-func newURL(url entity.ShortLink) URL {
-	return URL{url: url}
+func newShortLink(shortLink entity.ShortLink) ShortLink {
+	return ShortLink{shortLink: shortLink}
 }
