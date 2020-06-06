@@ -7,6 +7,7 @@ import (
 
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/entity/metatag"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
@@ -15,6 +16,33 @@ var _ repository.ShortLink = (*ShortLinkSql)(nil)
 // ShortLinkSql accesses ShortLink information in short_link table through SQL.
 type ShortLinkSql struct {
 	db *sql.DB
+}
+
+func (s *ShortLinkSql) UpdateOGMetaTags(alias string, openGraphTags metatag.OpenGraph) (entity.ShortLink, error) {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1, "%s"=$2, "%s"=$3
+WHERE "%s"=$4;`,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnOpenGraphTitle,
+		table.ShortLink.ColumnOpenGraphDescription,
+		table.ShortLink.ColumnOpenGraphImageURL,
+		table.ShortLink.ColumnAlias,
+	)
+
+	_, err := s.db.Exec(
+		statement,
+		openGraphTags.Title,
+		openGraphTags.Description,
+		openGraphTags.ImageURL,
+		alias,
+	)
+
+	if err != nil {
+		return entity.ShortLink{}, err
+	}
+
+	return s.GetShortLinkByAlias(alias)
 }
 
 // IsAliasExist checks whether a given alias exist in short_link table.
