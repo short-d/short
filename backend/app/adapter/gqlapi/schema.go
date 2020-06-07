@@ -15,9 +15,9 @@ type Mutation {
 }
 
 type AuthQuery {
-	URL(alias: String!, expireAfter: Time): URL
+	ShortLink(alias: String!, expireAfter: Time): ShortLink
 	changeLog: ChangeLog!
-	URLs: [URL!]!
+	ShortLinks: [ShortLink!]!
 }
 
 type ChangeLog {
@@ -33,14 +33,14 @@ type Change {
 }
 
 type AuthMutation {
-	createURL(url: URLInput!, isPublic: Boolean!): URL
+	createShortLink(shortLink: ShortLinkInput!, isPublic: Boolean!): ShortLink
 	createChange(change: ChangeInput!): Change!
 	deleteChange(id: String!): String
 	viewChangeLog: Time!
 }
 
-input URLInput {
-	originalURL: String!
+input ShortLinkInput {
+	longLink: String!
 	customAlias: String
 	expireAt: Time
 }
@@ -50,9 +50,9 @@ input ChangeInput {
   	summaryMarkdown: String
 }
 
-type URL {
+type ShortLink {
 	alias: String
-	originalURL: String
+	longLink: String
 	expireAt: Time
 }
 

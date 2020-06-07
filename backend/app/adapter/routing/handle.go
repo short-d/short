@@ -16,8 +16,8 @@ import (
 	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
-// NewOriginalURL translates alias to the original long link.
-func NewOriginalURL(
+// NewLongLink translates alias to the original long link.
+func NewLongLink(
 	instrumentationFactory request.InstrumentationFactory,
 	shortLinkRetriever shortlink.Retriever,
 	timer timer.Timer,
@@ -38,8 +38,8 @@ func NewOriginalURL(
 		}
 		i.LongLinkRetrievalSucceed()
 
-		originURL := s.LongLink
-		http.Redirect(w, r, originURL, http.StatusSeeOther)
+		longLink := s.LongLink
+		http.Redirect(w, r, longLink, http.StatusSeeOther)
 		i.RedirectedAliasToLongLink(s)
 	}
 }
