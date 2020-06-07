@@ -35,7 +35,7 @@ type Change {
 type AuthMutation {
 	createURL(url: URLInput!, isPublic: Boolean!): URL
 	createChange(change: ChangeInput!): Change!
-	deleteChange(ID: String!): String
+	deleteChange(id: String!): String
 	viewChangeLog: Time!
 }
 

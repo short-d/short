@@ -88,14 +88,13 @@ func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
 	return newChange(change), err
 }
 
-// DeleteChange removes a Change in the change log
+// DeleteChange removes a Change with given ID from change log
 func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
-	ID := args.ID
-	err := a.changeLog.DeleteChange(ID)
+	err := a.changeLog.DeleteChange(args.ID)
 	if err != nil {
 		return nil, err
 	}
-	return &ID, nil
+	return &args.ID, nil
 }
 
 // ViewChangeLog records the time when the user viewed the change log

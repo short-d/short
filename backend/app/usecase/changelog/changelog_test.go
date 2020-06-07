@@ -354,12 +354,12 @@ func TestPersist_DeleteChange(t *testing.T) {
 		name                  string
 		changeLog             []entity.Change
 		deleteChangeId        string
-		expectedChange        []entity.Change
+		expectedChangeLog     []entity.Change
 		expectedChangeLogSize int
 		hasErr                bool
 	}{
 		{
-			name: "delete change successfully",
+			name: "delete existing change successfully",
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",
@@ -373,7 +373,7 @@ func TestPersist_DeleteChange(t *testing.T) {
 				},
 			},
 			deleteChangeId: "12345",
-			expectedChange: []entity.Change {
+			expectedChangeLog: []entity.Change{
 				{
 					ID:              "54321",
 					Title:           "title 2",
@@ -381,6 +381,36 @@ func TestPersist_DeleteChange(t *testing.T) {
 				},
 			},
 			expectedChangeLogSize: 1,
+			hasErr:                false,
+		},
+		{
+			name: "delete non existing change",
+			changeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			deleteChangeId: "34567",
+			expectedChangeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			expectedChangeLogSize: 2,
 			hasErr:                false,
 		},
 	}
@@ -411,13 +441,10 @@ func TestPersist_DeleteChange(t *testing.T) {
 			}
 			assert.Equal(t, nil, err)
 
-
 			changeLog, err := persist.GetChangeLog()
-			assert.Equal(t, testCase.expectedChange, changeLog)
 
 			assert.Equal(t, nil, err)
-
-			assert.Equal(t, testCase.expectedChangeLogSize, len(changeLog))
+			assert.SameElements(t, testCase.expectedChangeLog, changeLog)
 		})
 	}
 }
