@@ -35,7 +35,7 @@ describe('Searchbar', () => {
     render(<SearchBar onChange={changeHandler} />);
   });
 
-  test('should trigger change events successfully', async () => {
+  test('should trigger change events successfully after debounce time', async () => {
     fireEvent.change(input, {
       target: { value: 'Lorem ipsum' }
     });
