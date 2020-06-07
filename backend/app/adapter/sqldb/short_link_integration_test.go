@@ -135,7 +135,7 @@ func TestShortLinkSql_UpdateOGMetaTags(t *testing.T) {
 
 					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
 
-					shortLink, err := shortLinkRepo.UpdateOGMetaTags(testCase.alias, testCase.metaTags)
+					shortLink, err := shortLinkRepo.UpdateOpenGraphTags(testCase.alias, testCase.metaTags)
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expectedShortLink, shortLink)
 				})
