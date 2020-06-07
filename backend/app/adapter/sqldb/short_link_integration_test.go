@@ -63,7 +63,7 @@ func TestShortLinkSql_UpdateOGMetaTags(t *testing.T) {
 		expectedShortLink entity.ShortLink
 	}{
 		{
-			name: "Update nil meta tags",
+			name: "Twitter tags not provided",
 			tableRows: []shortLinkTableRow{
 				{
 					alias:    "220uFicCJj",
@@ -87,7 +87,7 @@ func TestShortLinkSql_UpdateOGMetaTags(t *testing.T) {
 			},
 		},
 		{
-			name: "Update non nil meta tags",
+			name: "Twitter tags provided",
 			tableRows: []shortLinkTableRow{
 				{
 					alias:              "220uFicCJj",

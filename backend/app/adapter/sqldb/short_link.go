@@ -38,7 +38,6 @@ WHERE "%s"=$4;`,
 		openGraphTags.ImageURL,
 		alias,
 	)
-
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
