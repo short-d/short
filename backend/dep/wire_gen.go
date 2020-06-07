@@ -30,13 +30,15 @@ import (
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
-	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
 	"github.com/short-d/short/backend/tool"
@@ -73,9 +75,9 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	http := webreq.NewHTTP(client)
 	entryRepository := provider.NewEntryRepositorySwitch(runtime2, deployment, stdOut, dataDogAPIKey, http)
 	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, entryRepository)
-	urlSql := sqldb.NewURLSql(sqlDB)
-	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
-	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
+	shortLinkSql := sqldb.NewShortLinkSql(sqlDB)
+	userShortLinkSQL := sqldb.NewUserShortLinkSQL(sqlDB)
+	retrieverPersist := shortlink.NewRetrieverPersist(shortLinkSql, userShortLinkSQL)
 	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
 		return service.GraphQL{}, err
@@ -88,7 +90,7 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	customAlias := validator.NewCustomAlias()
 	safeBrowsing := provider.NewSafeBrowsing(googleAPIKey, http)
 	detector := risk.NewDetector(safeBrowsing)
-	creatorPersist := url.NewCreatorPersist(urlSql, userURLRelationSQL, keyGenerator, longLink, customAlias, system, detector)
+	creatorPersist := shortlink.NewCreatorPersist(shortLinkSql, userShortLinkSQL, keyGenerator, longLink, customAlias, system, detector)
 	changeLogSQL := sqldb.NewChangeLogSQL(sqlDB)
 	userChangeLogSQL := sqldb.NewUserChangeLogSQL(sqlDB)
 	persist := changelog.NewPersist(keyGenerator, system, changeLogSQL, userChangeLogSQL)
@@ -126,11 +128,14 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	ipStack := provider.NewIPStack(ipStackAPIKey, http, loggerLogger)
 	requestClient := request.NewClient(proxy, ipStack)
 	instrumentationFactory := request.NewInstrumentationFactory(loggerLogger, system, dataDog, segment, keyGenerator, requestClient)
-	urlSql := sqldb.NewURLSql(sqlDB)
-	userURLRelationSQL := sqldb.NewUserURLRelationSQL(sqlDB)
-	retrieverPersist := url.NewRetrieverPersist(urlSql, userURLRelationSQL)
+	shortLinkSql := sqldb.NewShortLinkSql(sqlDB)
+	userShortLinkSQL := sqldb.NewUserShortLinkSQL(sqlDB)
+	retrieverPersist := shortlink.NewRetrieverPersist(shortLinkSql, userShortLinkSQL)
 	featureToggleSQL := sqldb.NewFeatureToggleSQL(sqlDB)
-	decisionMakerFactory := provider.NewFeatureDecisionMakerFactorySwitch(deployment, featureToggleSQL)
+	userRoleSQL := sqldb.NewUserRoleSQL(sqlDB)
+	rbacRBAC := rbac.NewRBAC(userRoleSQL)
+	authorizerAuthorizer := authorizer.NewAuthorizer(rbacRBAC)
+	decisionMakerFactory := provider.NewFeatureDecisionMakerFactorySwitch(deployment, featureToggleSQL, authorizerAuthorizer)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
 	factory := sso.NewFactory(authenticator)
@@ -152,7 +157,7 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	googleSSOSql := sqldb.NewGoogleSSOSql(sqlDB, loggerLogger)
 	googleAccountLinker := provider.NewGoogleAccountLinker(accountLinkerFactory, googleSSOSql)
 	googleSingleSignOn := provider.NewGoogleSSO(factory, googleIdentityProvider, googleAccount, googleAccountLinker)
-	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticator)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
 }
@@ -180,7 +185,9 @@ func InjectDataTool(prefix provider.LogPrefix, logLevel logger.LogLevel, dbConfi
 
 // wire.go:
 
-var authSet = wire.NewSet(provider.NewJwtGo, provider.NewAuthenticator)
+var authenticatorSet = wire.NewSet(provider.NewJwtGo, provider.NewAuthenticator)
+
+var authorizerSet = wire.NewSet(wire.Bind(new(repository.UserRole), new(sqldb.UserRoleSQL)), sqldb.NewUserRoleSQL, rbac.NewRBAC, authorizer.NewAuthorizer)
 
 var observabilitySet = wire.NewSet(wire.Bind(new(io.Output), new(io.StdOut)), wire.Bind(new(runtime.Runtime), new(runtime.Program)), wire.Bind(new(metrics.Metrics), new(metrics.DataDog)), wire.Bind(new(analytics.Analytics), new(analytics.Segment)), wire.Bind(new(network.Network), new(network.Proxy)), io.NewStdOut, provider.NewEntryRepositorySwitch, provider.NewLogger, runtime.NewProgram, provider.NewDataDogMetrics, provider.NewSegment, network.NewProxy, request.NewClient, request.NewInstrumentationFactory)
 

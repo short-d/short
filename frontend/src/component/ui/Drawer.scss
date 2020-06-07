@@ -1,5 +1,6 @@
 @import '../styles/color';
 @import '../styles/easing';
+@import '../styles/shadow';
 
 $drawer-width: 240px;
 
@@ -7,6 +8,9 @@ $drawer-width: 240px;
   width: $drawer-width;
   margin-left: -$drawer-width;
   transition: margin-left 300ms $ease-in-out-quart;
+  height: 100%;
+  margin-top: 0;
+  box-shadow: $shadow-drawer;
 
   &.open {
     margin-left: 0;

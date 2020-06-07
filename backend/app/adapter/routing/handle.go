@@ -4,19 +4,22 @@ import (
 	"encoding/json"
 	"net/http"
 	netURL "net/url"
+	"strings"
 
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
-	"github.com/short-d/short/backend/app/usecase/url"
 )
 
-// NewOriginalURL translates alias to the original long link.
-func NewOriginalURL(
+// NewLongLink translates alias to the original long link.
+func NewLongLink(
 	instrumentationFactory request.InstrumentationFactory,
-	urlRetriever url.Retriever,
+	shortLinkRetriever shortlink.Retriever,
 	timer timer.Timer,
 	webFrontendURL netURL.URL,
 ) router.Handle {
@@ -27,7 +30,7 @@ func NewOriginalURL(
 		i.RedirectingAliasToLongLink(alias)
 
 		now := timer.Now()
-		u, err := urlRetriever.GetURL(alias, &now)
+		s, err := shortLinkRetriever.GetShortLink(alias, &now)
 		if err != nil {
 			i.LongLinkRetrievalFailed(err)
 			serve404(w, r, webFrontendURL)
@@ -35,9 +38,9 @@ func NewOriginalURL(
 		}
 		i.LongLinkRetrievalSucceed()
 
-		originURL := u.OriginalURL
-		http.Redirect(w, r, originURL, http.StatusSeeOther)
-		i.RedirectedAliasToLongLink(u)
+		longLink := s.LongLink
+		http.Redirect(w, r, longLink, http.StatusSeeOther)
+		i.RedirectedAliasToLongLink(s)
 	}
 }
 
@@ -85,13 +88,15 @@ func NewSSOSignInCallback(
 func FeatureHandle(
 	instrumentationFactory request.InstrumentationFactory,
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
+	authenticator authenticator.Authenticator,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
 		i := instrumentationFactory.NewRequest()
 		featureID := params["featureID"]
+		user := getUser(r, authenticator)
 
 		decision := featureDecisionMakerFactory.NewDecision(i)
-		isEnable := decision.IsFeatureEnable(featureID)
+		isEnable := decision.IsFeatureEnable(featureID, user)
 
 		body, err := json.Marshal(isEnable)
 		if err != nil {
@@ -100,4 +105,29 @@ func FeatureHandle(
 
 		w.Write(body)
 	}
+}
+
+func getUser(r *http.Request, authenticator authenticator.Authenticator) *entity.User {
+	authToken := getBearerToken(r)
+	user, err := authenticator.GetUser(authToken)
+	if err != nil {
+		return nil
+	}
+	return &user
+}
+
+// getBearerToken parses Authorization token with format "Bearer <token>"
+func getBearerToken(r *http.Request) string {
+	authHeader := r.Header.Get("Authorization")
+	if len(authHeader) < 1 {
+		return ""
+	}
+	words := strings.Split(authHeader, " ")
+	if len(words) != 2 {
+		return ""
+	}
+	if words[0] != "Bearer" {
+		return ""
+	}
+	return words[1]
 }

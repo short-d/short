@@ -14,37 +14,38 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 )
 
-var insertUserURLRelationRowSQL = fmt.Sprintf(`
+var insertUserShortLinkRowSQL = fmt.Sprintf(`
 INSERT INTO %s (%s, %s)
 VALUES ($1, $2)`,
-	table.UserURLRelation.TableName,
-	table.UserURLRelation.ColumnURLAlias,
-	table.UserURLRelation.ColumnUserID,
+	table.UserShortLink.TableName,
+	table.UserShortLink.ColumnShortLinkAlias,
+	table.UserShortLink.ColumnUserID,
 )
 
-type userURLRelationTableRow struct {
-	alias     string
-	userEmail string
+type userShortLinkTableRow struct {
+	alias  string
+	userID string
 }
 
-func TestListURLSql_FindAliasesByUser(t *testing.T) {
+func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16Z")
 
 	testCases := []struct {
-		name              string
-		userTableRows     []userTableRow
-		urlTableRows      []urlTableRow
-		relationTableRows []userURLRelationTableRow
-		user              entity.User
-		hasErr            bool
-		expectedAliases   []string
+		name               string
+		userTableRows      []userTableRow
+		shortLinkTableRows []shortLinkTableRow
+		relationTableRows  []userShortLinkTableRow
+		user               entity.User
+		hasErr             bool
+		expectedAliases    []string
 	}{
 		{
-			name:              "no alias found",
-			userTableRows:     []userTableRow{},
-			urlTableRows:      []urlTableRow{},
-			relationTableRows: []userURLRelationTableRow{},
+			name:               "no alias found",
+			userTableRows:      []userTableRow{},
+			shortLinkTableRows: []shortLinkTableRow{},
+			relationTableRows:  []userShortLinkTableRow{},
 			user: entity.User{
+				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
 				LastSignedInAt: &now,
@@ -57,18 +58,23 @@ func TestListURLSql_FindAliasesByUser(t *testing.T) {
 		{
 			name: "aliases found",
 			userTableRows: []userTableRow{
-				{email: "test@example.com"},
+				{
+					id:    "test",
+					name:  "mockedUser",
+					email: "test@example.com",
+				},
 			},
-			urlTableRows: []urlTableRow{
+			shortLinkTableRows: []shortLinkTableRow{
 				{alias: "abcd-123-xyz"},
 			},
-			relationTableRows: []userURLRelationTableRow{
+			relationTableRows: []userShortLinkTableRow{
 				{
-					alias:     "abcd-123-xyz",
-					userEmail: "test@example.com",
+					alias:  "abcd-123-xyz",
+					userID: "test",
 				},
 			},
 			user: entity.User{
+				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
 				LastSignedInAt: &now,
@@ -91,11 +97,11 @@ func TestListURLSql_FindAliasesByUser(t *testing.T) {
 				dbConfig,
 				func(sqlDB *sql.DB) {
 					insertUserTableRows(t, sqlDB, testCase.userTableRows)
-					insertURLTableRows(t, sqlDB, testCase.urlTableRows)
-					insertUserURLRelationTableRows(t, sqlDB, testCase.relationTableRows)
+					insertShortLinkTableRows(t, sqlDB, testCase.shortLinkTableRows)
+					insertUserShortLinkTableRows(t, sqlDB, testCase.relationTableRows)
 
-					userURLRelationRepo := sqldb.NewUserURLRelationSQL(sqlDB)
-					result, err := userURLRelationRepo.FindAliasesByUser(testCase.user)
+					userShortLinkRepo := sqldb.NewUserShortLinkSQL(sqlDB)
+					result, err := userShortLinkRepo.FindAliasesByUser(testCase.user)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
@@ -108,16 +114,16 @@ func TestListURLSql_FindAliasesByUser(t *testing.T) {
 	}
 }
 
-func insertUserURLRelationTableRows(
+func insertUserShortLinkTableRows(
 	t *testing.T,
 	sqlDB *sql.DB,
-	tableRows []userURLRelationTableRow,
+	tableRows []userShortLinkTableRow,
 ) {
 	for _, tableRow := range tableRows {
 		_, err := sqlDB.Exec(
-			insertUserURLRelationRowSQL,
+			insertUserShortLinkRowSQL,
 			tableRow.alias,
-			tableRow.userEmail,
+			tableRow.userID,
 		)
 		assert.Equal(t, nil, err)
 	}

@@ -42,14 +42,14 @@ func (i Instrumentation) RedirectingAliasToLongLink(alias string) {
 }
 
 // RedirectedAliasToLongLink tracks RedirectedAliasToLongLink event.
-func (i Instrumentation) RedirectedAliasToLongLink(url entity.URL) {
+func (i Instrumentation) RedirectedAliasToLongLink(shortLink entity.ShortLink) {
 	go func() {
 		c := <-i.redirectedAliasToLongLinkCh
 		userID := i.getUserID(nil)
 		props := map[string]string{
 			"request-id": c.RequestID,
-			"alias":      url.Alias,
-			"long-link":  url.OriginalURL,
+			"alias":      shortLink.Alias,
+			"long-link":  shortLink.LongLink,
 		}
 		i.analytics.Track("RedirectedAliasToLongLink", props, userID, c)
 	}()

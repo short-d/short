@@ -28,21 +28,30 @@ import (
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
-	"github.com/short-d/short/backend/app/usecase/url"
 	"github.com/short-d/short/backend/app/usecase/validator"
 	"github.com/short-d/short/backend/dep/provider"
 	"github.com/short-d/short/backend/tool"
 )
 
-var authSet = wire.NewSet(
+var authenticatorSet = wire.NewSet(
 	provider.NewJwtGo,
 	provider.NewAuthenticator,
+)
+
+var authorizerSet = wire.NewSet(
+	wire.Bind(new(repository.UserRole), new(sqldb.UserRoleSQL)),
+	sqldb.NewUserRoleSQL,
+	rbac.NewRBAC,
+	authorizer.NewAuthorizer,
 )
 
 var observabilitySet = wire.NewSet(
@@ -151,17 +160,17 @@ func InjectGraphQLService(
 		wire.Bind(new(graphql.Handler), new(graphql.GraphGopherHandler)),
 
 		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
-		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserURLRelationSQL)),
+		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.ChangeLog), new(sqldb.ChangeLogSQL)),
 		wire.Bind(new(repository.UserChangeLog), new(sqldb.UserChangeLogSQL)),
-		wire.Bind(new(repository.URL), new(*sqldb.URLSql)),
+		wire.Bind(new(repository.ShortLink), new(*sqldb.ShortLinkSql)),
 
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
-		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(url.Creator), new(url.CreatorPersist)),
+		wire.Bind(new(shortlink.Retriever), new(shortlink.RetrieverPersist)),
+		wire.Bind(new(shortlink.Creator), new(shortlink.CreatorPersist)),
 
 		observabilitySet,
-		authSet,
+		authenticatorSet,
 		keyGenSet,
 
 		env.NewDeployment,
@@ -178,14 +187,14 @@ func InjectGraphQLService(
 		provider.NewReCaptchaService,
 		sqldb.NewChangeLogSQL,
 		sqldb.NewUserChangeLogSQL,
-		sqldb.NewURLSql,
-		sqldb.NewUserURLRelationSQL,
+		sqldb.NewShortLinkSql,
+		sqldb.NewUserShortLinkSQL,
 
 		validator.NewLongLink,
 		validator.NewCustomAlias,
 		changelog.NewPersist,
-		url.NewRetrieverPersist,
-		url.NewCreatorPersist,
+		shortlink.NewRetrieverPersist,
+		shortlink.NewCreatorPersist,
 		requester.NewVerifier,
 	)
 	return service.GraphQL{}, nil
@@ -218,13 +227,14 @@ func InjectRoutingService(
 		wire.Bind(new(timer.Timer), new(timer.System)),
 		wire.Bind(new(geo.Geo), new(geo.IPStack)),
 
-		wire.Bind(new(url.Retriever), new(url.RetrieverPersist)),
-		wire.Bind(new(repository.UserURLRelation), new(sqldb.UserURLRelationSQL)),
+		wire.Bind(new(shortlink.Retriever), new(shortlink.RetrieverPersist)),
+		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.User), new(*sqldb.UserSQL)),
-		wire.Bind(new(repository.URL), new(*sqldb.URLSql)),
+		wire.Bind(new(repository.ShortLink), new(*sqldb.ShortLinkSql)),
 
 		observabilitySet,
-		authSet,
+		authenticatorSet,
+		authorizerSet,
 		githubAPISet,
 		facebookAPISet,
 		googleAPISet,
@@ -249,12 +259,12 @@ func InjectRoutingService(
 		sqldb.NewFacebookSSOSql,
 		sqldb.NewGoogleSSOSql,
 		sqldb.NewUserSQL,
-		sqldb.NewURLSql,
-		sqldb.NewUserURLRelationSQL,
+		sqldb.NewShortLinkSql,
+		sqldb.NewUserShortLinkSQL,
 
 		sso.NewAccountLinkerFactory,
 		sso.NewFactory,
-		url.NewRetrieverPersist,
+		shortlink.NewRetrieverPersist,
 		provider.NewShortRoutes,
 	)
 	return service.Routing{}, nil

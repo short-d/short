@@ -24,6 +24,9 @@ import { ShortLinkService } from '../service/ShortLink.service';
 import { UserShortLinksSection } from './pages/shared/UserShortLinksSection';
 import { AnalyticsService } from '../service/Analytics.service';
 import { PreferenceTogglesSubSection } from './pages/shared/PreferenceTogglesSubSection';
+import { AdminPage } from './pages/AdminPage';
+import withFeatureToggle from './hoc/withFeatureToggle';
+import withPageAuth from './hoc/withPageAuth';
 
 export class UIFactory {
   private ToggledGoogleSignInButton: ComponentType<any>;
@@ -34,6 +37,8 @@ export class UIFactory {
   private ToggledPreferenceTogglesSubSection: ComponentType<any>;
   private ToggledPublicListingToggle: ComponentType<any>;
   private ToggledUserShortLinksSection: ComponentType<any>;
+
+  private AuthedAdminPage: ComponentType<any>;
 
   constructor(
     private authService: AuthService,
@@ -50,53 +55,66 @@ export class UIFactory {
     private shortLinkService: ShortLinkService,
     private analyticsService: AnalyticsService
   ) {
-    const includeGoogleSignInButton = this.featureDecisionService.includeGoogleSignInButton();
+    const includeGoogleSignInButton = this.featureDecisionService
+      .includeGoogleSignInButton;
     this.ToggledGoogleSignInButton = withFeatureToggle(
       GoogleSignInButton,
       includeGoogleSignInButton
     );
 
-    const includeGithubSignInButton = this.featureDecisionService.includeGithubSignInButton();
+    const includeGithubSignInButton = this.featureDecisionService
+      .includeGithubSignInButton;
     this.ToggledGithubSignInButton = withFeatureToggle(
       GithubSignInButton,
       includeGithubSignInButton
     );
 
-    const includeFacebookSignInButton = this.featureDecisionService.includeFacebookSignInButton();
+    const includeFacebookSignInButton = this.featureDecisionService
+      .includeFacebookSignInButton;
     this.ToggledFacebookSignInButton = withFeatureToggle(
       FacebookSignInButton,
       includeFacebookSignInButton
     );
 
-    const includeSearchBar = this.featureDecisionService.includeSearchBar();
+    const includeSearchBar = this.featureDecisionService.includeSearchBar;
     this.ToggledSearchBar = withFeatureToggle(SearchBar, includeSearchBar);
 
-    const includeViewChangeLogButton = this.featureDecisionService.includeViewChangeLogButton();
+    const includeViewChangeLogButton = this.featureDecisionService
+      .includeViewChangeLogButton;
     this.ToggledViewChangeLogButton = withFeatureToggle(
       ViewChangeLogButton,
       includeViewChangeLogButton
     );
 
-    const includePreferenceTogglesSubSection = this.featureDecisionService.includePreferenceTogglesSubSection();
+    const includePreferenceTogglesSubSection = this.featureDecisionService
+      .includePreferenceTogglesSubSection;
     this.ToggledPreferenceTogglesSubSection = withFeatureToggle(
       PreferenceTogglesSubSection,
       includePreferenceTogglesSubSection
     );
 
-    const includePublicListingToggle = this.featureDecisionService.includePublicListingToggle();
+    const includePublicListingToggle = this.featureDecisionService
+      .includePublicListingToggle;
     this.ToggledPublicListingToggle = withFeatureToggle(
       PublicListingToggle,
       includePublicListingToggle
     );
 
-    const includeUserShortLinksSection = this.featureDecisionService.includeUserShortLinksSection();
+    const includeUserShortLinksSection = this.featureDecisionService
+      .includeUserShortLinksSection;
     this.ToggledUserShortLinksSection = withFeatureToggle(
       UserShortLinksSection,
       includeUserShortLinksSection
     );
+
+    const includeAdminPage = this.featureDecisionService.includeAdminPage;
+    this.AuthedAdminPage = withPageAuth(AdminPage, includeAdminPage);
   }
 
-  public createHomePage(location: H.Location<any>): ReactElement {
+  public createHomePage(
+    location: H.Location<any>,
+    history: H.History<any>
+  ): ReactElement {
     return (
       <HomePage
         uiFactory={this}
@@ -114,8 +132,13 @@ export class UIFactory {
         analyticsService={this.analyticsService}
         store={this.store}
         location={location}
+        history={history}
       />
     );
+  }
+
+  public createAdminPage(): ReactElement {
+    return <this.AuthedAdminPage />;
   }
 
   public createViewChangeLogButton(props: any): ReactElement {
@@ -165,48 +188,4 @@ export class UIFactory {
   public createApp(): ReactElement {
     return <App uiFactory={this} urlService={this.urlService} />;
   }
-}
-
-function withFeatureToggle(
-  WrappedComponent: React.ComponentType<any>,
-  featureDecision: Promise<boolean>
-): React.ComponentType<any> {
-  interface IState {
-    isFeatureEnabled: boolean;
-  }
-
-  return class extends React.Component<any, IState> {
-    private isComponentMounted: boolean;
-
-    constructor(props: any) {
-      super(props);
-      this.state = {
-        isFeatureEnabled: false
-      };
-      this.isComponentMounted = false;
-    }
-
-    componentDidMount(): void {
-      this.isComponentMounted = true;
-
-      featureDecision.then(decision => {
-        if (!this.isComponentMounted) {
-          return;
-        }
-        this.setState({ isFeatureEnabled: decision });
-      });
-    }
-
-    componentWillUnmount(): void {
-      this.isComponentMounted = false;
-    }
-
-    render() {
-      const { isFeatureEnabled } = this.state;
-      if (!isFeatureEnabled) {
-        return <div />;
-      }
-      return <WrappedComponent {...this.props} />;
-    }
-  };
 }

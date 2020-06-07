@@ -15,31 +15,31 @@ import (
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
-type urlMap = map[string]entity.URL
+type shortLinkMap = map[string]entity.ShortLink
 
-func TestAuthQuery_URL(t *testing.T) {
+func TestAuthQuery_ShortLink(t *testing.T) {
 	t.Parallel()
 	now := time.Now()
 	before := now.Add(-5 * time.Second)
 	after := now.Add(5 * time.Second)
 
 	testCases := []struct {
-		name        string
-		user        entity.User
-		alias       string
-		expireAfter *scalar.Time
-		urls        urlMap
-		hasErr      bool
-		expectedURL *URL
+		name              string
+		user              entity.User
+		alias             string
+		expireAfter       *scalar.Time
+		shortLinks        shortLinkMap
+		hasErr            bool
+		expectedShortLink *ShortLink
 	}{
 		{
 			name:        "alias not found with no expireAfter",
 			alias:       "220uFicCJj",
 			expireAfter: nil,
-			urls:        urlMap{},
+			shortLinks:  shortLinkMap{},
 			hasErr:      true,
 		},
 		{
@@ -48,8 +48,8 @@ func TestAuthQuery_URL(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls:   urlMap{},
-			hasErr: true,
+			shortLinks: shortLinkMap{},
+			hasErr:     true,
 		},
 		{
 			name:  "alias expired",
@@ -57,27 +57,27 @@ func TestAuthQuery_URL(t *testing.T) {
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls: urlMap{
-				"220uFicCJj": entity.URL{
+			shortLinks: shortLinkMap{
+				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &before,
 				},
 			},
 			hasErr: true,
 		},
 		{
-			name:  "url found",
+			name:  "shortlink found",
 			alias: "220uFicCJj",
 			expireAfter: &scalar.Time{
 				Time: now,
 			},
-			urls: urlMap{
-				"220uFicCJj": entity.URL{
+			shortLinks: shortLinkMap{
+				"220uFicCJj": entity.ShortLink{
 					ExpireAt: &after,
 				},
 			},
 			hasErr: false,
-			expectedURL: &URL{
-				url: entity.URL{
+			expectedShortLink: &ShortLink{
+				shortLink: entity.ShortLink{
 					ExpireAt: &after,
 				},
 			},
@@ -88,9 +88,9 @@ func TestAuthQuery_URL(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			fakeURLRepo := repository.NewURLFake(testCase.urls)
-			fakeUserURLRelationRepo := repository.NewUserURLRepoFake(nil, nil)
-			retrieverFake := url.NewRetrieverPersist(&fakeURLRepo, &fakeUserURLRelationRepo)
+			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
+			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake(nil, nil)
+			retrieverFake := shortlink.NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 
 			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
@@ -109,18 +109,18 @@ func TestAuthQuery_URL(t *testing.T) {
 
 			query := newAuthQuery(&authToken, auth, changeLog, retrieverFake)
 
-			urlArgs := &URLArgs{
+			shortLinkArgs := &ShortLinkArgs{
 				Alias:       testCase.alias,
 				ExpireAfter: testCase.expireAfter,
 			}
 
-			u, err := query.URL(urlArgs)
+			s, err := query.ShortLink(shortLinkArgs)
 
 			if testCase.hasErr {
 				assert.NotEqual(t, nil, err)
 				return
 			}
-			assert.Equal(t, testCase.expectedURL, u)
+			assert.Equal(t, testCase.expectedShortLink, s)
 		})
 	}
 }

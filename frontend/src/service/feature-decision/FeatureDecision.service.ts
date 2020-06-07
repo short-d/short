@@ -7,4 +7,5 @@ export interface IFeatureDecisionService {
   includePreferenceTogglesSubSection(): Promise<boolean>;
   includePublicListingToggle(): Promise<boolean>;
   includeUserShortLinksSection(): Promise<boolean>;
+  includeAdminPage(): Promise<boolean>;
 }

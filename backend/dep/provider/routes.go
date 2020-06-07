@@ -8,8 +8,9 @@ import (
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/routing"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
-	"github.com/short-d/short/backend/app/usecase/url"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 // WebFrontendURL represents the URL of the web frontend
@@ -20,20 +21,22 @@ func NewShortRoutes(
 	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL WebFrontendURL,
 	timer timer.Timer,
-	urlRetriever url.Retriever,
+	shortLinkRetriever shortlink.Retriever,
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
 	githubSSO github.SingleSignOn,
 	facebookSSO facebook.SingleSignOn,
 	googleSSO google.SingleSignOn,
+	authenticator authenticator.Authenticator,
 ) []router.Route {
 	return routing.NewShort(
 		instrumentationFactory,
 		string(webFrontendURL),
 		timer,
-		urlRetriever,
+		shortLinkRetriever,
 		featureDecisionMakerFactory,
 		githubSSO,
 		facebookSSO,
 		googleSSO,
+		authenticator,
 	)
 }

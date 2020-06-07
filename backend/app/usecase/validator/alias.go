@@ -1,6 +1,9 @@
 package validator
 
-import "regexp"
+import (
+	"regexp"
+	"strings"
+)
 
 const (
 	customAliasMaxLength = 50
@@ -12,19 +15,29 @@ type CustomAlias struct {
 }
 
 // IsValid checks whether the given alias has valid format.
-func (c CustomAlias) IsValid(alias *string) bool {
+func (c CustomAlias) IsValid(alias *string) (bool, Violation) {
 	if alias == nil {
-		return true
+		return true, Valid
 	}
 
 	if *alias == "" {
-		return true
+		return true, Valid
 	}
 
 	if len(*alias) >= customAliasMaxLength {
-		return false
+		return false, AliasTooLong
 	}
-	return true
+
+	if c.hasFragmentCharacter(*alias) {
+		return false, HasFragmentCharacter
+	}
+
+	return true, Valid
+}
+
+// hasFragmentCharacter returns whether the alias contains the '#' character which starts fragment identifiers in URLs
+func (c CustomAlias) hasFragmentCharacter(alias string) bool {
+	return strings.ContainsRune(alias, rune('#'))
 }
 
 // NewCustomAlias creates custom alias validator.
