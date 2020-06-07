@@ -23,6 +23,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 
 	alias := "220uFicCJj"
 	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
+	invalidFragmentAlias := "cant-have#chr"
 	emptyAlias := ""
 
 	testCases := []struct {
@@ -63,6 +64,18 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 				},
 			},
 			alias: &longAlias,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			shortLink: entity.ShortLink{
+				LongLink: "https://www.google.com",
+			},
+			expHasErr: true,
+		},
+		{
+			name:       "alias contains invalid URL fragment character",
+			shortLinks: shortLinks{},
+			alias:      &invalidFragmentAlias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -133,13 +146,8 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			},
 		},
 		{
-			name: "no available key",
-			shortLinks: shortLinks{
-				"220uFicCJj": entity.ShortLink{
-					Alias:    "220uFicCJj",
-					ExpireAt: &now,
-				},
-			},
+			name:          "no available key",
+			shortLinks:    shortLinks{},
 			availableKeys: []keygen.Key{},
 			alias:         nil,
 			user: entity.User{

@@ -68,13 +68,14 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		return &ShortLink{shortLink: newShortLink}, nil
 	}
 
+	// TODO(issue#823): refactor error type checking
 	switch err.(type) {
 	case shortlink.ErrAliasExist:
 		return nil, ErrAliasExist(*customAlias)
 	case shortlink.ErrInvalidLongLink:
-		return nil, ErrInvalidLongLink(u.LongLink)
+		return nil, ErrInvalidLongLink{u.LongLink, string(err.(shortlink.ErrInvalidLongLink).Violation)}
 	case shortlink.ErrInvalidCustomAlias:
-		return nil, ErrInvalidCustomAlias(*customAlias)
+		return nil, ErrInvalidCustomAlias{*customAlias, string(err.(shortlink.ErrInvalidCustomAlias).Violation)}
 	case shortlink.ErrMaliciousLongLink:
 		return nil, ErrMaliciousContent(u.LongLink)
 	default:

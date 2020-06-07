@@ -19,17 +19,23 @@ func (e ErrAliasExist) Error() string {
 }
 
 // ErrInvalidLongLink represents incorrect long link format error
-type ErrInvalidLongLink string
+type ErrInvalidLongLink struct {
+	LongLink  string
+	Violation validator.Violation
+}
 
 func (e ErrInvalidLongLink) Error() string {
-	return string(e)
+	return string(e.LongLink)
 }
 
 // ErrInvalidCustomAlias represents incorrect custom alias format error
-type ErrInvalidCustomAlias string
+type ErrInvalidCustomAlias struct {
+	customAlias string
+	Violation   validator.Violation
+}
 
 func (e ErrInvalidCustomAlias) Error() string {
-	return string(e)
+	return string(e.customAlias)
 }
 
 // ErrMaliciousLongLink represents malicious long link error
@@ -60,8 +66,9 @@ type CreatorPersist struct {
 // TODO(issue#235): add functionality for public URLs
 func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
 	longLink := shortLink.LongLink
-	if !c.longLinkValidator.IsValid(&longLink) {
-		return entity.ShortLink{}, ErrInvalidLongLink(longLink)
+	isValid, violation := c.longLinkValidator.IsValid(&longLink)
+	if !isValid {
+		return entity.ShortLink{}, ErrInvalidLongLink{longLink, violation}
 	}
 
 	if c.riskDetector.IsURLMalicious(longLink) {
@@ -72,8 +79,9 @@ func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, customAlias 
 		return c.createShortLinkWithAutoAlias(shortLink, user)
 	}
 
-	if !c.aliasValidator.IsValid(customAlias) {
-		return entity.ShortLink{}, ErrInvalidCustomAlias(*customAlias)
+	isValid, violation = c.aliasValidator.IsValid(customAlias)
+	if !isValid {
+		return entity.ShortLink{}, ErrInvalidCustomAlias{*customAlias, violation}
 	}
 	return c.createShortLinkWithCustomAlias(shortLink, *customAlias, user)
 }
