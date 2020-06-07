@@ -18,6 +18,8 @@ type Order interface {
 // NewOrder creates Order.
 func NewOrder(by By) Order {
 	switch by {
+	case ByCreatedTimeASC:
+		return CreatedTime{}
 	default:
 		return Unchanged{}
 	}

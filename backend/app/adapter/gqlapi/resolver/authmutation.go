@@ -43,6 +43,11 @@ type ChangeInput struct {
 	SummaryMarkdown *string
 }
 
+// DeleteChangeArgs represents the possible parameters for DeleteChange endpoint
+type DeleteChangeArgs struct {
+	ID string
+}
+
 // CreateShortLink creates mapping between an alias and a long link for a given user
 func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, error) {
 	user, err := viewer(a.authToken, a.authenticator)
@@ -82,6 +87,15 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
 	change, err := a.changeLog.CreateChange(args.Change.Title, args.Change.SummaryMarkdown)
 	return newChange(change), err
+}
+
+// DeleteChange removes a Change with given ID from change log
+func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
+	err := a.changeLog.DeleteChange(args.ID)
+	if err != nil {
+		return nil, err
+	}
+	return &args.ID, nil
 }
 
 // ViewChangeLog records the time when the user viewed the change log

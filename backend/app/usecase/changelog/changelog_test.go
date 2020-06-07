@@ -344,3 +344,107 @@ func TestPersist_ViewChangeLog(t *testing.T) {
 		})
 	}
 }
+
+func TestPersist_DeleteChange(t *testing.T) {
+	t.Parallel()
+
+	summaryMarkdown1 := "summary 1"
+	summaryMarkdown2 := "summary 2"
+	testCases := []struct {
+		name                  string
+		changeLog             []entity.Change
+		deleteChangeId        string
+		expectedChangeLog     []entity.Change
+		expectedChangeLogSize int
+		hasErr                bool
+	}{
+		{
+			name: "delete existing change successfully",
+			changeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			deleteChangeId: "12345",
+			expectedChangeLog: []entity.Change{
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			expectedChangeLogSize: 1,
+			hasErr:                false,
+		},
+		{
+			name: "delete non existing change",
+			changeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			deleteChangeId: "34567",
+			expectedChangeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			expectedChangeLogSize: 2,
+			hasErr:                false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
+			changeLogRepo := repository.NewChangeLogFake(testCase.changeLog)
+			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			assert.Equal(t, nil, err)
+
+			tm := timer.NewStub(time.Now())
+			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
+			persist := NewPersist(
+				keyGen,
+				tm,
+				&changeLogRepo,
+				&userChangeLogRepo,
+			)
+
+			err = persist.DeleteChange(testCase.deleteChangeId)
+			if testCase.hasErr {
+				assert.NotEqual(t, nil, err)
+				return
+			}
+			assert.Equal(t, nil, err)
+
+			changeLog, err := persist.GetChangeLog()
+
+			assert.Equal(t, nil, err)
+			assert.SameElements(t, testCase.expectedChangeLog, changeLog)
+		})
+	}
+}

@@ -30,10 +30,10 @@ func (c *ChangeLogFake) CreateChange(newChange entity.Change) (entity.Change, er
 	return newChange, nil
 }
 
-// DeleteChange removes a change based on a given ID
-func (c *ChangeLogFake) DeleteChange(ID string) error {
+// DeleteChange removes a change based on a given id
+func (c *ChangeLogFake) DeleteChange(id string) error {
 	for idx, change := range c.changeLog {
-		if change.ID == ID {
+		if change.ID == id {
 			return c.removeChangeAt(idx)
 		}
 	}
