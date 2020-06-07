@@ -35,6 +35,7 @@ type Change {
 type AuthMutation {
 	createShortLink(shortLink: ShortLinkInput!, isPublic: Boolean!): ShortLink
 	createChange(change: ChangeInput!): Change!
+	deleteChange(id: String!): String
 	viewChangeLog: Time!
 }
 

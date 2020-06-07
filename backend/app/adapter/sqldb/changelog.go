@@ -75,8 +75,8 @@ VALUES ($1, $2, $3, $4);
 	return newChange, nil
 }
 
-// DeleteChange removes a change with the given ID
-func (c ChangeLogSQL) DeleteChange(ID string) error {
+// DeleteChange removes a change with the given id
+func (c ChangeLogSQL) DeleteChange(id string) error {
 	statement := fmt.Sprintf(`
 DELETE FROM "%s"
 WHERE "%s" = $1;
@@ -85,7 +85,7 @@ WHERE "%s" = $1;
 		table.ChangeLog.ColumnID,
 	)
 
-	_, err := c.db.Exec(statement, ID)
+	_, err := c.db.Exec(statement, id)
 	return err
 }
 
