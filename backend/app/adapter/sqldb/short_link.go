@@ -18,7 +18,7 @@ type ShortLinkSql struct {
 	db *sql.DB
 }
 
-// UpdateOpenGraphTags updates OpenGraph Meta Tags for a given short_link.
+// UpdateOpenGraphTags updates OpenGraph meta tags for a given short link.
 func (s *ShortLinkSql) UpdateOpenGraphTags(alias string, openGraphTags metatag.OpenGraph) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
