@@ -3,7 +3,9 @@ import { IErr } from '../entity/Err';
 export enum Err {
   ReCaptchaNotReady = 'reCaptchaNotReady',
   InvalidReCaptchaSiteKey = 'invalidReCaptchaSiteKey',
+  MaliciousContent = 'maliciousContent',
   AliasAlreadyExist = 'aliasAlreadyExist',
+  AliasInvalid = 'invalidCustomAlias',
   UserNotHuman = 'requesterNotHuman',
   Unauthenticated = 'invalidAuthToken',
   NetworkError = 'networkError',
@@ -22,15 +24,32 @@ const unknownErr = {
 const invalidReCaptchaSiteKeyErr = {
   name: 'Invalid reCaptcha site key',
   description: `
-  Please email byliuyang11@gmail.com the screenshots and detailed steps to 
-  reproduce it so that I can investigate.`
+                Please email byliuyang11@gmail.com the screenshots and detailed steps to 
+                reproduce it so that I can investigate.
+                `
 };
 
 const aliasNotAvailableErr = {
   name: 'Alias not available',
   description: `
-                The alias you choose is not available. Please choose a different 
+                The alias you chose is not available. Please choose a different 
                 alias, or leave alias field empty to automatically generate one.
+                `
+};
+
+const aliasInvalidErr = {
+  name: 'Alias is invalid',
+  description: `
+                The alias you chose is invalid. Please choose a different 
+                alias, or leave alias field empty to automatically generate one.
+                `
+};
+
+const maliciousContentErr = {
+  name: 'Malicious Content Detected',
+  description: `
+                The input you provided contains malicious content. Please remove
+                them and try again.
                 `
 };
 
@@ -56,12 +75,16 @@ export class ErrorService {
     switch (errCode) {
       case Err.AliasAlreadyExist:
         return aliasNotAvailableErr;
+      case Err.AliasInvalid:
+        return aliasInvalidErr;
       case Err.UserNotHuman:
         return userNotHumanErr;
       case Err.NetworkError:
         return networkErr;
       case Err.InvalidReCaptchaSiteKey:
         return invalidReCaptchaSiteKeyErr;
+      case Err.MaliciousContent:
+        return maliciousContentErr;
       case Err.Unknown:
       default:
         return unknownErr;

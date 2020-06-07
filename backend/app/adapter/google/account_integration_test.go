@@ -9,11 +9,13 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/webreq"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 func TestAccount_GetSingleSignOnUser(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name            string
 		httpResponse    *http.Response
@@ -71,12 +73,12 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			httpRequest := mdtest.NewHTTPRequestFake(
+			httpRequest := webreq.NewHTTPFake(
 				func(req *http.Request) (response *http.Response, e error) {
-					mdtest.Equal(t, "https://openidconnect.googleapis.com/v1/userinfo", req.URL.String())
-					mdtest.Equal(t, "GET", req.Method)
-					mdtest.Equal(t, "application/json", req.Header.Get("Accept"))
-					mdtest.Equal(t, "Bearer access_token", req.Header.Get("Authorization"))
+					assert.Equal(t, "https://openidconnect.googleapis.com/v1/userinfo", req.URL.String())
+					assert.Equal(t, "GET", req.Method)
+					assert.Equal(t, "application/json", req.Header.Get("Accept"))
+					assert.Equal(t, "Bearer access_token", req.Header.Get("Authorization"))
 
 					return testCase.httpResponse, testCase.httpErr
 				})
@@ -85,11 +87,11 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 			gotSSOUser, err := googleAccount.GetSingleSignOnUser("access_token")
 
 			if testCase.expectHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedSSOUser, gotSSOUser)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedSSOUser, gotSSOUser)
 		})
 	}
 }

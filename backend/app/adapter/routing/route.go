@@ -3,68 +3,41 @@ package routing
 import (
 	netURL "net/url"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/adapter/facebook"
-	"github.com/short-d/short/app/adapter/github"
-	"github.com/short-d/short/app/adapter/google"
-	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/auth"
-	"github.com/short-d/short/app/usecase/sso"
-	"github.com/short-d/short/app/usecase/url"
+	"github.com/short-d/app/fw/router"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/adapter/facebook"
+	"github.com/short-d/short/backend/app/adapter/github"
+	"github.com/short-d/short/backend/app/adapter/google"
+	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/adapter/routing/analytics"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
-
-// Observability represents a set of metrics data producers which improve the observability of the
-// system, such as logger and tracer.
-type Observability struct {
-	Logger fw.Logger
-	Tracer fw.Tracer
-}
 
 // NewShort creates HTTP routing table.
 func NewShort(
-	observability Observability,
+	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL string,
-	timer fw.Timer,
-	urlRetriever url.Retriever,
-	githubAPI github.API,
-	facebookAPI facebook.API,
-	googleAPI google.API,
-	authenticator auth.Authenticator,
-	accountProvider account.Provider,
-) []fw.Route {
-	githubSignIn := sso.NewSingleSignOn(
-		githubAPI.IdentityProvider,
-		githubAPI.Account,
-		accountProvider,
-		authenticator,
-	)
-	facebookSignIn := sso.NewSingleSignOn(
-		facebookAPI.IdentityProvider,
-		facebookAPI.Account,
-		accountProvider,
-		authenticator,
-	)
-	googleSignIn := sso.NewSingleSignOn(
-		googleAPI.IdentityProvider,
-		googleAPI.Account,
-		accountProvider,
-		authenticator,
-	)
+	timer timer.Timer,
+	shortLinkRetriever shortlink.Retriever,
+	featureDecisionMakerFactory feature.DecisionMakerFactory,
+	githubSSO github.SingleSignOn,
+	facebookSSO facebook.SingleSignOn,
+	googleSSO google.SingleSignOn,
+	authenticator authenticator.Authenticator,
+) []router.Route {
 	frontendURL, err := netURL.Parse(webFrontendURL)
 	if err != nil {
 		panic(err)
 	}
-	logger := observability.Logger
-	tracer := observability.Tracer
-	return []fw.Route{
+	return []router.Route{
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
 			Handle: NewSSOSignIn(
-				logger,
-				tracer,
-				githubAPI.IdentityProvider,
-				authenticator,
+				sso.SingleSignOn(githubSSO),
 				webFrontendURL,
 			),
 		},
@@ -72,9 +45,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/github/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				logger,
-				tracer,
-				githubSignIn,
+				sso.SingleSignOn(githubSSO),
 				*frontendURL,
 			),
 		},
@@ -82,10 +53,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in",
 			Handle: NewSSOSignIn(
-				logger,
-				tracer,
-				facebookAPI.IdentityProvider,
-				authenticator,
+				sso.SingleSignOn(facebookSSO),
 				webFrontendURL,
 			),
 		},
@@ -93,9 +61,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				logger,
-				tracer,
-				facebookSignIn,
+				sso.SingleSignOn(facebookSSO),
 				*frontendURL,
 			),
 		},
@@ -103,10 +69,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/google/sign-in",
 			Handle: NewSSOSignIn(
-				logger,
-				tracer,
-				googleAPI.IdentityProvider,
-				authenticator,
+				sso.SingleSignOn(googleSSO),
 				webFrontendURL,
 			),
 		},
@@ -114,22 +77,33 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/google/sign-in/callback",
 			Handle: NewSSOSignInCallback(
-				logger,
-				tracer,
-				googleSignIn,
+				sso.SingleSignOn(googleSSO),
 				*frontendURL,
 			),
 		},
 		{
 			Method: "GET",
 			Path:   "/r/:alias",
-			Handle: NewOriginalURL(
-				logger,
-				tracer,
-				urlRetriever,
+			Handle: NewLongLink(
+				instrumentationFactory,
+				shortLinkRetriever,
 				timer,
 				*frontendURL,
 			),
+		},
+		{
+			Method: "GET",
+			Path:   "/features/:featureID",
+			Handle: FeatureHandle(
+				instrumentationFactory,
+				featureDecisionMakerFactory,
+				authenticator,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/analytics/track/:event",
+			Handle: analytics.TrackHandle(instrumentationFactory),
 		},
 	}
 }

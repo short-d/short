@@ -2,16 +2,13 @@ package kgs
 
 import (
 	"context"
-	"crypto/tls"
-	"fmt"
 
+	"github.com/short-d/app/fw/rpc"
 	"github.com/short-d/kgs/app/adapter/rpc/proto"
-	"github.com/short-d/short/app/usecase/service"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	"github.com/short-d/short/backend/app/usecase/keygen"
 )
 
-var _ service.KeyFetcher = (*RPC)(nil)
+var _ keygen.KeyFetcher = (*RPC)(nil)
 
 // RPC represents remote procedure calls which interact with key generation
 // service.
@@ -20,7 +17,7 @@ type RPC struct {
 }
 
 // FetchKeys retrieves keys in batch from key generation service.
-func (k RPC) FetchKeys(maxCount int) ([]service.Key, error) {
+func (k RPC) FetchKeys(maxCount int) ([]keygen.Key, error) {
 	req := proto.AllocateKeysRequest{
 		MaxKeyCount: uint32(maxCount),
 	}
@@ -31,24 +28,19 @@ func (k RPC) FetchKeys(maxCount int) ([]service.Key, error) {
 		return nil, err
 	}
 
-	keys := make([]service.Key, 0)
+	keys := make([]keygen.Key, 0)
 	for _, key := range res.Keys {
-		keys = append(keys, service.Key(key))
+		keys = append(keys, keygen.Key(key))
 	}
 	return keys, nil
 }
 
 // NewRPC initializes GRPC client for key generation service APIs.
 func NewRPC(hostname string, port int) (RPC, error) {
-	target := fmt.Sprintf("%s:%d", hostname, port)
-
-	config := &tls.Config{
-		InsecureSkipVerify: true,
-	}
-
-	gRPCTls := credentials.NewTLS(config)
-	gRPCCredentials := grpc.WithTransportCredentials(gRPCTls)
-	connection, err := grpc.Dial(target, gRPCCredentials)
+	connection, err := rpc.
+		NewClientConnBuilder(hostname, port).
+		InsecureTLS().
+		Build()
 	if err != nil {
 		return RPC{}, err
 	}

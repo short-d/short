@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/webreq"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
 const (
@@ -22,13 +22,13 @@ type accessTokenResponse struct {
 	TokenType   string `json:"token_type"`
 }
 
-var _ service.IdentityProvider = (*IdentityProvider)(nil)
+var _ sso.IdentityProvider = (*IdentityProvider)(nil)
 
 // IdentityProvider represents Github OAuth service.
 type IdentityProvider struct {
 	clientID     string
 	clientSecret string
-	http         fw.HTTPRequest
+	http         webreq.HTTP
 }
 
 // GetAuthorizationURL retrieves the URL of Github sign in page.
@@ -46,14 +46,18 @@ func (g IdentityProvider) GetAuthorizationURL() string {
 func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessToken string, err error) {
 	clientID := g.clientID
 	clientSecret := g.clientSecret
-	body := fmt.Sprintf("client_id=%s&client_secret=%s&code=%s", clientID, clientSecret, authorizationCode)
+
+	body := url.Values{}
+	body.Set("client_id", clientID)
+	body.Set("client_secret", clientSecret)
+	body.Set("code", authorizationCode)
 
 	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
 
 	apiRes := accessTokenResponse{}
-	err = g.http.JSON(http.MethodPost, accessTokenAPI, headers, body, &apiRes)
+	err = g.http.JSON(http.MethodPost, accessTokenAPI, headers, body.Encode(), &apiRes)
 	if err != nil {
 		return "", err
 	}
@@ -62,7 +66,7 @@ func (g IdentityProvider) RequestAccessToken(authorizationCode string) (accessTo
 }
 
 // NewIdentityProvider initializes Github OAuth service.
-func NewIdentityProvider(http fw.HTTPRequest, clientID string, clientSecret string) IdentityProvider {
+func NewIdentityProvider(http webreq.HTTP, clientID string, clientSecret string) IdentityProvider {
 	return IdentityProvider{
 		clientID:     clientID,
 		clientSecret: clientSecret,

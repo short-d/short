@@ -10,12 +10,13 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/short-d/app/mdtest"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/webreq"
 )
 
 func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	t.Parallel()
-	httpRequest := mdtest.NewHTTPRequestFake(
+	httpRequest := webreq.NewHTTPFake(
 		func(req *http.Request) (response *http.Response, e error) {
 			return nil, nil
 		})
@@ -27,18 +28,19 @@ func TestIdentityProvider_GetAuthorizationURL(t *testing.T) {
 	urlResponse := identityProvider.GetAuthorizationURL()
 
 	parsedUrl, err := url.Parse(urlResponse)
-	mdtest.Equal(t, nil, err)
-	mdtest.Equal(t, "https", parsedUrl.Scheme)
-	mdtest.Equal(t, "accounts.google.com", parsedUrl.Host)
-	mdtest.Equal(t, "/o/oauth2/v2/auth", parsedUrl.Path)
-	mdtest.Equal(t, "true", parsedUrl.Query().Get("include_granted_scopes"))
-	mdtest.Equal(t, "email profile", parsedUrl.Query().Get("scope"))
-	mdtest.Equal(t, "code", parsedUrl.Query().Get("response_type"))
-	mdtest.Equal(t, clientID, parsedUrl.Query().Get("client_id"))
-	mdtest.Equal(t, redirectURI, parsedUrl.Query().Get("redirect_uri"))
+	assert.Equal(t, nil, err)
+	assert.Equal(t, "https", parsedUrl.Scheme)
+	assert.Equal(t, "accounts.google.com", parsedUrl.Host)
+	assert.Equal(t, "/o/oauth2/v2/auth", parsedUrl.Path)
+	assert.Equal(t, "true", parsedUrl.Query().Get("include_granted_scopes"))
+	assert.Equal(t, "email profile", parsedUrl.Query().Get("scope"))
+	assert.Equal(t, "code", parsedUrl.Query().Get("response_type"))
+	assert.Equal(t, clientID, parsedUrl.Query().Get("client_id"))
+	assert.Equal(t, redirectURI, parsedUrl.Query().Get("redirect_uri"))
 }
 
 func TestIdentityProvider_RequestAccessToken(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name                string
 		httpResponse        *http.Response
@@ -119,19 +121,18 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			httpRequest := mdtest.NewHTTPRequestFake(
+			httpRequest := webreq.NewHTTPFake(
 				func(req *http.Request) (response *http.Response, e error) {
-					mdtest.Equal(t, "https", req.URL.Scheme)
-					mdtest.Equal(t, "www.googleapis.com", req.URL.Host)
-					mdtest.Equal(t, "/oauth2/v4/token", req.URL.Path)
-					mdtest.Equal(t, testCase.clientID, req.URL.Query().Get("client_id"))
-					mdtest.Equal(t, testCase.clientSecret, req.URL.Query().Get("client_secret"))
-					mdtest.Equal(t, testCase.authorizationCode, req.URL.Query().Get("code"))
-					mdtest.Equal(t, testCase.redirectURI, req.URL.Query().Get("redirect_uri"))
-					mdtest.Equal(t, "authorization_code", req.URL.Query().Get("grant_type"))
-					mdtest.Equal(t, "POST", req.Method)
-					mdtest.Equal(t, "application/json", req.Header.Get("Accept"))
-					mdtest.Equal(t, "application/x-www-form-urlencoded", req.Header.Get("Content-Type"))
+					assert.Equal(t, "https", req.URL.Scheme)
+					assert.Equal(t, "www.googleapis.com", req.URL.Host)
+					assert.Equal(t, "/oauth2/v4/token", req.URL.Path)
+					assert.Equal(t, testCase.clientID, req.URL.Query().Get("client_id"))
+					assert.Equal(t, testCase.clientSecret, req.URL.Query().Get("client_secret"))
+					assert.Equal(t, testCase.authorizationCode, req.URL.Query().Get("code"))
+					assert.Equal(t, testCase.redirectURI, req.URL.Query().Get("redirect_uri"))
+					assert.Equal(t, "authorization_code", req.URL.Query().Get("grant_type"))
+					assert.Equal(t, "POST", req.Method)
+					assert.Equal(t, "application/json", req.Header.Get("Accept"))
 
 					return testCase.httpResponse, testCase.httpErr
 				})
@@ -140,11 +141,11 @@ func TestIdentityProvider_RequestAccessToken(t *testing.T) {
 			actualAccessToken, err := identityProvider.RequestAccessToken(testCase.authorizationCode)
 
 			if testCase.expectHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedAccessToken, actualAccessToken)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedAccessToken, actualAccessToken)
 		})
 	}
 }

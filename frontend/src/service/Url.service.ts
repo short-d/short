@@ -1,25 +1,24 @@
 import { Url } from '../entity/Url';
-import { ApolloClient } from 'apollo-client';
-import { HttpLink } from 'apollo-link-http';
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { ApolloLink, FetchResult } from 'apollo-link';
-import gql from 'graphql-tag';
 import { EnvService } from './Env.service';
-import { GraphQlError } from '../graphql/error';
 import { AuthService } from './Auth.service';
 import { CaptchaService, CREATE_SHORT_LINK } from './Captcha.service';
 import { validateLongLinkFormat } from '../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../validators/CustomAlias.validator';
 import { Err, ErrorService } from './Error.service';
 import { IErr } from '../entity/Err';
+import {
+  GraphQLService,
+  IGraphQLError,
+  IGraphQLRequestError
+} from './GraphQL.service';
 
 interface ICreatedUrl {
   alias: string;
-  originalURL: string;
+  longLink: string;
 }
 
 interface IAuthMutation {
-  createURL: ICreatedUrl;
+  createShortLink: ICreatedUrl;
 }
 
 interface ICreateURLData {
@@ -31,44 +30,38 @@ interface ICreateShortLinkErrs {
   createShortLinkErr?: IErr;
 }
 
-const gqlCreateURL = gql`
+const gqlCreateURL = `
   mutation params(
     $captchaResponse: String!
     $authToken: String!
-    $urlInput: URLInput!
+    $shortLinkInput: ShortLinkInput!
     $isPublic: Boolean!
   ) {
     authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
-      createURL(url: $urlInput, isPublic: $isPublic) {
+      createShortLink(shortLink: $shortLinkInput, isPublic: $isPublic) {
         alias
-        originalURL
+        longLink
       }
     }
   }
 `;
 
 export class UrlService {
-  private gqlClient: ApolloClient<NormalizedCacheObject>;
+  private graphQLBaseURL: string;
 
   constructor(
     private authService: AuthService,
     private envService: EnvService,
     private errorService: ErrorService,
-    private captchaService: CaptchaService
+    private captchaService: CaptchaService,
+    private graphQLService: GraphQLService
   ) {
-    const gqlLink = ApolloLink.from([
-      new HttpLink({
-        uri: `${this.envService.getVal('GRAPHQL_API_BASE_URL')}/graphql`
-      })
-    ]);
-
-    this.gqlClient = new ApolloClient({
-      link: gqlLink,
-      cache: new InMemoryCache()
-    });
+    this.graphQLBaseURL = `${this.envService.getVal(
+      'GRAPHQL_API_BASE_URL'
+    )}/graphql`;
   }
 
-  createShortLink(editingUrl: Url): Promise<Url> {
+  createShortLink(editingUrl: Url, isPublic: boolean = false): Promise<Url> {
     return new Promise(async (resolve, reject) => {
       const longLink = editingUrl.originalUrl;
       const customAlias = editingUrl.alias;
@@ -80,7 +73,7 @@ export class UrlService {
       }
 
       try {
-        const url = await this.invokeCreateShortLinkApi(editingUrl);
+        const url = await this.invokeCreateShortLinkApi(editingUrl, isPublic);
         resolve(url);
         return;
       } catch (errCode) {
@@ -133,7 +126,10 @@ export class UrlService {
     return null;
   }
 
-  private async invokeCreateShortLinkApi(link: Url): Promise<Url> {
+  private async invokeCreateShortLinkApi(
+    shortLink: Url,
+    isPublic: boolean
+  ): Promise<Url> {
     let captchaResponse = '';
 
     try {
@@ -142,37 +138,38 @@ export class UrlService {
       return Promise.reject(err);
     }
 
-    let alias = link.alias === '' ? null : link.alias!;
-    let variables = this.gqlCreateURLVariable(captchaResponse, link, alias);
+    let variables = this.gqlCreateURLVariable(
+      captchaResponse,
+      shortLink,
+      isPublic
+    );
     return new Promise<Url>( // TODO(issue#599): simplify business logic below to improve readability
       (resolve: (createdURL: Url) => void, reject: (errCode: Err) => any) => {
-        this.gqlClient
-          .mutate({
-            variables: variables,
-            mutation: gqlCreateURL
+        this.graphQLService
+          .mutate<ICreateURLData>(this.graphQLBaseURL, {
+            mutation: gqlCreateURL,
+            variables: variables
           })
-          .then((res: FetchResult<ICreateURLData>) => {
-            if (!res || !res.data) {
-              return reject(Err.Unknown);
-            }
+          .then((res: ICreateURLData) => {
             const url = this.getUrlFromCreatedUrl(
-              res.data.authMutation.createURL
+              res.authMutation.createShortLink
             );
             resolve(url);
           })
-          .catch(({ graphQLErrors, networkError, message }) => {
-            if (networkError) {
+          .catch((err: IGraphQLRequestError) => {
+            if (err.networkError) {
               reject(Err.NetworkError);
               return;
             }
-            if (!graphQLErrors || graphQLErrors.length === 0) {
+            if (!err.graphQLErrors || err.graphQLErrors.length === 0) {
               reject(Err.Unknown);
               return;
             }
-            const errCodes = graphQLErrors.map((graphQLError: GraphQlError) =>
-              graphQLError.extensions
-                ? graphQLError.extensions.code
-                : Err.Unknown
+            const errCodes = err.graphQLErrors.map(
+              (graphQLError: IGraphQLError) =>
+                graphQLError.extensions
+                  ? (graphQLError.extensions.code as Err)
+                  : Err.Unknown
             );
             reject(errCodes[0]);
           });
@@ -182,7 +179,7 @@ export class UrlService {
 
   private getUrlFromCreatedUrl(createdUrl: ICreatedUrl): Url {
     return {
-      originalUrl: createdUrl.originalURL,
+      originalUrl: createdUrl.longLink,
       alias: createdUrl.alias
     };
   }
@@ -190,15 +187,14 @@ export class UrlService {
   private gqlCreateURLVariable(
     captchaResponse: string,
     link: Url,
-    alias: string | null,
     isPublic: boolean = false
   ) {
     return {
       captchaResponse: captchaResponse,
       authToken: this.authService.getAuthToken(),
-      urlInput: {
-        originalURL: link.originalUrl,
-        customAlias: alias
+      shortLinkInput: {
+        longLink: link.originalUrl,
+        customAlias: link.alias
       },
       isPublic
     };

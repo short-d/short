@@ -6,18 +6,22 @@ import { Button } from '../../ui/Button';
 import { ShortLinkUsage } from './ShortLinkUsage';
 import { Section } from '../../ui/Section';
 import { Url } from '../../../entity/Url';
+import { UIFactory } from '../../UIFactory';
 
 interface Props {
+  uiFactory: UIFactory;
   longLinkText?: string;
   alias?: string;
   shortLink?: string;
   inputErr?: string;
   createdUrl?: Url;
   qrCodeUrl?: string;
+  isShortLinkPublic?: boolean;
   onLongLinkTextFieldBlur?: () => void;
   onLongLinkTextFieldChange?: (newLongLink: string) => void;
   onShortLinkTextFieldBlur?: () => void;
   onShortLinkTextFieldChange?: (newAlias: string) => void;
+  onPublicToggleClick?: (enabled: boolean) => void;
   onCreateShortLinkButtonClick?: () => void;
 }
 
@@ -59,6 +63,11 @@ export class CreateShortLinkSection extends Component<Props> {
           </div>
         </div>
         <div className={'input-error'}>{this.props.inputErr}</div>
+        {this.props.uiFactory.createPreferenceTogglesSubSection({
+          uiFactory: this.props.uiFactory,
+          isShortLinkPublic: this.props.isShortLinkPublic,
+          onPublicToggleClick: this.props.onPublicToggleClick
+        })}
         {this.props.createdUrl && (
           <div className={'short-link-usage-wrapper'}>
             <ShortLinkUsage

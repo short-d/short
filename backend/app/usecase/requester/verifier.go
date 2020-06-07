@@ -1,12 +1,8 @@
 package requester
 
-import (
-	"github.com/short-d/short/app/usecase/service"
-)
-
 // Verifier verifies in coming network to prevents cyber attacks.
 type Verifier struct {
-	service service.ReCaptcha
+	service ReCaptcha
 }
 
 // IsHuman checks whether the request is sent by a human user.
@@ -19,7 +15,7 @@ func (r Verifier) IsHuman(recaptchaResponse string) (bool, error) {
 }
 
 // NewVerifier creates new request verifier.
-func NewVerifier(service service.ReCaptcha) Verifier {
+func NewVerifier(service ReCaptcha) Verifier {
 	return Verifier{
 		service: service,
 	}

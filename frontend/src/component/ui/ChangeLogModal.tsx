@@ -2,17 +2,19 @@ import React, { Component } from 'react';
 import moment from 'moment';
 
 import './ChangeLogModal.scss';
-import { Update } from '../../entity/Update';
+import { Change } from '../../entity/Change';
 import { Button } from './Button';
 import { Modal } from './Modal';
+import { Icon, IconID } from './Icon';
 
 interface State {
   shouldShowFullChangeLog: boolean;
 }
 
 interface Props {
-  changeLog?: Array<Update>;
+  changeLog?: Array<Change>;
   defaultVisibleLogs: number;
+  onModalOpen?: () => void;
 }
 
 export class ChangeLogModal extends Component<Props, State> {
@@ -43,12 +45,12 @@ export class ChangeLogModal extends Component<Props, State> {
     return (
       <div className={'changelog'}>
         <ul>
-          {changeLog.map((update: Update) => (
-            <li key={update.releasedAt}>
-              <div className={'title'}>{update.title}</div>
-              <div className={'summary'}>{update.summary}</div>
+          {changeLog.map((change: Change) => (
+            <li key={change.id}>
+              <div className={'title'}>{change.title}</div>
+              <div className={'summary'}>{change.summaryMarkdown}</div>
               <div className={'released-date'}>
-                {moment(update.releasedAt).fromNow()}
+                {moment(change.releasedAt).fromNow()}
               </div>
             </li>
           ))}
@@ -74,13 +76,17 @@ export class ChangeLogModal extends Component<Props, State> {
 
   render() {
     return (
-      <Modal ref={this.modalRef} canClose={true}>
+      <Modal
+        ref={this.modalRef}
+        canClose={true}
+        onModalOpen={this.props.onModalOpen}
+      >
         <div className={'modal-body'}>
           <div className={'modal-header'}>
             Since You've Been Gone
-            <i className={'material-icons clear'} onClick={this.close}>
-              clear
-            </i>
+            <span className={'close-button'}>
+              <Icon defaultIconID={IconID.Close} onClick={this.close} />
+            </span>
           </div>
           {this.createChangeLog()}
           {this.createShowCompleteChangeLogButton()}

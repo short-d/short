@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/short-d/short/app/entity"
+import "github.com/short-d/short/backend/app/entity"
 
 // User accesses users' information from storage, such as database.
 type User interface {
@@ -9,5 +9,4 @@ type User interface {
 	GetUserByID(id string) (entity.User, error)
 	GetUserByEmail(email string) (entity.User, error)
 	CreateUser(user entity.User) error
-	UpdateUserID(email string, userID string) error
 }

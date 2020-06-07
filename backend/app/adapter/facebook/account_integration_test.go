@@ -9,11 +9,13 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/entity"
+	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/webreq"
+	"github.com/short-d/short/backend/app/entity"
 )
 
 func TestAccount_GetSingleSignOnUser(t *testing.T) {
+	t.Parallel()
 	testCases := []struct {
 		name            string
 		httpResponse    *http.Response
@@ -69,14 +71,14 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			httpRequest := mdtest.NewHTTPRequestFake(
+			httpRequest := webreq.NewHTTPFake(
 				func(req *http.Request) (response *http.Response, e error) {
-					mdtest.Equal(t, "https", req.URL.Scheme)
-					mdtest.Equal(t, "graph.facebook.com", req.URL.Host)
-					mdtest.Equal(t, "/me", req.URL.Path)
-					mdtest.Equal(t, "access_token", req.URL.Query().Get("access_token"))
-					mdtest.Equal(t, "id,name,email", req.URL.Query().Get("fields"))
-					mdtest.Equal(t, "GET", req.Method)
+					assert.Equal(t, "https", req.URL.Scheme)
+					assert.Equal(t, "graph.facebook.com", req.URL.Host)
+					assert.Equal(t, "/me", req.URL.Path)
+					assert.Equal(t, "access_token", req.URL.Query().Get("access_token"))
+					assert.Equal(t, "id,name,email", req.URL.Query().Get("fields"))
+					assert.Equal(t, "GET", req.Method)
 
 					return testCase.httpResponse, testCase.httpErr
 				})
@@ -85,11 +87,11 @@ func TestAccount_GetSingleSignOnUser(t *testing.T) {
 			gotSSOUser, err := facebookAccount.GetSingleSignOnUser("access_token")
 
 			if testCase.expectHasErr {
-				mdtest.NotEqual(t, nil, err)
+				assert.NotEqual(t, nil, err)
 				return
 			}
-			mdtest.Equal(t, nil, err)
-			mdtest.Equal(t, testCase.expectedSSOUser, gotSSOUser)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expectedSSOUser, gotSSOUser)
 		})
 	}
 }

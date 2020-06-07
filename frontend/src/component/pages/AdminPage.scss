@@ -1,0 +1,80 @@
+@import '../styles/color';
+@import '../styles/font';
+@import '../styles/shape';
+@import '../styles/easing';
+@import '../styles/shadow';
+@import '../styles/corner';
+@import '../styles/layer';
+
+#admin-page {
+  font-family: $font-family-primary;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  > header {
+    position: inherit;
+    display: flex;
+    background-color: $color-primary;
+    height: 50px;
+    box-shadow: $shadow-header;
+    justify-content: left;
+    align-items: center;
+    padding: 0 30px;
+    flex: 0 0 auto;
+
+    .menu-button {
+      fill: white;
+      padding: 4px;
+      transition: background-color 200ms $ease-in-out-quart;
+      @include circle;
+
+      &:hover {
+        cursor: pointer;
+        background-color: $shadow-drawer;
+      }
+    }
+
+    #logo {
+      user-select: none;
+      margin-left: 30px;
+      display: flex;
+
+      > .short {
+        font-size: 20px;
+        font-weight: $font-weight-bold;
+        letter-spacing: 2px;
+        line-height: 26px;
+        background-color: white;
+        padding: 2px 8px;
+        color: $color-primary;
+        @include round-corner;
+      }
+
+      > .admin {
+        margin-left: 20px;
+        font-size: 26px;
+        font-weight: $font-weight-semi-bold;
+      }
+    }
+  }
+
+  > .main {
+    flex: 1;
+    display: flex;
+
+    > .menu {
+      flex: 0 0;
+      z-index: $layer-drawer;
+    }
+
+    > .content {
+      flex: 1;
+      overflow-x: hidden;
+      background-color: $color-admin-panel-background;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+  }
+}

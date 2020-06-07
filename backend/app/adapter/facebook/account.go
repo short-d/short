@@ -4,18 +4,18 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/entity"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/webreq"
+	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
 const facebookAPI = "https://graph.facebook.com/me"
 
-var _ service.SSOAccount = (*Account)(nil)
+var _ sso.Account = (*Account)(nil)
 
 // Account accesses user's account data through FB Graph API.
 type Account struct {
-	httpRequest fw.HTTPRequest
+	httpRequest webreq.HTTP
 }
 
 // GetSingleSignOnUser retrieves user's email and name from Facebook API.
@@ -54,8 +54,8 @@ func (g Account) GetSingleSignOnUser(accessToken string) (entity.SSOUser, error)
 }
 
 // NewAccount initializes Facebook account API client.
-func NewAccount(http fw.HTTPRequest) Account {
+func NewAccount(httpRequest webreq.HTTP) Account {
 	return Account{
-		httpRequest: http,
+		httpRequest: httpRequest,
 	}
 }

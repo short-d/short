@@ -5,16 +5,15 @@ package keygen
 import (
 	"testing"
 
-	"github.com/short-d/app/mdtest"
-	"github.com/short-d/short/app/usecase/service"
+	"github.com/short-d/app/fw/assert"
 )
 
 func TestNewRemote(t *testing.T) {
 	t.Parallel()
 
-	keyFetcher := service.NewKeyFetcherFake([]service.Key{})
+	keyFetcher := NewKeyFetcherFake([]Key{})
 	_, err := NewKeyGenerator(0, &keyFetcher)
-	mdtest.NotEqual(t, nil, err)
+	assert.NotEqual(t, nil, err)
 }
 
 func TestRemote_NewKey(t *testing.T) {
@@ -22,17 +21,17 @@ func TestRemote_NewKey(t *testing.T) {
 
 	testCases := []struct {
 		name              string
-		availableKeys     []service.Key
+		availableKeys     []Key
 		bufferSize        int
 		expectedGetKeyOps int
 		expectedHasErrs   []bool
-		expectedKeys      []service.Key
+		expectedKeys      []Key
 	}{
 		{
 			name: "buffer size is 2",
-			availableKeys: []service.Key{
-				service.Key("0K"),
-				service.Key("0L"),
+			availableKeys: []Key{
+				Key("0K"),
+				Key("0L"),
 			},
 			bufferSize:        2,
 			expectedGetKeyOps: 2,
@@ -40,28 +39,28 @@ func TestRemote_NewKey(t *testing.T) {
 				false,
 				false,
 			},
-			expectedKeys: []service.Key{
-				service.Key("0K"),
-				service.Key("0L"),
+			expectedKeys: []Key{
+				Key("0K"),
+				Key("0L"),
 			},
 		},
 		{
 			name:              "no key available at beginning",
-			availableKeys:     []service.Key{},
+			availableKeys:     []Key{},
 			bufferSize:        2,
 			expectedGetKeyOps: 1,
 			expectedHasErrs: []bool{
 				true,
 			},
-			expectedKeys: []service.Key{
-				service.Key(""),
+			expectedKeys: []Key{
+				Key(""),
 			},
 		},
 		{
 			name: "run out of key",
-			availableKeys: []service.Key{
-				service.Key("0K"),
-				service.Key("0L"),
+			availableKeys: []Key{
+				Key("0K"),
+				Key("0L"),
 			},
 			bufferSize:        2,
 			expectedGetKeyOps: 3,
@@ -70,10 +69,10 @@ func TestRemote_NewKey(t *testing.T) {
 				false,
 				true,
 			},
-			expectedKeys: []service.Key{
-				service.Key("0K"),
-				service.Key("0L"),
-				service.Key(""),
+			expectedKeys: []Key{
+				Key("0K"),
+				Key("0L"),
+				Key(""),
 			},
 		},
 	}
@@ -83,18 +82,18 @@ func TestRemote_NewKey(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			keyFetcher := service.NewKeyFetcherFake(testCase.availableKeys)
+			keyFetcher := NewKeyFetcherFake(testCase.availableKeys)
 			remote, err := NewKeyGenerator(testCase.bufferSize, &keyFetcher)
-			mdtest.Equal(t, nil, err)
+			assert.Equal(t, nil, err)
 
 			for idx := 0; idx < testCase.expectedGetKeyOps; idx++ {
 				key, err := remote.NewKey()
 
 				if testCase.expectedHasErrs[idx] {
-					mdtest.NotEqual(t, nil, err)
+					assert.NotEqual(t, nil, err)
 					continue
 				}
-				mdtest.Equal(t, testCase.expectedKeys[idx], key)
+				assert.Equal(t, testCase.expectedKeys[idx], key)
 			}
 		})
 	}

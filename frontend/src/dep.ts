@@ -1,6 +1,5 @@
 import { UIFactory } from './component/UIFactory';
 import { CaptchaService } from './service/Captcha.service';
-import { StaticConfigDecisionService } from './service/StaticConfigDecision.service';
 import { AuthService } from './service/Auth.service';
 import { QrCodeService } from './service/QrCode.service';
 import { VersionService } from './service/Version.service';
@@ -15,6 +14,14 @@ import { SearchService } from './service/Search.service';
 import { BrowserExtensionFactory } from './service/extensionService/BrowserExtension.factory';
 import { ChangeLogService } from './service/ChangeLog.service';
 import { ClipboardServiceFactory } from './service/clipboardService/Clipboard.service.factory';
+import { GraphQLService } from './service/GraphQL.service';
+import { FetchHTTPService } from './service/HTTP.service';
+import { ShortHTTPApi } from './service/ShortHTTP.api';
+import { DynamicDecisionService } from './service/feature-decision/DynamicDecision.service';
+import { ShortLinkService } from './service/ShortLink.service';
+import { AnalyticsService } from './service/Analytics.service';
+import { ChangeLogGraphQLApi } from './service/ChangeLogGraphQL.api';
+import { ShortLinkGraphQLApi } from './service/ShortLinkGraphQL.api';
 
 export function initEnvService(): EnvService {
   return new EnvService();
@@ -30,7 +37,6 @@ export function initUIFactory(
 ): UIFactory {
   const cookieService = new CookieService();
   const qrCodeService = new QrCodeService();
-  const staticConfigDecision = new StaticConfigDecisionService();
 
   const routingService = new RoutingService();
   const authService = new AuthService(
@@ -39,20 +45,45 @@ export function initUIFactory(
     routingService
   );
   const errorService = new ErrorService();
+  const httpService = new FetchHTTPService();
+  const shortHTTPApi = new ShortHTTPApi(authService, httpService, envService);
+  const dynamicDecisionService = new DynamicDecisionService(shortHTTPApi);
+
+  const graphQLService = new GraphQLService(httpService);
   const urlService = new UrlService(
     authService,
     envService,
     errorService,
-    captchaService
+    captchaService,
+    graphQLService
   );
   const versionService = new VersionService(envService);
   const store = initStore();
   const searchService = new SearchService();
-  const changeLogService = new ChangeLogService();
+  const changeLogGraphQLApi = new ChangeLogGraphQLApi(
+    authService,
+    envService,
+    captchaService,
+    graphQLService
+  );
+  const changeLogService = new ChangeLogService(
+    changeLogGraphQLApi,
+    errorService
+  );
   const extensionService = new BrowserExtensionFactory().makeBrowserExtensionService(
     envService
   );
   const clipboardService = new ClipboardServiceFactory().makeClipboardService();
+  const shortLinkGraphQLApi = new ShortLinkGraphQLApi(
+    authService,
+    envService,
+    graphQLService
+  );
+  const shortLinkService = new ShortLinkService(
+    shortLinkGraphQLApi,
+    errorService
+  );
+  const analyticsService = new AnalyticsService(shortHTTPApi);
 
   return new UIFactory(
     authService,
@@ -65,7 +96,9 @@ export function initUIFactory(
     searchService,
     changeLogService,
     store,
-    staticConfigDecision
+    dynamicDecisionService,
+    shortLinkService,
+    analyticsService
   );
 }
 

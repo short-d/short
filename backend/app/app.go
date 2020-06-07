@@ -1,15 +1,20 @@
 package app
 
 import (
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/dep"
-	"github.com/short-d/short/dep/provider"
+	"time"
+
+	"github.com/short-d/app/fw/db"
+	"github.com/short-d/app/fw/env"
+	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/short/backend/dep"
+	"github.com/short-d/short/backend/dep/provider"
 )
 
 // ServiceConfig represents require parameters for the backend APIs
 type ServiceConfig struct {
+	Runtime              string
 	LogPrefix            string
-	LogLevel             fw.LogLevel
+	LogLevel             logger.LogLevel
 	MigrationRoot        string
 	RecaptchaSecret      string
 	GithubClientID       string
@@ -27,49 +32,68 @@ type ServiceConfig struct {
 	KeyGenBufferSize     int
 	KgsHostname          string
 	KgsPort              int
+	AuthTokenLifetime    time.Duration
+	DataDogAPIKey        string
+	SegmentAPIKey        string
+	IPStackAPIKey        string
+	GoogleAPIKey         string
 }
 
 // Start launches the GraphQL & HTTP APIs
 func Start(
-	dbConfig fw.DBConfig,
+	dbConfig db.Config,
+	dbConnector db.Connector,
+	dbMigrationTool db.MigrationTool,
 	config ServiceConfig,
-	dbConnector fw.DBConnector,
-	dbMigrationTool fw.DBMigrationTool,
 ) {
-	db, err := dbConnector.Connect(dbConfig)
+	sqlDB, err := dbConnector.Connect(dbConfig)
 	if err != nil {
 		panic(err)
 	}
 
-	err = dbMigrationTool.MigrateUp(db, config.MigrationRoot)
+	err = dbMigrationTool.MigrateUp(sqlDB, config.MigrationRoot)
 	if err != nil {
 		panic(err)
 	}
+
+	kgsBufferSize := provider.KeyGenBufferSize(config.KeyGenBufferSize)
+	kgsRPCConfig := provider.KgsRPCConfig{
+		Hostname: config.KgsHostname,
+		Port:     config.KgsPort,
+	}
+
+	dataDogAPIKey := provider.DataDogAPIKey(config.DataDogAPIKey)
+	segmentAPIKey := provider.SegmentAPIKey(config.SegmentAPIKey)
+	ipStackAPIKey := provider.IPStackAPIKey(config.IPStackAPIKey)
+	googleAPIKey := provider.GoogleAPIKey(config.GoogleAPIKey)
 
 	graphqlAPI, err := dep.InjectGraphQLService(
-		"GraphQL API",
+		env.Runtime(config.Runtime),
 		provider.LogPrefix(config.LogPrefix),
 		config.LogLevel,
-		db,
+		sqlDB,
 		"/graphql",
 		provider.ReCaptchaSecret(config.RecaptchaSecret),
 		provider.JwtSecret(config.JwtSecret),
-		provider.KeyGenBufferSize(config.KeyGenBufferSize),
-		provider.KgsRPCConfig{
-			Hostname: config.KgsHostname,
-			Port:     config.KgsPort,
-		},
+		kgsBufferSize,
+		kgsRPCConfig,
+		provider.TokenValidDuration(config.AuthTokenLifetime),
+		dataDogAPIKey,
+		segmentAPIKey,
+		ipStackAPIKey,
+		googleAPIKey,
 	)
 	if err != nil {
 		panic(err)
 	}
-	graphqlAPI.Start(config.GraphQLAPIPort)
 
-	httpAPI := dep.InjectRoutingService(
-		"Routing API",
+	graphqlAPI.StartAsync(config.GraphQLAPIPort)
+
+	httpAPI, err := dep.InjectRoutingService(
+		env.Runtime(config.Runtime),
 		provider.LogPrefix(config.LogPrefix),
 		config.LogLevel,
-		db,
+		sqlDB,
 		provider.GithubClientID(config.GithubClientID),
 		provider.GithubClientSecret(config.GithubClientSecret),
 		provider.FacebookClientID(config.FacebookClientID),
@@ -79,7 +103,17 @@ func Start(
 		provider.GoogleClientSecret(config.GoogleClientSecret),
 		provider.GoogleRedirectURI(config.GoogleRedirectURI),
 		provider.JwtSecret(config.JwtSecret),
+		kgsBufferSize,
+		kgsRPCConfig,
 		provider.WebFrontendURL(config.WebFrontendURL),
+		provider.TokenValidDuration(config.AuthTokenLifetime),
+		dataDogAPIKey,
+		segmentAPIKey,
+		ipStackAPIKey,
 	)
+	if err != nil {
+		panic(err)
+	}
+
 	httpAPI.StartAndWait(config.HTTPAPIPort)
 }

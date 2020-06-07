@@ -1,14 +1,16 @@
 package provider
 
 import (
-	"github.com/short-d/app/fw"
-	"github.com/short-d/short/app/adapter/facebook"
-	"github.com/short-d/short/app/adapter/github"
-	"github.com/short-d/short/app/adapter/google"
-	"github.com/short-d/short/app/adapter/routing"
-	"github.com/short-d/short/app/usecase/account"
-	"github.com/short-d/short/app/usecase/auth"
-	"github.com/short-d/short/app/usecase/url"
+	"github.com/short-d/app/fw/router"
+	"github.com/short-d/app/fw/timer"
+	"github.com/short-d/short/backend/app/adapter/facebook"
+	"github.com/short-d/short/backend/app/adapter/github"
+	"github.com/short-d/short/backend/app/adapter/google"
+	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/adapter/routing"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
 // WebFrontendURL represents the URL of the web frontend
@@ -16,31 +18,25 @@ type WebFrontendURL string
 
 // NewShortRoutes creates HTTP routes for Short API with WwwRoot to uniquely identify WwwRoot during dependency injection.
 func NewShortRoutes(
-	logger fw.Logger,
-	tracer fw.Tracer,
+	instrumentationFactory request.InstrumentationFactory,
 	webFrontendURL WebFrontendURL,
-	timer fw.Timer,
-	urlRetriever url.Retriever,
-	githubAPI github.API,
-	facebookAPI facebook.API,
-	googleAPI google.API,
-	authenticator auth.Authenticator,
-	accountProvider account.Provider,
-) []fw.Route {
-	observability := routing.Observability{
-		Logger: logger,
-		Tracer: tracer,
-	}
-
+	timer timer.Timer,
+	shortLinkRetriever shortlink.Retriever,
+	featureDecisionMakerFactory feature.DecisionMakerFactory,
+	githubSSO github.SingleSignOn,
+	facebookSSO facebook.SingleSignOn,
+	googleSSO google.SingleSignOn,
+	authenticator authenticator.Authenticator,
+) []router.Route {
 	return routing.NewShort(
-		observability,
+		instrumentationFactory,
 		string(webFrontendURL),
 		timer,
-		urlRetriever,
-		githubAPI,
-		facebookAPI,
-		googleAPI,
+		shortLinkRetriever,
+		featureDecisionMakerFactory,
+		githubSSO,
+		facebookSSO,
+		googleSSO,
 		authenticator,
-		accountProvider,
 	)
 }
