@@ -3,17 +3,24 @@ import { render, fireEvent, Matcher } from '@testing-library/react';
 import { SearchBar } from './SearchBar';
 
 describe('Searchbar', () => {
-  let changeHandler: () => void;
-  let searchBarRef: any;
-  let container: HTMLElement;
-  let getByPlaceholderText: (id: Matcher) => HTMLElement;
-  let input: HTMLInputElement;
-  beforeEach(() => {
-    changeHandler = jest.fn();
-    searchBarRef = React.createRef<SearchBar>();
-    ({ getByPlaceholderText, container } = render(
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
+  });
+
+  test('should render without auto complete suggestions', () => {
+    const changeHandler = jest.fn();
+    render(<SearchBar onChange={changeHandler} />);
+  });
+
+  test('should trigger change events successfully after debounce time', async () => {
+    const changeHandler = jest.fn();
+    const TOTAL_DURATION = 300;
+    const { getByPlaceholderText } = render(
       <SearchBar
-        ref={searchBarRef}
         onChange={changeHandler}
         autoCompleteSuggestions={[
           {
@@ -26,41 +33,80 @@ describe('Searchbar', () => {
           }
         ]}
       />
-    ));
+    );
 
-    input = getByPlaceholderText('Search short links') as HTMLInputElement;
-  });
+    const input = getByPlaceholderText(
+      'Search short links'
+    ) as HTMLInputElement;
 
-  test('should render without auto complete suggestions', () => {
-    render(<SearchBar onChange={changeHandler} />);
-  });
-
-  test('should trigger change events successfully after debounce time', async () => {
     fireEvent.change(input, {
       target: { value: 'Lorem ipsum' }
     });
 
     expect(changeHandler).toBeCalledTimes(0);
 
-    await new Promise(r => setTimeout(r, 300));
+    jest.advanceTimersByTime(TOTAL_DURATION);
 
     expect(changeHandler).toBeCalledTimes(1);
     expect(changeHandler).toBeCalledWith('Lorem ipsum');
   });
 
   test('should show autocomplete box on focus', () => {
+    const changeHandler = jest.fn();
+    const { getByPlaceholderText, container } = render(
+      <SearchBar
+        onChange={changeHandler}
+        autoCompleteSuggestions={[
+          {
+            originalUrl: 'https://www.google.com/',
+            alias: 'google'
+          },
+          {
+            originalUrl: 'https://github.com/short-d/short/',
+            alias: 'short'
+          }
+        ]}
+      />
+    );
+
+    const input = getByPlaceholderText(
+      'Search short links'
+    ) as HTMLInputElement;
+
     expect(container.querySelector('.suggestions.show')).toBeFalsy();
-    input.focus();
+    fireEvent.focus(input);
     expect(container.querySelector('.suggestions.show')).toBeTruthy();
   });
 
   test('should hide autocomplete box on blur', async () => {
-    expect(container.querySelector('.suggestions.show')).toBeFalsy();
-    input.focus();
-    expect(container.querySelector('.suggestions.show')).toBeTruthy();
-    input.blur();
+    const changeHandler = jest.fn();
+    const TOTAL_DURATION = 300;
+    const { getByPlaceholderText, container } = render(
+      <SearchBar
+        onChange={changeHandler}
+        autoCompleteSuggestions={[
+          {
+            originalUrl: 'https://www.google.com/',
+            alias: 'google'
+          },
+          {
+            originalUrl: 'https://github.com/short-d/short/',
+            alias: 'short'
+          }
+        ]}
+      />
+    );
 
-    await new Promise(r => setTimeout(r, 300));
+    const input = getByPlaceholderText(
+      'Search short links'
+    ) as HTMLInputElement;
+
+    expect(container.querySelector('.suggestions.show')).toBeFalsy();
+    fireEvent.focus(input);
+    expect(container.querySelector('.suggestions.show')).toBeTruthy();
+    fireEvent.blur(input);
+
+    jest.advanceTimersByTime(TOTAL_DURATION);
 
     expect(container.querySelector('.suggestions.show')).toBeFalsy();
   });
