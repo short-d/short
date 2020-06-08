@@ -20,7 +20,7 @@ const DEBOUNCE_DURATION: number = 300;
 
 export class SearchBar extends Component<Props, State> {
   state = {
-    showAutoCompleteBox: true
+    showAutoCompleteBox: false
   };
 
   private onSearch$: any = new Subject();

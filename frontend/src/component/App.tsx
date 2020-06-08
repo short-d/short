@@ -18,8 +18,8 @@ export class App extends Component<IProps> {
           <Route
             path={'/'}
             exact
-            render={({ location }) =>
-              this.props.uiFactory.createHomePage(location)
+            render={({ location, history }) =>
+              this.props.uiFactory.createHomePage(location, history)
             }
           />
           <Route

@@ -3,7 +3,7 @@ import { NotFoundPage } from '../pages/NotFoundPage';
 
 export default function(
   WrappedComponent: React.ComponentType<any>,
-  makeAuthDecision: Promise<boolean>
+  makeAuthDecision: () => Promise<boolean>
 ) {
   enum AuthDecision {
     AUTHORIZED,
@@ -29,7 +29,7 @@ export default function(
     componentDidMount(): void {
       this.isComponentMounted = true;
 
-      makeAuthDecision.then(decision => {
+      makeAuthDecision().then(decision => {
         if (!this.isComponentMounted) {
           return;
         }

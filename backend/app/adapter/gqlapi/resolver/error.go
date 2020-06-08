@@ -10,6 +10,7 @@ const (
 	ErrCodeRequesterNotHuman          = "requesterNotHuman"
 	ErrCodeInvalidLongLink            = "invalidLongLink"
 	ErrCodeInvalidCustomAlias         = "invalidCustomAlias"
+	ErrCodeAliasWithFragment          = "aliasWithFragment"
 	ErrCodeMaliciousContent           = "maliciousContent"
 	ErrCodeInvalidAuthToken           = "invalidAuthToken"
 )
@@ -77,7 +78,10 @@ func (e ErrNotHuman) Error() string {
 }
 
 // ErrInvalidLongLink signifies that the provided long link has incorrect format.
-type ErrInvalidLongLink string
+type ErrInvalidLongLink struct {
+	longLink  string
+	violation string
+}
 
 var _ GraphQlError = (*ErrInvalidLongLink)(nil)
 
@@ -85,8 +89,9 @@ var _ GraphQlError = (*ErrInvalidLongLink)(nil)
 // handle the error.
 func (e ErrInvalidLongLink) Extensions() map[string]interface{} {
 	return map[string]interface{}{
-		"code":     ErrCodeInvalidLongLink,
-		"longLink": string(e),
+		"code":      ErrCodeInvalidLongLink,
+		"longLink":  e.longLink,
+		"violation": e.violation,
 	}
 }
 
@@ -97,7 +102,10 @@ func (e ErrInvalidLongLink) Error() string {
 
 // ErrInvalidCustomAlias signifies that the provided custom alias has incorrect
 // format.
-type ErrInvalidCustomAlias string
+type ErrInvalidCustomAlias struct {
+	customAlias string
+	violation   string
+}
 
 var _ GraphQlError = (*ErrInvalidCustomAlias)(nil)
 
@@ -106,7 +114,8 @@ var _ GraphQlError = (*ErrInvalidCustomAlias)(nil)
 func (e ErrInvalidCustomAlias) Extensions() map[string]interface{} {
 	return map[string]interface{}{
 		"code":        ErrCodeInvalidCustomAlias,
-		"customAlias": string(e),
+		"customAlias": e.customAlias,
+		"violation":   e.violation,
 	}
 }
 

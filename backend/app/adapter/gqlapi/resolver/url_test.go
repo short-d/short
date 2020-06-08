@@ -11,41 +11,41 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 )
 
-func TestURL_Alias(t *testing.T) {
+func TestShortLink_Alias(t *testing.T) {
 	t.Parallel()
-	urlResolver := URL{url: entity.ShortLink{Alias: "TestAlias"}}
+	shortLinkResolver := ShortLink{shortLink: entity.ShortLink{Alias: "TestAlias"}}
 
-	expected := urlResolver.url.Alias
-	got := *urlResolver.Alias()
-	assert.Equal(t, got, expected, "*urlTest.Alias() = %v; want %v", expected, got)
+	expected := shortLinkResolver.shortLink.Alias
+	got := *shortLinkResolver.Alias()
+	assert.Equal(t, got, expected, "*shortLinkTest.Alias() = %v; want %v", expected, got)
 }
 
-func TestURL_OriginalURL(t *testing.T) {
+func TestShortLink_LongLink(t *testing.T) {
 	t.Parallel()
-	urlResolver := URL{url: entity.ShortLink{LongLink: "TestOriginalUrl"}}
+	shortLinkResolver := ShortLink{shortLink: entity.ShortLink{LongLink: "TestLongLink"}}
 
-	expected := urlResolver.url.LongLink
-	got := *urlResolver.OriginalURL()
-	assert.Equal(t, got, expected, "*urlResolver.LongLink() = %v; want %v", expected, got)
+	expected := shortLinkResolver.shortLink.LongLink
+	got := *shortLinkResolver.LongLink()
+	assert.Equal(t, got, expected, "*shortLinkResolver.LongLink() = %v; want %v", expected, got)
 }
 
-func TestURL_ExpireAt(t *testing.T) {
+func TestShortLink_ExpireAt(t *testing.T) {
 	t.Parallel()
 	timeAfter := time.Now().Add(5 * time.Second)
 	testCases := []struct {
-		url      URL
-		expected *scalar.Time
+		shortLink ShortLink
+		expected  *scalar.Time
 	}{
 		{
-			url:      URL{url: entity.ShortLink{ExpireAt: &timeAfter}},
-			expected: &scalar.Time{Time: timeAfter},
+			shortLink: ShortLink{shortLink: entity.ShortLink{ExpireAt: &timeAfter}},
+			expected:  &scalar.Time{Time: timeAfter},
 		},
 		{
-			url: URL{url: entity.ShortLink{ExpireAt: nil}},
+			shortLink: ShortLink{shortLink: entity.ShortLink{ExpireAt: nil}},
 		},
 	}
 	for _, testCase := range testCases {
 		testCase := testCase
-		assert.Equal(t, testCase.expected, testCase.url.ExpireAt())
+		assert.Equal(t, testCase.expected, testCase.shortLink.ExpireAt())
 	}
 }

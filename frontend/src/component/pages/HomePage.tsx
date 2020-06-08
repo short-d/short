@@ -9,7 +9,7 @@ import { Modal } from '../ui/Modal';
 import { ExtPromo } from './shared/promos/ExtPromo';
 import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
-import { Location } from 'history';
+import { Location, History } from 'history';
 import { AuthService } from '../../service/Auth.service';
 import { IBrowserExtensionService } from '../../service/extensionService/BrowserExtension.service';
 import { VersionService } from '../../service/Version.service';
@@ -61,10 +61,12 @@ interface Props {
   analyticsService: AnalyticsService;
   store: Store<IAppState>;
   location: Location;
+  history: History;
 }
 
 interface State {
   isUserSignedIn?: boolean;
+  shouldShowAdminButton?: boolean;
   shouldShowPromo?: boolean;
   longLink?: string;
   alias?: string;
@@ -108,10 +110,18 @@ export class HomePage extends Component<Props, State> {
     this.setState({
       isUserSignedIn: true
     });
+    this.showAdminButton();
     this.handleStateChange();
     this.autoFillLongLink();
     this.autoShowChangeLog();
   }
+
+  private showAdminButton = async () => {
+    const decision = await this.props.featureDecisionService.includeAdminPage();
+    this.setState({
+      shouldShowAdminButton: decision
+    });
+  };
 
   autoShowChangeLog = async () => {
     const showChangeLog = await this.props.featureDecisionService.includeViewChangeLogButton();
@@ -194,8 +204,10 @@ export class HomePage extends Component<Props, State> {
   }
 
   requestSignIn = () => {
+    // TODO(issue#833): make feature Toggle handle dynamic rendering condition.
     this.setState({
-      isUserSignedIn: false
+      isUserSignedIn: false,
+      shouldShowAdminButton: false
     });
     this.props.authService.signOut();
     this.showSignInModal();
@@ -212,6 +224,10 @@ export class HomePage extends Component<Props, State> {
 
   handleSignOutButtonClick = () => {
     this.requestSignIn();
+  };
+
+  handleAdminButtonClick = () => {
+    this.props.history.push('/admin');
   };
 
   handleLongLinkChange = (newLongLink: string) => {
@@ -356,7 +372,9 @@ export class HomePage extends Component<Props, State> {
           onSearchBarInputChange={this.handleSearchBarInputChange}
           autoCompleteSuggestions={this.state.autoCompleteSuggestions}
           shouldShowSignOutButton={this.state.isUserSignedIn}
+          shouldShowAdminButton={this.state.shouldShowAdminButton}
           onSignOutButtonClick={this.handleSignOutButtonClick}
+          onAdminButtonClick={this.handleAdminButtonClick}
         />
         <div className={'main'}>
           <CreateShortLinkSection

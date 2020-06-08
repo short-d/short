@@ -17,6 +17,7 @@ type ChangeLog interface {
 	GetChangeLog() ([]entity.Change, error)
 	GetLastViewedAt(user entity.User) (*time.Time, error)
 	ViewChangeLog(user entity.User) (time.Time, error)
+	DeleteChange(id string) error
 }
 
 // Persist retrieves change log from and saves changes to persistent data store.
@@ -55,6 +56,7 @@ func (p Persist) GetLastViewedAt(user entity.User) (*time.Time, error) {
 		return &lastViewedAt, nil
 	}
 
+	// TODO(issue#823): refactor error type checking
 	switch err.(type) {
 	case repository.ErrEntryNotFound:
 		return nil, nil
@@ -71,6 +73,7 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 		return lastViewedAt, nil
 	}
 
+	// TODO(issue#823): refactor error type checking
 	switch err.(type) {
 	case repository.ErrEntryNotFound:
 		err = p.userChangeLogRepo.CreateRelation(user, now)
@@ -82,6 +85,11 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 	}
 
 	return time.Time{}, err
+}
+
+// DeleteChange removes the change with given id
+func (p Persist) DeleteChange(id string) error {
+	return p.changeLogRepo.DeleteChange(id)
 }
 
 // NewPersist creates Persist

@@ -23,6 +23,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 
 	alias := "220uFicCJj"
 	longAlias := "an-alias-cannot-be-used-to-specify-default-arguments"
+	invalidFragmentAlias := "cant-have#chr"
 	emptyAlias := ""
 
 	testCases := []struct {
@@ -35,8 +36,9 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
 		isPublic           bool
-		expHasErr          bool
-		expectedShortLink  entity.ShortLink
+		// TODO(issue#803): Check error types in tests.
+		expHasErr         bool
+		expectedShortLink entity.ShortLink
 	}{
 		{
 			name: "alias exists",
@@ -50,7 +52,9 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			shortLink: entity.ShortLink{},
+			shortLink: entity.ShortLink{
+				LongLink: "https://www.google.com",
+			},
 			isPublic:  false,
 			expHasErr: true,
 		},
@@ -63,6 +67,18 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 				},
 			},
 			alias: &longAlias,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			shortLink: entity.ShortLink{
+				LongLink: "https://www.google.com",
+			},
+			expHasErr: true,
+		},
+		{
+			name:       "alias contains invalid URL fragment character",
+			shortLinks: shortLinks{},
+			alias:      &invalidFragmentAlias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -133,13 +149,8 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			},
 		},
 		{
-			name: "no available key",
-			shortLinks: shortLinks{
-				"220uFicCJj": entity.ShortLink{
-					Alias:    "220uFicCJj",
-					ExpireAt: &now,
-				},
-			},
+			name:          "no available key",
+			shortLinks:    shortLinks{},
 			availableKeys: []keygen.Key{},
 			alias:         nil,
 			user: entity.User{
