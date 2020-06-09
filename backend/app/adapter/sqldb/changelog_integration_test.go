@@ -207,7 +207,7 @@ func TestChangeLogSql_DeleteChange(t *testing.T) {
 					summaryMarkdown: summaryMarkdown2,
 				},
 			},
-			deleteChangeId: "67890",
+			deleteChangeId:        "67890",
 			expectedChangeLogSize: 1,
 			expectedChangeLog: []entity.Change{
 				{
@@ -230,7 +230,7 @@ func TestChangeLogSql_DeleteChange(t *testing.T) {
 					summaryMarkdown: summaryMarkdown2,
 				},
 			},
-			deleteChangeId: "34567",
+			deleteChangeId:        "34567",
 			expectedChangeLogSize: 2,
 			expectedChangeLog: []entity.Change{
 				{
@@ -264,6 +264,105 @@ func TestChangeLogSql_DeleteChange(t *testing.T) {
 
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expectedChangeLogSize, len(changeLog))
+				})
+		})
+	}
+}
+
+func TestChangeLogSql_UpdateChange(t *testing.T) {
+	summaryMarkdown1 := "summary 1"
+	summaryMarkdown2 := "summary 2"
+	summaryMarkdown3 := "summary 3"
+
+	testCases := []struct {
+		name              string
+		tableRows         []changeLogTableRow
+		change            entity.Change
+		expectedChangeLog []entity.Change
+	}{
+		{
+			name: "update an existing change",
+			tableRows: []changeLogTableRow{
+				{
+					id:              "12345",
+					title:           "title 1",
+					summaryMarkdown: summaryMarkdown1,
+				},
+				{
+					id:              "12346",
+					title:           "title 2",
+					summaryMarkdown: summaryMarkdown2,
+				},
+			},
+			change: entity.Change{
+				ID:              "12345",
+				Title:           "title 3",
+				SummaryMarkdown: &summaryMarkdown3,
+			},
+			expectedChangeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 3",
+					SummaryMarkdown: &summaryMarkdown3,
+				},
+				{
+					ID:              "12346",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+		}, {
+			name: "update a non existing change",
+			tableRows: []changeLogTableRow{
+				{
+					id:              "12345",
+					title:           "title 1",
+					summaryMarkdown: summaryMarkdown1,
+				},
+				{
+					id:              "12346",
+					title:           "title 2",
+					summaryMarkdown: summaryMarkdown2,
+				},
+			},
+			change: entity.Change{
+				ID:              "23456",
+				Title:           "title 3",
+				SummaryMarkdown: &summaryMarkdown3,
+			},
+			expectedChangeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "12346",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			dbtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertChangeLogTableRows(t, sqlDB, testCase.tableRows)
+
+					changeLogRepo := sqldb.NewChangeLogSQL(sqlDB)
+
+					change, err := changeLogRepo.UpdateChange(testCase.change)
+					changeLog, _ := changeLogRepo.GetChangeLog()
+
+					assert.Equal(t, nil, err)
+					assert.Equal(t, testCase.change, change)
+					assert.SameElements(t, testCase.expectedChangeLog, changeLog)
 				})
 		})
 	}

@@ -50,6 +50,18 @@ func (c *ChangeLogFake) removeChangeAt(idx int) error {
 	return nil
 }
 
+func (c *ChangeLogFake) UpdateChange(newChange entity.Change) (entity.Change, error) {
+	for idx, change := range c.changeLog {
+		if change.ID == newChange.ID {
+			c.changeLog[idx].Title = newChange.Title
+			c.changeLog[idx].SummaryMarkdown = newChange.SummaryMarkdown
+			break
+		}
+	}
+
+	return newChange, nil
+}
+
 // NewChangeLogFake creates ChangeLogFake
 func NewChangeLogFake(changeLog []entity.Change) ChangeLogFake {
 	return ChangeLogFake{

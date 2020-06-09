@@ -89,6 +89,34 @@ WHERE "%s" = $1;
 	return err
 }
 
+// UpdateChange updates an existing change in change_log table
+func (c ChangeLogSQL) UpdateChange(newChange entity.Change) (entity.Change, error) {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET
+    "%s" = $1,
+    "%s" = $2
+WHERE "%s" = $3;
+`,
+		table.ChangeLog.TableName,
+		table.ChangeLog.ColumnTitle,
+		table.ChangeLog.ColumnSummaryMarkdown,
+		table.ChangeLog.ColumnID,
+	)
+
+	_, err := c.db.Exec(
+		statement,
+		newChange.Title,
+		newChange.SummaryMarkdown,
+		newChange.ID,
+	)
+	if err != nil {
+		return entity.Change{}, err
+	}
+
+	return newChange, nil
+}
+
 // NewChangeLogSQL creates ChangeLogSQL
 func NewChangeLogSQL(db *sql.DB) ChangeLogSQL {
 	return ChangeLogSQL{
