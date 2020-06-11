@@ -63,6 +63,24 @@ func (u UserShortLinkSQL) FindAliasesByUser(user entity.User) ([]string, error) 
 	return aliases, nil
 }
 
+// FindAliasByUser verifies if the ShortLink alias belongs to the given user.
+func (u UserShortLinkSQL) FindAliasByUser(user entity.User, alias string) (bool, error) {
+	statement := fmt.Sprintf(`SELECT from "%s" WHERE "%s"=$1 AND "%s"=$2`,
+		table.UserShortLink.TableName,
+		table.UserShortLink.ColumnUserID,
+		table.UserShortLink.ColumnShortLinkAlias,
+	)
+
+	rows, err := u.db.Query(statement, user.ID, alias)
+	if err != nil {
+		return false, err
+	}
+	defer rows.Close()
+
+	found := rows.Next()
+	return found, nil
+}
+
 // NewUserShortLinkSQL creates UserShortLinkSQL
 func NewUserShortLinkSQL(db *sql.DB) UserShortLinkSQL {
 	return UserShortLinkSQL{
