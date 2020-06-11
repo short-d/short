@@ -71,7 +71,8 @@ func (s Search) searchResource(resource Resource, orderBy order.Order, query Que
 func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (Result, error) {
 	if query.User == nil {
 		return Result{}, errors.New("user not provided")
-	} else if len(query.Query) == 0 {
+	}
+	if len(query.Query) == 0 {
 		return Result{}, errors.New("query not provided")
 	}
 
