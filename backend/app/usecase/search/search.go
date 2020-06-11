@@ -105,10 +105,10 @@ func (s Search) getShortLinkByUser(user entity.User) ([]entity.ShortLink, error)
 
 func matchShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.Order) []entity.ShortLink {
 	var matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr []entity.ShortLink
-	queries := strings.Split(query.Query, " ")
+	keywords := strings.Split(query.Query, " ")
 	for _, shortLink := range shortLinks {
 		// check if query is contained in alias by "and" operator and by "or" operator
-		aliasByAnd, aliasByOr := stringContains(shortLink.Alias, queries)
+		aliasByAnd, aliasByOr := stringContains(shortLink.Alias, keywords)
 		if aliasByAnd {
 			matchedAliasByAnd = append(matchedAliasByAnd, shortLink)
 			continue
@@ -118,7 +118,7 @@ func matchShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.O
 		}
 
 		// check if query is contained in long link by "and" operator and by "or" operator
-		longLinkByAnd, longLinkByOr := stringContains(shortLink.LongLink, queries)
+		longLinkByAnd, longLinkByOr := stringContains(shortLink.LongLink, keywords)
 		if longLinkByAnd {
 			matchedLongLinkByAnd = append(matchedLongLinkByAnd, shortLink)
 		} else if longLinkByOr {
