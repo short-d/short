@@ -87,7 +87,7 @@ func TestShortLinkSql_UpdateTwitterTags(t *testing.T) {
 			},
 		},
 		{
-			name: "Twitter tags provided",
+			name: "OpenGraph tags provided",
 			tableRows: []shortLinkTableRow{
 				{
 					alias:              "220uFicCJj",
