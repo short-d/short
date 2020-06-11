@@ -80,6 +80,32 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 		return Result{}, err
 	}
 
+	matchedShortLinks := matchShortLinks(shortLinks, query, orderBy)
+
+	if len(matchedShortLinks) > filter.MaxResults {
+		matchedShortLinks = matchedShortLinks[:filter.MaxResults]
+	}
+
+	return Result{
+		shortLinks: matchedShortLinks,
+		users:      nil,
+	}, nil
+}
+
+func (s Search) searchUser(query Query, orderBy order.Order, filter Filter) (Result, error) {
+	return Result{}, nil
+}
+
+func (s Search) getShortLinkByUser(user entity.User) ([]entity.ShortLink, error) {
+	aliases, err := s.userShortLinkRepo.FindAliasesByUser(user)
+	if err != nil {
+		return []entity.ShortLink{}, err
+	}
+
+	return s.shortLinkRepo.GetShortLinksByAliases(aliases)
+}
+
+func matchShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.Order) []entity.ShortLink {
 	var matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr []entity.ShortLink
 	queries := strings.Split(query.Query, " ")
 	for _, shortLink := range shortLinks {
@@ -106,29 +132,7 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 	sortShortLinks(orderBy, matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr)
 
 	// merge all the short links
-	mergedShortLinks := mergeShortLinks(matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr)
-
-	if len(mergedShortLinks) > filter.MaxResults {
-		mergedShortLinks = mergedShortLinks[:filter.MaxResults]
-	}
-
-	return Result{
-		shortLinks: mergedShortLinks,
-		users:      nil,
-	}, nil
-}
-
-func (s Search) searchUser(query Query, orderBy order.Order, filter Filter) (Result, error) {
-	return Result{}, nil
-}
-
-func (s Search) getShortLinkByUser(user entity.User) ([]entity.ShortLink, error) {
-	aliases, err := s.userShortLinkRepo.FindAliasesByUser(user)
-	if err != nil {
-		return []entity.ShortLink{}, err
-	}
-
-	return s.shortLinkRepo.GetShortLinksByAliases(aliases)
+	return mergeShortLinks(matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr)
 }
 
 func stringContains(s string, words []string) (bool, bool) {
