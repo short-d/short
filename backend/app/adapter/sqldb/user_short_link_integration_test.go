@@ -114,7 +114,7 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 	}
 }
 
-func TestListShortLinkSql_FindAliasByUser(t *testing.T) {
+func TestListShortLinkSql_IsAliasOwnedByUser(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16Z")
 	user := entity.User{
 		ID:             "test",
@@ -228,7 +228,7 @@ func TestListShortLinkSql_FindAliasByUser(t *testing.T) {
 					insertUserShortLinkTableRows(t, sqlDB, testCase.relationTableRows)
 
 					userShortLinkRepo := sqldb.NewUserShortLinkSQL(sqlDB)
-					result, err := userShortLinkRepo.FindAliasByUser(testCase.user, testCase.alias)
+					result, err := userShortLinkRepo.IsAliasOwnedByUser(testCase.user, testCase.alias)
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.isFound, result)
 				})
