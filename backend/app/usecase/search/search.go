@@ -2,6 +2,7 @@ package search
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/short-d/short/backend/app/entity"
@@ -24,6 +25,7 @@ type Result struct {
 
 // Search finds resources based on specified criteria.
 func (s Search) Search(query Query, filter Filter) (Result, error) {
+	var finalErr error
 	resultCh := make(chan Result)
 	defer close(resultCh)
 
@@ -33,6 +35,7 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 		go func() {
 			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
 			if err != nil {
+				finalErr = err
 				resultCh <- Result{}
 				return
 			}
@@ -47,11 +50,11 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 		case result := <-resultCh:
 			results = append(results, result)
 		case <-timeout:
-			return mergeResults(results), nil
+			return mergeResults(results), finalErr
 		}
 	}
 
-	return mergeResults(results), nil
+	return mergeResults(results), finalErr
 }
 
 func (s Search) searchResource(resource Resource, orderBy order.Order, query Query, filter Filter) (Result, error) {
@@ -66,11 +69,99 @@ func (s Search) searchResource(resource Resource, orderBy order.Order, query Que
 }
 
 func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (Result, error) {
-	return Result{}, nil
+	if query.User == nil {
+		return Result{}, errors.New("user not provided")
+	} else if len(query.Query) == 0 {
+		return Result{}, errors.New("query not provided")
+	}
+
+	shortLinks, err := s.getShortLinkByUser(*query.User)
+	if err != nil {
+		return Result{}, err
+	}
+
+	var matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr []entity.ShortLink
+	queries := strings.Split(query.Query, " ")
+	for _, shortLink := range shortLinks {
+		// check if query is contained in alias by "and" operator and by "or" operator
+		aliasByAnd, aliasByOr := stringContains(shortLink.Alias, queries)
+		if aliasByAnd {
+			matchedAliasByAnd = append(matchedAliasByAnd, shortLink)
+			continue
+		} else if aliasByOr {
+			matchedAliasByOr = append(matchedAliasByOr, shortLink)
+			continue
+		}
+
+		// check if query is contained in long link by "and" operator and by "or" operator
+		longLinkByAnd, longLinkByOr := stringContains(shortLink.LongLink, queries)
+		if longLinkByAnd {
+			matchedLongLinkByAnd = append(matchedLongLinkByAnd, shortLink)
+		} else if longLinkByOr {
+			matchedLongLinkByOr = append(matchedLongLinkByOr, shortLink)
+		}
+	}
+
+	// sort short links
+	sortShortLinks(orderBy, matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr)
+
+	// merge all the short links
+	mergedShortLinks := mergeShortLinks(matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr)
+
+	if len(mergedShortLinks) > filter.MaxResults {
+		mergedShortLinks = mergedShortLinks[:filter.MaxResults]
+	}
+
+	return Result{
+		shortLinks: mergedShortLinks,
+		users:      nil,
+	}, nil
 }
 
 func (s Search) searchUser(query Query, orderBy order.Order, filter Filter) (Result, error) {
 	return Result{}, nil
+}
+
+func (s Search) getShortLinkByUser(user entity.User) ([]entity.ShortLink, error) {
+	aliases, err := s.userShortLinkRepo.FindAliasesByUser(user)
+	if err != nil {
+		return []entity.ShortLink{}, err
+	}
+
+	return s.shortLinkRepo.GetShortLinksByAliases(aliases)
+}
+
+func stringContains(s string, words []string) (bool, bool) {
+	and := true
+	or := false
+	for _, word := range words {
+		if !and && or {
+			return and, or
+		}
+
+		if strings.Contains(s, word) {
+			or = true
+		} else {
+			and = false
+		}
+	}
+	return and, or
+}
+
+func sortShortLinks(orderBy order.Order, shortLinkLists ...[]entity.ShortLink) {
+	for _, shortLinks := range shortLinkLists {
+		orderBy.ArrangeShortLinks(shortLinks)
+	}
+}
+
+func mergeShortLinks(shortLinkLists ...[]entity.ShortLink) []entity.ShortLink {
+	var merged []entity.ShortLink
+
+	for _, shortLinks := range shortLinkLists {
+		merged = append(merged, shortLinks...)
+	}
+
+	return merged
 }
 
 func toOrders(ordersBy []order.By) []order.Order {

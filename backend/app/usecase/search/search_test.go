@@ -91,6 +91,39 @@ func TestSearch(t *testing.T) {
 		expectedResult     Result
 	}{
 		{
+			name:       "search without user",
+			shortLinks: shortLinksMap,
+			Query: Query{
+				Query: "http google",
+			},
+			filter: Filter{
+				MaxResults: 2,
+				Resources:  []Resource{ShortLink},
+				Orders:     []order.By{order.ByCreatedTimeASC},
+			},
+			relationUsers:      users,
+			relationShortLinks: userShortLinks,
+			expectedHasErr:     true,
+		},
+		{
+			name:       "search without query",
+			shortLinks: shortLinksMap,
+			Query: Query{
+				User: &entity.User{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			filter: Filter{
+				MaxResults: 2,
+				Resources:  []Resource{ShortLink},
+				Orders:     []order.By{order.ByCreatedTimeASC},
+			},
+			relationUsers:      users,
+			relationShortLinks: userShortLinks,
+			expectedHasErr:     true,
+		},
+		{
 			name:       "valid search",
 			shortLinks: shortLinksMap,
 			Query: Query{
@@ -125,7 +158,7 @@ func TestSearch(t *testing.T) {
 			name:       "empty search",
 			shortLinks: shortLinksMap,
 			Query: Query{
-				Query: "",
+				Query: "non existent",
 				User: &entity.User{
 					ID:    "alpha",
 					Email: "alpha@example.com",
@@ -185,6 +218,7 @@ func TestSearch(t *testing.T) {
 			result, err := search.Search(testCase.Query, testCase.filter)
 			if testCase.expectedHasErr {
 				assert.NotEqual(t, nil, err)
+				return
 			}
 
 			assert.Equal(t, nil, err)
