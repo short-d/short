@@ -82,12 +82,10 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 
 	matchedShortLinks := matchShortLinks(shortLinks, query, orderBy)
 
-	if len(matchedShortLinks) > filter.MaxResults {
-		matchedShortLinks = matchedShortLinks[:filter.MaxResults]
-	}
+	filteredShortLinks := filterShortLinks(matchedShortLinks, filter)
 
 	return Result{
-		shortLinks: matchedShortLinks,
+		shortLinks: filteredShortLinks,
 		users:      nil,
 	}, nil
 }
@@ -133,6 +131,14 @@ func matchShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.O
 
 	// merge all the short links
 	return mergeShortLinks(matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr)
+}
+
+func filterShortLinks(shortLinks []entity.ShortLink, filter Filter) []entity.ShortLink {
+	if len(shortLinks) > filter.MaxResults {
+		shortLinks = shortLinks[:filter.MaxResults]
+	}
+
+	return shortLinks
 }
 
 func stringContains(s string, words []string) (bool, bool) {
