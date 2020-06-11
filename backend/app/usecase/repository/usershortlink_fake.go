@@ -50,6 +50,16 @@ func (u UserShortLinkFake) IsRelationExist(user entity.User, shortLink entity.Sh
 	return false
 }
 
+// IsAliasOwnedByUser checks to see if the given user owns a short link with the provided alias.
+func (u UserShortLinkFake) IsAliasOwnedByUser(user entity.User, alias string) (bool, error) {
+	for idx, currUser := range u.users {
+		if currUser.ID == user.ID && u.shortLinks[idx].Alias == alias {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 // NewUserShortLinkRepoFake creates UserShortLinkFake
 func NewUserShortLinkRepoFake(users []entity.User, shortLinks []entity.ShortLink) UserShortLinkFake {
 	return UserShortLinkFake{
