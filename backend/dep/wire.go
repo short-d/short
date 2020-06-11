@@ -168,6 +168,7 @@ func InjectGraphQLService(
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
 		wire.Bind(new(shortlink.Retriever), new(shortlink.RetrieverPersist)),
 		wire.Bind(new(shortlink.Creator), new(shortlink.CreatorPersist)),
+		wire.Bind(new(shortlink.Updater), new(shortlink.UpdaterPersist)),
 
 		observabilitySet,
 		authenticatorSet,
@@ -196,6 +197,7 @@ func InjectGraphQLService(
 		changelog.NewPersist,
 		shortlink.NewRetrieverPersist,
 		shortlink.NewCreatorPersist,
+		shortlink.NewUpdaterPersist,
 		requester.NewVerifier,
 	)
 	return service.GraphQL{}, nil
