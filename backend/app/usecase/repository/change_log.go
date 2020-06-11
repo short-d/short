@@ -9,4 +9,5 @@ type ChangeLog interface {
 	GetChangeLog() ([]entity.Change, error)
 	CreateChange(newChange entity.Change) (entity.Change, error)
 	DeleteChange(id string) error
+	UpdateChange(newChange entity.Change) (entity.Change, error)
 }

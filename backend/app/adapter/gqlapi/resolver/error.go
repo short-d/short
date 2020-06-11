@@ -162,7 +162,7 @@ func (e ErrMaliciousContent) Error() string {
 	return "contains malicious content"
 }
 
-// ErrUnauthorizedAction signifies the requesting user is not authorized for the action.
+// ErrUnauthorizedAction signifies the requesting user is not allowed to perform certain action.
 type ErrUnauthorizedAction string
 
 var _ GraphQlError = (*ErrUnauthorizedAction)(nil)
