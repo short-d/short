@@ -106,10 +106,11 @@ func (s Search) getShortLinkByUser(user entity.User) ([]entity.ShortLink, error)
 
 func matchShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.Order) []entity.ShortLink {
 	var matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr []entity.ShortLink
-	keywords := strings.Split(query.Query, " ")
+	keywords := getKeywordsFromQuery(query.Query)
 	for _, shortLink := range shortLinks {
 		// check if query is contained in alias by "and" operator and by "or" operator
-		aliasByAnd, aliasByOr := stringContains(shortLink.Alias, keywords)
+		aliasByAnd := containsAllWords(shortLink.Alias, keywords)
+		aliasByOr := containsSomeWords(shortLink.Alias, keywords)
 		if aliasByAnd {
 			matchedAliasByAnd = append(matchedAliasByAnd, shortLink)
 			continue
@@ -119,7 +120,8 @@ func matchShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.O
 		}
 
 		// check if query is contained in long link by "and" operator and by "or" operator
-		longLinkByAnd, longLinkByOr := stringContains(shortLink.LongLink, keywords)
+		longLinkByAnd := containsAllWords(shortLink.LongLink, keywords)
+		longLinkByOr := containsSomeWords(shortLink.LongLink, keywords)
 		if longLinkByAnd {
 			matchedLongLinkByAnd = append(matchedLongLinkByAnd, shortLink)
 		} else if longLinkByOr {
@@ -134,29 +136,34 @@ func matchShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.O
 	return mergeShortLinks(matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr)
 }
 
+func getKeywordsFromQuery(query string) []string {
+	return strings.Split(query, " ")
+}
+
+func containsAllWords(s string, words []string) bool {
+	for _, word := range words {
+		if !strings.Contains(s, word) {
+			return false
+		}
+	}
+	return true
+}
+
+func containsSomeWords(s string, words []string) bool {
+	for _, word := range words {
+		if strings.Contains(s, word) {
+			return true
+		}
+	}
+	return false
+}
+
 func filterShortLinks(shortLinks []entity.ShortLink, filter Filter) []entity.ShortLink {
 	if len(shortLinks) > filter.MaxResults {
 		shortLinks = shortLinks[:filter.MaxResults]
 	}
 
 	return shortLinks
-}
-
-func stringContains(s string, words []string) (bool, bool) {
-	and := true
-	or := false
-	for _, word := range words {
-		if !and && or {
-			return and, or
-		}
-
-		if strings.Contains(s, word) {
-			or = true
-		} else {
-			and = false
-		}
-	}
-	return and, or
 }
 
 func sortShortLinks(orderBy order.Order, shortLinkLists ...[]entity.ShortLink) {
@@ -167,7 +174,6 @@ func sortShortLinks(orderBy order.Order, shortLinkLists ...[]entity.ShortLink) {
 
 func mergeShortLinks(shortLinkLists ...[]entity.ShortLink) []entity.ShortLink {
 	var merged []entity.ShortLink
-
 	for _, shortLinks := range shortLinkLists {
 		merged = append(merged, shortLinks...)
 	}
