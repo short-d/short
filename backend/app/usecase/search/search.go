@@ -105,35 +105,25 @@ func (s Search) getShortLinkByUser(user entity.User) ([]entity.ShortLink, error)
 }
 
 func matchShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.Order) []entity.ShortLink {
-	var matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr []entity.ShortLink
+	var matchedAliasByAll, matchedAliasByAny, matchedLongLinkByAll, matchedLongLinkByAny []entity.ShortLink
 	keywords := getKeywordsFromQuery(query.Query)
 	for _, shortLink := range shortLinks {
-		// check if query is contained in alias by "and" operator and by "or" operator
-		aliasByAnd := containsAllWords(shortLink.Alias, keywords)
-		aliasByOr := containsSomeWords(shortLink.Alias, keywords)
-		if aliasByAnd {
-			matchedAliasByAnd = append(matchedAliasByAnd, shortLink)
-			continue
-		} else if aliasByOr {
-			matchedAliasByOr = append(matchedAliasByOr, shortLink)
-			continue
-		}
-
-		// check if query is contained in long link by "and" operator and by "or" operator
-		longLinkByAnd := containsAllWords(shortLink.LongLink, keywords)
-		longLinkByOr := containsSomeWords(shortLink.LongLink, keywords)
-		if longLinkByAnd {
-			matchedLongLinkByAnd = append(matchedLongLinkByAnd, shortLink)
-		} else if longLinkByOr {
-			matchedLongLinkByOr = append(matchedLongLinkByOr, shortLink)
+		if containsAllWords(shortLink.Alias, keywords) {
+			matchedAliasByAll = append(matchedAliasByAll, shortLink)
+		} else if containsAnyWord(shortLink.Alias, keywords) {
+			matchedAliasByAny = append(matchedAliasByAny, shortLink)
+		} else if containsAllWords(shortLink.LongLink, keywords) {
+			matchedLongLinkByAll = append(matchedLongLinkByAll, shortLink)
+		} else if containsAnyWord(shortLink.LongLink, keywords) {
+			matchedLongLinkByAny = append(matchedLongLinkByAny, shortLink)
 		}
 	}
 
 	// sort short links
-	sortShortLinks(orderBy, matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr)
+	sortShortLinks(orderBy, matchedAliasByAll, matchedAliasByAny, matchedLongLinkByAll, matchedLongLinkByAny)
 
 	// merge all the short links
-	return mergeShortLinks(matchedAliasByAnd, matchedAliasByOr, matchedLongLinkByAnd, matchedLongLinkByOr)
+	return mergeShortLinks(matchedAliasByAll, matchedAliasByAny, matchedLongLinkByAll, matchedLongLinkByAny)
 }
 
 func getKeywordsFromQuery(query string) []string {
@@ -149,7 +139,7 @@ func containsAllWords(s string, words []string) bool {
 	return true
 }
 
-func containsSomeWords(s string, words []string) bool {
+func containsAnyWord(s string, words []string) bool {
 	for _, word := range words {
 		if strings.Contains(s, word) {
 			return true
