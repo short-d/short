@@ -81,8 +81,7 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 		return Result{}, err
 	}
 
-	matchedShortLinks := matchShortLinks(shortLinks, query, orderBy)
-
+	matchedShortLinks := findShortLinks(shortLinks, query, orderBy)
 	filteredShortLinks := filterShortLinks(matchedShortLinks, filter)
 
 	return Result{
@@ -104,9 +103,9 @@ func (s Search) getShortLinkByUser(user entity.User) ([]entity.ShortLink, error)
 	return s.shortLinkRepo.GetShortLinksByAliases(aliases)
 }
 
-func matchShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.Order) []entity.ShortLink {
+func findShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.Order) []entity.ShortLink {
 	var matchedAliasByAll, matchedAliasByAny, matchedLongLinkByAll, matchedLongLinkByAny []entity.ShortLink
-	keywords := getKeywordsFromQuery(query.Query)
+	keywords := getKeywords(query.Query)
 	for _, shortLink := range shortLinks {
 		if containsAllWords(shortLink.Alias, keywords) {
 			matchedAliasByAll = append(matchedAliasByAll, shortLink)
@@ -119,14 +118,12 @@ func matchShortLinks(shortLinks []entity.ShortLink, query Query, orderBy order.O
 		}
 	}
 
-	// sort short links
 	sortShortLinks(orderBy, matchedAliasByAll, matchedAliasByAny, matchedLongLinkByAll, matchedLongLinkByAny)
 
-	// merge all the short links
 	return mergeShortLinks(matchedAliasByAll, matchedAliasByAny, matchedLongLinkByAll, matchedLongLinkByAny)
 }
 
-func getKeywordsFromQuery(query string) []string {
+func getKeywords(query string) []string {
 	return strings.Split(query, " ")
 }
 
@@ -152,7 +149,6 @@ func filterShortLinks(shortLinks []entity.ShortLink, filter Filter) []entity.Sho
 	if len(shortLinks) > filter.MaxResults {
 		shortLinks = shortLinks[:filter.MaxResults]
 	}
-
 	return shortLinks
 }
 
@@ -167,7 +163,6 @@ func mergeShortLinks(shortLinkLists ...[]entity.ShortLink) []entity.ShortLink {
 	for _, shortLinks := range shortLinkLists {
 		merged = append(merged, shortLinks...)
 	}
-
 	return merged
 }
 
