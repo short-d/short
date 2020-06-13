@@ -18,6 +18,7 @@ type ChangeLog interface {
 	GetLastViewedAt(user entity.User) (*time.Time, error)
 	ViewChangeLog(user entity.User) (time.Time, error)
 	DeleteChange(id string) error
+	UpdateChange(id string, title string, summaryMarkdown *string) (entity.Change, error)
 }
 
 // Persist retrieves change log from and saves changes to persistent data store.
@@ -90,6 +91,20 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 // DeleteChange removes the change with given id
 func (p Persist) DeleteChange(id string) error {
 	return p.changeLogRepo.DeleteChange(id)
+}
+
+// UpdateChange updates an existing change with given id in data store.
+func (p Persist) UpdateChange(
+	id string,
+	title string,
+	summaryMarkdown *string,
+) (entity.Change, error) {
+	newChange := entity.Change{
+		ID:              id,
+		Title:           title,
+		SummaryMarkdown: summaryMarkdown,
+	}
+	return p.changeLogRepo.UpdateChange(newChange)
 }
 
 // NewPersist creates Persist
