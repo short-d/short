@@ -63,7 +63,7 @@ func (u UserShortLinkSQL) FindAliasesByUser(user entity.User) ([]string, error) 
 	return aliases, nil
 }
 
-// HasMapping checks whether a given short link belongs to a user.
+// HasMapping checks whether a given short link is tied to a user.
 func (u UserShortLinkSQL) HasMapping(user entity.User, alias string) (bool, error) {
 	query := fmt.Sprintf(`SELECT "%s" FROM "%s" WHERE "%s"=$1 AND "%s"=$2`,
 		table.UserShortLink.ColumnUserID,
