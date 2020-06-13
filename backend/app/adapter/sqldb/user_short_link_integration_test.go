@@ -116,14 +116,6 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 
 func TestListShortLinkSql_HasMapping(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16Z")
-	user := entity.User{
-		ID:             "test",
-		Name:           "mockedUser",
-		Email:          "test@example.com",
-		LastSignedInAt: &now,
-		CreatedAt:      &now,
-		UpdatedAt:      &now,
-	}
 
 	testCases := []struct {
 		name               string
@@ -132,7 +124,7 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 		relationTableRows  []userShortLinkTableRow
 		alias              string
 		user               entity.User
-		expectIsFound            bool
+		expectIsFound      bool
 	}{
 		{
 			name: "alias does not exist",
@@ -149,8 +141,15 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 			shortLinkTableRows: []shortLinkTableRow{},
 			relationTableRows:  []userShortLinkTableRow{},
 			alias:              "fizzbuzz",
-			user:               user,
-			isFound:            false,
+			user: {
+				ID:             "test",
+				Name:           "mockedUser",
+				Email:          "test@example.com",
+				LastSignedInAt: &now,
+				CreatedAt:      &now,
+				UpdatedAt:      &now,
+			},
+			expectIsFound: false,
 		},
 		{
 			name: "alias does not belong to the user",
@@ -183,9 +182,16 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 					userID: "test2",
 				},
 			},
-			alias:   "fizzbuzz",
-			user:    user,
-			isFound: false,
+			alias: "fizzbuzz",
+			user: {
+				ID:             "test",
+				Name:           "mockedUser",
+				Email:          "test@example.com",
+				LastSignedInAt: &now,
+				CreatedAt:      &now,
+				UpdatedAt:      &now,
+			},
+			expectIsFound: false,
 		},
 		{
 			name: "alias belongs to the user",
@@ -210,9 +216,16 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 					userID: "test",
 				},
 			},
-			alias:   "fizzbuzz",
-			user:    user,
-			isFound: true,
+			alias: "fizzbuzz",
+			user: {
+				ID:             "test",
+				Name:           "mockedUser",
+				Email:          "test@example.com",
+				LastSignedInAt: &now,
+				CreatedAt:      &now,
+				UpdatedAt:      &now,
+			},
+			expectIsFound: true,
 		},
 	}
 	for _, testCase := range testCases {
@@ -230,7 +243,7 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 					userShortLinkRepo := sqldb.NewUserShortLinkSQL(sqlDB)
 					result, err := userShortLinkRepo.IsAliasOwnedByUser(testCase.user, testCase.alias)
 					assert.Equal(t, nil, err)
-					assert.Equal(t, testCase.isFound, result)
+					assert.Equal(t, testCase.expectIsFound, result)
 				})
 		})
 	}
