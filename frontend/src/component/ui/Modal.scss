@@ -20,7 +20,7 @@
 
   .card {
     background-color: $color-white;
-    box-shadow: $shadow-card;
+    box-shadow: $shadow-modal;
     position: fixed;
     @include align-center;
   }
