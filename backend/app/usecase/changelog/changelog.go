@@ -5,11 +5,19 @@ import (
 
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 var _ ChangeLog = (*Persist)(nil)
+
+// ErrUnauthorizedAction represents unauthorized action error
+type ErrUnauthorizedAction string
+
+func (e ErrUnauthorizedAction) Error() string {
+	return string(e)
+}
 
 // ChangeLog retrieves change log and create changes.
 type ChangeLog interface {
@@ -17,7 +25,7 @@ type ChangeLog interface {
 	GetChangeLog() ([]entity.Change, error)
 	GetLastViewedAt(user entity.User) (*time.Time, error)
 	ViewChangeLog(user entity.User) (time.Time, error)
-	DeleteChange(id string) error
+	DeleteChange(id string, user entity.User) error
 	UpdateChange(id string, title string, summaryMarkdown *string) (entity.Change, error)
 }
 
@@ -27,6 +35,7 @@ type Persist struct {
 	timer             timer.Timer
 	changeLogRepo     repository.ChangeLog
 	userChangeLogRepo repository.UserChangeLog
+	authorizer        authorizer.Authorizer
 }
 
 // CreateChange creates a new change in the data store.
@@ -89,7 +98,16 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 }
 
 // DeleteChange removes the change with given id
-func (p Persist) DeleteChange(id string) error {
+func (p Persist) DeleteChange(id string, user entity.User) error {
+	canDeleteChange, err := p.authorizer.CanDeleteChange(user)
+	if err != nil {
+		return err
+	}
+
+	if !canDeleteChange {
+		return ErrUnauthorizedAction("Unauthorized action: delete change logs")
+	}
+
 	return p.changeLogRepo.DeleteChange(id)
 }
 
@@ -113,11 +131,13 @@ func NewPersist(
 	timer timer.Timer,
 	changeLog repository.ChangeLog,
 	userChangeLog repository.UserChangeLog,
+	authorizer authorizer.Authorizer,
 ) Persist {
 	return Persist{
 		keyGen:            keyGen,
 		timer:             timer,
 		changeLogRepo:     changeLog,
 		userChangeLogRepo: userChangeLog,
+		authorizer:        authorizer,
 	}
 }

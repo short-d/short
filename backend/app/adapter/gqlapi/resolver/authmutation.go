@@ -97,11 +97,23 @@ func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
 
 // DeleteChange removes a Change with given ID from change log
 func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
-	err := a.changeLog.DeleteChange(args.ID)
+	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
-		return nil, err
+		return nil, ErrInvalidAuthToken{}
 	}
-	return &args.ID, nil
+
+	err = a.changeLog.DeleteChange(args.ID, user)
+	if err == nil {
+		return &args.ID, nil
+	}
+
+	// TODO(issue#823): refactor error type checking
+	switch err.(type) {
+	case changelog.ErrUnauthorizedAction:
+		return nil, ErrUnauthorizedAction(err.Error())
+	default:
+		return nil, ErrUnknown{}
+	}
 }
 
 // UpdateChange updates a Change with given ID in change log.
