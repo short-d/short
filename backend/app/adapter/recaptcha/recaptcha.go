@@ -1,8 +1,9 @@
 package recaptcha
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
+	"net/url"
 
 	"github.com/short-d/app/fw/webreq"
 	"github.com/short-d/short/backend/app/usecase/requester"
@@ -24,12 +25,13 @@ func (r Service) Verify(captchaResponse string) (requester.VerifyResponse, error
 	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
-	// TODO(issue#739): Change ReCaptcha API body to a map.
-	body := fmt.Sprintf("secret=%s&response=%s", r.secret, captchaResponse)
+	body := url.Values{}
+	body.Set("secret", r.secret)
+	body.Set("response", captchaResponse)
 	apiRes := requester.VerifyResponse{}
-	err := r.http.JSON(http.MethodPost, verifyAPI, headers, body, &apiRes)
+	err := r.http.JSON(http.MethodPost, verifyAPI, headers, body.Encode(), &apiRes)
 	if err != nil {
-		return requester.VerifyResponse{}, err
+		return requester.VerifyResponse{}, errors.New("Error validating captcha response")
 	}
 	return apiRes, nil
 }

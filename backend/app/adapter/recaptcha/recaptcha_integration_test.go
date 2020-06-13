@@ -4,6 +4,7 @@ package recaptcha
 
 import (
 	"bytes"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -24,6 +25,7 @@ func TestReCaptcha_Verify(t *testing.T) {
 		httpResponse *http.Response
 		httpErr      error
 		expRes       requester.VerifyResponse
+		expErr		 error
 	}{
 		{
 			name: "successful request with score = 0.8",
@@ -46,6 +48,13 @@ func TestReCaptcha_Verify(t *testing.T) {
 				ChallengeTime: "2006-01-02T15:04:05+07:00",
 				Hostname:      "s.time4hacks.com",
 			},
+		},
+		{
+			name: "unsuccessful request produced an error",
+			httpResponse: nil,
+			httpErr: errors.New("Service encountered an error"),
+			expRes: requester.VerifyResponse{},
+			expErr: errors.New("Error validating captcha response"),
 		},
 	}
 
@@ -72,7 +81,7 @@ func TestReCaptcha_Verify(t *testing.T) {
 			rc := NewService(httpRequest, expSecret)
 			gotRes, err := rc.Verify(expCaptchaResponse)
 
-			assert.Equal(t, nil, err)
+			assert.Equal(t, testCase.expErr, err)
 			assert.Equal(t, testCase.expRes, gotRes)
 		})
 	}
