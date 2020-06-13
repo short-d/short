@@ -15,70 +15,6 @@ type shortLinks = map[string]entity.ShortLink
 func TestSearch(t *testing.T) {
 	t.Parallel()
 
-	shortLinksMap := make(shortLinks)
-	shortLinksMap["git-google"] = entity.ShortLink{
-		Alias:    "git-google",
-		LongLink: "http://github.com/google",
-	}
-	shortLinksMap["google"] = entity.ShortLink{
-		Alias:    "google",
-		LongLink: "https://google.com",
-	}
-	shortLinksMap["short"] = entity.ShortLink{
-		Alias:    "short",
-		LongLink: "https://short-d.com",
-	}
-	shortLinksMap["facebook"] = entity.ShortLink{
-		Alias:    "facebook",
-		LongLink: "https://facebook.com",
-	}
-
-	users := []entity.User{
-		{
-			ID:    "alpha",
-			Email: "alpha@example.com",
-		},
-		{
-			ID:    "alpha",
-			Email: "alpha@example.com",
-		},
-		{
-			ID:    "beta",
-			Email: "beta@example.com",
-		},
-		{
-			ID:    "alpha",
-			Email: "alpha@example.com",
-		},
-		{
-			ID:    "alpha",
-			Email: "alpha@example.com",
-		},
-	}
-
-	userShortLinks := []entity.ShortLink{
-		{
-			Alias:    "git-google",
-			LongLink: "http://github.com/google",
-		},
-		{
-			Alias:    "google",
-			LongLink: "https://google.com",
-		},
-		{
-			Alias:    "google",
-			LongLink: "https://google.com",
-		},
-		{
-			Alias:    "short",
-			LongLink: "https://short-d.com",
-		},
-		{
-			Alias:    "facebook",
-			LongLink: "https://facebook.com",
-		},
-	}
-
 	testCases := []struct {
 		name               string
 		shortLinks         shortLinks
@@ -90,8 +26,25 @@ func TestSearch(t *testing.T) {
 		expectedResult     Result
 	}{
 		{
-			name:       "search without user",
-			shortLinks: shortLinksMap,
+			name: "search without user",
+			shortLinks: shortLinks{
+				"git-google": entity.ShortLink{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				"google": entity.ShortLink{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				"facebook": entity.ShortLink{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
 			Query: Query{
 				Query: "http google",
 			},
@@ -100,13 +53,72 @@ func TestSearch(t *testing.T) {
 				Resources:  []Resource{ShortLink},
 				Orders:     []order.By{order.ByCreatedTimeASC},
 			},
-			relationUsers:      users,
-			relationShortLinks: userShortLinks,
-			expectedHasErr:     true,
+			relationUsers: []entity.User{
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "beta",
+					Email: "beta@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
+			expectedHasErr: true,
 		},
 		{
-			name:       "search without query",
-			shortLinks: shortLinksMap,
+			name: "search without query",
+			shortLinks: shortLinks{
+				"git-google": entity.ShortLink{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				"google": entity.ShortLink{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				"facebook": entity.ShortLink{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
 			Query: Query{
 				User: &entity.User{
 					ID:    "alpha",
@@ -118,13 +130,72 @@ func TestSearch(t *testing.T) {
 				Resources:  []Resource{ShortLink},
 				Orders:     []order.By{order.ByCreatedTimeASC},
 			},
-			relationUsers:      users,
-			relationShortLinks: userShortLinks,
-			expectedHasErr:     true,
+			relationUsers: []entity.User{
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "beta",
+					Email: "beta@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
+			expectedHasErr: true,
 		},
 		{
-			name:       "valid search",
-			shortLinks: shortLinksMap,
+			name: "valid search",
+			shortLinks: shortLinks{
+				"git-google": entity.ShortLink{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				"google": entity.ShortLink{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				"facebook": entity.ShortLink{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
 			Query: Query{
 				Query: "http google",
 				User: &entity.User{
@@ -137,8 +208,50 @@ func TestSearch(t *testing.T) {
 				Resources:  []Resource{ShortLink},
 				Orders:     []order.By{order.ByCreatedTimeASC},
 			},
-			relationUsers:      users,
-			relationShortLinks: userShortLinks,
+			relationUsers: []entity.User{
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "beta",
+					Email: "beta@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
 			expectedResult: Result{
 				shortLinks: []entity.ShortLink{
 					{
@@ -154,8 +267,25 @@ func TestSearch(t *testing.T) {
 			},
 		},
 		{
-			name:       "empty search",
-			shortLinks: shortLinksMap,
+			name: "empty search",
+			shortLinks: shortLinks{
+				"git-google": entity.ShortLink{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				"google": entity.ShortLink{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				"facebook": entity.ShortLink{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
 			Query: Query{
 				Query: "non existent",
 				User: &entity.User{
@@ -168,16 +298,75 @@ func TestSearch(t *testing.T) {
 				Resources:  []Resource{ShortLink},
 				Orders:     []order.By{order.ByCreatedTimeASC},
 			},
-			relationUsers:      users,
-			relationShortLinks: userShortLinks,
+			relationUsers: []entity.User{
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "beta",
+					Email: "beta@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
 			expectedResult: Result{
 				shortLinks: nil,
 				users:      nil,
 			},
 		},
 		{
-			name:       "one result",
-			shortLinks: shortLinksMap,
+			name: "one result",
+			shortLinks: shortLinks{
+				"git-google": entity.ShortLink{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				"google": entity.ShortLink{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				"facebook": entity.ShortLink{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
 			Query: Query{
 				Query: "short",
 				User: &entity.User{
@@ -190,8 +379,50 @@ func TestSearch(t *testing.T) {
 				Resources:  []Resource{ShortLink},
 				Orders:     []order.By{order.ByCreatedTimeASC},
 			},
-			relationUsers:      users,
-			relationShortLinks: userShortLinks,
+			relationUsers: []entity.User{
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "beta",
+					Email: "beta@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
 			expectedResult: Result{
 				shortLinks: []entity.ShortLink{
 					{
