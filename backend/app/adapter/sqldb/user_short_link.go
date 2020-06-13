@@ -63,7 +63,7 @@ func (u UserShortLinkSQL) FindAliasesByUser(user entity.User) ([]string, error) 
 	return aliases, nil
 }
 
-// IsAliasOwnedByUser verifies if the ShortLink alias belongs to the given user.
+// IsAliasOwnedByUser checks whether a given short link belongs to a user.
 func (u UserShortLinkSQL) IsAliasOwnedByUser(user entity.User, alias string) (bool, error) {
 	statement := fmt.Sprintf(`SELECT FROM "%s" WHERE "%s"=$1 AND "%s"=$2`,
 		table.UserShortLink.TableName,
