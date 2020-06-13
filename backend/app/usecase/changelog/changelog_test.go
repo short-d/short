@@ -550,7 +550,6 @@ func TestPersist_UpdateChange(t *testing.T) {
 			assert.Equal(t, nil, err)
 
 			changeLog, err := persist.GetChangeLog()
-
 			assert.Equal(t, nil, err)
 			assert.SameElements(t, testCase.expectedChangeLog, changeLog)
 		})

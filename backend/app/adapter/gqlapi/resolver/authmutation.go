@@ -111,7 +111,6 @@ func (a AuthMutation) UpdateChange(args *UpdateChangeArgs) (Change, error) {
 		args.Change.Title,
 		args.Change.SummaryMarkdown,
 	)
-
 	return newChange(change), err
 }
 
