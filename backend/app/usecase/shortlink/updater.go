@@ -35,11 +35,11 @@ func (u UpdaterPersist) UpdateShortLink(
 	update entity.ShortLink,
 	user entity.User,
 ) (entity.ShortLink, error) {
-	found, err := u.userShortLinkRelationRepo.IsAliasOwnedByUser(user, oldAlias)
+	ok, err := u.userShortLinkRelationRepo.HasMapping(user, oldAlias)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
-	if !found {
+	if !ok {
 		return entity.ShortLink{}, errors.New("short link not found")
 	}
 
