@@ -132,7 +132,7 @@ func TestListShortLinkSql_IsAliasOwnedByUser(t *testing.T) {
 		relationTableRows  []userShortLinkTableRow
 		alias              string
 		user               entity.User
-		isFound            bool
+		expectIsFound            bool
 	}{
 		{
 			name: "alias does not exist",
