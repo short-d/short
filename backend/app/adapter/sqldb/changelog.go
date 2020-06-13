@@ -89,13 +89,11 @@ WHERE "%s" = $1;
 	return err
 }
 
-// UpdateChange updates an existing change in change_log table
+// UpdateChange updates an existing change in change_log table.
 func (c ChangeLogSQL) UpdateChange(newChange entity.Change) (entity.Change, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
-SET
-    "%s" = $1,
-    "%s" = $2
+SET "%s" = $1, "%s" = $2
 WHERE "%s" = $3;
 `,
 		table.ChangeLog.TableName,
