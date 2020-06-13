@@ -13,6 +13,9 @@ import (
 
 var _ Updater = (*UpdaterPersist)(nil)
 
+// ErrShortLinkNotFound means that a queried shortlink was not found
+var ErrShortLinkNotFound = errors.New("short link not found")
+
 // Updater modifies the properties of existing short links.
 type Updater interface {
 	UpdateShortLink(oldAlias string, update entity.ShortLink, user entity.User) (entity.ShortLink, error)
@@ -40,7 +43,7 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, err
 	}
 	if !ok {
-		return entity.ShortLink{}, errors.New("short link not found")
+		return entity.ShortLink{}, ErrShortLinkNotFound
 	}
 
 	shortLink, err := u.shortLinkRepo.GetShortLinkByAlias(oldAlias)
