@@ -50,13 +50,13 @@ func (c *ChangeLogFake) removeChangeAt(idx int) error {
 	return nil
 }
 
-// UpdateChange replaces an existing change having given id with updated attributes
+// UpdateChange replaces an existing change having given id with updated attributes.
 func (c *ChangeLogFake) UpdateChange(newChange entity.Change) (entity.Change, error) {
 	for idx, change := range c.changeLog {
 		if change.ID == newChange.ID {
 			c.changeLog[idx].Title = newChange.Title
 			c.changeLog[idx].SummaryMarkdown = newChange.SummaryMarkdown
-			break
+			return newChange, nil
 		}
 	}
 
