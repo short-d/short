@@ -141,7 +141,7 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 			shortLinkTableRows: []shortLinkTableRow{},
 			relationTableRows:  []userShortLinkTableRow{},
 			alias:              "fizzbuzz",
-			user: {
+			user: entity.User{
 				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
@@ -183,7 +183,7 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 				},
 			},
 			alias: "fizzbuzz",
-			user: {
+			user: entity.User{
 				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
@@ -217,7 +217,7 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 				},
 			},
 			alias: "fizzbuzz",
-			user: {
+			user: entity.User{
 				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
@@ -226,6 +226,33 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 				UpdatedAt:      &now,
 			},
 			expectIsFound: true,
+		},
+		{
+			name: "user does not exist",
+			userTableRows: []userTableRow{
+				{
+					id:           "test",
+					email:        "test@example.com",
+					name:         "mockedUser",
+					lastSignedIn: &now,
+					createdAt:    &now,
+					updatedAt:    &now,
+				},
+			},
+			shortLinkTableRows: []shortLinkTableRow{
+				{
+					alias: "fizzbuzz",
+				},
+			},
+			relationTableRows: []userShortLinkTableRow{
+				{
+					alias:  "fizzbuzz",
+					userID: "test",
+				},
+			},
+			alias:         "fizzbuzz",
+			user:          entity.User{},
+			expectIsFound: false,
 		},
 	}
 	for _, testCase := range testCases {
@@ -241,7 +268,7 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 					insertUserShortLinkTableRows(t, sqlDB, testCase.relationTableRows)
 
 					userShortLinkRepo := sqldb.NewUserShortLinkSQL(sqlDB)
-					result, err := userShortLinkRepo.IsAliasOwnedByUser(testCase.user, testCase.alias)
+					result, err := userShortLinkRepo.HasMapping(testCase.user, testCase.alias)
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expectIsFound, result)
 				})

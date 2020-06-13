@@ -72,7 +72,7 @@ func (u UserShortLinkSQL) HasMapping(user entity.User, alias string) (bool, erro
 		table.UserShortLink.ColumnShortLinkAlias,
 	)
 
-	var id int
+	var id string
 	err := u.db.QueryRow(query, user.ID, alias).Scan(&id)
 	if err == sql.ErrNoRows {
 		return false, nil
