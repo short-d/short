@@ -114,7 +114,7 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 	}
 }
 
-func TestListShortLinkSql_IsAliasOwnedByUser(t *testing.T) {
+func TestListShortLinkSql_HasMapping(t *testing.T) {
 	now := mustParseTime(t, "2019-05-01T08:02:16Z")
 	user := entity.User{
 		ID:             "test",
