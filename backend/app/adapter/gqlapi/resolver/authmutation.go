@@ -90,9 +90,25 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 }
 
 // CreateChange creates a Change in the change log
-func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
-	change, err := a.changeLog.CreateChange(args.Change.Title, args.Change.SummaryMarkdown)
-	return newChange(change), err
+func (a AuthMutation) CreateChange(args *CreateChangeArgs) (*Change, error) {
+	user, err := viewer(a.authToken, a.authenticator)
+	if err != nil {
+		return nil, ErrInvalidAuthToken{}
+	}
+
+	change, err := a.changeLog.CreateChange(args.Change.Title, args.Change.SummaryMarkdown, user)
+	if err == nil {
+		change := newChange(change)
+		return &change, nil
+	}
+
+	// TODO(issue#823): refactor error type checking
+	switch err.(type) {
+	case changelog.ErrUnauthorizedAction:
+		return nil, ErrUnauthorizedAction(err.Error())
+	default:
+		return nil, ErrUnknown{}
+	}
 }
 
 // DeleteChange removes a Change with given ID from change log

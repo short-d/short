@@ -21,7 +21,7 @@ func (e ErrUnauthorizedAction) Error() string {
 
 // ChangeLog retrieves change log and create changes.
 type ChangeLog interface {
-	CreateChange(title string, summaryMarkdown *string) (entity.Change, error)
+	CreateChange(title string, summaryMarkdown *string, user entity.User) (entity.Change, error)
 	GetChangeLog() ([]entity.Change, error)
 	GetLastViewedAt(user entity.User) (*time.Time, error)
 	ViewChangeLog(user entity.User) (time.Time, error)
@@ -39,7 +39,16 @@ type Persist struct {
 }
 
 // CreateChange creates a new change in the data store.
-func (p Persist) CreateChange(title string, summaryMarkdown *string) (entity.Change, error) {
+func (p Persist) CreateChange(title string, summaryMarkdown *string, user entity.User) (entity.Change, error) {
+	canCreateChange, err := p.authorizer.CanCreateChange(user)
+	if err != nil {
+		return entity.Change{}, err
+	}
+
+	if !canCreateChange {
+		return entity.Change{}, ErrUnauthorizedAction("Unauthorized action: create change logs")
+	}
+
 	now := p.timer.Now().UTC()
 	key, err := p.keyGen.NewKey()
 	if err != nil {
