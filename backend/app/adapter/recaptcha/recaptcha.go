@@ -31,7 +31,7 @@ func (r Service) Verify(captchaResponse string) (requester.VerifyResponse, error
 	apiRes := requester.VerifyResponse{}
 	err := r.http.JSON(http.MethodPost, verifyAPI, headers, body.Encode(), &apiRes)
 	if err != nil {
-		return requester.VerifyResponse{}, errors.New("Error validating captcha response")
+		return requester.VerifyResponse{}, errors.New("failed to retrieve reCaptcha API response")
 	}
 	return apiRes, nil
 }
