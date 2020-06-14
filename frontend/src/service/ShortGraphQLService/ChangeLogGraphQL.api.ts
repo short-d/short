@@ -1,42 +1,20 @@
-import { AuthService } from './Auth.service';
-import { EnvService } from './Env.service';
+import { AuthService } from '../Auth.service';
+import { EnvService } from '../Env.service';
 
-import { GraphQLService, IGraphQLRequestError } from './GraphQL.service';
-import { ChangeLog } from '../entity/ChangeLog';
-import { Change } from '../entity/Change';
-import { getErrorCodes } from './GraphQLError';
-import { CaptchaService, VIEW_CHANGE_LOG } from './Captcha.service';
-
-interface IChangeLogGraphQLQuery {
-  authQuery: IGraphQLAuthQuery;
-}
-
-interface IGraphQLAuthQuery {
-  changeLog: IGraphQLChangeLog;
-}
-
-interface IGraphQLChangeLog {
-  changes: IGraphQLChange[];
-  lastViewedAt: string;
-}
-
-interface IGraphQLChange {
-  id: string;
-  title: string;
-  summaryMarkdown: string;
-  releasedAt: string;
-}
-
-interface IChangeLogGraphQLMutation {
-  authMutation: IGraphQLAuthMutation;
-}
-
-interface IGraphQLAuthMutation {
-  viewChangeLog: string;
-}
+import { GraphQLService, IGraphQLRequestError } from '../GraphQL.service';
+import { ChangeLog } from '../../entity/ChangeLog';
+import { Change } from '../../entity/Change';
+import { getErrorCodes } from '../GraphQLError';
+import { CaptchaService, VIEW_CHANGE_LOG } from '../Captcha.service';
+import {
+  IShortGraphQLChange,
+  IShortGraphQLChangeLog,
+  IShortGraphQLMutation,
+  IShortGraphQLQuery
+} from './Schema';
 
 export class ChangeLogGraphQLApi {
-  private baseURL: string;
+  private readonly baseURL: string;
 
   constructor(
     private authService: AuthService,
@@ -66,11 +44,11 @@ export class ChangeLogGraphQLApi {
     const variables = { authToken: this.authService.getAuthToken() };
     return new Promise((resolve, reject) => {
       this.graphQLService
-        .query<IChangeLogGraphQLQuery>(this.baseURL, {
+        .query<IShortGraphQLQuery>(this.baseURL, {
           query: getChangeLogQuery,
           variables: variables
         })
-        .then((res: IChangeLogGraphQLQuery) => {
+        .then((res: IShortGraphQLQuery) => {
           const { changeLog } = res.authQuery;
           resolve(this.parseChangeLog(changeLog));
         })
@@ -104,8 +82,8 @@ export class ChangeLogGraphQLApi {
       };
 
       try {
-        const res: IChangeLogGraphQLMutation = await this.graphQLService.mutate<
-          IChangeLogGraphQLMutation
+        const res: IShortGraphQLMutation = await this.graphQLService.mutate<
+          IShortGraphQLMutation
         >(this.baseURL, {
           mutation: viewChangeLogMutation,
           variables: variables
@@ -120,7 +98,7 @@ export class ChangeLogGraphQLApi {
     });
   }
 
-  private parseChangeLog(changeLog: IGraphQLChangeLog): ChangeLog {
+  private parseChangeLog(changeLog: IShortGraphQLChangeLog): ChangeLog {
     if (changeLog.lastViewedAt) {
       return {
         changes: changeLog.changes.map(this.parseChange),
@@ -133,7 +111,7 @@ export class ChangeLogGraphQLApi {
     };
   }
 
-  private parseChange(change: IGraphQLChange): Change {
+  private parseChange(change: IShortGraphQLChange): Change {
     return {
       id: change.id,
       title: change.title,

@@ -1,21 +1,9 @@
-import { AuthService } from './Auth.service';
-import { EnvService } from './Env.service';
-import { GraphQLService, IGraphQLRequestError } from './GraphQL.service';
-import { Url } from '../entity/Url';
-import { getErrorCodes } from './GraphQLError';
-
-interface IShortGraphQLQuery {
-  authQuery: IShortGraphQLAuthQuery;
-}
-
-interface IShortGraphQLAuthQuery {
-  ShortLinks: IShortGraphQLURL[];
-}
-
-interface IShortGraphQLURL {
-  alias: string;
-  longLink: string;
-}
+import { AuthService } from '../Auth.service';
+import { EnvService } from '../Env.service';
+import { GraphQLService, IGraphQLRequestError } from '../GraphQL.service';
+import { Url } from '../../entity/Url';
+import { getErrorCodes } from '../GraphQLError';
+import { IShortGraphQLQuery, IShortGraphQLShortLink } from './Schema';
 
 export class ShortLinkGraphQLApi {
   private baseURL: string;
@@ -57,7 +45,7 @@ export class ShortLinkGraphQLApi {
     });
   }
 
-  private parseUrl(url: IShortGraphQLURL): Url {
+  private parseUrl(url: IShortGraphQLShortLink): Url {
     return {
       originalUrl: url.longLink,
       alias: url.alias
