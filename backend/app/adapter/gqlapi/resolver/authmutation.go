@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
@@ -105,7 +106,7 @@ func (a AuthMutation) CreateChange(args *CreateChangeArgs) (*Change, error) {
 	// TODO(issue#823): refactor error type checking
 	switch err.(type) {
 	case changelog.ErrUnauthorizedAction:
-		return nil, ErrUnauthorizedAction(err.Error())
+		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to create a change", user.ID))
 	default:
 		return nil, ErrUnknown{}
 	}
@@ -126,7 +127,7 @@ func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
 	// TODO(issue#823): refactor error type checking
 	switch err.(type) {
 	case changelog.ErrUnauthorizedAction:
-		return nil, ErrUnauthorizedAction(err.Error())
+		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to delete the change %s", user.ID, args.ID))
 	default:
 		return nil, ErrUnknown{}
 	}
@@ -153,7 +154,7 @@ func (a AuthMutation) UpdateChange(args *UpdateChangeArgs) (*Change, error) {
 	// TODO(issue#823): refactor error type checking
 	switch err.(type) {
 	case changelog.ErrUnauthorizedAction:
-		return nil, ErrUnauthorizedAction(err.Error())
+		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to update the change %s", user.ID, args.ID))
 	default:
 		return nil, ErrUnknown{}
 	}

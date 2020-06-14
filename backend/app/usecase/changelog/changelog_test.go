@@ -6,13 +6,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/short/backend/app/usecase/authorizer"
-	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
-	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
-
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
@@ -158,7 +157,7 @@ func TestPersist_CreateChange(t *testing.T) {
 			expectedChangeLogSize: 3,
 			hasErr:                false,
 		}, {
-			name: "user does not have create change access",
+			name: "user is not allowed to create a change",
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",
@@ -237,6 +236,8 @@ func TestPersist_GetChangeLog(t *testing.T) {
 		name          string
 		changeLog     []entity.Change
 		availableKeys []keygen.Key
+		roles         map[string][]role.Role
+		user          entity.User
 	}{
 		{
 			name: "get full changelog successfully",
@@ -253,10 +254,22 @@ func TestPersist_GetChangeLog(t *testing.T) {
 				},
 			},
 			availableKeys: []keygen.Key{},
+			roles: map[string][]role.Role{
+				"alpha": {role.Basic},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
 		}, {
 			name:          "get empty changelog successfully",
 			changeLog:     []entity.Change{},
 			availableKeys: []keygen.Key{},
+			roles: map[string][]role.Role{
+				"alpha": {role.Basic},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
 		},
 	}
 
@@ -270,6 +283,10 @@ func TestPersist_GetChangeLog(t *testing.T) {
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 
+			fakeRolesRepo := repository.NewUserRoleFake(testCase.roles)
+			rb := rbac.NewRBAC(fakeRolesRepo)
+			au := authorizer.NewAuthorizer(rb)
+
 			tm := timer.NewStub(now)
 			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
 			persist := NewPersist(
@@ -277,7 +294,7 @@ func TestPersist_GetChangeLog(t *testing.T) {
 				tm,
 				&changeLogRepo,
 				&userChangeLogRepo,
-				authorizer.Authorizer{},
+				au,
 			)
 
 			changeLog, err := persist.GetChangeLog()
@@ -296,15 +313,19 @@ func TestPersist_GetLastViewedAt(t *testing.T) {
 		name          string
 		userChangeLog map[string]time.Time
 		user          entity.User
+		roles         map[string][]role.Role
 		lastViewedAt  *time.Time
 	}{
 		{
 			name:          "user never viewed the change log before",
 			userChangeLog: map[string]time.Time{},
 			user: entity.User{
-				ID:    "12345",
+				ID:    "alpha",
 				Name:  "Test User",
 				Email: "test@gmail.com",
+			},
+			roles: map[string][]role.Role{
+				"alpha": {role.Basic},
 			},
 			lastViewedAt: nil,
 		},
@@ -312,9 +333,12 @@ func TestPersist_GetLastViewedAt(t *testing.T) {
 			name:          "user viewed change log",
 			userChangeLog: map[string]time.Time{"test@gmail.com": twoMonthsAgo},
 			user: entity.User{
-				ID:    "12345",
+				ID:    "alpha",
 				Name:  "Test User",
 				Email: "test@gmail.com",
+			},
+			roles: map[string][]role.Role{
+				"alpha": {role.Basic},
 			},
 			lastViewedAt: &twoMonthsAgo,
 		},
@@ -333,12 +357,16 @@ func TestPersist_GetLastViewedAt(t *testing.T) {
 			tm := timer.NewStub(now)
 			userChangeLogRepo := repository.NewUserChangeLogFake(testCase.userChangeLog)
 
+			fakeRolesRepo := repository.NewUserRoleFake(testCase.roles)
+			rb := rbac.NewRBAC(fakeRolesRepo)
+			au := authorizer.NewAuthorizer(rb)
+
 			persist := NewPersist(
 				keyGen,
 				tm,
 				&changeLogRepo,
 				&userChangeLogRepo,
-				authorizer.Authorizer{},
+				au,
 			)
 
 			lastViewedAt, err := persist.GetLastViewedAt(testCase.user)
@@ -357,15 +385,19 @@ func TestPersist_ViewChangeLog(t *testing.T) {
 		name          string
 		userChangeLog map[string]time.Time
 		user          entity.User
+		roles         map[string][]role.Role
 		lastViewedAt  time.Time
 	}{
 		{
 			name:          "user viewed the change log the first time",
 			userChangeLog: map[string]time.Time{},
 			user: entity.User{
-				ID:    "12345",
+				ID:    "alpha",
 				Name:  "Test User",
 				Email: "test@gmail.com",
+			},
+			roles: map[string][]role.Role{
+				"alpha": {role.Basic},
 			},
 			lastViewedAt: now,
 		},
@@ -373,9 +405,12 @@ func TestPersist_ViewChangeLog(t *testing.T) {
 			name:          "user has viewed the change log before",
 			userChangeLog: map[string]time.Time{"test@gmail.com": twoMonthsAgo},
 			user: entity.User{
-				ID:    "12345",
+				ID:    "alpha",
 				Name:  "Test User",
 				Email: "test@gmail.com",
+			},
+			roles: map[string][]role.Role{
+				"alpha": {role.Basic},
 			},
 			lastViewedAt: now,
 		},
@@ -394,12 +429,16 @@ func TestPersist_ViewChangeLog(t *testing.T) {
 			tm := timer.NewStub(now)
 			userChangeLogRepo := repository.NewUserChangeLogFake(testCase.userChangeLog)
 
+			fakeRolesRepo := repository.NewUserRoleFake(testCase.roles)
+			rb := rbac.NewRBAC(fakeRolesRepo)
+			au := authorizer.NewAuthorizer(rb)
+
 			persist := NewPersist(
 				keyGen,
 				tm,
 				&changeLogRepo,
 				&userChangeLogRepo,
-				authorizer.Authorizer{},
+				au,
 			)
 
 			lastViewedAt, err := persist.ViewChangeLog(testCase.user)
@@ -492,7 +531,7 @@ func TestPersist_DeleteChange(t *testing.T) {
 			hasErr: false,
 		},
 		{
-			name: "user does not have delete change access",
+			name: "user is not allowed to delete a change",
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",
@@ -650,7 +689,7 @@ func TestPersist_UpdateChange(t *testing.T) {
 			hasErr: false,
 		},
 		{
-			name: "user does not have update change access",
+			name: "user is not allowed to update a change",
 			changeLog: []entity.Change{
 				{
 					ID:              "12345",

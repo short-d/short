@@ -1,6 +1,7 @@
 package changelog
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/short-d/app/fw/timer"
@@ -13,10 +14,15 @@ import (
 var _ ChangeLog = (*Persist)(nil)
 
 // ErrUnauthorizedAction represents unauthorized action error
-type ErrUnauthorizedAction string
+type ErrUnauthorizedAction struct {
+	user   entity.User
+	action string
+}
+
+var _ error = (*ErrUnauthorizedAction)(nil)
 
 func (e ErrUnauthorizedAction) Error() string {
-	return string(e)
+	return fmt.Sprintf("user %s is not allowed to %s", e.user, e.action)
 }
 
 // ChangeLog retrieves change log and create changes.
@@ -46,7 +52,10 @@ func (p Persist) CreateChange(title string, summaryMarkdown *string, user entity
 	}
 
 	if !canCreateChange {
-		return entity.Change{}, ErrUnauthorizedAction("Unauthorized action: create change logs")
+		return entity.Change{}, ErrUnauthorizedAction{
+			user:   user,
+			action: "create a change",
+		}
 	}
 
 	now := p.timer.Now().UTC()
@@ -114,7 +123,10 @@ func (p Persist) DeleteChange(id string, user entity.User) error {
 	}
 
 	if !canDeleteChange {
-		return ErrUnauthorizedAction("Unauthorized action: delete change logs")
+		return ErrUnauthorizedAction{
+			user:   user,
+			action: "delete a change",
+		}
 	}
 
 	return p.changeLogRepo.DeleteChange(id)
@@ -133,7 +145,10 @@ func (p Persist) UpdateChange(
 	}
 
 	if !canUpdateChange {
-		return entity.Change{}, ErrUnauthorizedAction("Unauthorized action: update change logs")
+		return entity.Change{}, ErrUnauthorizedAction{
+			user:   user,
+			action: "update a change",
+		}
 	}
 
 	newChange := entity.Change{
