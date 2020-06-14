@@ -25,7 +25,7 @@ func TestReCaptcha_Verify(t *testing.T) {
 		httpResponse *http.Response
 		httpErr      error
 		expRes       requester.VerifyResponse
-		expErr		 error
+		expectHasErr bool
 	}{
 		{
 			name: "successful request with score = 0.8",
@@ -53,8 +53,7 @@ func TestReCaptcha_Verify(t *testing.T) {
 			name: "request failed with error",
 			httpResponse: nil,
 			httpErr: errors.New("http request failure"),
-			expRes: requester.VerifyResponse{},
-			expErr: errors.New("Error validating captcha response"),
+			expectHasErr: true,
 		},
 	}
 
@@ -81,7 +80,11 @@ func TestReCaptcha_Verify(t *testing.T) {
 			rc := NewService(httpRequest, expSecret)
 			gotRes, err := rc.Verify(expCaptchaResponse)
 
-			assert.Equal(t, testCase.expErr, err)
+			if testCase.expectHasErr {
+				assert.NotEqual(t, nil, err)
+				return
+			}
+			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expRes, gotRes)
 		})
 	}
