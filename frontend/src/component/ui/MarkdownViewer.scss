@@ -1,0 +1,35 @@
+@import '../styles/font';
+
+$table-border: 1px solid #e0e0e0;
+
+.MarkdownViewer {
+  @include default-font;
+
+  ul {
+    list-style: inside disc;
+  }
+
+  table {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border: $table-border;
+
+    th {
+      background-color: #616161;
+      color: white;
+      font-weight: $font-weight-medium;
+    }
+
+    td {
+      border-top: $table-border;
+      border-bottom: $table-border;
+    }
+
+    th,
+    td {
+      padding: 8px 16px;
+    }
+  }
+}

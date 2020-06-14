@@ -6,6 +6,7 @@ import { Change } from '../../entity/Change';
 import { Button } from './Button';
 import { Modal } from './Modal';
 import { Icon, IconID } from './Icon';
+import { MarkdownViewer } from './MarkdownViewer';
 
 interface State {
   shouldShowFullChangeLog: boolean;
@@ -48,7 +49,11 @@ export class ChangeLogModal extends Component<Props, State> {
           {changeLog.map((change: Change) => (
             <li key={change.id}>
               <div className={'title'}>{change.title}</div>
-              <div className={'summary'}>{change.summaryMarkdown}</div>
+              <div className={'summary'}>
+                {change.summaryMarkdown && (
+                  <MarkdownViewer markdown={change.summaryMarkdown} />
+                )}
+              </div>
               <div className={'released-date'}>
                 {moment(change.releasedAt).fromNow()}
               </div>
