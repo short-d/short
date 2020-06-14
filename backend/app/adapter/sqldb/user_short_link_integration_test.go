@@ -114,6 +114,168 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 	}
 }
 
+func TestListShortLinkSql_HasMapping(t *testing.T) {
+	now := mustParseTime(t, "2019-05-01T08:02:16Z")
+
+	testCases := []struct {
+		name               string
+		userTableRows      []userTableRow
+		shortLinkTableRows []shortLinkTableRow
+		relationTableRows  []userShortLinkTableRow
+		alias              string
+		user               entity.User
+		expectIsFound      bool
+	}{
+		{
+			name: "alias does not exist",
+			userTableRows: []userTableRow{
+				{
+					id:           "test",
+					email:        "test@example.com",
+					name:         "mockedUser",
+					lastSignedIn: &now,
+					createdAt:    &now,
+					updatedAt:    &now,
+				},
+			},
+			shortLinkTableRows: []shortLinkTableRow{},
+			relationTableRows:  []userShortLinkTableRow{},
+			alias:              "fizzbuzz",
+			user: entity.User{
+				ID:             "test",
+				Name:           "mockedUser",
+				Email:          "test@example.com",
+				LastSignedInAt: &now,
+				CreatedAt:      &now,
+				UpdatedAt:      &now,
+			},
+			expectIsFound: false,
+		},
+		{
+			name: "alias does not belong to the user",
+			userTableRows: []userTableRow{
+				{
+					id:           "test",
+					email:        "test@example.com",
+					name:         "mockedUser",
+					lastSignedIn: &now,
+					createdAt:    &now,
+					updatedAt:    &now,
+				},
+				{
+					id:           "test2",
+					email:        "test2@example.com",
+					name:         "mockedUser2",
+					lastSignedIn: &now,
+					createdAt:    &now,
+					updatedAt:    &now,
+				},
+			},
+			shortLinkTableRows: []shortLinkTableRow{
+				{
+					alias: "fizzbuzz",
+				},
+			},
+			relationTableRows: []userShortLinkTableRow{
+				{
+					alias:  "fizzbuzz",
+					userID: "test2",
+				},
+			},
+			alias: "fizzbuzz",
+			user: entity.User{
+				ID:             "test",
+				Name:           "mockedUser",
+				Email:          "test@example.com",
+				LastSignedInAt: &now,
+				CreatedAt:      &now,
+				UpdatedAt:      &now,
+			},
+			expectIsFound: false,
+		},
+		{
+			name: "alias belongs to the user",
+			userTableRows: []userTableRow{
+				{
+					id:           "test",
+					email:        "test@example.com",
+					name:         "mockedUser",
+					lastSignedIn: &now,
+					createdAt:    &now,
+					updatedAt:    &now,
+				},
+			},
+			shortLinkTableRows: []shortLinkTableRow{
+				{
+					alias: "fizzbuzz",
+				},
+			},
+			relationTableRows: []userShortLinkTableRow{
+				{
+					alias:  "fizzbuzz",
+					userID: "test",
+				},
+			},
+			alias: "fizzbuzz",
+			user: entity.User{
+				ID:             "test",
+				Name:           "mockedUser",
+				Email:          "test@example.com",
+				LastSignedInAt: &now,
+				CreatedAt:      &now,
+				UpdatedAt:      &now,
+			},
+			expectIsFound: true,
+		},
+		{
+			name: "user does not exist",
+			userTableRows: []userTableRow{
+				{
+					id:           "test",
+					email:        "test@example.com",
+					name:         "mockedUser",
+					lastSignedIn: &now,
+					createdAt:    &now,
+					updatedAt:    &now,
+				},
+			},
+			shortLinkTableRows: []shortLinkTableRow{
+				{
+					alias: "fizzbuzz",
+				},
+			},
+			relationTableRows: []userShortLinkTableRow{
+				{
+					alias:  "fizzbuzz",
+					userID: "test",
+				},
+			},
+			alias:         "fizzbuzz",
+			user:          entity.User{},
+			expectIsFound: false,
+		},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			dbtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertUserTableRows(t, sqlDB, testCase.userTableRows)
+					insertShortLinkTableRows(t, sqlDB, testCase.shortLinkTableRows)
+					insertUserShortLinkTableRows(t, sqlDB, testCase.relationTableRows)
+
+					userShortLinkRepo := sqldb.NewUserShortLinkSQL(sqlDB)
+					result, err := userShortLinkRepo.HasMapping(testCase.user, testCase.alias)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, testCase.expectIsFound, result)
+				})
+		})
+	}
+}
+
 func insertUserShortLinkTableRows(
 	t *testing.T,
 	sqlDB *sql.DB,

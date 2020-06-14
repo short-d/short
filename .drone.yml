@@ -69,6 +69,7 @@ steps:
       branch:
         - master
       event:
+        - push
         - pull_request
 
   - name: run backend unit tests
@@ -148,6 +149,7 @@ steps:
       branch:
         - master
       event:
+        - push
         - pull_request
 
   - name: create testing frontend assets

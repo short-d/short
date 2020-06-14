@@ -13,6 +13,7 @@ const (
 	ErrCodeAliasWithFragment          = "aliasWithFragment"
 	ErrCodeMaliciousContent           = "maliciousContent"
 	ErrCodeInvalidAuthToken           = "invalidAuthToken"
+	ErrCodeUnauthorizedAction         = "unauthorizedAction"
 )
 
 // GraphQlError represents a GraphAPI error.
@@ -159,4 +160,23 @@ func (e ErrMaliciousContent) Extensions() map[string]interface{} {
 // Error retrieves the human readable error message.
 func (e ErrMaliciousContent) Error() string {
 	return "contains malicious content"
+}
+
+// ErrUnauthorizedAction signifies the requesting user is not allowed to perform certain action.
+type ErrUnauthorizedAction string
+
+var _ GraphQlError = (*ErrUnauthorizedAction)(nil)
+
+// Extensions keeps structured error metadata so that the clients can reliably
+// handle the error.
+func (e ErrUnauthorizedAction) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code":   ErrCodeUnauthorizedAction,
+		"action": string(e),
+	}
+}
+
+// Error retrieves the human readable error message.
+func (e ErrUnauthorizedAction) Error() string {
+	return "unauthorized action"
 }
