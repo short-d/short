@@ -11,6 +11,7 @@ import (
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
@@ -73,7 +74,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 			tm := timer.NewStub(now)
 			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
 			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
-			changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo)
+			changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo, authorizer.Authorizer{})
 
 			query := newQuery(lg, auth, changeLog, retrieverFake)
 

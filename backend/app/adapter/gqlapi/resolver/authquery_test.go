@@ -12,6 +12,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
@@ -99,7 +100,7 @@ func TestAuthQuery_ShortLink(t *testing.T) {
 			timerFake := timer.NewStub(now)
 			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
 			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
-			changeLog := changelog.NewPersist(keyGen, timerFake, &changeLogRepo, &userChangeLogRepo)
+			changeLog := changelog.NewPersist(keyGen, timerFake, &changeLogRepo, &userChangeLogRepo, authorizer.Authorizer{})
 
 			tokenizer := crypto.NewTokenizerFake()
 			auth := authenticator.NewAuthenticator(tokenizer, timerFake, time.Hour)
