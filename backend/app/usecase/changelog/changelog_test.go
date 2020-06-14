@@ -6,6 +6,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/short/backend/app/usecase/authorizer"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
+
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
@@ -26,6 +30,8 @@ func TestPersist_CreateChange(t *testing.T) {
 		change                entity.Change
 		expectedChange        entity.Change
 		availableKeys         []keygen.Key
+		roles                 map[string][]role.Role
+		user                  entity.User
 		expectedChangeLogSize int
 		hasErr                bool
 	}{
@@ -53,7 +59,13 @@ func TestPersist_CreateChange(t *testing.T) {
 				SummaryMarkdown: &summaryMarkdown3,
 				ReleasedAt:      now,
 			},
-			availableKeys:         []keygen.Key{"test"},
+			availableKeys: []keygen.Key{"test"},
+			roles: map[string][]role.Role{
+				"alpha": {role.Admin},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
 			expectedChangeLogSize: 3,
 			hasErr:                false,
 		}, {
@@ -74,8 +86,14 @@ func TestPersist_CreateChange(t *testing.T) {
 				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 			},
-			expectedChange:        entity.Change{},
-			availableKeys:         []keygen.Key{},
+			expectedChange: entity.Change{},
+			availableKeys:  []keygen.Key{},
+			roles: map[string][]role.Role{
+				"alpha": {role.Admin},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
 		}, {
@@ -96,8 +114,14 @@ func TestPersist_CreateChange(t *testing.T) {
 				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 			},
-			expectedChange:        entity.Change{},
-			availableKeys:         []keygen.Key{"12345"},
+			expectedChange: entity.Change{},
+			availableKeys:  []keygen.Key{"12345"},
+			roles: map[string][]role.Role{
+				"alpha": {role.Admin},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
 			expectedChangeLogSize: 2,
 			hasErr:                true,
 		}, {
@@ -124,9 +148,41 @@ func TestPersist_CreateChange(t *testing.T) {
 				SummaryMarkdown: nil,
 				ReleasedAt:      now,
 			},
-			availableKeys:         []keygen.Key{"22222"},
+			availableKeys: []keygen.Key{"22222"},
+			roles: map[string][]role.Role{
+				"alpha": {role.Admin},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
 			expectedChangeLogSize: 3,
 			hasErr:                false,
+		}, {
+			name: "user does not have create change access",
+			changeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			change: entity.Change{
+				Title:           "title 3",
+				SummaryMarkdown: &summaryMarkdown3,
+			},
+			availableKeys: []keygen.Key{"test"},
+			roles: map[string][]role.Role{
+				"alpha": {role.Basic},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
+			hasErr: true,
 		},
 	}
 
@@ -140,6 +196,10 @@ func TestPersist_CreateChange(t *testing.T) {
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 
+			fakeRolesRepo := repository.NewUserRoleFake(testCase.roles)
+			rb := rbac.NewRBAC(fakeRolesRepo)
+			au := authorizer.NewAuthorizer(rb)
+
 			tm := timer.NewStub(now)
 			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
 			persist := NewPersist(
@@ -147,9 +207,10 @@ func TestPersist_CreateChange(t *testing.T) {
 				tm,
 				&changeLogRepo,
 				&userChangeLogRepo,
+				au,
 			)
 
-			newChange, err := persist.CreateChange(testCase.change.Title, testCase.change.SummaryMarkdown)
+			newChange, err := persist.CreateChange(testCase.change.Title, testCase.change.SummaryMarkdown, testCase.user)
 			if testCase.hasErr {
 				assert.NotEqual(t, nil, err)
 				return
@@ -216,6 +277,7 @@ func TestPersist_GetChangeLog(t *testing.T) {
 				tm,
 				&changeLogRepo,
 				&userChangeLogRepo,
+				authorizer.Authorizer{},
 			)
 
 			changeLog, err := persist.GetChangeLog()
@@ -276,6 +338,7 @@ func TestPersist_GetLastViewedAt(t *testing.T) {
 				tm,
 				&changeLogRepo,
 				&userChangeLogRepo,
+				authorizer.Authorizer{},
 			)
 
 			lastViewedAt, err := persist.GetLastViewedAt(testCase.user)
@@ -336,6 +399,7 @@ func TestPersist_ViewChangeLog(t *testing.T) {
 				tm,
 				&changeLogRepo,
 				&userChangeLogRepo,
+				authorizer.Authorizer{},
 			)
 
 			lastViewedAt, err := persist.ViewChangeLog(testCase.user)
@@ -356,6 +420,8 @@ func TestPersist_DeleteChange(t *testing.T) {
 		deleteChangeId        string
 		expectedChangeLog     []entity.Change
 		expectedChangeLogSize int
+		roles                 map[string][]role.Role
+		user                  entity.User
 		hasErr                bool
 	}{
 		{
@@ -381,7 +447,13 @@ func TestPersist_DeleteChange(t *testing.T) {
 				},
 			},
 			expectedChangeLogSize: 1,
-			hasErr:                false,
+			roles: map[string][]role.Role{
+				"alpha": {role.Admin},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
+			hasErr: false,
 		},
 		{
 			name: "delete non existing change",
@@ -411,7 +483,37 @@ func TestPersist_DeleteChange(t *testing.T) {
 				},
 			},
 			expectedChangeLogSize: 2,
-			hasErr:                false,
+			roles: map[string][]role.Role{
+				"alpha": {role.Admin},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
+			hasErr: false,
+		},
+		{
+			name: "user does not have delete change access",
+			changeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			deleteChangeId:        "12345",
+			expectedChangeLogSize: 1,
+			roles: map[string][]role.Role{
+				"alpha": {role.Basic},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
+			hasErr: true,
 		},
 	}
 
@@ -425,6 +527,10 @@ func TestPersist_DeleteChange(t *testing.T) {
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 
+			fakeRolesRepo := repository.NewUserRoleFake(testCase.roles)
+			rb := rbac.NewRBAC(fakeRolesRepo)
+			au := authorizer.NewAuthorizer(rb)
+
 			tm := timer.NewStub(time.Now())
 			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
 			persist := NewPersist(
@@ -432,9 +538,10 @@ func TestPersist_DeleteChange(t *testing.T) {
 				tm,
 				&changeLogRepo,
 				&userChangeLogRepo,
+				au,
 			)
 
-			err = persist.DeleteChange(testCase.deleteChangeId)
+			err = persist.DeleteChange(testCase.deleteChangeId, testCase.user)
 			if testCase.hasErr {
 				assert.NotEqual(t, nil, err)
 				return
@@ -459,7 +566,10 @@ func TestPersist_UpdateChange(t *testing.T) {
 		name              string
 		changeLog         []entity.Change
 		change            entity.Change
+		roles             map[string][]role.Role
+		user              entity.User
 		expectedChangeLog []entity.Change
+		hasErr            bool
 	}{
 		{
 			name: "update existing change successfully",
@@ -480,6 +590,12 @@ func TestPersist_UpdateChange(t *testing.T) {
 				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 			},
+			roles: map[string][]role.Role{
+				"alpha": {role.Admin},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
 			expectedChangeLog: []entity.Change{
 				{
 					ID:              "12345",
@@ -492,6 +608,7 @@ func TestPersist_UpdateChange(t *testing.T) {
 					SummaryMarkdown: &summaryMarkdown3,
 				},
 			},
+			hasErr: false,
 		},
 		{
 			name: "update non existing change",
@@ -512,6 +629,12 @@ func TestPersist_UpdateChange(t *testing.T) {
 				Title:           "title 3",
 				SummaryMarkdown: &summaryMarkdown3,
 			},
+			roles: map[string][]role.Role{
+				"alpha": {role.Admin},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
 			expectedChangeLog: []entity.Change{
 				{
 					ID:              "12345",
@@ -524,6 +647,34 @@ func TestPersist_UpdateChange(t *testing.T) {
 					SummaryMarkdown: &summaryMarkdown2,
 				},
 			},
+			hasErr: false,
+		},
+		{
+			name: "user does not have update change access",
+			changeLog: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			change: entity.Change{
+				ID:              "54321",
+				Title:           "title 3",
+				SummaryMarkdown: &summaryMarkdown3,
+			},
+			roles: map[string][]role.Role{
+				"alpha": {role.Basic},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
+			hasErr: true,
 		},
 	}
 
@@ -537,6 +688,10 @@ func TestPersist_UpdateChange(t *testing.T) {
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
 			assert.Equal(t, nil, err)
 
+			fakeRolesRepo := repository.NewUserRoleFake(testCase.roles)
+			rb := rbac.NewRBAC(fakeRolesRepo)
+			au := authorizer.NewAuthorizer(rb)
+
 			tm := timer.NewStub(time.Now())
 			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
 			persist := NewPersist(
@@ -544,9 +699,14 @@ func TestPersist_UpdateChange(t *testing.T) {
 				tm,
 				&changeLogRepo,
 				&userChangeLogRepo,
+				au,
 			)
 
-			_, err = persist.UpdateChange(testCase.change.ID, testCase.change.Title, testCase.change.SummaryMarkdown)
+			_, err = persist.UpdateChange(testCase.change.ID, testCase.change.Title, testCase.change.SummaryMarkdown, testCase.user)
+			if testCase.hasErr {
+				assert.NotEqual(t, nil, err)
+				return
+			}
 			assert.Equal(t, nil, err)
 
 			changeLog, err := persist.GetChangeLog()
