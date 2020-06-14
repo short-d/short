@@ -26,7 +26,7 @@ type ChangeLog interface {
 	GetLastViewedAt(user entity.User) (*time.Time, error)
 	ViewChangeLog(user entity.User) (time.Time, error)
 	DeleteChange(id string, user entity.User) error
-	UpdateChange(id string, title string, summaryMarkdown *string) (entity.Change, error)
+	UpdateChange(id string, title string, summaryMarkdown *string, user entity.User) (entity.Change, error)
 }
 
 // Persist retrieves change log from and saves changes to persistent data store.
@@ -125,7 +125,17 @@ func (p Persist) UpdateChange(
 	id string,
 	title string,
 	summaryMarkdown *string,
+	user entity.User,
 ) (entity.Change, error) {
+	canUpdateChange, err := p.authorizer.CanUpdateChange(user)
+	if err != nil {
+		return entity.Change{}, err
+	}
+
+	if !canUpdateChange {
+		return entity.Change{}, ErrUnauthorizedAction("Unauthorized action: update change logs")
+	}
+
 	newChange := entity.Change{
 		ID:              id,
 		Title:           title,

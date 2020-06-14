@@ -22,6 +22,11 @@ func (a Authorizer) CanDeleteChange(user entity.User) (bool, error) {
 	return a.rbac.HasPermission(user, permission.DeleteChange)
 }
 
+// CanUpdateChange decides whether a user is allowed to update a change.
+func (a Authorizer) CanUpdateChange(user entity.User) (bool, error) {
+	return a.rbac.HasPermission(user, permission.EditChange)
+}
+
 // CanViewAdminPanel decides whether a user is allowed to view admin panel.
 func (a Authorizer) CanViewAdminPanel(user entity.User) (bool, error) {
 	return a.rbac.HasPermission(user, permission.ViewAdminPanel)

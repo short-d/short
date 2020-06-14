@@ -133,13 +133,30 @@ func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
 }
 
 // UpdateChange updates a Change with given ID in change log.
-func (a AuthMutation) UpdateChange(args *UpdateChangeArgs) (Change, error) {
+func (a AuthMutation) UpdateChange(args *UpdateChangeArgs) (*Change, error) {
+	user, err := viewer(a.authToken, a.authenticator)
+	if err != nil {
+		return nil, ErrInvalidAuthToken{}
+	}
+
 	change, err := a.changeLog.UpdateChange(
 		args.ID,
 		args.Change.Title,
 		args.Change.SummaryMarkdown,
+		user,
 	)
-	return newChange(change), err
+	if err == nil {
+		change := newChange(change)
+		return &change, nil
+	}
+
+	// TODO(issue#823): refactor error type checking
+	switch err.(type) {
+	case changelog.ErrUnauthorizedAction:
+		return nil, ErrUnauthorizedAction(err.Error())
+	default:
+		return nil, ErrUnknown{}
+	}
 }
 
 // ViewChangeLog records the time when the user viewed the change log
