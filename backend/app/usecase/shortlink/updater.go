@@ -38,7 +38,7 @@ func (u UpdaterPersist) UpdateShortLink(
 	update entity.ShortLink,
 	user entity.User,
 ) (entity.ShortLink, error) {
-	ok, err := u.userShortLinkRelationRepo.HasMapping(user, oldAlias)
+	hasMapping, err := u.userShortLinkRelationRepo.HasMapping(user, oldAlias)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
