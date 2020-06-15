@@ -18,33 +18,6 @@ type ShortLinkSql struct {
 	db *sql.DB
 }
 
-// UpdateTwitterTags updates Twitter meta tags for a given short link.
-func (s *ShortLinkSql) UpdateTwitterTags(alias string, twitterTags metatag.Twitter) (entity.ShortLink, error) {
-	statement := fmt.Sprintf(`
-UPDATE "%s"
-SET "%s"=$1, "%s"=$2, "%s"=$3
-WHERE "%s"=$4;`,
-		table.ShortLink.TableName,
-		table.ShortLink.ColumnTwitterTitle,
-		table.ShortLink.ColumnTwitterDescription,
-		table.ShortLink.ColumnTwitterImageURL,
-		table.ShortLink.ColumnAlias,
-	)
-
-	_, err := s.db.Exec(
-		statement,
-		twitterTags.Title,
-		twitterTags.Description,
-		twitterTags.ImageURL,
-		alias,
-	)
-	if err != nil {
-		return entity.ShortLink{}, err
-	}
-
-	return s.GetShortLinkByAlias(alias)
-}
-
 // UpdateOpenGraphTags updates OpenGraph meta tags for a given short link.
 func (s *ShortLinkSql) UpdateOpenGraphTags(alias string, openGraphTags metatag.OpenGraph) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
@@ -63,6 +36,33 @@ WHERE "%s"=$4;`,
 		openGraphTags.Title,
 		openGraphTags.Description,
 		openGraphTags.ImageURL,
+		alias,
+	)
+	if err != nil {
+		return entity.ShortLink{}, err
+	}
+
+	return s.GetShortLinkByAlias(alias)
+}
+
+// UpdateTwitterTags updates Twitter meta tags for a given short link.
+func (s *ShortLinkSql) UpdateTwitterTags(alias string, twitterTags metatag.Twitter) (entity.ShortLink, error) {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1, "%s"=$2, "%s"=$3
+WHERE "%s"=$4;`,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnTwitterTitle,
+		table.ShortLink.ColumnTwitterDescription,
+		table.ShortLink.ColumnTwitterImageURL,
+		table.ShortLink.ColumnAlias,
+	)
+
+	_, err := s.db.Exec(
+		statement,
+		twitterTags.Title,
+		twitterTags.Description,
+		twitterTags.ImageURL,
 		alias,
 	)
 	if err != nil {
