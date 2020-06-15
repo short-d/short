@@ -4,12 +4,12 @@ import (
 	"fmt"
 )
 
-// KeywordType represents keyword matching type.
-type KeywordType int
+// Algorithm represents keyword matching type.
+type Algorithm int
 
 const (
 	// ContainsAllKeywords represents ContainsAll type
-	ContainsAllKeywords KeywordType = iota
+	ContainsAllKeywords Algorithm = iota
 	// ContainsAnyKeyword represents ContainsAny type
 	ContainsAnyKeyword
 )
@@ -20,13 +20,13 @@ type Keyword interface {
 }
 
 // NewKeyword creates Keyword.
-func NewKeyword(keywordType KeywordType) (Keyword, error) {
-	switch keywordType {
+func NewKeyword(algorithm Algorithm) (Keyword, error) {
+	switch algorithm {
 	case ContainsAllKeywords:
 		return new(ContainsAll), nil
 	case ContainsAnyKeyword:
 		return new(ContainsAny), nil
 	default:
-		return nil, fmt.Errorf("keyword matching type %d not recognized", keywordType)
+		return nil, fmt.Errorf("match algorithm %d not recognized", algorithm)
 	}
 }
