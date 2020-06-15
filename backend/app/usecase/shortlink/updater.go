@@ -93,7 +93,7 @@ func (u *UpdaterPersist) updateLongLink(shortLink, update entity.ShortLink) enti
 // NewUpdaterPersist creates a new UpdaterPersist instance.
 func NewUpdaterPersist(
 	shortLinkRepo repository.ShortLink,
-	userShortLinkRelationRepo repository.UserShortLink,
+	userShortLinkRepo repository.UserShortLink,
 	keyGen keygen.KeyGenerator,
 	longLinkValidator validator.LongLink,
 	aliasValidator validator.CustomAlias,
