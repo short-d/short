@@ -6,4 +6,5 @@ import "github.com/short-d/short/backend/app/entity"
 type UserShortLink interface {
 	CreateRelation(user entity.User, shortLink entity.ShortLink) error
 	FindAliasesByUser(user entity.User) ([]string, error)
+	HasMapping(user entity.User, alias string) (bool, error)
 }

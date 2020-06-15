@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
@@ -48,6 +49,12 @@ type DeleteChangeArgs struct {
 	ID string
 }
 
+// UpdateChangeArgs represents the possible parameters for UpdateChange endpoint.
+type UpdateChangeArgs struct {
+	ID     string
+	Change ChangeInput
+}
+
 // CreateShortLink creates mapping between an alias and a long link for a given user
 func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, error) {
 	user, err := viewer(a.authToken, a.authenticator)
@@ -84,18 +91,73 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 }
 
 // CreateChange creates a Change in the change log
-func (a AuthMutation) CreateChange(args *CreateChangeArgs) (Change, error) {
-	change, err := a.changeLog.CreateChange(args.Change.Title, args.Change.SummaryMarkdown)
-	return newChange(change), err
+func (a AuthMutation) CreateChange(args *CreateChangeArgs) (*Change, error) {
+	user, err := viewer(a.authToken, a.authenticator)
+	if err != nil {
+		return nil, ErrInvalidAuthToken{}
+	}
+
+	change, err := a.changeLog.CreateChange(args.Change.Title, args.Change.SummaryMarkdown, user)
+	if err == nil {
+		change := newChange(change)
+		return &change, nil
+	}
+
+	// TODO(issue#823): refactor error type checking
+	switch err.(type) {
+	case changelog.ErrUnauthorizedAction:
+		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to create a change", user.ID))
+	default:
+		return nil, ErrUnknown{}
+	}
 }
 
 // DeleteChange removes a Change with given ID from change log
 func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
-	err := a.changeLog.DeleteChange(args.ID)
+	user, err := viewer(a.authToken, a.authenticator)
 	if err != nil {
-		return nil, err
+		return nil, ErrInvalidAuthToken{}
 	}
-	return &args.ID, nil
+
+	err = a.changeLog.DeleteChange(args.ID, user)
+	if err == nil {
+		return &args.ID, nil
+	}
+
+	// TODO(issue#823): refactor error type checking
+	switch err.(type) {
+	case changelog.ErrUnauthorizedAction:
+		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to delete the change %s", user.ID, args.ID))
+	default:
+		return nil, ErrUnknown{}
+	}
+}
+
+// UpdateChange updates a Change with given ID in change log.
+func (a AuthMutation) UpdateChange(args *UpdateChangeArgs) (*Change, error) {
+	user, err := viewer(a.authToken, a.authenticator)
+	if err != nil {
+		return nil, ErrInvalidAuthToken{}
+	}
+
+	change, err := a.changeLog.UpdateChange(
+		args.ID,
+		args.Change.Title,
+		args.Change.SummaryMarkdown,
+		user,
+	)
+	if err == nil {
+		change := newChange(change)
+		return &change, nil
+	}
+
+	// TODO(issue#823): refactor error type checking
+	switch err.(type) {
+	case changelog.ErrUnauthorizedAction:
+		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to update the change %s", user.ID, args.ID))
+	default:
+		return nil, ErrUnknown{}
+	}
 }
 
 // ViewChangeLog records the time when the user viewed the change log
