@@ -4,17 +4,18 @@ import "strings"
 
 var _ Keyword = (*ContainsAny)(nil)
 
+// ContainsAny checks if an input contains any element of a list.
 type ContainsAny struct {
 }
 
-func (c ContainsAny) IsMatch(query string, input string) bool {
+// IsMatch matches any word against the input.
+func (c ContainsAny) IsMatch(words []string, input string) bool {
 	if input == "" {
 		return false
-	} else if query == "" {
+	} else if len(words) == 0 {
 		return false
 	}
 
-	words := getKeywords(query)
 	for _, word := range words {
 		if strings.Contains(input, word) {
 			return true

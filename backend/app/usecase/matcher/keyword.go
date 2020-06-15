@@ -1,27 +1,24 @@
 package matcher
 
-import "strings"
-
-type KeywordMatcher int
+// KeywordType represents the type of keyword matching.
+type KeywordType int
 
 const (
-	MatchAll KeywordMatcher = iota
-	MatchAny
+	ContainsAllKeywords KeywordType = iota
+	ContainsAnyKeyword
 )
 
+// Keyword matches the slice of words against the input.
 type Keyword interface {
-	IsMatch(query string, input string) bool
+	IsMatch(words []string, input string) bool
 }
 
-func getKeywords(query string) []string {
-	return strings.Split(query, " ")
-}
-
-func NewKeyword(matcher KeywordMatcher) Keyword {
-	switch matcher {
-	case MatchAll:
+// NewKeyword creates Keyword.
+func NewKeyword(keywordType KeywordType) Keyword {
+	switch keywordType {
+	case ContainsAllKeywords:
 		return ContainsAll{}
-	case MatchAny:
+	case ContainsAnyKeyword:
 		return ContainsAny{}
 	default:
 		return ContainsAll{}

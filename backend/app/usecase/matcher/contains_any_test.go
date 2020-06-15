@@ -11,49 +11,49 @@ func TestContainsAny_IsMatch(t *testing.T) {
 
 	testCases := []struct {
 		name     string
-		query    string
+		words    []string
 		input    string
 		expected bool
 	}{
 		{
-			name:     "empty query and empty input",
-			query:    "",
+			name:     "empty words and empty input",
+			words:    nil,
 			input:    "",
 			expected: false,
 		},
 		{
-			name:     "empty query",
-			query:    "",
+			name:     "empty words",
+			words:    nil,
 			input:    "a",
 			expected: false,
 		},
 		{
 			name:     "empty input",
-			query:    "a",
+			words:    []string{"a"},
 			input:    "",
 			expected: false,
 		},
 		{
 			name:     "complete match",
-			query:    "a",
+			words:    []string{"a"},
 			input:    "a",
 			expected: true,
 		},
 		{
 			name:     "match",
-			query:    "a",
+			words:    []string{"a"},
 			input:    "aaaa",
 			expected: true,
 		},
 		{
 			name:     "no match",
-			query:    "a b c",
+			words:    []string{"a", "b", "c"},
 			input:    "xyz",
 			expected: false,
 		},
 		{
 			name:     "in between match",
-			query:    "a b c",
+			words:    []string{"a", "b", "c"},
 			input:    "xcz",
 			expected: true,
 		},
@@ -63,9 +63,9 @@ func TestContainsAny_IsMatch(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			matchAny := NewKeyword(MatchAny)
+			containsAny := NewKeyword(ContainsAnyKeyword)
 
-			assert.Equal(t, testCase.expected, matchAny.IsMatch(testCase.query, testCase.input))
+			assert.Equal(t, testCase.expected, containsAny.IsMatch(testCase.words, testCase.input))
 		})
 	}
 }
