@@ -52,11 +52,13 @@ func (u UpdaterPersist) UpdateShortLink(
 	shortLink = u.updateAlias(shortLink, update)
 	shortLink = u.updateLongLink(shortLink, update)
 
-	if isValid, violation := u.aliasValidator.IsValid(&shortLink.Alias); !isValid {
+	isValid, violation := u.aliasValidator.IsValid(&shortLink.Alias)
+	if !isValid {
 		return entity.ShortLink{}, ErrInvalidCustomAlias{shortLink.Alias, violation}
 	}
 
-	if isValid, violation := u.longLinkValidator.IsValid(&shortLink.LongLink); !isValid {
+	isValid, violation = u.longLinkValidator.IsValid(&shortLink.LongLink)
+	if !isValid {
 		return entity.ShortLink{}, ErrInvalidLongLink{shortLink.LongLink, violation}
 	}
 
