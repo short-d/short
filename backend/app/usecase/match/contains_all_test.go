@@ -40,9 +40,9 @@ func TestContainsAll_IsMatch(t *testing.T) {
 			expected: true,
 		},
 		{
-			name:     "match",
-			words:    []string{"a"},
-			input:    "aaaa",
+			name:     "all match",
+			words:    []string{"a", "ab", "aa"},
+			input:    "aaaba",
 			expected: true,
 		},
 		{
@@ -52,7 +52,7 @@ func TestContainsAll_IsMatch(t *testing.T) {
 			expected: false,
 		},
 		{
-			name:     "in between match",
+			name:     "at least one mismatch",
 			words:    []string{"a", "b", "c"},
 			input:    "xcz",
 			expected: false,

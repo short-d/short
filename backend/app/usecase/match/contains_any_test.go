@@ -19,13 +19,13 @@ func TestContainsAny_IsMatch(t *testing.T) {
 			name:     "empty words and empty input",
 			words:    nil,
 			input:    "",
-			expected: true,
+			expected: false,
 		},
 		{
 			name:     "empty words",
 			words:    nil,
 			input:    "a",
-			expected: true,
+			expected: false,
 		},
 		{
 			name:     "empty input",
@@ -40,9 +40,9 @@ func TestContainsAny_IsMatch(t *testing.T) {
 			expected: true,
 		},
 		{
-			name:     "match",
-			words:    []string{"a"},
-			input:    "aaaa",
+			name:     "all match",
+			words:    []string{"a", "ab", "aa"},
+			input:    "aaaba",
 			expected: true,
 		},
 		{
@@ -52,7 +52,7 @@ func TestContainsAny_IsMatch(t *testing.T) {
 			expected: false,
 		},
 		{
-			name:     "in between match",
+			name:     "any one match",
 			words:    []string{"a", "b", "c"},
 			input:    "xcz",
 			expected: true,
