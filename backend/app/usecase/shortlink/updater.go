@@ -32,7 +32,7 @@ type UpdaterPersist struct {
 	riskDetector              risk.Detector
 }
 
-// UpdateShortLink persists mutations for a given short link in the repository.
+// UpdateShortLink mutates a short link in the repository.
 func (u UpdaterPersist) UpdateShortLink(
 	oldAlias string,
 	update entity.ShortLink,
