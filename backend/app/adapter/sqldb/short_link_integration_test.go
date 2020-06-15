@@ -162,11 +162,11 @@ func TestShortLinkSql_UpdateTwitterTags(t *testing.T) {
 			name: "Twitter tags not provided",
 			tableRows: []shortLinkTableRow{
 				{
-					alias:    "220uFicCJj",
-					longLink: "http://www.google.com",
-					ogTitle:            &title1,
-					ogDescription:      &description1,
-					ogImageURL:         &imageURL1,
+					alias:         "220uFicCJj",
+					longLink:      "http://www.google.com",
+					ogTitle:       &title1,
+					ogDescription: &description1,
+					ogImageURL:    &imageURL1,
 				},
 			},
 			alias: "220uFicCJj",
