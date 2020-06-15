@@ -50,9 +50,9 @@ func TestReCaptcha_Verify(t *testing.T) {
 			},
 		},
 		{
-			name: "request failed with error",
+			name:         "request failed with error",
 			httpResponse: nil,
-			httpErr: errors.New("http request failure"),
+			httpErr:      errors.New("http request failure"),
 			expectHasErr: true,
 		},
 	}
