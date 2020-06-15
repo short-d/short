@@ -164,7 +164,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
 			},
 			blockedLongLinks: map[string]bool{
-				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": false,
+				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": true,
 			},
 			expectedHasErr:    true,
 			expectedShortLink: entity.ShortLink{},

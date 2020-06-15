@@ -20,7 +20,7 @@ type Updater interface {
 	UpdateShortLink(oldAlias string, update entity.ShortLink, user entity.User) (entity.ShortLink, error)
 }
 
-// UpdaterPersist persists the mutated short link in the data store..
+// UpdaterPersist persists the mutated short link in the data store.
 type UpdaterPersist struct {
 	shortLinkRepo     repository.ShortLink
 	userShortLinkRepo repository.UserShortLink
@@ -77,7 +77,6 @@ func (u UpdaterPersist) updateAlias(shortLink, update entity.ShortLink) entity.S
 	if newAlias != "" {
 		shortLink.Alias = newAlias
 	}
-
 	return shortLink
 }
 
@@ -86,7 +85,6 @@ func (u *UpdaterPersist) updateLongLink(shortLink, update entity.ShortLink) enti
 	if newLongLink != "" {
 		shortLink.LongLink = newLongLink
 	}
-
 	return shortLink
 }
 
