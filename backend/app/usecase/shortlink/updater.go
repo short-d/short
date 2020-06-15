@@ -16,7 +16,7 @@ var _ Updater = (*UpdaterPersist)(nil)
 // ErrShortLinkNotFound represents the failure of finding certain short link in the data store
 var ErrShortLinkNotFound = errors.New("short link not found")
 
-// Updater modifies the properties of existing short links.
+// Updater mutates existing short links.
 type Updater interface {
 	UpdateShortLink(oldAlias string, update entity.ShortLink, user entity.User) (entity.ShortLink, error)
 }
