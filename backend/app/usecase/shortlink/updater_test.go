@@ -27,6 +27,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		update             entity.ShortLink
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
+		blockedLongLinks   map[string]bool
 		expectedHasErr     bool
 		expectedShortLink  entity.ShortLink
 	}{
@@ -162,6 +163,9 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			update: entity.ShortLink{
 				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
 			},
+			blockedLongLinks: map[string]bool{
+				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": false,
+			},
 			expectedHasErr:    true,
 			expectedShortLink: entity.ShortLink{},
 		},
@@ -171,9 +175,6 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			blockedHash := map[string]bool{
-				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": false,
-			}
 			tm := timer.NewStub(now)
 			shortLinkRepo := repository.NewShortLinkFake(testCase.shortlinks)
 			userShortLinkRepo := repository.NewUserShortLinkRepoFake(
@@ -183,7 +184,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
-			blacklist := risk.NewBlackListFake(blockedHash)
+			blacklist := risk.NewBlackListFake(testCase.blockedLongLinks)
 			riskDetector := risk.NewDetector(blacklist)
 			updater := NewUpdaterPersist(
 				&shortLinkRepo,
