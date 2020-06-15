@@ -159,7 +159,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
-			name:  "malicious shortLink update",
+			name:  "reject malicious long link",
 			alias: alias,
 			user: entity.User{
 				Email: "gopher@golang.org",
