@@ -14,7 +14,7 @@ import {
 import {
   IShortGraphQLShortLink,
   IShortGraphQLMutation
-} from './ShortGraphQLService/Schema';
+} from './ShortGraphQLService/schema';
 
 interface ICreateShortLinkErrs {
   authorizationErr?: string;
