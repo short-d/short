@@ -1,16 +1,20 @@
+@import '../styles/font';
 @import '../styles/color';
 @import '../styles/corner';
 @import '../styles/scrollbar';
 @import '../styles/center';
 @import '../styles/layouts';
+@import '../styles/shadow';
 
 .modal-body {
   display: flex;
   flex-direction: column;
   background-color: $color-white;
   position: fixed;
+  overflow: hidden;
   width: 500px;
   height: 570px;
+  @include default-font;
   @include align-center;
   @include round-corner;
 
@@ -22,10 +26,11 @@
     font-size: 20px;
     line-height: 1;
     text-align: left;
-    padding: 20px;
-    height: 32px;
-    border-bottom: 1px solid $color-divider;
-    font-weight: 600;
+    padding: 16px 20px 16px 30px;
+    margin: 0;
+    box-shadow: $shadow-card;
+    z-index: 10;
+    font-weight: $font-weight-semi-bold;
 
     .close-button {
       cursor: pointer;
@@ -37,40 +42,42 @@
     display: flex;
     flex-direction: column;
     background-color: $color-modal-background;
-    overflow: auto;
+    overflow: hidden;
 
     ul {
       flex: 1;
       list-style: none;
       display: block;
       padding: 0;
-      margin: 0;
-      overflow-y: scroll;
+      overflow-y: auto;
       margin: 4px;
       @include scroll-bar;
 
       li {
         display: flex;
         flex-direction: column;
-        padding: 10px;
+        padding: 20px;
         list-style: none;
         text-align: left;
-        border: 1px solid $color-divider;
+        box-shadow: $shadow-card;
         margin: 10px;
-        min-height: 120px;
         background: white;
         word-break: break-word;
+        border-radius: 4px;
 
         .title {
-          font-weight: 900;
-          margin-bottom: 6px;
+          text-align: center;
+          font-weight: $font-weight-semi-bold;
+          font-size: 18px;
         }
 
         .summary {
-          flex: 1;
+          margin-top: 10px;
         }
 
         .released-date {
+          text-align: right;
+          margin-top: 10px;
           color: $color-time;
         }
       }
@@ -80,15 +87,15 @@
   .view-all-updates {
     width: 100%;
     height: 70px;
-    background-color: $color-modal-background;
     display: flex;
     box-sizing: border-box;
     padding: 24px;
+    justify-content: center;
+    box-shadow: $shadow-card;
 
     button {
-      flex: 1;
-      background-color: $color-divider;
-      color: $color-dark-gray;
+      background-color: #424242;
+      color: white;
       height: 30px;
     }
   }

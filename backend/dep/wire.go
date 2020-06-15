@@ -171,6 +171,7 @@ func InjectGraphQLService(
 
 		observabilitySet,
 		authenticatorSet,
+		authorizerSet,
 		keyGenSet,
 
 		env.NewDeployment,
