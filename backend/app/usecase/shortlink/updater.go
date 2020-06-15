@@ -23,13 +23,13 @@ type Updater interface {
 
 // UpdaterPersist persists the mutated short link in the data store..
 type UpdaterPersist struct {
-	shortLinkRepo             repository.ShortLink
+	shortLinkRepo     repository.ShortLink
 	userShortLinkRepo repository.UserShortLink
-	keyGen                    keygen.KeyGenerator
-	longLinkValidator         validator.LongLink
-	aliasValidator            validator.CustomAlias
-	timer                     timer.Timer
-	riskDetector              risk.Detector
+	keyGen            keygen.KeyGenerator
+	longLinkValidator validator.LongLink
+	aliasValidator    validator.CustomAlias
+	timer             timer.Timer
+	riskDetector      risk.Detector
 }
 
 // UpdateShortLink mutates a short link in the repository.
@@ -38,11 +38,11 @@ func (u UpdaterPersist) UpdateShortLink(
 	update entity.ShortLink,
 	user entity.User,
 ) (entity.ShortLink, error) {
-	hasMapping, err := u.userShortLinkRelationRepo.HasMapping(user, oldAlias)
+	hasMapping, err := u.userShortLinkRepo.HasMapping(user, oldAlias)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
-	if !ok {
+	if !hasMapping {
 		return entity.ShortLink{}, ErrShortLinkNotFound
 	}
 
@@ -102,7 +102,7 @@ func NewUpdaterPersist(
 ) UpdaterPersist {
 	return UpdaterPersist{
 		shortLinkRepo,
-		userShortLinkRelationRepo,
+		userShortLinkRepo,
 		keyGen,
 		longLinkValidator,
 		aliasValidator,

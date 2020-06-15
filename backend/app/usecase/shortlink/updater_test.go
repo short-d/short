@@ -29,10 +29,10 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		availableKeys      []keygen.Key
 		shortlinks         shortLinks
 		user               entity.User
-		update    entity.ShortLink
+		update             entity.ShortLink
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
-		expectedHasErr          bool
+		expectedHasErr     bool
 		expectedShortLink  entity.ShortLink
 	}{
 		{
@@ -49,7 +49,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			shortLinkUpdate: entity.ShortLink{
+			update: entity.ShortLink{
 				LongLink: validNewLongLink,
 			},
 			relationUsers: []entity.User{
@@ -62,7 +62,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 					UpdatedAt: &now,
 				},
 			},
-			expHasErr: false,
+			expectedHasErr: false,
 			expectedShortLink: entity.ShortLink{
 				Alias:    "boGp9w35",
 				LongLink: validNewLongLink,
@@ -82,7 +82,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			shortLinkUpdate: entity.ShortLink{
+			update: entity.ShortLink{
 				LongLink: validNewLongLink,
 			},
 			relationUsers: []entity.User{
@@ -95,7 +95,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 					UpdatedAt: &now,
 				},
 			},
-			expHasErr:         true,
+			expectedHasErr:    true,
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
@@ -112,7 +112,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			shortLinkUpdate: entity.ShortLink{
+			update: entity.ShortLink{
 				LongLink: "aaaaaaaaaaaaaaaaaaa",
 			},
 			relationUsers: []entity.User{
@@ -125,7 +125,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 					UpdatedAt: &now,
 				},
 			},
-			expHasErr:         true,
+			expectedHasErr:    true,
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
@@ -142,7 +142,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			shortLinkUpdate: entity.ShortLink{
+			update: entity.ShortLink{
 				LongLink: "https://google.com/",
 			},
 			relationUsers: []entity.User{
@@ -155,7 +155,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 					UpdatedAt: &now,
 				},
 			},
-			expHasErr:         true,
+			expectedHasErr:    true,
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
@@ -164,10 +164,10 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			user: entity.User{
 				Email: "gopher@golang.org",
 			},
-			shortLinkUpdate: entity.ShortLink{
+			update: entity.ShortLink{
 				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
 			},
-			expHasErr:         true,
+			expectedHasErr:    true,
 			expectedShortLink: entity.ShortLink{},
 		},
 	}
@@ -203,8 +203,8 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				riskDetector,
 			)
 
-			shortLink, err := updater.UpdateShortLink(testCase.alias, testCase.shortLinkUpdate, testCase.user)
-			if testCase.expHasErr {
+			shortLink, err := updater.UpdateShortLink(testCase.alias, testCase.update, testCase.user)
+			if testCase.expectedHasErr {
 				assert.NotEqual(t, nil, err)
 
 				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.expectedShortLink.Alias)
