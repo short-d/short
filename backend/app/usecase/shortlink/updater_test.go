@@ -18,9 +18,6 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now().UTC()
-	alias := "boGp9w35"
-	validNewAlias := "eBJRJJty"
-	validNewLongLink := "https://httpbin.org/get?p1=v1"
 
 	testCases := []struct {
 		name               string
@@ -35,7 +32,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 	}{
 		{
 			name:  "successfully update existing long link",
-			alias: alias,
+			alias: "boGp9w35",
 			shortlinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
@@ -48,7 +45,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			update: entity.ShortLink{
-				LongLink: validNewLongLink,
+				LongLink: "https://httpbin.org/get?p1=v1",
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -63,12 +60,12 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			expectedHasErr: false,
 			expectedShortLink: entity.ShortLink{
 				Alias:    "boGp9w35",
-				LongLink: validNewLongLink,
+				LongLink: "https://httpbin.org/get?p1=v1",
 			},
 		},
 		{
 			name:  "alias doesn't exist",
-			alias: validNewAlias,
+			alias: "eBJRJJty",
 			shortlinks: shortLinks{
 				"boGp9w35zzzz": entity.ShortLink{
 					Alias:     "boGp9w35zzzz",
@@ -81,7 +78,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			update: entity.ShortLink{
-				LongLink: validNewLongLink,
+				LongLink: "https://httpbin.org/get?p1=v1",
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -98,7 +95,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		},
 		{
 			name:  "long link is invalid",
-			alias: alias,
+			alias: "boGp9w35",
 			shortlinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
@@ -128,7 +125,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		},
 		{
 			name:  "short link is not owned by the user",
-			alias: alias,
+			alias: "boGp9w35",
 			shortlinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
@@ -158,7 +155,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		},
 		{
 			name:  "reject malicious long link",
-			alias: alias,
+			alias: "boGp9w35",
 			user: entity.User{
 				Email: "gopher@golang.org",
 			},
