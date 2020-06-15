@@ -159,31 +159,39 @@ func TestShortLinkSql_UpdateTwitterTags(t *testing.T) {
 		expectedShortLink entity.ShortLink
 	}{
 		{
-			name: "OpenGraph tags not provided",
+			name: "Twitter tags not provided",
 			tableRows: []shortLinkTableRow{
 				{
 					alias:    "220uFicCJj",
 					longLink: "http://www.google.com",
+					ogTitle:            &title1,
+					ogDescription:      &description1,
+					ogImageURL:         &imageURL1,
 				},
 			},
 			alias: "220uFicCJj",
 			metaTags: metatag.Twitter{
-				Title:       &title1,
-				Description: &description1,
-				ImageURL:    &imageURL1,
+				Title:       &title2,
+				Description: &description2,
+				ImageURL:    &imageURL2,
 			},
 			expectedShortLink: entity.ShortLink{
 				Alias:    "220uFicCJj",
 				LongLink: "http://www.google.com",
-				TwitterTags: metatag.Twitter{
+				OpenGraphTags: metatag.OpenGraph{
 					Title:       &title1,
 					Description: &description1,
 					ImageURL:    &imageURL1,
 				},
+				TwitterTags: metatag.Twitter{
+					Title:       &title2,
+					Description: &description2,
+					ImageURL:    &imageURL2,
+				},
 			},
 		},
 		{
-			name: "OpenGraph tags provided",
+			name: "Twitter tags provided",
 			tableRows: []shortLinkTableRow{
 				{
 					alias:              "220uFicCJj",
