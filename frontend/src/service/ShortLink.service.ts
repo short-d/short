@@ -1,6 +1,6 @@
 import { Url } from '../entity/Url';
 import { Err, ErrorService } from './Error.service';
-import { ShortLinkGraphQLApi } from './ShortGraphQLService/ShortLinkGraphQL.api';
+import { ShortLinkGraphQLApi } from './shortGraphQL/ShortLinkGraphQL.api';
 
 export interface IPagedShortLinks {
   shortLinks: Url[];
