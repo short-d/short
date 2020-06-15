@@ -63,8 +63,9 @@ func TestContainsAny_IsMatch(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			containsAny := NewKeyword(ContainsAnyKeyword)
+			containsAny, err := NewKeyword(ContainsAnyKeyword)
 
+			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expected, containsAny.IsMatch(testCase.words, testCase.input))
 		})
 	}

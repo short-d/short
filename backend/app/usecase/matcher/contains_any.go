@@ -8,7 +8,7 @@ var _ Keyword = (*ContainsAny)(nil)
 type ContainsAny struct {
 }
 
-// IsMatch matches any word against the input.
+// IsMatch checks if the input contains any word.
 func (c ContainsAny) IsMatch(words []string, input string) bool {
 	if input == "" {
 		return false

@@ -1,6 +1,11 @@
 package matcher
 
-// KeywordType represents the type of keyword matching.
+import (
+	"errors"
+	"fmt"
+)
+
+// KeywordType represents keyword matching type.
 type KeywordType int
 
 const (
@@ -8,19 +13,19 @@ const (
 	ContainsAnyKeyword
 )
 
-// Keyword matches the slice of words against the input.
+// Keyword matches a list of words against an input.
 type Keyword interface {
 	IsMatch(words []string, input string) bool
 }
 
 // NewKeyword creates Keyword.
-func NewKeyword(keywordType KeywordType) Keyword {
+func NewKeyword(keywordType KeywordType) (Keyword, error) {
 	switch keywordType {
 	case ContainsAllKeywords:
-		return ContainsAll{}
+		return new(ContainsAll), nil
 	case ContainsAnyKeyword:
-		return ContainsAny{}
+		return new(ContainsAny), nil
 	default:
-		return ContainsAll{}
+		return nil, errors.New(fmt.Sprintf("keyword matching type %d not recognized", keywordType))
 	}
 }
