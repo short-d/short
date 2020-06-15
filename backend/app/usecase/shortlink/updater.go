@@ -13,7 +13,7 @@ import (
 
 var _ Updater = (*UpdaterPersist)(nil)
 
-// ErrShortLinkNotFound means that a queried shortlink was not found
+// ErrShortLinkNotFound represents the failure of finding certain short link in the data store
 var ErrShortLinkNotFound = errors.New("short link not found")
 
 // Updater modifies the properties of existing short links.
