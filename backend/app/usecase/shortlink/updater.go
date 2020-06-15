@@ -24,7 +24,7 @@ type Updater interface {
 // UpdaterPersist persists the mutated short link in the data store..
 type UpdaterPersist struct {
 	shortLinkRepo             repository.ShortLink
-	userShortLinkRelationRepo repository.UserShortLink
+	userShortLinkRepo repository.UserShortLink
 	keyGen                    keygen.KeyGenerator
 	longLinkValidator         validator.LongLink
 	aliasValidator            validator.CustomAlias
