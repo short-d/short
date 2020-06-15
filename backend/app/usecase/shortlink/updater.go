@@ -5,7 +5,6 @@ import (
 
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/risk"
 	"github.com/short-d/short/backend/app/usecase/validator"
@@ -25,7 +24,6 @@ type Updater interface {
 type UpdaterPersist struct {
 	shortLinkRepo     repository.ShortLink
 	userShortLinkRepo repository.UserShortLink
-	keyGen            keygen.KeyGenerator
 	longLinkValidator validator.LongLink
 	aliasValidator    validator.CustomAlias
 	timer             timer.Timer
@@ -94,7 +92,6 @@ func (u *UpdaterPersist) updateLongLink(shortLink, update entity.ShortLink) enti
 func NewUpdaterPersist(
 	shortLinkRepo repository.ShortLink,
 	userShortLinkRepo repository.UserShortLink,
-	keyGen keygen.KeyGenerator,
 	longLinkValidator validator.LongLink,
 	aliasValidator validator.CustomAlias,
 	timer timer.Timer,
@@ -103,7 +100,6 @@ func NewUpdaterPersist(
 	return UpdaterPersist{
 		shortLinkRepo,
 		userShortLinkRepo,
-		keyGen,
 		longLinkValidator,
 		aliasValidator,
 		timer,

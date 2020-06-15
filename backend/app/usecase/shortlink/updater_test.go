@@ -9,7 +9,6 @@ import (
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
-	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/risk"
 	"github.com/short-d/short/backend/app/usecase/validator"
@@ -26,7 +25,6 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 	testCases := []struct {
 		name               string
 		alias              string
-		availableKeys      []keygen.Key
 		shortlinks         shortLinks
 		user               entity.User
 		update             entity.ShortLink
@@ -185,9 +183,6 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				testCase.relationUsers,
 				testCase.relationShortLinks,
 			)
-			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
-			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
-			assert.Equal(t, nil, err)
 
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
@@ -196,7 +191,6 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			updater := NewUpdaterPersist(
 				&shortLinkRepo,
 				&userShortLinkRepo,
-				keyGen,
 				longLinkValidator,
 				aliasValidator,
 				tm,
