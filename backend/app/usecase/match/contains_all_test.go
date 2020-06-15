@@ -1,4 +1,4 @@
-package matcher
+package match
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 	"github.com/short-d/app/fw/assert"
 )
 
-func TestContainsAny_IsMatch(t *testing.T) {
+func TestContainsAll_IsMatch(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
@@ -55,7 +55,7 @@ func TestContainsAny_IsMatch(t *testing.T) {
 			name:     "in between match",
 			words:    []string{"a", "b", "c"},
 			input:    "xcz",
-			expected: true,
+			expected: false,
 		},
 	}
 	for _, testCase := range testCases {
@@ -63,10 +63,10 @@ func TestContainsAny_IsMatch(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			containsAny, err := NewKeyword(ContainsAnyKeyword)
+			containsAll, err := NewKeyword(ContainsAllKeywords)
 
 			assert.Equal(t, nil, err)
-			assert.Equal(t, testCase.expected, containsAny.IsMatch(testCase.words, testCase.input))
+			assert.Equal(t, testCase.expected, containsAll.IsMatch(testCase.words, testCase.input))
 		})
 	}
 }
