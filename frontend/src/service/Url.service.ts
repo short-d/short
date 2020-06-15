@@ -38,7 +38,7 @@ const gqlCreateURL = `
 `;
 
 export class UrlService {
-  private graphQLBaseURL: string;
+  private readonly graphQLBaseURL: string;
 
   constructor(
     private authService: AuthService,

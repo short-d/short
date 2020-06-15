@@ -3,10 +3,10 @@ import { EnvService } from '../Env.service';
 import { GraphQLService, IGraphQLRequestError } from '../GraphQL.service';
 import { Url } from '../../entity/Url';
 import { getErrorCodes } from '../GraphQLError';
-import { IShortGraphQLQuery, IShortGraphQLShortLink } from './Schema';
+import { IShortGraphQLQuery, IShortGraphQLShortLink } from './schema';
 
 export class ShortLinkGraphQLApi {
-  private baseURL: string;
+  private readonly baseURL: string;
 
   constructor(
     private authService: AuthService,

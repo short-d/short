@@ -11,7 +11,7 @@ import {
   IShortGraphQLChangeLog,
   IShortGraphQLMutation,
   IShortGraphQLQuery
-} from './Schema';
+} from './schema';
 
 export class ChangeLogGraphQLApi {
   private readonly baseURL: string;
