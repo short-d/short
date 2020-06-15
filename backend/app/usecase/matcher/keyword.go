@@ -1,7 +1,6 @@
 package matcher
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -26,6 +25,6 @@ func NewKeyword(keywordType KeywordType) (Keyword, error) {
 	case ContainsAnyKeyword:
 		return new(ContainsAny), nil
 	default:
-		return nil, errors.New(fmt.Sprintf("keyword matching type %d not recognized", keywordType))
+		return nil, fmt.Errorf("keyword matching type %d not recognized", keywordType)
 	}
 }
