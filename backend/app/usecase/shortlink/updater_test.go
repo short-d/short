@@ -32,7 +32,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		update    entity.ShortLink
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
-		expHasErr          bool
+		expectedHasErr          bool
 		expectedShortLink  entity.ShortLink
 	}{
 		{
