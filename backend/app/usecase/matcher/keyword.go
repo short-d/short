@@ -8,7 +8,9 @@ import (
 type KeywordType int
 
 const (
+	// ContainsAllKeywords represents ContainsAll type
 	ContainsAllKeywords KeywordType = iota
+	// ContainsAnyKeyword represents ContainsAny type
 	ContainsAnyKeyword
 )
 
