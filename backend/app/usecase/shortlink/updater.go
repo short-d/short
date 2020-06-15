@@ -21,7 +21,7 @@ type Updater interface {
 	UpdateShortLink(oldAlias string, update entity.ShortLink, user entity.User) (entity.ShortLink, error)
 }
 
-// UpdaterPersist persists the given changes to a short link in the database store.
+// UpdaterPersist persists the mutated short link in the data store..
 type UpdaterPersist struct {
 	shortLinkRepo             repository.ShortLink
 	userShortLinkRelationRepo repository.UserShortLink
