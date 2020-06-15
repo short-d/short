@@ -19,13 +19,13 @@ func TestContainsAll_IsMatch(t *testing.T) {
 			name:     "empty words and empty input",
 			words:    nil,
 			input:    "",
-			expected: false,
+			expected: true,
 		},
 		{
 			name:     "empty words",
 			words:    nil,
 			input:    "a",
-			expected: false,
+			expected: true,
 		},
 		{
 			name:     "empty input",
