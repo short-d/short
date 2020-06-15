@@ -45,6 +45,33 @@ WHERE "%s"=$4;`,
 	return s.GetShortLinkByAlias(alias)
 }
 
+// UpdateTwitterTags updates Twitter meta tags for a given short link.
+func (s *ShortLinkSql) UpdateTwitterTags(alias string, twitterTags metatag.Twitter) (entity.ShortLink, error) {
+	statement := fmt.Sprintf(`
+UPDATE "%s"
+SET "%s"=$1, "%s"=$2, "%s"=$3
+WHERE "%s"=$4;`,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnTwitterTitle,
+		table.ShortLink.ColumnTwitterDescription,
+		table.ShortLink.ColumnTwitterImageURL,
+		table.ShortLink.ColumnAlias,
+	)
+
+	_, err := s.db.Exec(
+		statement,
+		twitterTags.Title,
+		twitterTags.Description,
+		twitterTags.ImageURL,
+		alias,
+	)
+	if err != nil {
+		return entity.ShortLink{}, err
+	}
+
+	return s.GetShortLinkByAlias(alias)
+}
+
 // IsAliasExist checks whether a given alias exist in short_link table.
 func (s ShortLinkSql) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
