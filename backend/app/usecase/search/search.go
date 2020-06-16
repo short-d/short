@@ -2,9 +2,12 @@ package search
 
 import (
 	"errors"
+	"strings"
 	"time"
 
+	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/usecase/matcher"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/search/order"
 )
@@ -14,6 +17,7 @@ type Search struct {
 	shortLinkRepo     repository.ShortLink
 	userShortLinkRepo repository.UserShortLink
 	timeout           time.Duration
+	logger            logger.Logger
 }
 
 // Result represents the result of a search query.
@@ -33,6 +37,8 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 		go func() {
 			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
 			if err != nil {
+				// TODO(issue#865): Handle errors of Search API
+				s.logger.Error(err)
 				resultCh <- Result{}
 				return
 			}
@@ -65,12 +71,91 @@ func (s Search) searchResource(resource Resource, orderBy order.Order, query Que
 	}
 }
 
+// TODO(issue#866): Simplify searchShortLink function
 func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (Result, error) {
-	return Result{}, nil
+	if query.User == nil {
+		s.logger.Error(errors.New("user not provided"))
+		return Result{}, nil
+	}
+
+	shortLinks, err := s.getShortLinkByUser(*query.User)
+	if err != nil {
+		return Result{}, err
+	}
+
+	var matchedAliasByAll, matchedAliasByAny, matchedLongLinkByAll, matchedLongLinkByAny []entity.ShortLink
+	keywords := getKeywords(query.Query)
+	for _, shortLink := range shortLinks {
+		if matcher.ContainsAll(keywords, shortLink.Alias) {
+			matchedAliasByAll = append(matchedAliasByAll, shortLink)
+			continue
+		}
+		if matcher.ContainsAny(keywords, shortLink.Alias) {
+			matchedAliasByAny = append(matchedAliasByAny, shortLink)
+			continue
+		}
+		if matcher.ContainsAll(keywords, shortLink.LongLink) {
+			matchedLongLinkByAll = append(matchedLongLinkByAll, shortLink)
+			continue
+		}
+		if matcher.ContainsAny(keywords, shortLink.LongLink) {
+			matchedLongLinkByAny = append(matchedLongLinkByAny, shortLink)
+		}
+	}
+
+	sortShortLinks(orderBy, matchedAliasByAll, matchedAliasByAny, matchedLongLinkByAll, matchedLongLinkByAny)
+
+	mergedShortLinks := mergeShortLinks(
+		matchedAliasByAll,
+		matchedAliasByAny,
+		matchedLongLinkByAll,
+		matchedLongLinkByAny,
+	)
+
+	filteredShortLinks := filterShortLinks(mergedShortLinks, filter)
+
+	return Result{
+		shortLinks: filteredShortLinks,
+		users:      nil,
+	}, nil
 }
 
 func (s Search) searchUser(query Query, orderBy order.Order, filter Filter) (Result, error) {
 	return Result{}, nil
+}
+
+func (s Search) getShortLinkByUser(user entity.User) ([]entity.ShortLink, error) {
+	aliases, err := s.userShortLinkRepo.FindAliasesByUser(user)
+	if err != nil {
+		return []entity.ShortLink{}, err
+	}
+
+	return s.shortLinkRepo.GetShortLinksByAliases(aliases)
+}
+
+func getKeywords(query string) []string {
+	return strings.Split(query, " ")
+}
+
+func filterShortLinks(shortLinks []entity.ShortLink, filter Filter) []entity.ShortLink {
+	if len(shortLinks) > filter.MaxResults {
+		shortLinks = shortLinks[:filter.MaxResults]
+	}
+	return shortLinks
+}
+
+func sortShortLinks(orderBy order.Order, shortLinkLists ...[]entity.ShortLink) {
+	for _, shortLinks := range shortLinkLists {
+		orderBy.ArrangeShortLinks(shortLinks)
+	}
+}
+
+func mergeShortLinks(shortLinkLists ...[]entity.ShortLink) []entity.ShortLink {
+	var merged []entity.ShortLink
+	for _, shortLinks := range shortLinkLists {
+		merged = append(merged, shortLinks...)
+	}
+	return merged
 }
 
 func toOrders(ordersBy []order.By) []order.Order {
@@ -97,10 +182,12 @@ func NewSearch(
 	shortLinkRepo repository.ShortLink,
 	userShortLinkRepo repository.UserShortLink,
 	timeout time.Duration,
+	logger logger.Logger,
 ) Search {
 	return Search{
 		shortLinkRepo:     shortLinkRepo,
 		userShortLinkRepo: userShortLinkRepo,
 		timeout:           timeout,
+		logger:            logger,
 	}
 }
