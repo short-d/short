@@ -37,6 +37,7 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 		go func() {
 			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
 			if err != nil {
+				// // TODO(issue#865): Handle errors of Search API
 				s.logger.Error(err)
 				resultCh <- Result{}
 				return
@@ -82,7 +83,7 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 	}
 
 	var matchedAliasByAll, matchedAliasByAny, matchedLongLinkByAll, matchedLongLinkByAny []entity.ShortLink
-	keywords := getKeywords(query.Query, " ")
+	keywords := getKeywords(query.Query)
 	for _, shortLink := range shortLinks {
 		if matcher.ContainsAll(keywords, shortLink.Alias) {
 			matchedAliasByAll = append(matchedAliasByAll, shortLink)
@@ -125,8 +126,8 @@ func (s Search) getShortLinkByUser(user entity.User) ([]entity.ShortLink, error)
 	return s.shortLinkRepo.GetShortLinksByAliases(aliases)
 }
 
-func getKeywords(query, separator string) []string {
-	return strings.Split(query, separator)
+func getKeywords(query string) []string {
+	return strings.Split(query, " ")
 }
 
 func filterShortLinks(shortLinks []entity.ShortLink, filter Filter) []entity.ShortLink {
