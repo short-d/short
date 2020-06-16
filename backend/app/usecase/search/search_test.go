@@ -4,9 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/short-d/app/fw/logger"
-
 	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/search/order"
