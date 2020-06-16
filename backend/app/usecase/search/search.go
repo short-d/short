@@ -88,11 +88,17 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 	for _, shortLink := range shortLinks {
 		if matcher.ContainsAll(keywords, shortLink.Alias) {
 			matchedAliasByAll = append(matchedAliasByAll, shortLink)
-		} else if matcher.ContainsAny(keywords, shortLink.Alias) {
+			continue
+		} 
+		if matcher.ContainsAny(keywords, shortLink.Alias) {
 			matchedAliasByAny = append(matchedAliasByAny, shortLink)
-		} else if matcher.ContainsAll(keywords, shortLink.LongLink) {
+			continue
+		}
+		if matcher.ContainsAll(keywords, shortLink.LongLink) {
 			matchedLongLinkByAll = append(matchedLongLinkByAll, shortLink)
-		} else if matcher.ContainsAny(keywords, shortLink.LongLink) {
+			continue
+		}
+		if matcher.ContainsAny(keywords, shortLink.LongLink) {
 			matchedLongLinkByAny = append(matchedLongLinkByAny, shortLink)
 		}
 	}
