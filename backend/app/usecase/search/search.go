@@ -37,7 +37,7 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 		go func() {
 			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
 			if err != nil {
-				// // TODO(issue#865): Handle errors of Search API
+				// TODO(issue#865): Handle errors of Search API
 				s.logger.Error(err)
 				resultCh <- Result{}
 				return
@@ -71,6 +71,7 @@ func (s Search) searchResource(resource Resource, orderBy order.Order, query Que
 	}
 }
 
+// TODO(issue#866): Simplify searchShortLink function
 func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (Result, error) {
 	if query.User == nil {
 		s.logger.Error(errors.New("user not provided"))
