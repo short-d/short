@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/short-d/app/fw/logger"
+
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/repository"
@@ -22,7 +24,6 @@ func TestSearch(t *testing.T) {
 		filter             Filter
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
-		expectedHasErr     bool
 		expectedResult     Result
 	}{
 		{
@@ -97,84 +98,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedHasErr: true,
-		},
-		{
-			name: "search without query",
-			shortLinks: shortLinks{
-				"git-google": entity.ShortLink{
-					Alias:    "git-google",
-					LongLink: "http://github.com/google",
-				},
-				"google": entity.ShortLink{
-					Alias:    "google",
-					LongLink: "https://google.com",
-				},
-				"short": entity.ShortLink{
-					Alias:    "short",
-					LongLink: "https://short-d.com",
-				},
-				"facebook": entity.ShortLink{
-					Alias:    "facebook",
-					LongLink: "https://facebook.com",
-				},
-			},
-			Query: Query{
-				User: &entity.User{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-				},
-			},
-			filter: Filter{
-				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
-			},
-			relationUsers: []entity.User{
-				{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-				},
-				{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-				},
-				{
-					ID:    "beta",
-					Email: "beta@example.com",
-				},
-				{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-				},
-				{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-				},
-			},
-			relationShortLinks: []entity.ShortLink{
-				{
-					Alias:    "git-google",
-					LongLink: "http://github.com/google",
-				},
-				{
-					Alias:    "google",
-					LongLink: "https://google.com",
-				},
-				{
-					Alias:    "google",
-					LongLink: "https://google.com",
-				},
-				{
-					Alias:    "short",
-					LongLink: "https://short-d.com",
-				},
-				{
-					Alias:    "facebook",
-					LongLink: "https://facebook.com",
-				},
-			},
-			expectedHasErr: true,
+			expectedResult: Result{},
 		},
 		{
 			name: "valid search",
@@ -443,13 +367,13 @@ func TestSearch(t *testing.T) {
 			shortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
 			timeout := time.Second
 
-			search := NewSearch(&shortLinkRepo, &userShortLinkRepo, timeout)
+			entryRepo := logger.NewEntryRepoFake()
+			lg, err := logger.NewFake(logger.LogOff, &entryRepo)
+			assert.Equal(t, nil, err)
+
+			search := NewSearch(&shortLinkRepo, &userShortLinkRepo, timeout, lg)
 
 			result, err := search.Search(testCase.Query, testCase.filter)
-			if testCase.expectedHasErr {
-				assert.NotEqual(t, nil, err)
-				return
-			}
 
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedResult, result)
