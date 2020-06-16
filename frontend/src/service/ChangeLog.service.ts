@@ -1,5 +1,5 @@
 import { ChangeLog } from '../entity/ChangeLog';
-import { ChangeLogGraphQLApi } from './ChangeLogGraphQL.api';
+import { ChangeLogGraphQLApi } from './shortGraphQL/ChangeLogGraphQL.api';
 import { ErrorService, Err } from './Error.service';
 import { Change } from '../entity/Change';
 

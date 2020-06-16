@@ -7,9 +7,9 @@ interface Props {
 export class ViewChangeLogButton extends Component<Props> {
   render() {
     return (
-      <div className={'row view-changelog'} onClick={this.props.onClick}>
-        <a href={'/#'}>View Changelog</a>
-      </div>
+      <a href={'/#'} onClick={this.props.onClick}>
+        View Changelog
+      </a>
     );
   }
 }
