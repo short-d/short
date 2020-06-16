@@ -89,7 +89,7 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 		if matcher.ContainsAll(keywords, shortLink.Alias) {
 			matchedAliasByAll = append(matchedAliasByAll, shortLink)
 			continue
-		} 
+		}
 		if matcher.ContainsAny(keywords, shortLink.Alias) {
 			matchedAliasByAny = append(matchedAliasByAny, shortLink)
 			continue
