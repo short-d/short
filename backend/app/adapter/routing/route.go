@@ -105,5 +105,10 @@ func NewShort(
 			Path:   "/analytics/track/:event",
 			Handle: analytics.TrackHandle(instrumentationFactory),
 		},
+		{
+			Method: "POST",
+			Path:   "/api/search",
+			Handle: SearchHandle(),
+		},
 	}
 }

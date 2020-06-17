@@ -107,6 +107,12 @@ func FeatureHandle(
 	}
 }
 
+func SearchHandle() router.Handle {
+	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
+		w.Write([]byte("hello"))
+	}
+}
+
 func getUser(r *http.Request, authenticator authenticator.Authenticator) *entity.User {
 	authToken := getBearerToken(r)
 	user, err := authenticator.GetUser(authToken)
