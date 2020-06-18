@@ -221,10 +221,10 @@ func InjectRoutingService(
 	kgsRPCConfig provider.KgsRPCConfig,
 	webFrontendURL provider.WebFrontendURL,
 	tokenValidDuration provider.TokenValidDuration,
+	searchTimeout provider.SearchTimeout,
 	dataDogAPIKey provider.DataDogAPIKey,
 	segmentAPIKey provider.SegmentAPIKey,
 	ipStackAPIKey provider.IPStackAPIKey,
-	searchTimeout provider.SearchAPITimeout,
 ) (service.Routing, error) {
 	wire.Build(
 		wire.Bind(new(timer.Timer), new(timer.System)),
@@ -243,7 +243,7 @@ func InjectRoutingService(
 		googleAPISet,
 		keyGenSet,
 		featureDecisionSet,
-		provider.NewSearchAPITimeout,
+		provider.NewSearchTimeout,
 
 		service.NewRouting,
 		webreq.NewHTTPClient,

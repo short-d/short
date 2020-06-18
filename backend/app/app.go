@@ -33,7 +33,7 @@ type ServiceConfig struct {
 	KgsHostname          string
 	KgsPort              int
 	AuthTokenLifetime    time.Duration
-	SearchAPITimeout     time.Duration
+	SearchTimeout        time.Duration
 	DataDogAPIKey        string
 	SegmentAPIKey        string
 	IPStackAPIKey        string
@@ -108,10 +108,10 @@ func Start(
 		kgsRPCConfig,
 		provider.WebFrontendURL(config.WebFrontendURL),
 		provider.TokenValidDuration(config.AuthTokenLifetime),
+		provider.SearchTimeout(config.SearchTimeout),
 		dataDogAPIKey,
 		segmentAPIKey,
 		ipStackAPIKey,
-		provider.SearchAPITimeout(config.SearchAPITimeout),
 	)
 	if err != nil {
 		panic(err)

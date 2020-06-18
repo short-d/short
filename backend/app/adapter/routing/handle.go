@@ -108,8 +108,8 @@ func FeatureHandle(
 	}
 }
 
-// SearchAPIHandle fetches resources under certain criterias.
-func SearchAPIHandle(
+// SearchHandle fetches resources under certain criterias.
+func SearchHandle(
 	search search.Search,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {

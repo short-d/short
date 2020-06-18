@@ -41,7 +41,7 @@ func main() {
 		GraphQLAPIPort       int           `env:"GRAPHQL_API_PORT" default:"8080"`
 		HTTPAPIPort          int           `env:"HTTP_API_PORT" default:"80"`
 		AuthTokenLifeTime    time.Duration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
-		SearchAPITimeout     time.Duration `env:"SEARCH_API_TIMEOUT" default:"1s"`
+		SearchTimeout        time.Duration `env:"SEARCH_TIMEOUT" default:"1s"`
 		DataDogAPIKey        string        `env:"DATA_DOG_API_KEY" default:""`
 		SegmentAPIKey        string        `env:"SEGMENT_API_KEY" default:""`
 		IPStackAPIKey        string        `env:"IP_STACK_API_KEY" default:""`
@@ -86,7 +86,7 @@ func main() {
 		KgsHostname:          config.KgsHostname,
 		KgsPort:              config.KgsPort,
 		AuthTokenLifetime:    config.AuthTokenLifeTime,
-		SearchAPITimeout:     config.SearchAPITimeout,
+		SearchTimeout:        config.SearchTimeout,
 		DataDogAPIKey:        config.DataDogAPIKey,
 		SegmentAPIKey:        config.SegmentAPIKey,
 		IPStackAPIKey:        config.IPStackAPIKey,

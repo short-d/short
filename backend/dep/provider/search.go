@@ -2,10 +2,10 @@ package provider
 
 import "time"
 
-// SearchAPITimeout represents timeout duration of a search request.
-type SearchAPITimeout time.Duration
+// SearchTimeout represents timeout duration of a search request.
+type SearchTimeout time.Duration
 
-// NewSearchAPITimeout creates Duration.
-func NewSearchAPITimeout(timeout SearchAPITimeout) time.Duration {
+// NewSearchTimeout creates Duration.
+func NewSearchTimeout(timeout SearchTimeout) time.Duration {
 	return time.Duration(timeout)
 }
