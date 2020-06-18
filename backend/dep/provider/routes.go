@@ -10,6 +10,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/routing"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/search"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
@@ -27,6 +28,7 @@ func NewShortRoutes(
 	facebookSSO facebook.SingleSignOn,
 	googleSSO google.SingleSignOn,
 	authenticator authenticator.Authenticator,
+	search search.Search,
 ) []router.Route {
 	return routing.NewShort(
 		instrumentationFactory,
@@ -38,5 +40,6 @@ func NewShortRoutes(
 		facebookSSO,
 		googleSSO,
 		authenticator,
+		search,
 	)
 }

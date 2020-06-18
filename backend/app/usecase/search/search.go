@@ -14,10 +14,10 @@ import (
 
 // Search finds different types of resources matching certain criteria and sort them based on predefined orders.
 type Search struct {
+	logger            logger.Logger
 	shortLinkRepo     repository.ShortLink
 	userShortLinkRepo repository.UserShortLink
 	timeout           time.Duration
-	logger            logger.Logger
 }
 
 // Result represents the result of a search query.
@@ -179,10 +179,10 @@ func mergeResults(results []Result) Result {
 
 // NewSearch creates Search
 func NewSearch(
+	logger logger.Logger,
 	shortLinkRepo repository.ShortLink,
 	userShortLinkRepo repository.UserShortLink,
 	timeout time.Duration,
-	logger logger.Logger,
 ) Search {
 	return Search{
 		shortLinkRepo:     shortLinkRepo,

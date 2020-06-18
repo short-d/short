@@ -12,6 +12,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/routing/analytics"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/search"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
 )
@@ -27,6 +28,7 @@ func NewShort(
 	facebookSSO facebook.SingleSignOn,
 	googleSSO google.SingleSignOn,
 	authenticator authenticator.Authenticator,
+	search search.Search,
 ) []router.Route {
 	frontendURL, err := netURL.Parse(webFrontendURL)
 	if err != nil {
@@ -104,6 +106,11 @@ func NewShort(
 			Method: "GET",
 			Path:   "/analytics/track/:event",
 			Handle: analytics.TrackHandle(instrumentationFactory),
+		},
+		{
+			Method: "POST",
+			Path:   "/api/search",
+			Handle: SearchHandle(search),
 		},
 	}
 }

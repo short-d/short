@@ -458,7 +458,7 @@ func TestSearch(t *testing.T) {
 			lg, err := logger.NewFake(logger.LogOff, &entryRepo)
 			assert.Equal(t, nil, err)
 
-			search := NewSearch(&shortLinkRepo, &userShortLinkRepo, timeout, lg)
+			search := NewSearch(lg, &shortLinkRepo, &userShortLinkRepo, timeout)
 
 			result, err := search.Search(testCase.Query, testCase.filter)
 

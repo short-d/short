@@ -12,6 +12,7 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
+	"github.com/short-d/short/backend/app/usecase/search"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
 )
@@ -104,6 +105,15 @@ func FeatureHandle(
 		}
 
 		w.Write(body)
+	}
+}
+
+// SearchHandle fetches resources under certain criterias.
+func SearchHandle(
+	search search.Search,
+) router.Handle {
+	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
+		w.Write([]byte("not implemented"))
 	}
 }
 
