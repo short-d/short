@@ -111,7 +111,7 @@ func Start(
 		dataDogAPIKey,
 		segmentAPIKey,
 		ipStackAPIKey,
-		config.SearchAPITimeout,
+		provider.SearchAPITimeout(config.SearchAPITimeout),
 	)
 	if err != nil {
 		panic(err)

@@ -4,7 +4,6 @@ package dep
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
@@ -225,7 +224,7 @@ func InjectRoutingService(
 	dataDogAPIKey provider.DataDogAPIKey,
 	segmentAPIKey provider.SegmentAPIKey,
 	ipStackAPIKey provider.IPStackAPIKey,
-	searchTimeout time.Duration,
+	searchTimeout provider.SearchAPITimeout,
 ) (service.Routing, error) {
 	wire.Build(
 		wire.Bind(new(timer.Timer), new(timer.System)),
@@ -244,6 +243,7 @@ func InjectRoutingService(
 		googleAPISet,
 		keyGenSet,
 		featureDecisionSet,
+		provider.NewSearchAPITimeout,
 
 		service.NewRouting,
 		webreq.NewHTTPClient,

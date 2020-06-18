@@ -108,7 +108,7 @@ func FeatureHandle(
 	}
 }
 
-// SearchAPIHandle responds to search requests.
+// SearchAPIHandle fetches resources under certain criterias.
 func SearchAPIHandle(
 	search search.Search,
 ) router.Handle {
