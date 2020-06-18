@@ -33,6 +33,7 @@ type ServiceConfig struct {
 	KgsHostname          string
 	KgsPort              int
 	AuthTokenLifetime    time.Duration
+	SearchAPITimeout     time.Duration
 	DataDogAPIKey        string
 	SegmentAPIKey        string
 	IPStackAPIKey        string
@@ -110,6 +111,7 @@ func Start(
 		dataDogAPIKey,
 		segmentAPIKey,
 		ipStackAPIKey,
+		config.SearchAPITimeout,
 	)
 	if err != nil {
 		panic(err)

@@ -6,6 +6,8 @@ import (
 	netURL "net/url"
 	"strings"
 
+	"github.com/short-d/short/backend/app/usecase/search"
+
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/adapter/request"
@@ -107,9 +109,12 @@ func FeatureHandle(
 	}
 }
 
-func SearchHandle() router.Handle {
+// SearchAPIHandle responds to the search api endpoint requests.
+func SearchAPIHandle(
+	search search.Search,
+) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
-		w.Write([]byte("hello"))
+		w.Write([]byte("not implemented"))
 	}
 }
 

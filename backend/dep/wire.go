@@ -4,6 +4,7 @@ package dep
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
@@ -35,6 +36,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
+	"github.com/short-d/short/backend/app/usecase/search"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/validator"
@@ -223,6 +225,7 @@ func InjectRoutingService(
 	dataDogAPIKey provider.DataDogAPIKey,
 	segmentAPIKey provider.SegmentAPIKey,
 	ipStackAPIKey provider.IPStackAPIKey,
+	searchTimeout time.Duration,
 ) (service.Routing, error) {
 	wire.Build(
 		wire.Bind(new(timer.Timer), new(timer.System)),
@@ -266,6 +269,7 @@ func InjectRoutingService(
 		sso.NewAccountLinkerFactory,
 		sso.NewFactory,
 		shortlink.NewRetrieverPersist,
+		search.NewSearch,
 		provider.NewShortRoutes,
 	)
 	return service.Routing{}, nil

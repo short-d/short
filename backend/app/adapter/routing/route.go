@@ -3,6 +3,8 @@ package routing
 import (
 	netURL "net/url"
 
+	"github.com/short-d/short/backend/app/usecase/search"
+
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/adapter/facebook"
@@ -27,6 +29,7 @@ func NewShort(
 	facebookSSO facebook.SingleSignOn,
 	googleSSO google.SingleSignOn,
 	authenticator authenticator.Authenticator,
+	search search.Search,
 ) []router.Route {
 	frontendURL, err := netURL.Parse(webFrontendURL)
 	if err != nil {
@@ -108,7 +111,7 @@ func NewShort(
 		{
 			Method: "POST",
 			Path:   "/api/search",
-			Handle: SearchHandle(),
+			Handle: SearchAPIHandle(search),
 		},
 	}
 }
