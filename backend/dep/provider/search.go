@@ -11,7 +11,7 @@ import (
 // SearchTimeout represents timeout duration of a search request.
 type SearchTimeout time.Duration
 
-// NewSearch creates Search with its dependencies.
+// NewSearch creates Search given its dependencies.
 func NewSearch(
 	logger logger.Logger,
 	shortLinkRepo repository.ShortLink,
