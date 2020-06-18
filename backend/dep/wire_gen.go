@@ -36,7 +36,6 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
-	"github.com/short-d/short/backend/app/usecase/search"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/validator"
@@ -160,9 +159,8 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	googleSSOSql := sqldb.NewGoogleSSOSql(sqlDB, loggerLogger)
 	googleAccountLinker := provider.NewGoogleAccountLinker(accountLinkerFactory, googleSSOSql)
 	googleSingleSignOn := provider.NewGoogleSSO(factory, googleIdentityProvider, googleAccount, googleAccountLinker)
-	duration := provider.NewSearchTimeout(searchTimeout)
-	searchSearch := search.NewSearch(shortLinkSql, userShortLinkSQL, duration, loggerLogger)
-	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticator, searchSearch)
+	search := provider.NewSearch(loggerLogger, shortLinkSql, userShortLinkSQL, searchTimeout)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticator, search)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
 }

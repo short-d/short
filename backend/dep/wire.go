@@ -35,7 +35,6 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
-	"github.com/short-d/short/backend/app/usecase/search"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
 	"github.com/short-d/short/backend/app/usecase/validator"
@@ -243,7 +242,6 @@ func InjectRoutingService(
 		googleAPISet,
 		keyGenSet,
 		featureDecisionSet,
-		provider.NewSearchTimeout,
 
 		service.NewRouting,
 		webreq.NewHTTPClient,
@@ -269,7 +267,7 @@ func InjectRoutingService(
 		sso.NewAccountLinkerFactory,
 		sso.NewFactory,
 		shortlink.NewRetrieverPersist,
-		search.NewSearch,
+		provider.NewSearch,
 		provider.NewShortRoutes,
 	)
 	return service.Routing{}, nil
