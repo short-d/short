@@ -3,7 +3,7 @@ package routing
 import (
 	"encoding/json"
 	"net/http"
-	netURL "net/url"
+	"net/url"
 	"strings"
 
 	"github.com/short-d/app/fw/router"
@@ -22,7 +22,7 @@ func NewLongLink(
 	instrumentationFactory request.InstrumentationFactory,
 	shortLinkRetriever shortlink.Retriever,
 	timer timer.Timer,
-	webFrontendURL netURL.URL,
+	webFrontendURL url.URL,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
 		alias := params["alias"]
@@ -45,7 +45,7 @@ func NewLongLink(
 	}
 }
 
-func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL netURL.URL) {
+func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL url.URL) {
 	webFrontendURL.Path = "/404"
 	http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 }
@@ -69,7 +69,7 @@ func NewSSOSignIn(
 // NewSSOSignInCallback generates Short's authentication token given identity provider's authorization code.
 func NewSSOSignInCallback(
 	singleSignOn sso.SingleSignOn,
-	webFrontendURL netURL.URL,
+	webFrontendURL url.URL,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
 		code := params["code"]

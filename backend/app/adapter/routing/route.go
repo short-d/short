@@ -1,7 +1,7 @@
 package routing
 
 import (
-	netURL "net/url"
+	"net/url"
 
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/timer"
@@ -30,7 +30,7 @@ func NewShort(
 	authenticator authenticator.Authenticator,
 	search search.Search,
 ) []router.Route {
-	frontendURL, err := netURL.Parse(webFrontendURL)
+	frontendURL, err := url.Parse(webFrontendURL)
 	if err != nil {
 		panic(err)
 	}
