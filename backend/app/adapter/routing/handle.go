@@ -111,8 +111,14 @@ func FeatureHandle(
 // SearchHandle fetches resources under certain criterias.
 func SearchHandle(
 	search search.Search,
+	authenticator authenticator.Authenticator,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
+		//user := getUser(r, authenticator)
+		//if user == nil {
+		//	w.Write([]byte("user not logged in"))
+		//}
+
 		w.Write([]byte("not implemented"))
 	}
 }
