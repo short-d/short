@@ -2,6 +2,7 @@ package routing
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	netURL "net/url"
 	"strings"
@@ -110,7 +111,7 @@ func FeatureHandle(
 
 // SearchHandle fetches resources under certain criterias.
 func SearchHandle(
-	search search.Search,
+	searcher search.Search,
 	authenticator authenticator.Authenticator,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
@@ -119,7 +120,30 @@ func SearchHandle(
 		//	w.Write([]byte("user not logged in"))
 		//}
 
-		w.Write([]byte("not implemented"))
+		searchRequest, err := readSearchRequest(r)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		query := search.Query{
+			Query: searchRequest.Query,
+			User:  nil,
+		}
+		filter := getFilter(searchRequest)
+
+		result, err := searcher.Search(query, filter)
+
+		fmt.Println(result)
+
+		output, err := json.Marshal(searchRequest)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		w.Header().Set("content-type", "application/json")
+		w.Write(output)
 	}
 }
 
