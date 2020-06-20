@@ -25,7 +25,6 @@ func TestSearch(t *testing.T) {
 		orders             []order.By
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
-		expectedHasError   bool
 		expectedResult     Result
 	}{
 		{
@@ -457,10 +456,6 @@ func TestSearch(t *testing.T) {
 			assert.Equal(t, nil, err)
 
 			result, err := search.Search(testCase.Query, filter)
-			if testCase.expectedHasError {
-				assert.NotEqual(t, nil, err)
-				return
-			}
 
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedResult, result)

@@ -3,9 +3,8 @@ package search
 import (
 	"testing"
 
-	"github.com/short-d/short/backend/app/usecase/search/order"
-
 	"github.com/short-d/app/fw/assert"
+	"github.com/short-d/short/backend/app/usecase/search/order"
 )
 
 func TestCreatedTime_ArrangeShortLinks(t *testing.T) {
