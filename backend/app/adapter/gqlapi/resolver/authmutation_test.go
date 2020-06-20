@@ -11,6 +11,9 @@ import (
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
+	"github.com/short-d/short/backend/app/usecase/authorizer"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
+	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
@@ -219,7 +222,12 @@ func TestUpdateShortLink(t *testing.T) {
 			tm := timer.NewStub(now)
 			changeLogRepo := repository.NewChangeLogFake([]entity.Change{})
 			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
-			changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo)
+
+			fakeRolesRepo := repository.NewUserRoleFake(map[string][]role.Role{})
+			rb := rbac.NewRBAC(fakeRolesRepo)
+			au := authorizer.NewAuthorizer(rb)
+
+			changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo, au)
 
 			tokenizer := crypto.NewTokenizerFake()
 			auth := authenticator.NewAuthenticator(tokenizer, tm, time.Hour)
