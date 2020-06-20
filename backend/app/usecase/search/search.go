@@ -28,14 +28,18 @@ type Result struct {
 
 // Search finds resources based on specified criteria.
 func (s Search) Search(query Query, filter Filter) (Result, error) {
+	if !filter.IsValid() {
+		return Result{}, errors.New("filter is not valid")
+	}
+
 	resultCh := make(chan Result)
 	defer close(resultCh)
 
-	orders := toOrders(filter.OrderedResources)
+	orders := toOrders(filter.Orders)
 
-	for i := range filter.OrderedResources {
+	for i := range filter.Resources {
 		go func() {
-			result, err := s.searchResource(filter.OrderedResources[i].Resource, orders[i], query, filter)
+			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
 			if err != nil {
 				// TODO(issue#865): Handle errors of Search API
 				s.logger.Error(err)
@@ -48,7 +52,7 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 
 	timeout := time.After(s.timeout)
 	var results []Result
-	for i := 0; i < len(filter.OrderedResources); i++ {
+	for i := 0; i < len(filter.Resources); i++ {
 		select {
 		case result := <-resultCh:
 			results = append(results, result)
@@ -158,10 +162,10 @@ func mergeShortLinks(shortLinkLists ...[]entity.ShortLink) []entity.ShortLink {
 	return merged
 }
 
-func toOrders(orderedResources []OrderedResource) []order.Order {
+func toOrders(ordersBy []order.By) []order.Order {
 	var orders []order.Order
-	for _, orderedResource := range orderedResources {
-		orders = append(orders, order.NewOrder(orderedResource.Order))
+	for _, orderBy := range ordersBy {
+		orders = append(orders, order.NewOrder(orderBy))
 	}
 	return orders
 }

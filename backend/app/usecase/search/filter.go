@@ -10,14 +10,23 @@ const (
 	User
 )
 
-// OrderedResource represents a type of searchable objects together with the order.
-type OrderedResource struct {
-	Resource Resource
-	Order    order.By
-}
-
 // Filter represents the filters for a search request.
 type Filter struct {
-	MaxResults       int
-	OrderedResources []OrderedResource
+	MaxResults int
+	Resources  []Resource
+	Orders     []order.By
+}
+
+// IsValid checks if the resources and orders have one-to-one relation.
+func (f *Filter) IsValid() bool {
+	return len(f.Resources) == len(f.Orders)
+}
+
+// NewFilter creates Filter.
+func NewFilter(maxResults int, resources []Resource, orders []order.By) Filter {
+	return Filter{
+		MaxResults: maxResults,
+		Resources:  resources,
+		Orders:     orders,
+	}
 }

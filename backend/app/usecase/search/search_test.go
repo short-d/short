@@ -23,6 +23,7 @@ func TestSearch(t *testing.T) {
 		filter             Filter
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
+		expectedHasError   bool
 		expectedResult     Result
 	}{
 		{
@@ -50,12 +51,8 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				OrderedResources: []OrderedResource{
-					{
-						Resource: ShortLink,
-						Order:    order.ByCreatedTimeASC,
-					},
-				},
+				Resources:  []Resource{ShortLink},
+				Orders:     []order.By{order.ByCreatedTimeASC},
 			},
 			relationUsers: []entity.User{
 				{
@@ -131,12 +128,8 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				OrderedResources: []OrderedResource{
-					{
-						Resource: ShortLink,
-						Order:    order.ByCreatedTimeASC,
-					},
-				},
+				Resources:  []Resource{ShortLink},
+				Orders:     []order.By{order.ByCreatedTimeASC},
 			},
 			relationUsers: []entity.User{
 				{
@@ -196,7 +189,7 @@ func TestSearch(t *testing.T) {
 			},
 		},
 		{
-			name: "no order given",
+			name: "less orders than resources",
 			shortLinks: shortLinks{
 				"git-google": entity.ShortLink{
 					Alias:    "git-google",
@@ -224,11 +217,8 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				OrderedResources: []OrderedResource{
-					{
-						Resource: ShortLink,
-					},
-				},
+				Resources:  []Resource{ShortLink},
+				Orders:     []order.By{},
 			},
 			relationUsers: []entity.User{
 				{
@@ -274,18 +264,8 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: Result{
-				shortLinks: []entity.ShortLink{
-					{
-						Alias:    "git-google",
-						LongLink: "http://github.com/google",
-					},
-					{
-						Alias:    "google",
-						LongLink: "https://google.com",
-					},
-				},
-			},
+			expectedHasError: true,
+			expectedResult:   Result{},
 		},
 		{
 			name: "valid search",
@@ -316,12 +296,8 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				OrderedResources: []OrderedResource{
-					{
-						Resource: ShortLink,
-						Order:    order.ByCreatedTimeASC,
-					},
-				},
+				Resources:  []Resource{ShortLink},
+				Orders:     []order.By{order.ByCreatedTimeASC},
 			},
 			relationUsers: []entity.User{
 				{
@@ -410,12 +386,8 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				OrderedResources: []OrderedResource{
-					{
-						Resource: ShortLink,
-						Order:    order.ByCreatedTimeASC,
-					},
-				},
+				Resources:  []Resource{ShortLink},
+				Orders:     []order.By{order.ByCreatedTimeASC},
 			},
 			relationUsers: []entity.User{
 				{
@@ -495,12 +467,8 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				OrderedResources: []OrderedResource{
-					{
-						Resource: ShortLink,
-						Order:    order.ByCreatedTimeASC,
-					},
-				},
+				Resources:  []Resource{ShortLink},
+				Orders:     []order.By{order.ByCreatedTimeASC},
 			},
 			relationUsers: []entity.User{
 				{
@@ -573,6 +541,10 @@ func TestSearch(t *testing.T) {
 			search := NewSearch(lg, &shortLinkRepo, &userShortLinkRepo, timeout)
 
 			result, err := search.Search(testCase.Query, testCase.filter)
+			if testCase.expectedHasError {
+				assert.NotEqual(t, nil, err)
+				return
+			}
 
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedResult, result)
