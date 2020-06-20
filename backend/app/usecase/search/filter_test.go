@@ -7,7 +7,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/search/order"
 )
 
-func TestCreatedTime_ArrangeShortLinks(t *testing.T) {
+func TestNewFilter(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
