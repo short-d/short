@@ -239,7 +239,6 @@ func TestUpdateShortLink(t *testing.T) {
 			updater := shortlink.NewUpdaterPersist(
 				&shortLinkRepo,
 				&userShortLinkRepo,
-				keyGen,
 				longLinkValidator,
 				aliasValidator,
 				tm,

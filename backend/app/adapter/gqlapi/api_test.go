@@ -55,7 +55,6 @@ func TestGraphQlAPI(t *testing.T) {
 	updater := shortlink.NewUpdaterPersist(
 		&shortLinkRepo,
 		&userShortLinkRepo,
-		keyGen,
 		longLinkValidator,
 		customAliasValidator,
 		tm,
