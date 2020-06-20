@@ -188,6 +188,95 @@ func TestSearch(t *testing.T) {
 			},
 		},
 		{
+			name: "less orders than resources",
+			shortLinks: shortLinks{
+				"git-google": entity.ShortLink{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				"google": entity.ShortLink{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				"facebook": entity.ShortLink{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
+			Query: Query{
+				Query: "google",
+				User: &entity.User{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			filter: Filter{
+				MaxResults: 2,
+				Resources:  []Resource{ShortLink},
+				Orders:     []order.By{},
+			},
+			relationUsers: []entity.User{
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "beta",
+					Email: "beta@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:    "git-google",
+					LongLink: "http://github.com/google",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "google",
+					LongLink: "https://google.com",
+				},
+				{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+				{
+					Alias:    "facebook",
+					LongLink: "https://facebook.com",
+				},
+			},
+			expectedResult: Result{
+				shortLinks: []entity.ShortLink{
+					{
+						Alias:    "git-google",
+						LongLink: "http://github.com/google",
+					},
+					{
+						Alias:    "google",
+						LongLink: "https://google.com",
+					},
+				},
+			},
+		},
+		{
 			name: "valid search",
 			shortLinks: shortLinks{
 				"git-google": entity.ShortLink{

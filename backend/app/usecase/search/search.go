@@ -31,6 +31,9 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 	resultCh := make(chan Result)
 	defer close(resultCh)
 
+	if len(filter.Resources) > len(filter.Orders) {
+		filter.Orders = appendDefaultOrders(filter.Orders, len(filter.Resources)-len(filter.Orders))
+	}
 	orders := toOrders(filter.Orders)
 
 	for i := range filter.Resources {
@@ -156,6 +159,13 @@ func mergeShortLinks(shortLinkLists ...[]entity.ShortLink) []entity.ShortLink {
 		merged = append(merged, shortLinks...)
 	}
 	return merged
+}
+
+func appendDefaultOrders(ordersBy []order.By, size int) []order.By {
+	for i := 0; i < size; i++ {
+		ordersBy = append(ordersBy, order.Default)
+	}
+	return ordersBy
 }
 
 func toOrders(ordersBy []order.By) []order.Order {
