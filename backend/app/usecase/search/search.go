@@ -31,14 +31,11 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 	resultCh := make(chan Result)
 	defer close(resultCh)
 
-	if len(filter.Resources) > len(filter.Orders) {
-		filter.Orders = appendDefaultOrders(filter.Orders, len(filter.Resources)-len(filter.Orders))
-	}
-	orders := toOrders(filter.Orders)
+	orders := toOrders(filter.OrderedResources)
 
-	for i := range filter.Resources {
+	for i := range filter.OrderedResources {
 		go func() {
-			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
+			result, err := s.searchResource(filter.OrderedResources[i].Resource, orders[i], query, filter)
 			if err != nil {
 				// TODO(issue#865): Handle errors of Search API
 				s.logger.Error(err)
@@ -51,7 +48,7 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 
 	timeout := time.After(s.timeout)
 	var results []Result
-	for i := 0; i < len(filter.Resources); i++ {
+	for i := 0; i < len(filter.OrderedResources); i++ {
 		select {
 		case result := <-resultCh:
 			results = append(results, result)
@@ -161,17 +158,10 @@ func mergeShortLinks(shortLinkLists ...[]entity.ShortLink) []entity.ShortLink {
 	return merged
 }
 
-func appendDefaultOrders(ordersBy []order.By, size int) []order.By {
-	for i := 0; i < size; i++ {
-		ordersBy = append(ordersBy, order.Default)
-	}
-	return ordersBy
-}
-
-func toOrders(ordersBy []order.By) []order.Order {
+func toOrders(orderedResources []OrderedResource) []order.Order {
 	var orders []order.Order
-	for _, orderBy := range ordersBy {
-		orders = append(orders, order.NewOrder(orderBy))
+	for _, orderedResource := range orderedResources {
+		orders = append(orders, order.NewOrder(orderedResource.Order))
 	}
 	return orders
 }

@@ -50,8 +50,12 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
+				OrderedResources: []OrderedResource{
+					{
+						Resource: ShortLink,
+						Order:    order.ByCreatedTimeASC,
+					},
+				},
 			},
 			relationUsers: []entity.User{
 				{
@@ -127,8 +131,12 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
+				OrderedResources: []OrderedResource{
+					{
+						Resource: ShortLink,
+						Order:    order.ByCreatedTimeASC,
+					},
+				},
 			},
 			relationUsers: []entity.User{
 				{
@@ -188,7 +196,7 @@ func TestSearch(t *testing.T) {
 			},
 		},
 		{
-			name: "less orders than resources",
+			name: "no order given",
 			shortLinks: shortLinks{
 				"git-google": entity.ShortLink{
 					Alias:    "git-google",
@@ -216,8 +224,11 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{},
+				OrderedResources: []OrderedResource{
+					{
+						Resource: ShortLink,
+					},
+				},
 			},
 			relationUsers: []entity.User{
 				{
@@ -305,8 +316,12 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
+				OrderedResources: []OrderedResource{
+					{
+						Resource: ShortLink,
+						Order:    order.ByCreatedTimeASC,
+					},
+				},
 			},
 			relationUsers: []entity.User{
 				{
@@ -395,8 +410,12 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
+				OrderedResources: []OrderedResource{
+					{
+						Resource: ShortLink,
+						Order:    order.ByCreatedTimeASC,
+					},
+				},
 			},
 			relationUsers: []entity.User{
 				{
@@ -476,8 +495,12 @@ func TestSearch(t *testing.T) {
 			},
 			filter: Filter{
 				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
+				OrderedResources: []OrderedResource{
+					{
+						Resource: ShortLink,
+						Order:    order.ByCreatedTimeASC,
+					},
+				},
 			},
 			relationUsers: []entity.User{
 				{

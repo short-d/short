@@ -10,9 +10,14 @@ const (
 	User
 )
 
+// OrderedResource represents a type of searchable objects together with the order.
+type OrderedResource struct {
+	Resource Resource
+	Order    order.By
+}
+
 // Filter represents the filters for a search request.
 type Filter struct {
-	MaxResults int
-	Resources  []Resource
-	Orders     []order.By
+	MaxResults       int
+	OrderedResources []OrderedResource
 }
