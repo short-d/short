@@ -31,11 +31,11 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 	resultCh := make(chan Result)
 	defer close(resultCh)
 
-	orders := toOrders(filter.Orders)
+	orders := toOrders(filter.orders)
 
-	for i := range filter.Resources {
+	for i := range filter.resources {
 		go func() {
-			result, err := s.searchResource(filter.Resources[i], orders[i], query, filter)
+			result, err := s.searchResource(filter.resources[i], orders[i], query, filter)
 			if err != nil {
 				// TODO(issue#865): Handle errors of Search API
 				s.logger.Error(err)
@@ -48,7 +48,7 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 
 	timeout := time.After(s.timeout)
 	var results []Result
-	for i := 0; i < len(filter.Resources); i++ {
+	for i := 0; i < len(filter.resources); i++ {
 		select {
 		case result := <-resultCh:
 			results = append(results, result)
@@ -138,8 +138,8 @@ func getKeywords(query string) []string {
 }
 
 func filterShortLinks(shortLinks []entity.ShortLink, filter Filter) []entity.ShortLink {
-	if len(shortLinks) > filter.MaxResults {
-		shortLinks = shortLinks[:filter.MaxResults]
+	if len(shortLinks) > filter.maxResults {
+		shortLinks = shortLinks[:filter.maxResults]
 	}
 	return shortLinks
 }
