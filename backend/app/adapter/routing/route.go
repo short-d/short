@@ -9,7 +9,6 @@ import (
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/request"
-	"github.com/short-d/short/backend/app/adapter/routing/analytics"
 	"github.com/short-d/short/backend/app/adapter/routing/handle"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/feature"
@@ -17,10 +16,6 @@ import (
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
 )
-
-type shortRouter struct {
-	routes []router.Route
-}
 
 // NewShort creates HTTP routing table.
 func NewShort(
@@ -39,67 +34,83 @@ func NewShort(
 	if err != nil {
 		panic(err)
 	}
-
-	var shortRouter shortRouter
-
-	shortRouter.addRoute("GET", "/oauth/github/sign-in", handle.NewSSOSignIn(
-		sso.SingleSignOn(githubSSO),
-		webFrontendURL,
-	))
-	shortRouter.addRoute("GET", "/oauth/github/sign-in/callback", handle.NewSSOSignInCallback(
-		sso.SingleSignOn(githubSSO),
-		*frontendURL,
-	))
-	shortRouter.addRoute("GET", "/oauth/github/sign-in/callback", handle.NewSSOSignInCallback(
-		sso.SingleSignOn(githubSSO),
-		*frontendURL,
-	))
-	shortRouter.addRoute("GET", "/oauth/github/sign-in/callback", handle.NewSSOSignInCallback(
-		sso.SingleSignOn(githubSSO),
-		*frontendURL,
-	))
-	shortRouter.addRoute("GET", "/oauth/facebook/sign-in", handle.NewSSOSignIn(
-		sso.SingleSignOn(facebookSSO),
-		webFrontendURL,
-	))
-	shortRouter.addRoute("GET", "/oauth/facebook/sign-in/callback", handle.NewSSOSignInCallback(
-		sso.SingleSignOn(facebookSSO),
-		*frontendURL,
-	))
-	shortRouter.addRoute("GET", "/oauth/google/sign-in", handle.NewSSOSignIn(
-		sso.SingleSignOn(googleSSO),
-		webFrontendURL,
-	))
-	shortRouter.addRoute("GET", "/oauth/google/sign-in/callback", handle.NewSSOSignInCallback(
-		sso.SingleSignOn(googleSSO),
-		*frontendURL,
-	))
-	shortRouter.addRoute("GET", "/r/:alias", handle.NewLongLink(
-		instrumentationFactory,
-		shortLinkRetriever,
-		timer,
-		*frontendURL,
-	))
-	shortRouter.addRoute("GET", "/features/:featureID", handle.Feature(
-		instrumentationFactory,
-		featureDecisionMakerFactory,
-		authenticator,
-	))
-	shortRouter.addRoute("GET", "/analytics/track/:event", analytics.TrackHandle(
-		instrumentationFactory,
-	))
-	shortRouter.addRoute("POST", "/api/search", handle.Search(
-		search,
-	))
-
-	return shortRouter.routes
-}
-
-func (s *shortRouter) addRoute(method, path string, handle router.Handle) []router.Route {
-	s.routes = append(s.routes, router.Route{
-		Method: method,
-		Path:   path,
-		Handle: handle,
-	})
-	return s.routes
+	return []router.Route{
+		{
+			Method: "GET",
+			Path:   "/oauth/github/sign-in",
+			Handle: handle.NewSSOSignIn(
+				sso.SingleSignOn(githubSSO),
+				webFrontendURL,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/oauth/github/sign-in/callback",
+			Handle: handle.NewSSOSignInCallback(
+				sso.SingleSignOn(githubSSO),
+				*frontendURL,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/oauth/facebook/sign-in",
+			Handle: handle.NewSSOSignIn(
+				sso.SingleSignOn(facebookSSO),
+				webFrontendURL,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/oauth/facebook/sign-in/callback",
+			Handle: handle.NewSSOSignInCallback(
+				sso.SingleSignOn(facebookSSO),
+				*frontendURL,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/oauth/google/sign-in",
+			Handle: handle.NewSSOSignIn(
+				sso.SingleSignOn(googleSSO),
+				webFrontendURL,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/oauth/google/sign-in/callback",
+			Handle: handle.NewSSOSignInCallback(
+				sso.SingleSignOn(googleSSO),
+				*frontendURL,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/r/:alias",
+			Handle: handle.NewLongLink(
+				instrumentationFactory,
+				shortLinkRetriever,
+				timer,
+				*frontendURL,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/features/:featureID",
+			Handle: handle.Feature(
+				instrumentationFactory,
+				featureDecisionMakerFactory,
+				authenticator,
+			),
+		},
+		{
+			Method: "GET",
+			Path:   "/analytics/track/:event",
+			Handle: handle.Track(instrumentationFactory),
+		},
+		{
+			Method: "POST",
+			Path:   "/api/search",
+			Handle: handle.Search(search),
+		},
+	}
 }
