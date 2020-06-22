@@ -19,7 +19,7 @@ type ShortLinkSql struct {
 }
 
 // UpdateOpenGraphTags updates OpenGraph meta tags for a given short link.
-func (s *ShortLinkSql) UpdateOpenGraphTags(alias string, openGraphTags metatag.OpenGraph) (entity.ShortLink, error) {
+func (s ShortLinkSql) UpdateOpenGraphTags(alias string, openGraphTags metatag.OpenGraph) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3
@@ -46,7 +46,7 @@ WHERE "%s"=$4;`,
 }
 
 // UpdateTwitterTags updates Twitter meta tags for a given short link.
-func (s *ShortLinkSql) UpdateTwitterTags(alias string, twitterTags metatag.Twitter) (entity.ShortLink, error) {
+func (s ShortLinkSql) UpdateTwitterTags(alias string, twitterTags metatag.Twitter) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3
@@ -94,7 +94,7 @@ WHERE "%s"=$1;`,
 }
 
 // CreateShortLink inserts a new ShortLink into short_link table.
-func (s *ShortLinkSql) CreateShortLink(shortLink entity.ShortLink) error {
+func (s ShortLinkSql) CreateShortLink(shortLink entity.ShortLink) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
@@ -129,7 +129,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
 }
 
 // UpdateShortLink updates a ShortLink that exists within the short_link table.
-func (s *ShortLinkSql) UpdateShortLink(oldAlias string, newShortLink entity.ShortLink) (entity.ShortLink, error) {
+func (s ShortLinkSql) UpdateShortLink(oldAlias string, newShortLink entity.ShortLink) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3, "%s"=$4
@@ -296,8 +296,8 @@ func (s ShortLinkSql) composeParamList(numParams int) string {
 }
 
 // NewShortLinkSql creates ShortLinkSql
-func NewShortLinkSql(db *sql.DB) *ShortLinkSql {
-	return &ShortLinkSql{
+func NewShortLinkSql(db *sql.DB) ShortLinkSql {
+	return ShortLinkSql{
 		db: db,
 	}
 }
