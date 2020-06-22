@@ -163,7 +163,7 @@ func InjectGraphQLService(
 		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.ChangeLog), new(sqldb.ChangeLogSQL)),
 		wire.Bind(new(repository.UserChangeLog), new(sqldb.UserChangeLogSQL)),
-		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSql)),
+		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSQL)),
 
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
 		wire.Bind(new(shortlink.Retriever), new(shortlink.RetrieverPersist)),
@@ -188,7 +188,7 @@ func InjectGraphQLService(
 		provider.NewReCaptchaService,
 		sqldb.NewChangeLogSQL,
 		sqldb.NewUserChangeLogSQL,
-		sqldb.NewShortLinkSql,
+		sqldb.NewShortLinkSQL,
 		sqldb.NewUserShortLinkSQL,
 
 		validator.NewLongLink,
@@ -232,7 +232,7 @@ func InjectRoutingService(
 		wire.Bind(new(shortlink.Retriever), new(shortlink.RetrieverPersist)),
 		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.User), new(sqldb.UserSQL)),
-		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSql)),
+		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSQL)),
 
 		observabilitySet,
 		authenticatorSet,
@@ -261,7 +261,7 @@ func InjectRoutingService(
 		sqldb.NewFacebookSSOSql,
 		sqldb.NewGoogleSSOSql,
 		sqldb.NewUserSQL,
-		sqldb.NewShortLinkSql,
+		sqldb.NewShortLinkSQL,
 		sqldb.NewUserShortLinkSQL,
 
 		sso.NewAccountLinkerFactory,
