@@ -1,10 +1,9 @@
-package routing
+package handle
 
 import (
 	"encoding/json"
 	"net/http"
 	"net/url"
-	"strings"
 
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/timer"
@@ -45,11 +44,6 @@ func NewLongLink(
 	}
 }
 
-func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL url.URL) {
-	webFrontendURL.Path = "/404"
-	http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
-}
-
 // NewSSOSignIn redirects user to the sign in page.
 func NewSSOSignIn(
 	singleSignOn sso.SingleSignOn,
@@ -85,8 +79,8 @@ func NewSSOSignInCallback(
 	}
 }
 
-// FeatureHandle retrieves the status of feature toggle.
-func FeatureHandle(
+// Feature retrieves the status of feature toggle.
+func Feature(
 	instrumentationFactory request.InstrumentationFactory,
 	featureDecisionMakerFactory feature.DecisionMakerFactory,
 	authenticator authenticator.Authenticator,
@@ -108,13 +102,18 @@ func FeatureHandle(
 	}
 }
 
-// SearchHandle fetches resources under certain criterias.
-func SearchHandle(
+// Search fetches resources under certain criterias.
+func Search(
 	search search.Search,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
 		w.Write([]byte("not implemented"))
 	}
+}
+
+func serve404(w http.ResponseWriter, r *http.Request, webFrontendURL url.URL) {
+	webFrontendURL.Path = "/404"
+	http.Redirect(w, r, webFrontendURL.String(), http.StatusSeeOther)
 }
 
 func getUser(r *http.Request, authenticator authenticator.Authenticator) *entity.User {
@@ -124,20 +123,4 @@ func getUser(r *http.Request, authenticator authenticator.Authenticator) *entity
 		return nil
 	}
 	return &user
-}
-
-// getBearerToken parses Authorization token with format "Bearer <token>"
-func getBearerToken(r *http.Request) string {
-	authHeader := r.Header.Get("Authorization")
-	if len(authHeader) < 1 {
-		return ""
-	}
-	words := strings.Split(authHeader, " ")
-	if len(words) != 2 {
-		return ""
-	}
-	if words[0] != "Bearer" {
-		return ""
-	}
-	return words[1]
 }
