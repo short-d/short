@@ -133,7 +133,7 @@ func TestShortLinkSql_UpdateOGMetaTags(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 
 					shortLink, err := shortLinkRepo.UpdateOpenGraphTags(testCase.alias, testCase.metaTags)
 					assert.Equal(t, nil, err)
@@ -237,7 +237,7 @@ func TestShortLinkSql_UpdateTwitterTags(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 
 					shortLink, err := shortLinkRepo.UpdateTwitterTags(testCase.alias, testCase.metaTags)
 					assert.Equal(t, nil, err)
@@ -280,7 +280,7 @@ func TestShortLinkSql_IsAliasExist(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					gotIsExist, err := shortLinkRepo.IsAliasExist(testCase.alias)
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expIsExist, gotIsExist)
@@ -424,7 +424,7 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					shortLink, err := shortLinkRepo.GetShortLinkByAlias(testCase.alias)
 
 					if testCase.hasErr {
@@ -530,7 +530,7 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					err := shortLinkRepo.CreateShortLink(testCase.shortLink)
 
 					if testCase.hasErr {
@@ -627,7 +627,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 					expectedShortLink := testCase.expectedShortLink
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					shortLink, err := shortLinkRepo.UpdateShortLink(
 						testCase.oldAlias,
 						testCase.newShortLink,
@@ -755,7 +755,7 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					shortLink, err := shortLinkRepo.GetShortLinksByAliases(testCase.aliases)
 
 					if testCase.hasErr {
