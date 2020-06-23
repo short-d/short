@@ -35,7 +35,7 @@ func TestMetaTagPersist_GetOGTags(t *testing.T) {
 		expectedOGTags metatag.OpenGraph
 	}{
 		{
-			name: "Open Graph Tags Provided",
+			name: "Open Graph tags provided",
 			shortLinks: shortLinks{
 				"12345": entity.ShortLink{
 					Alias:    "12345",
@@ -75,7 +75,7 @@ func TestMetaTagPersist_GetOGTags(t *testing.T) {
 		},
 		{
 
-			name: "Open Graph Tags Not Provided",
+			name: "Open Graph tags not provided",
 			shortLinks: shortLinks{
 				"12345": entity.ShortLink{
 					Alias:    "12345",
@@ -148,7 +148,7 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 		expectedTwitterTags metatag.Twitter
 	}{
 		{
-			name: "Twitter Tags Provided",
+			name: "Twitter tags provided",
 			shortLinks: shortLinks{
 				"12345": entity.ShortLink{
 					Alias:    "12345",
@@ -187,7 +187,7 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 			},
 		},
 		{
-			name: "Twitter Tags Not Provided",
+			name: "Twitter tags not provided",
 			shortLinks: shortLinks{
 				"12345": entity.ShortLink{
 					Alias:    "12345",
