@@ -147,7 +147,7 @@ WHERE "%s"=$1;
 }
 
 // CreateUser inserts a new User into user table.
-func (u *UserSQL) CreateUser(user entity.User) error {
+func (u UserSQL) CreateUser(user entity.User) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s", "%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5, $6)
@@ -174,8 +174,8 @@ VALUES ($1, $2, $3, $4, $5, $6)
 }
 
 // NewUserSQL creates UserSQL
-func NewUserSQL(db *sql.DB) *UserSQL {
-	return &UserSQL{
+func NewUserSQL(db *sql.DB) UserSQL {
+	return UserSQL{
 		db: db,
 	}
 }
