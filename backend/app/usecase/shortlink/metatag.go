@@ -7,24 +7,32 @@ import (
 
 var _ MetaTag = (*MetaTagPersist)(nil)
 
+// MetaTag represents a ShortLink MetaTags retriever and updater
 type MetaTag interface {
-	GetOGTags(alias string) (metatag.OpenGraph, error)
+	GetOpenGraphTags(alias string) (metatag.OpenGraph, error)
 	GetTwitterTags(alias string) (metatag.Twitter, error)
 }
 
+// MetaTagPersist represents a ShortLink MetaTags retriever and updater which persist the generated
+// changes in the repository
 type MetaTagPersist struct {
 	shortLinkRepo repository.ShortLink
 }
 
-func (m MetaTagPersist) GetOGTags(alias string) (metatag.OpenGraph, error) {
+const defaultTitle string = "Short: Free link shortening service"
+const defaultDesc string = "Short enables people to type less for their favorite web sites"
+const defaultImageURL string = "https://short-d.com/promo/small-tile.png"
+
+// GetOpenGraphTags retrieves ShortLink Open Graph Tags from persistent storage given alias
+func (m MetaTagPersist) GetOpenGraphTags(alias string) (metatag.OpenGraph, error) {
 	shortLink, err := m.shortLinkRepo.GetShortLinkByAlias(alias)
 	if err != nil {
 		return metatag.OpenGraph{}, err
 	}
 
-	defaultTitle := "Short: Free link shortening service"
-	defaultDesc := "Short enables people to type less for their favorite web sites"
-	defaultImageURL := "https://short-d.com/promo/small-tile.png"
+	defaultTitle := defaultTitle
+	defaultDesc := defaultDesc
+	defaultImageURL := defaultImageURL
 
 	if shortLink.OpenGraphTags.Title == nil {
 		shortLink.OpenGraphTags.Title = &defaultTitle
@@ -41,15 +49,16 @@ func (m MetaTagPersist) GetOGTags(alias string) (metatag.OpenGraph, error) {
 	return shortLink.OpenGraphTags, nil
 }
 
+// GetTwitterTags retrieves ShortLink Twitter Tags from persistent storage given alias
 func (m MetaTagPersist) GetTwitterTags(alias string) (metatag.Twitter, error) {
 	shortLink, err := m.shortLinkRepo.GetShortLinkByAlias(alias)
 	if err != nil {
 		return metatag.Twitter{}, err
 	}
 
-	defaultTitle := "Short: Free link shortening service"
-	defaultDesc := "Short enables people to type less for their favorite web sites"
-	defaultImageURL := "https://short-d.com/promo/small-tile.png"
+	defaultTitle := defaultTitle
+	defaultDesc := defaultDesc
+	defaultImageURL := defaultImageURL
 
 	if shortLink.TwitterTags.Title == nil {
 		shortLink.TwitterTags.Title = &defaultTitle
@@ -66,6 +75,7 @@ func (m MetaTagPersist) GetTwitterTags(alias string) (metatag.Twitter, error) {
 	return shortLink.TwitterTags, nil
 }
 
+// NewMetaTagPersist creates persistent ShortLink meta tags retriever and updater
 func NewMetaTagPersist(shortLinkRepo repository.ShortLink) MetaTagPersist {
 	return MetaTagPersist{shortLinkRepo: shortLinkRepo}
 }

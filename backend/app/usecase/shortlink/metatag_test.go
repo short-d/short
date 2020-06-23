@@ -3,36 +3,38 @@
 package shortlink
 
 import (
-	"github.com/short-d/app/fw/assert"
-
 	"testing"
 
+	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/entity/metatag"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
-func TestMetaTagPersist_GetOGTags(t *testing.T) {
+func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 	t.Parallel()
 
 	title1 := "title1"
 	description1 := "description1"
 	imageURL1 := "imageURL1"
+
 	title2 := "title2"
 	description2 := "description2"
 	imageURL2 := "imageURL2"
+
 	title3 := "title3"
 	description3 := "description3"
 	imageURL3 := "imageURL3"
-	defaultTitle := "Short: Free link shortening service"
-	defaultDesc := "Short enables people to type less for their favorite web sites"
-	defaultImageURL := "https://short-d.com/promo/small-tile.png"
+
+	defaultTitle := defaultTitle
+	defaultDesc := defaultDesc
+	defaultImageURL := defaultImageURL
 
 	testCases := []struct {
-		name           string
-		shortLinks     shortLinks
-		alias          string
-		expectedOGTags metatag.OpenGraph
+		name                  string
+		shortLinks            shortLinks
+		alias                 string
+		expectedOpenGraphTags metatag.OpenGraph
 	}{
 		{
 			name: "Open Graph tags provided",
@@ -67,7 +69,7 @@ func TestMetaTagPersist_GetOGTags(t *testing.T) {
 				},
 			},
 			alias: "54321",
-			expectedOGTags: metatag.OpenGraph{
+			expectedOpenGraphTags: metatag.OpenGraph{
 				Title:       &title2,
 				Description: &description2,
 				ImageURL:    &imageURL2,
@@ -102,7 +104,7 @@ func TestMetaTagPersist_GetOGTags(t *testing.T) {
 				},
 			},
 			alias: "54321",
-			expectedOGTags: metatag.OpenGraph{
+			expectedOpenGraphTags: metatag.OpenGraph{
 				Title:       &defaultTitle,
 				Description: &defaultDesc,
 				ImageURL:    &defaultImageURL,
@@ -118,9 +120,9 @@ func TestMetaTagPersist_GetOGTags(t *testing.T) {
 			shortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
 			metaTag := NewMetaTagPersist(&shortLinkRepo)
 
-			ogTags, err := metaTag.GetOGTags(testCase.alias)
+			ogTags, err := metaTag.GetOpenGraphTags(testCase.alias)
 			assert.Equal(t, nil, err)
-			assert.Equal(t, testCase.expectedOGTags, ogTags)
+			assert.Equal(t, testCase.expectedOpenGraphTags, ogTags)
 		})
 	}
 }
@@ -131,15 +133,18 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 	title1 := "title1"
 	description1 := "description1"
 	imageURL1 := "imageURL1"
+
 	title2 := "title2"
 	description2 := "description2"
 	imageURL2 := "imageURL2"
+
 	title3 := "title3"
 	description3 := "description3"
 	imageURL3 := "imageURL3"
-	defaultTitle := "Short: Free link shortening service"
-	defaultDesc := "Short enables people to type less for their favorite web sites"
-	defaultImageURL := "https://short-d.com/promo/small-tile.png"
+
+	defaultTitle := defaultTitle
+	defaultDesc := defaultDesc
+	defaultImageURL := defaultImageURL
 
 	testCases := []struct {
 		name                string
