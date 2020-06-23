@@ -5,12 +5,10 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/short-d/short/backend/app/usecase/search/order"
-
-	"github.com/short-d/short/backend/app/usecase/authenticator"
-
 	"github.com/short-d/app/fw/router"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/search"
+	"github.com/short-d/short/backend/app/usecase/search/order"
 )
 
 // Search fetches resources under certain criterias.
@@ -19,10 +17,11 @@ func Search(
 	authenticator authenticator.Authenticator,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
-		//user := getUser(r, authenticator)
-		//if user == nil {
-		//	w.Write([]byte("user not logged in"))
-		//}
+		user := getUser(r, authenticator)
+		if user == nil {
+			w.Write([]byte("user not authenticated"))
+			return
+		}
 
 		searchRequest, err := readSearchRequest(r)
 		if err != nil {
@@ -32,11 +31,12 @@ func Search(
 
 		_ = search.Query{
 			Query: searchRequest.Query,
-			User:  nil,
+			User:  user,
 		}
 		_, err = getFilter(searchRequest)
 		if err != nil {
-			w.Write([]byte(err.Error()))
+			http.Error(w, err.Error(), 500)
+			return
 		}
 
 		w.Write([]byte("request is read"))
@@ -57,10 +57,6 @@ type Filter struct {
 	Orders     []string `json:"orders"`
 }
 
-// SearchResponse represents the JSON response received from Search API.
-type SearchResponse struct {
-}
-
 func readSearchRequest(r *http.Request) (*SearchRequest, error) {
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -74,7 +70,9 @@ func readSearchRequest(r *http.Request) (*SearchRequest, error) {
 }
 
 func getFilter(request *SearchRequest) (search.Filter, error) {
-	return search.NewFilter(request.Filter.MaxResults, getResources(request), getOrders(request))
+	resources := getResources(request)
+	orders := getOrders(request)
+	return search.NewFilter(request.Filter.MaxResults, resources, orders)
 }
 
 func getResources(request *SearchRequest) []search.Resource {
@@ -92,7 +90,7 @@ func getResources(request *SearchRequest) []search.Resource {
 func getOrders(request *SearchRequest) []order.By {
 	var orders []order.By
 	for _, o := range request.Filter.Orders {
-		if o == "time asc" {
+		if o == "by_created_time_asc" {
 			orders = append(orders, order.ByCreatedTimeASC)
 		}
 	}
