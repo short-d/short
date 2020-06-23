@@ -33,28 +33,6 @@ type CreateShortLinkArgs struct {
 	IsPublic  bool
 }
 
-// CreateChangeArgs represents the possible parameters for CreateChange endpoint
-type CreateChangeArgs struct {
-	Change ChangeInput
-}
-
-// ChangeInput represents possible properties for Change
-type ChangeInput struct {
-	Title           string
-	SummaryMarkdown *string
-}
-
-// DeleteChangeArgs represents the possible parameters for DeleteChange endpoint
-type DeleteChangeArgs struct {
-	ID string
-}
-
-// UpdateChangeArgs represents the possible parameters for UpdateChange endpoint.
-type UpdateChangeArgs struct {
-	ID     string
-	Change ChangeInput
-}
-
 // CreateShortLink creates mapping between an alias and a long link for a given user
 func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, error) {
 	user, err := viewer(a.authToken, a.authenticator)
@@ -90,6 +68,17 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 	}
 }
 
+// ChangeInput represents possible properties for Change
+type ChangeInput struct {
+	Title           string
+	SummaryMarkdown *string
+}
+
+// CreateChangeArgs represents the possible parameters for CreateChange endpoint
+type CreateChangeArgs struct {
+	Change ChangeInput
+}
+
 // CreateChange creates a Change in the change log
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (*Change, error) {
 	user, err := viewer(a.authToken, a.authenticator)
@@ -112,6 +101,11 @@ func (a AuthMutation) CreateChange(args *CreateChangeArgs) (*Change, error) {
 	}
 }
 
+// DeleteChangeArgs represents the possible parameters for DeleteChange endpoint
+type DeleteChangeArgs struct {
+	ID string
+}
+
 // DeleteChange removes a Change with given ID from change log
 func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
 	user, err := viewer(a.authToken, a.authenticator)
@@ -131,6 +125,12 @@ func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
 	default:
 		return nil, ErrUnknown{}
 	}
+}
+
+// UpdateChangeArgs represents the possible parameters for UpdateChange endpoint.
+type UpdateChangeArgs struct {
+	ID     string
+	Change ChangeInput
 }
 
 // UpdateChange updates a Change with given ID in change log.
