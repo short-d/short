@@ -11,15 +11,15 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
-var _ repository.ShortLink = (*ShortLinkSql)(nil)
+var _ repository.ShortLink = (*ShortLinkSQL)(nil)
 
-// ShortLinkSql accesses ShortLink information in short_link table through SQL.
-type ShortLinkSql struct {
+// ShortLinkSQL accesses ShortLink information in short_link table through SQL.
+type ShortLinkSQL struct {
 	db *sql.DB
 }
 
 // UpdateOpenGraphTags updates OpenGraph meta tags for a given short link.
-func (s *ShortLinkSql) UpdateOpenGraphTags(alias string, openGraphTags metatag.OpenGraph) (entity.ShortLink, error) {
+func (s ShortLinkSQL) UpdateOpenGraphTags(alias string, openGraphTags metatag.OpenGraph) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3
@@ -46,7 +46,7 @@ WHERE "%s"=$4;`,
 }
 
 // UpdateTwitterTags updates Twitter meta tags for a given short link.
-func (s *ShortLinkSql) UpdateTwitterTags(alias string, twitterTags metatag.Twitter) (entity.ShortLink, error) {
+func (s ShortLinkSQL) UpdateTwitterTags(alias string, twitterTags metatag.Twitter) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3
@@ -73,7 +73,7 @@ WHERE "%s"=$4;`,
 }
 
 // IsAliasExist checks whether a given alias exist in short_link table.
-func (s ShortLinkSql) IsAliasExist(alias string) (bool, error) {
+func (s ShortLinkSQL) IsAliasExist(alias string) (bool, error) {
 	query := fmt.Sprintf(`
 SELECT "%s" 
 FROM "%s" 
@@ -94,7 +94,7 @@ WHERE "%s"=$1;`,
 }
 
 // CreateShortLink inserts a new ShortLink into short_link table.
-func (s *ShortLinkSql) CreateShortLink(shortLink entity.ShortLink) error {
+func (s ShortLinkSQL) CreateShortLink(shortLink entity.ShortLink) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
@@ -129,7 +129,7 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
 }
 
 // UpdateShortLink updates a ShortLink that exists within the short_link table.
-func (s *ShortLinkSql) UpdateShortLink(oldAlias string, newShortLink entity.ShortLink) (entity.ShortLink, error) {
+func (s ShortLinkSQL) UpdateShortLink(oldAlias string, newShortLink entity.ShortLink) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3, "%s"=$4
@@ -159,7 +159,7 @@ WHERE "%s"=$5;`,
 }
 
 // GetShortLinkByAlias finds an ShortLink in short_link table given alias.
-func (s ShortLinkSql) GetShortLinkByAlias(alias string) (entity.ShortLink, error) {
+func (s ShortLinkSQL) GetShortLinkByAlias(alias string) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 SELECT "%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"
 FROM "%s" 
@@ -207,7 +207,7 @@ WHERE "%s"=$1;`,
 }
 
 // GetShortLinksByAliases finds ShortLinks for a list of aliases
-func (s ShortLinkSql) GetShortLinksByAliases(aliases []string) ([]entity.ShortLink, error) {
+func (s ShortLinkSQL) GetShortLinksByAliases(aliases []string) ([]entity.ShortLink, error) {
 	if len(aliases) == 0 {
 		return []entity.ShortLink{}, nil
 	}
@@ -285,7 +285,7 @@ WHERE "%s" IN (%s);`,
 }
 
 // composeParamList converts an slice to a parameters string with format: $1, $2, $3, ...
-func (s ShortLinkSql) composeParamList(numParams int) string {
+func (s ShortLinkSQL) composeParamList(numParams int) string {
 	params := make([]string, 0, numParams)
 	for i := 0; i < numParams; i++ {
 		params = append(params, fmt.Sprintf("$%d", i+1))
@@ -295,9 +295,9 @@ func (s ShortLinkSql) composeParamList(numParams int) string {
 	return parameterStr
 }
 
-// NewShortLinkSql creates ShortLinkSql
-func NewShortLinkSql(db *sql.DB) *ShortLinkSql {
-	return &ShortLinkSql{
+// NewShortLinkSQL creates ShortLinkSQL
+func NewShortLinkSQL(db *sql.DB) ShortLinkSQL {
+	return ShortLinkSQL{
 		db: db,
 	}
 }
