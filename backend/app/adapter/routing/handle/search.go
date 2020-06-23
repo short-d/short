@@ -40,7 +40,6 @@ func Search(
 		}
 
 		w.Write([]byte("request is read"))
-
 	}
 }
 
