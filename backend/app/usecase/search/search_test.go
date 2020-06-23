@@ -20,7 +20,9 @@ func TestSearch(t *testing.T) {
 		name               string
 		shortLinks         shortLinks
 		Query              Query
-		filter             Filter
+		maxResults         int
+		resources          []Resource
+		orders             []order.By
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
 		expectedResult     Result
@@ -48,11 +50,9 @@ func TestSearch(t *testing.T) {
 			Query: Query{
 				Query: "http google",
 			},
-			filter: Filter{
-				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
-			},
+			maxResults: 2,
+			resources:  []Resource{ShortLink},
+			orders:     []order.By{order.ByCreatedTimeASC},
 			relationUsers: []entity.User{
 				{
 					ID:    "alpha",
@@ -125,11 +125,9 @@ func TestSearch(t *testing.T) {
 					Email: "alpha@example.com",
 				},
 			},
-			filter: Filter{
-				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
-			},
+			maxResults: 2,
+			resources:  []Resource{ShortLink},
+			orders:     []order.By{order.ByCreatedTimeASC},
 			relationUsers: []entity.User{
 				{
 					ID:    "alpha",
@@ -214,11 +212,9 @@ func TestSearch(t *testing.T) {
 					Email: "alpha@example.com",
 				},
 			},
-			filter: Filter{
-				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
-			},
+			maxResults: 2,
+			resources:  []Resource{ShortLink},
+			orders:     []order.By{order.ByCreatedTimeASC},
 			relationUsers: []entity.User{
 				{
 					ID:    "alpha",
@@ -304,11 +300,9 @@ func TestSearch(t *testing.T) {
 					Email: "alpha@example.com",
 				},
 			},
-			filter: Filter{
-				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
-			},
+			maxResults: 2,
+			resources:  []Resource{ShortLink},
+			orders:     []order.By{order.ByCreatedTimeASC},
 			relationUsers: []entity.User{
 				{
 					ID:    "alpha",
@@ -385,11 +379,9 @@ func TestSearch(t *testing.T) {
 					Email: "alpha@example.com",
 				},
 			},
-			filter: Filter{
-				MaxResults: 2,
-				Resources:  []Resource{ShortLink},
-				Orders:     []order.By{order.ByCreatedTimeASC},
-			},
+			maxResults: 2,
+			resources:  []Resource{ShortLink},
+			orders:     []order.By{order.ByCreatedTimeASC},
 			relationUsers: []entity.User{
 				{
 					ID:    "alpha",
@@ -460,7 +452,10 @@ func TestSearch(t *testing.T) {
 
 			search := NewSearch(lg, &shortLinkRepo, &userShortLinkRepo, timeout)
 
-			result, err := search.Search(testCase.Query, testCase.filter)
+			filter, err := NewFilter(testCase.maxResults, testCase.resources, testCase.orders)
+			assert.Equal(t, nil, err)
+
+			result, err := search.Search(testCase.Query, filter)
 
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedResult, result)

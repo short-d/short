@@ -53,6 +53,15 @@ func TestGraphQlAPI(t *testing.T) {
 		riskDetector,
 	)
 
+	updater := shortlink.NewUpdaterPersist(
+		&shortLinkRepo,
+		&userShortLinkRepo,
+		longLinkValidator,
+		customAliasValidator,
+		tm,
+		riskDetector,
+	)
+
 	s := requester.NewReCaptchaFake(requester.VerifyResponse{})
 	verifier := requester.NewVerifier(s)
 	auth := authenticator.NewAuthenticatorFake(time.Now(), time.Hour)
@@ -67,7 +76,7 @@ func TestGraphQlAPI(t *testing.T) {
 	rb := rbac.NewRBAC(fakeRolesRepo)
 	au := authorizer.NewAuthorizer(rb)
 	changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo, au)
-	r := resolver.NewResolver(lg, retriever, creator, changeLog, verifier, auth)
+	r := resolver.NewResolver(lg, retriever, creator, updater, changeLog, verifier, auth)
 	graphqlAPI := NewShort(r)
 	assert.Equal(t, true, graphql.IsGraphQlAPIValid(graphqlAPI))
 }

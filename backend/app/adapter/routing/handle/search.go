@@ -1,4 +1,4 @@
-package routing
+package handle
 
 import (
 	"encoding/json"
@@ -7,8 +7,42 @@ import (
 
 	"github.com/short-d/short/backend/app/usecase/search/order"
 
+	"github.com/short-d/short/backend/app/usecase/authenticator"
+
+	"github.com/short-d/app/fw/router"
 	"github.com/short-d/short/backend/app/usecase/search"
 )
+
+// Search fetches resources under certain criterias.
+func Search(
+	searcher search.Search,
+	authenticator authenticator.Authenticator,
+) router.Handle {
+	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
+		//user := getUser(r, authenticator)
+		//if user == nil {
+		//	w.Write([]byte("user not logged in"))
+		//}
+
+		searchRequest, err := readSearchRequest(r)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		_ = search.Query{
+			Query: searchRequest.Query,
+			User:  nil,
+		}
+		_, err = getFilter(searchRequest)
+		if err != nil {
+			w.Write([]byte(err.Error()))
+		}
+
+		w.Write([]byte("request is read"))
+
+	}
+}
 
 // SearchRequest represents the JSON request received from Search API.
 type SearchRequest struct {
@@ -39,14 +73,8 @@ func readSearchRequest(r *http.Request) (*SearchRequest, error) {
 	return &searchRequest, err
 }
 
-func getFilter(request *SearchRequest) search.Filter {
-	var filter search.Filter
-
-	filter.MaxResults = request.Filter.MaxResults
-	filter.Resources = getResources(request)
-	filter.Orders = getOrders(request)
-
-	return filter
+func getFilter(request *SearchRequest) (search.Filter, error) {
+	return search.NewFilter(request.Filter.MaxResults, getResources(request), getOrders(request))
 }
 
 func getResources(request *SearchRequest) []search.Resource {
@@ -69,15 +97,4 @@ func getOrders(request *SearchRequest) []order.By {
 		}
 	}
 	return orders
-}
-
-func writeSearchResponse(w http.ResponseWriter, response *SearchResponse) error {
-	output, err := json.Marshal(response)
-	if err != nil {
-		return err
-	}
-	w.Header().Set("content-type", "application/json")
-	w.Write(output)
-
-	return nil
 }
