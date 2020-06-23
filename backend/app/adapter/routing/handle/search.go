@@ -61,7 +61,6 @@ func (s *SearchRequest) UnmarshalJSON(data []byte) error {
 	}
 
 	s.setQuery(temp.Query)
-
 	err := s.setFilter(temp.Filter.maxResults, temp.Filter.resources, temp.Filter.orders)
 
 	return err
@@ -102,11 +101,6 @@ func (f *Filter) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	orders, err := parseOrders(temp.Orders)
-	if err != nil {
-		return err
-	}
-
-	_, err = search.NewFilter(temp.MaxResults, resources, orders)
 	if err != nil {
 		return err
 	}
