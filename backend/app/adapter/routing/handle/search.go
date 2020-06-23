@@ -41,6 +41,7 @@ func Search(
 	}
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface.
 func (s *SearchRequest) UnmarshalJSON(data []byte) error {
 	temp := struct {
 		Query  string `json:"query"`
