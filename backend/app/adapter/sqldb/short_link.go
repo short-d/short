@@ -13,7 +13,7 @@ import (
 
 var _ repository.ShortLink = (*ShortLinkSQL)(nil)
 
-// NewShortLinkSQL accesses ShortLink information in short_link table through SQL.
+// ShortLinkSQL accesses ShortLink information in short_link table through SQL.
 type ShortLinkSQL struct {
 	db *sql.DB
 }
