@@ -12,7 +12,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/search/order"
 )
 
-// SearchRequest represents the JSON request received from Search API.
+// SearchRequest represents the request received from Search API.
 type SearchRequest struct {
 	query  search.Query
 	filter search.Filter
