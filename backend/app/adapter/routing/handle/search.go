@@ -29,9 +29,9 @@ type SearchRequest struct {
 
 // Filter represents the filter field received from Search API.
 type Filter struct {
-	MaxResults int               `json:"max_results"`
-	Resources  []search.Resource `json:"resources"`
-	Orders     []order.By        `json:"orders"`
+	MaxResults int
+	Resources  []search.Resource
+	Orders     []order.By
 }
 
 // Search fetches resources under certain criteria.
@@ -47,14 +47,14 @@ func Search(
 			return
 		}
 
-		var searchRequest SearchRequest
-		err = json.Unmarshal(buf, &searchRequest)
+		var body SearchRequest
+		err = json.Unmarshal(buf, &body)
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
 		}
 
-		w.Write([]byte(fmt.Sprintf("%v", searchRequest)))
+		w.Write([]byte(fmt.Sprintf("%v", body)))
 	}
 }
 
