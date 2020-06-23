@@ -2,6 +2,7 @@ package handle
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 
@@ -16,6 +17,13 @@ import (
 type SearchRequest struct {
 	query  search.Query
 	filter search.Filter
+}
+
+// Filter represents the filter field received from Search API.
+type Filter struct {
+	maxResults int
+	resources  []search.Resource
+	orders     []order.By
 }
 
 // Search fetches resources under certain criteria.
@@ -45,11 +53,7 @@ func Search(
 func (s *SearchRequest) UnmarshalJSON(data []byte) error {
 	temp := struct {
 		Query  string `json:"query"`
-		Filter struct {
-			MaxResults int      `json:"max_results"`
-			Resources  []string `json:"resources"`
-			Orders     []string `json:"orders"`
-		} `json:"filter"`
+		Filter Filter `json:"filter"`
 	}{}
 
 	if err := json.Unmarshal(data, &temp); err != nil {
@@ -58,9 +62,7 @@ func (s *SearchRequest) UnmarshalJSON(data []byte) error {
 
 	s.setQuery(temp.Query)
 
-	resources := parseResources(temp.Filter.Resources)
-	orders := parseOrders(temp.Filter.Orders)
-	err := s.setFilter(temp.Filter.MaxResults, resources, orders)
+	err := s.setFilter(temp.Filter.maxResults, temp.Filter.resources, temp.Filter.orders)
 
 	return err
 }
@@ -83,6 +85,39 @@ func (s *SearchRequest) setUser(user *entity.User) {
 	s.query.User = user
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface.
+func (f *Filter) UnmarshalJSON(data []byte) error {
+	temp := struct {
+		MaxResults int      `json:"max_results"`
+		Resources  []string `json:"resources"`
+		Orders     []string `json:"orders"`
+	}{}
+
+	if err := json.Unmarshal(data, &temp); err != nil {
+		return err
+	}
+
+	resources, err := parseResources(temp.Resources)
+	if err != nil {
+		return err
+	}
+	orders, err := parseOrders(temp.Orders)
+	if err != nil {
+		return err
+	}
+
+	_, err = search.NewFilter(temp.MaxResults, resources, orders)
+	if err != nil {
+		return err
+	}
+
+	f.maxResults = temp.MaxResults
+	f.resources = resources
+	f.orders = orders
+
+	return nil
+}
+
 func parseSearchBody(r *http.Request) (*SearchRequest, error) {
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -95,24 +130,46 @@ func parseSearchBody(r *http.Request) (*SearchRequest, error) {
 	return &searchRequest, err
 }
 
-func parseResources(data []string) []search.Resource {
+func parseResources(ss []string) ([]search.Resource, error) {
 	var resources []search.Resource
-	for _, resource := range data {
-		if resource == "short_link" {
-			resources = append(resources, search.ShortLink)
-		} else if resource == "user" {
-			resources = append(resources, search.User)
+	for _, s := range ss {
+		if resource, err := stringToResource(s); err == nil {
+			resources = append(resources, resource)
+		} else {
+			return resources, err
 		}
 	}
-	return resources
+	return resources, nil
 }
 
-func parseOrders(data []string) []order.By {
-	var orders []order.By
-	for _, o := range data {
-		if o == "by_created_time_asc" {
-			orders = append(orders, order.ByCreatedTimeASC)
+func stringToResource(s string) (search.Resource, error) {
+	switch s {
+	case "short_link":
+		return search.ShortLink, nil
+	case "user":
+		return search.User, nil
+	default:
+		return search.Resource(0), errors.New("unknown resource")
+	}
+}
+
+func parseOrders(ss []string) ([]order.By, error) {
+	var ordersBy []order.By
+	for _, s := range ss {
+		if orderBy, err := stringToOrder(s); err == nil {
+			ordersBy = append(ordersBy, orderBy)
+		} else {
+			return ordersBy, err
 		}
 	}
-	return orders
+	return ordersBy, nil
+}
+
+func stringToOrder(s string) (order.By, error) {
+	switch s {
+	case "by_created_time_asc":
+		return order.ByCreatedTimeASC, nil
+	default:
+		return order.By(0), errors.New("unknown order")
+	}
 }
