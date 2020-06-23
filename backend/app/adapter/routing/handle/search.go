@@ -43,14 +43,14 @@ func Search(
 		buf, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		var body SearchRequest
 		err = json.Unmarshal(buf, &body)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
