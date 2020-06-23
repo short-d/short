@@ -1,4 +1,4 @@
-package analytics
+package handle
 
 import (
 	"net/http"
@@ -7,8 +7,8 @@ import (
 	"github.com/short-d/short/backend/app/adapter/request"
 )
 
-// TrackHandle records event happened in the API caller.
-func TrackHandle(instrumentationFactory request.InstrumentationFactory) router.Handle {
+// Track records event happened in the API caller.
+func Track(instrumentationFactory request.InstrumentationFactory) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
 		i := instrumentationFactory.NewHTTP(r)
 
