@@ -10,8 +10,8 @@ import (
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
-// NewLongLink translates alias to the original long link.
-func NewLongLink(
+// LongLink translates alias to the original long link.
+func LongLink(
 	instrumentationFactory request.InstrumentationFactory,
 	shortLinkRetriever shortlink.Retriever,
 	timer timer.Timer,

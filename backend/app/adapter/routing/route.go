@@ -38,7 +38,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
-			Handle: handle.NewSSOSignIn(
+			Handle: handle.SSOSignIn(
 				sso.SingleSignOn(githubSSO),
 				webFrontendURL,
 			),
@@ -46,7 +46,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/github/sign-in/callback",
-			Handle: handle.NewSSOSignInCallback(
+			Handle: handle.SSOSignInCallback(
 				sso.SingleSignOn(githubSSO),
 				*frontendURL,
 			),
@@ -54,7 +54,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in",
-			Handle: handle.NewSSOSignIn(
+			Handle: handle.SSOSignIn(
 				sso.SingleSignOn(facebookSSO),
 				webFrontendURL,
 			),
@@ -62,7 +62,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in/callback",
-			Handle: handle.NewSSOSignInCallback(
+			Handle: handle.SSOSignInCallback(
 				sso.SingleSignOn(facebookSSO),
 				*frontendURL,
 			),
@@ -70,7 +70,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/google/sign-in",
-			Handle: handle.NewSSOSignIn(
+			Handle: handle.SSOSignIn(
 				sso.SingleSignOn(googleSSO),
 				webFrontendURL,
 			),
@@ -78,7 +78,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/oauth/google/sign-in/callback",
-			Handle: handle.NewSSOSignInCallback(
+			Handle: handle.SSOSignInCallback(
 				sso.SingleSignOn(googleSSO),
 				*frontendURL,
 			),
@@ -86,7 +86,7 @@ func NewShort(
 		{
 			Method: "GET",
 			Path:   "/r/:alias",
-			Handle: handle.NewLongLink(
+			Handle: handle.LongLink(
 				instrumentationFactory,
 				shortLinkRetriever,
 				timer,

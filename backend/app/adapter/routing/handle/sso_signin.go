@@ -8,8 +8,8 @@ import (
 	"github.com/short-d/short/backend/app/usecase/sso"
 )
 
-// NewSSOSignIn redirects user to the sign in page.
-func NewSSOSignIn(
+// SSOSignIn redirects user to the sign in page.
+func SSOSignIn(
 	singleSignOn sso.SingleSignOn,
 	webFrontendURL string,
 ) router.Handle {
@@ -24,8 +24,8 @@ func NewSSOSignIn(
 	}
 }
 
-// NewSSOSignInCallback generates Short's authentication token given identity provider's authorization code.
-func NewSSOSignInCallback(
+// SSOSignInCallback generates Short's authentication token given identity provider's authorization code.
+func SSOSignInCallback(
 	singleSignOn sso.SingleSignOn,
 	webFrontendURL url.URL,
 ) router.Handle {
