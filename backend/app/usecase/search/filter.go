@@ -10,7 +10,8 @@ import (
 type Resource uint
 
 const (
-	ShortLink Resource = iota
+	Unknown Resource = iota
+	ShortLink
 	User
 )
 

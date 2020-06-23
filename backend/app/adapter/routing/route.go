@@ -109,7 +109,7 @@ func NewShort(
 		},
 		{
 			Method: "POST",
-			Path:   "/api/search",
+			Path:   "/search",
 			Handle: handle.Search(
 				search,
 				authenticator,

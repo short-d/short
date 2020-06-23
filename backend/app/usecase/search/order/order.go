@@ -6,7 +6,8 @@ import "github.com/short-d/short/backend/app/entity"
 type By uint
 
 const (
-	ByCreatedTimeASC By = iota
+	ByUnsorted By = iota
+	ByCreatedTimeASC
 )
 
 // Order arranges searchable resources based on predefined properties.
