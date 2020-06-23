@@ -18,41 +18,55 @@ type AuthMutation struct {
 	authenticator    authenticator.Authenticator
 	changeLog        changelog.ChangeLog
 	shortLinkCreator shortlink.Creator
+	shortLinkUpdater shortlink.Updater
 }
 
 // ShortLinkInput represents possible ShortLink attributes
 type ShortLinkInput struct {
-	LongLink    string
+	LongLink    *string
 	CustomAlias *string
 	ExpireAt    *time.Time
+}
+
+// TODO(#840): remove this business logic and move it to use cases
+func (s *ShortLinkInput) isEmpty() bool {
+	return *s == ShortLinkInput{}
+}
+
+// TODO(#840): remove this business logic and move it to use cases
+func (s *ShortLinkInput) longLink() string {
+	if s.LongLink == nil {
+		return ""
+	}
+	return *s.LongLink
+}
+
+// TODO(#840): remove this business logic and move it to use cases
+func (s *ShortLinkInput) customAlias() string {
+	if s.CustomAlias == nil {
+		return ""
+	}
+	return *s.CustomAlias
+}
+
+// TODO(#840): remove this business logic and move it to use cases
+func (s *ShortLinkInput) createUpdate() *entity.ShortLink {
+	if s.isEmpty() {
+		return nil
+	}
+
+	return &entity.ShortLink{
+		Alias:    s.customAlias(),
+		LongLink: s.longLink(),
+		ExpireAt: s.ExpireAt,
+	}
+
 }
 
 // CreateShortLinkArgs represents the possible parameters for CreateShortLink endpoint
 type CreateShortLinkArgs struct {
 	ShortLink ShortLinkInput
 	IsPublic  bool
-}
-
-// CreateChangeArgs represents the possible parameters for CreateChange endpoint
-type CreateChangeArgs struct {
-	Change ChangeInput
-}
-
-// ChangeInput represents possible properties for Change
-type ChangeInput struct {
-	Title           string
-	SummaryMarkdown *string
-}
-
-// DeleteChangeArgs represents the possible parameters for DeleteChange endpoint
-type DeleteChangeArgs struct {
-	ID string
-}
-
-// UpdateChangeArgs represents the possible parameters for UpdateChange endpoint.
-type UpdateChangeArgs struct {
-	ID     string
-	Change ChangeInput
 }
 
 // CreateShortLink creates mapping between an alias and a long link for a given user
@@ -62,9 +76,10 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		return nil, ErrInvalidAuthToken{}
 	}
 
+	longLink := args.ShortLink.longLink()
 	customAlias := args.ShortLink.CustomAlias
 	u := entity.ShortLink{
-		LongLink: args.ShortLink.LongLink,
+		LongLink: longLink,
 		ExpireAt: args.ShortLink.ExpireAt,
 	}
 
@@ -90,6 +105,43 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 	}
 }
 
+// UpdateShortLinkArgs represents the possible parameters for updateShortLink endpoint
+type UpdateShortLinkArgs struct {
+	OldAlias  string
+	ShortLink ShortLinkInput
+}
+
+// UpdateShortLink updates the relationship between the short link and the user
+func (a AuthMutation) UpdateShortLink(args *UpdateShortLinkArgs) (*ShortLink, error) {
+	user, err := viewer(a.authToken, a.authenticator)
+	if err != nil {
+		return nil, ErrInvalidAuthToken{}
+	}
+
+	update := args.ShortLink.createUpdate()
+	if update == nil {
+		return nil, nil
+	}
+
+	newShortLink, err := a.shortLinkUpdater.UpdateShortLink(args.OldAlias, *update, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ShortLink{shortLink: newShortLink}, nil
+}
+
+// ChangeInput represents possible properties for Change
+type ChangeInput struct {
+	Title           string
+	SummaryMarkdown *string
+}
+
+// CreateChangeArgs represents the possible parameters for CreateChange endpoint
+type CreateChangeArgs struct {
+	Change ChangeInput
+}
+
 // CreateChange creates a Change in the change log
 func (a AuthMutation) CreateChange(args *CreateChangeArgs) (*Change, error) {
 	user, err := viewer(a.authToken, a.authenticator)
@@ -112,6 +164,11 @@ func (a AuthMutation) CreateChange(args *CreateChangeArgs) (*Change, error) {
 	}
 }
 
+// DeleteChangeArgs represents the possible parameters for DeleteChange endpoint
+type DeleteChangeArgs struct {
+	ID string
+}
+
 // DeleteChange removes a Change with given ID from change log
 func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
 	user, err := viewer(a.authToken, a.authenticator)
@@ -131,6 +188,12 @@ func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
 	default:
 		return nil, ErrUnknown{}
 	}
+}
+
+// UpdateChangeArgs represents the possible parameters for UpdateChange endpoint.
+type UpdateChangeArgs struct {
+	ID     string
+	Change ChangeInput
 }
 
 // UpdateChange updates a Change with given ID in change log.
@@ -176,11 +239,13 @@ func newAuthMutation(
 	authenticator authenticator.Authenticator,
 	changeLog changelog.ChangeLog,
 	shortLinkCreator shortlink.Creator,
+	shortLinkUpdater shortlink.Updater,
 ) AuthMutation {
 	return AuthMutation{
 		authToken:        authToken,
 		authenticator:    authenticator,
 		changeLog:        changeLog,
 		shortLinkCreator: shortLinkCreator,
+		shortLinkUpdater: shortLinkUpdater,
 	}
 }
