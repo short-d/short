@@ -60,6 +60,8 @@ func TestLinker_IsAccountLinked(t *testing.T) {
 
 			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			assert.Equal(t, nil, err)
+
 			userRepo := repository.NewUserFake([]entity.User{})
 			linkerFactory := NewAccountLinkerFactory(keyGen, &userRepo)
 			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUserIDs, testCase.mappingUserIDs)
@@ -129,6 +131,8 @@ func TestLinker_CreateAndLinkAccount(t *testing.T) {
 				keygen.Key(testCase.key),
 			})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			assert.Equal(t, nil, err)
+
 			userRepo := repository.NewUserFake(testCase.users)
 			linkerFactory := NewAccountLinkerFactory(keyGen, &userRepo)
 			ssoMap, err := repository.NewsSSOMapFake(testCase.mappingSSOUserIDs, testCase.mappingUserIDs)
