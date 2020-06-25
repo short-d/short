@@ -97,7 +97,7 @@ func Search(
 			return
 		}
 
-		response := resultToResponse(results)
+		response := newSearchResponse(results)
 		respBody, err := json.Marshal(&response)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -142,14 +142,15 @@ func (f *Filter) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func resultToResponse(result search.Result) SearchResponse {
+func newSearchResponse(result search.Result) SearchResponse {
 	shortLinks := make([]ShortLink, len(result.ShortLinks))
 	for i := 0; i < len(result.ShortLinks); i++ {
-		shortLinks[i] = convertShortLink(result.ShortLinks[i])
+		shortLinks[i] = newShortLink(result.ShortLinks[i])
 	}
+
 	users := make([]User, len(result.Users))
 	for i := 0; i < len(result.Users); i++ {
-		users[i] = convertUser(result.Users[i])
+		users[i] = newUser(result.Users[i])
 	}
 
 	return SearchResponse{
@@ -158,7 +159,7 @@ func resultToResponse(result search.Result) SearchResponse {
 	}
 }
 
-func convertShortLink(shortLink entity.ShortLink) ShortLink {
+func newShortLink(shortLink entity.ShortLink) ShortLink {
 	return ShortLink{
 		Alias:     shortLink.Alias,
 		LongLink:  shortLink.LongLink,
@@ -168,7 +169,7 @@ func convertShortLink(shortLink entity.ShortLink) ShortLink {
 	}
 }
 
-func convertUser(user entity.User) User {
+func newUser(user entity.User) User {
 	return User{
 		ID:             user.ID,
 		Name:           user.Name,
