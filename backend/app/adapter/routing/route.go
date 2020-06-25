@@ -109,8 +109,11 @@ func NewShort(
 		},
 		{
 			Method: "POST",
-			Path:   "/api/search",
-			Handle: handle.Search(search),
+			Path:   "/search",
+			Handle: handle.Search(
+				search,
+				authenticator,
+			),
 		},
 	}
 }
