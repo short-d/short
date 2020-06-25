@@ -13,6 +13,8 @@ import (
 	"github.com/short-d/short/backend/app/usecase/search/order"
 )
 
+const maxResults = 100
+
 var searchResource = map[string]search.Resource{
 	"short_link": search.ShortLink,
 	"user":       search.User,
@@ -35,8 +37,8 @@ type Filter struct {
 	Orders     []order.By
 }
 
-// SearchRespond represents the respond to the Search API request.
-type SearchRespond search.Result
+// SearchResponse represents the response to the Search API request.
+type SearchResponse search.Result
 
 // ShortLink represents the short_link field of Search API respond.
 type ShortLink entity.ShortLink
@@ -69,6 +71,9 @@ func Search(
 			Query: body.Query,
 			User:  user,
 		}
+		if body.Filter.MaxResults == 0 {
+			body.Filter.MaxResults = maxResults
+		}
 		filter, err := search.NewFilter(body.Filter.MaxResults, body.Filter.Resources, body.Filter.Orders)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -81,8 +86,8 @@ func Search(
 			return
 		}
 
-		respond := SearchRespond(results)
-		respBody, err := json.Marshal(&respond)
+		response := SearchResponse(results)
+		respBody, err := json.Marshal(&response)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -127,7 +132,7 @@ func (f *Filter) UnmarshalJSON(data []byte) error {
 }
 
 // MarshalJSON formats the search result into json format.
-func (s *SearchRespond) MarshalJSON() ([]byte, error) {
+func (s *SearchResponse) MarshalJSON() ([]byte, error) {
 	shortLinks := make([]ShortLink, len(s.ShortLinks))
 	for i := 0; i < len(s.ShortLinks); i++ {
 		shortLinks[i] = ShortLink(s.ShortLinks[i])
@@ -138,11 +143,11 @@ func (s *SearchRespond) MarshalJSON() ([]byte, error) {
 	}
 
 	buf := struct {
-		ShortLink []ShortLink `json:"short_link,omitempty"`
-		User      []User      `json:"user,omitempty"`
+		ShortLinks []ShortLink `json:"short_links,omitempty"`
+		Users      []User      `json:"users,omitempty"`
 	}{
-		ShortLink: shortLinks,
-		User:      users,
+		ShortLinks: shortLinks,
+		Users:      users,
 	}
 
 	return json.Marshal(&buf)
