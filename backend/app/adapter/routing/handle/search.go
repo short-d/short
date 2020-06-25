@@ -82,13 +82,13 @@ func Search(
 		}
 
 		respond := SearchRespond(results)
-		marshaled, err := json.Marshal(&respond)
+		respBody, err := json.Marshal(&respond)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		w.Write(marshaled)
+		w.Write(respBody)
 	}
 }
 
