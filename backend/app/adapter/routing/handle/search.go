@@ -58,7 +58,7 @@ func Search(
 	}
 }
 
-// UnmarshalJSON parses json into Filter
+// UnmarshalJSON parses json into Filter.
 func (f *Filter) UnmarshalJSON(data []byte) error {
 	buf := struct {
 		MaxResults int      `json:"max_results"`
