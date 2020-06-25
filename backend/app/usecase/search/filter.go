@@ -9,6 +9,7 @@ import (
 // Resource represents a type of searchable objects.
 type Resource uint
 
+// Resource constants represent supported types of resource.
 const (
 	Unknown Resource = iota
 	ShortLink
