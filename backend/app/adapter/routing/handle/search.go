@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/short-d/short/backend/app/adapter/request"
+
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
@@ -62,13 +64,17 @@ type User struct {
 
 // Search fetches resources under certain criteria.
 func Search(
+	instrumentationFactory request.InstrumentationFactory,
 	searcher search.Search,
 	authenticator authenticator.Authenticator,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
+		i := instrumentationFactory.NewHTTP(r)
+
 		buf, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
+			i.SearchFailed(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -76,6 +82,7 @@ func Search(
 		var body SearchRequest
 		err = json.Unmarshal(buf, &body)
 		if err != nil {
+			i.SearchFailed(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -87,12 +94,14 @@ func Search(
 		}
 		filter, err := search.NewFilter(body.Filter.MaxResults, body.Filter.Resources, body.Filter.Orders)
 		if err != nil {
+			i.SearchFailed(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		results, err := searcher.Search(query, filter)
 		if err != nil {
+			i.SearchFailed(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -100,11 +109,13 @@ func Search(
 		response := newSearchResponse(results)
 		respBody, err := json.Marshal(&response)
 		if err != nil {
+			i.SearchFailed(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		w.Write(respBody)
+		i.SearchSucceed()
 	}
 }
 

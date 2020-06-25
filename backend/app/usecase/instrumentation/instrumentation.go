@@ -24,6 +24,8 @@ type Instrumentation struct {
 	longLinkRetrievalFailedCh       chan ctx.ExecutionContext
 	featureToggleRetrievalSucceedCh chan ctx.ExecutionContext
 	featureToggleRetrievalFailedCh  chan ctx.ExecutionContext
+	searchSucceedCh                 chan ctx.ExecutionContext
+	searchFailedCh                  chan ctx.ExecutionContext
 	madeFeatureDecisionCh           chan ctx.ExecutionContext
 	trackCh                         chan ctx.ExecutionContext
 }
@@ -91,6 +93,23 @@ func (i Instrumentation) FeatureToggleRetrievalFailed(err error) {
 	}()
 }
 
+// SearchSucceed tracks the successes when searching the short resources.
+func (i Instrumentation) SearchSucceed() {
+	go func() {
+		c := <-i.searchSucceedCh
+		i.metrics.Count("search-succeed", 1, 1, c)
+	}()
+}
+
+// SearchFailed tracks the failures when searching the short resources.
+func (i Instrumentation) SearchFailed(err error) {
+	go func() {
+		c := <-i.searchFailedCh
+		i.logger.Error(err)
+		i.metrics.Count("search-failed", 1, 1, c)
+	}()
+}
+
 // MadeFeatureDecision tracks MadeFeatureDecision event.
 func (i Instrumentation) MadeFeatureDecision(
 	featureID string,
@@ -150,6 +169,8 @@ func NewInstrumentation(
 	longLinkRetrievalFailedCh := make(chan ctx.ExecutionContext)
 	featureToggleRetrievalSucceedCh := make(chan ctx.ExecutionContext)
 	featureToggleRetrievalFailedCh := make(chan ctx.ExecutionContext)
+	searchSucceedCh := make(chan ctx.ExecutionContext)
+	searchFailedCh := make(chan ctx.ExecutionContext)
 	madeFeatureDecisionCh := make(chan ctx.ExecutionContext)
 	trackCh := make(chan ctx.ExecutionContext)
 
@@ -165,6 +186,8 @@ func NewInstrumentation(
 		longLinkRetrievalFailedCh:       longLinkRetrievalFailedCh,
 		featureToggleRetrievalSucceedCh: featureToggleRetrievalSucceedCh,
 		featureToggleRetrievalFailedCh:  featureToggleRetrievalFailedCh,
+		searchSucceedCh:                 searchSucceedCh,
+		searchFailedCh:                  searchFailedCh,
 		madeFeatureDecisionCh:           madeFeatureDecisionCh,
 		trackCh:                         trackCh,
 	}
@@ -176,6 +199,8 @@ func NewInstrumentation(
 		go func() { longLinkRetrievalFailedCh <- c }()
 		go func() { featureToggleRetrievalSucceedCh <- c }()
 		go func() { featureToggleRetrievalFailedCh <- c }()
+		go func() { searchSucceedCh <- c }()
+		go func() { searchFailedCh <- c }()
 		go func() { madeFeatureDecisionCh <- c }()
 		go func() { trackCh <- c }()
 		close(ctxCh)

@@ -111,6 +111,7 @@ func NewShort(
 			Method: "POST",
 			Path:   "/search",
 			Handle: handle.Search(
+				instrumentationFactory,
 				search,
 				authenticator,
 			),
