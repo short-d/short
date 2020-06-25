@@ -173,7 +173,7 @@ func TestSearch(t *testing.T) {
 				},
 			},
 			expectedResult: Result{
-				shortLinks: []entity.ShortLink{
+				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "facebook",
 						LongLink: "https://facebook.com",
@@ -260,7 +260,7 @@ func TestSearch(t *testing.T) {
 				},
 			},
 			expectedResult: Result{
-				shortLinks: []entity.ShortLink{
+				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "google",
 						LongLink: "https://google.com",
@@ -270,7 +270,7 @@ func TestSearch(t *testing.T) {
 						LongLink: "http://github.com/google",
 					},
 				},
-				users: nil,
+				Users: nil,
 			},
 		},
 		{
@@ -348,8 +348,8 @@ func TestSearch(t *testing.T) {
 				},
 			},
 			expectedResult: Result{
-				shortLinks: nil,
-				users:      nil,
+				ShortLinks: nil,
+				Users:      nil,
 			},
 		},
 		{
@@ -427,13 +427,13 @@ func TestSearch(t *testing.T) {
 				},
 			},
 			expectedResult: Result{
-				shortLinks: []entity.ShortLink{
+				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "short",
 						LongLink: "https://short-d.com",
 					},
 				},
-				users: nil,
+				Users: nil,
 			},
 		},
 	}

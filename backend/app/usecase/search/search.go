@@ -22,8 +22,8 @@ type Search struct {
 
 // Result represents the result of a search query.
 type Result struct {
-	shortLinks []entity.ShortLink
-	users      []entity.User
+	ShortLinks []entity.ShortLink
+	Users      []entity.User
 }
 
 // Search finds resources based on specified criteria.
@@ -115,8 +115,8 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 	filteredShortLinks := filterShortLinks(mergedShortLinks, filter)
 
 	return Result{
-		shortLinks: filteredShortLinks,
-		users:      nil,
+		ShortLinks: filteredShortLinks,
+		Users:      nil,
 	}, nil
 }
 
@@ -138,6 +138,10 @@ func getKeywords(query string) []string {
 }
 
 func filterShortLinks(shortLinks []entity.ShortLink, filter Filter) []entity.ShortLink {
+	if filter.maxResults == 0 {
+		return shortLinks
+	}
+
 	if len(shortLinks) > filter.maxResults {
 		shortLinks = shortLinks[:filter.maxResults]
 	}
@@ -170,8 +174,8 @@ func mergeResults(results []Result) Result {
 	var mergedResult Result
 
 	for _, result := range results {
-		mergedResult.shortLinks = append(mergedResult.shortLinks, result.shortLinks...)
-		mergedResult.users = append(mergedResult.users, result.users...)
+		mergedResult.ShortLinks = append(mergedResult.ShortLinks, result.ShortLinks...)
+		mergedResult.Users = append(mergedResult.Users, result.Users...)
 	}
 
 	return mergedResult
