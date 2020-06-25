@@ -34,6 +34,7 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 	orders := toOrders(filter.orders)
 
 	for i := range filter.resources {
+		i := i
 		go func() {
 			result, err := s.searchResource(filter.resources[i], orders[i], query, filter)
 			if err != nil {
