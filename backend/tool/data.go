@@ -41,9 +41,15 @@ SELECT email FROM "user" WHERE id IS NULL LIMIT $1;
 		_, err = d.db.Exec(`
 UPDATE "user" SET id=$1 WHERE email=$2;
 `, key, email)
+		if err != nil {
+			panic(err)
+		}
 		_, err = d.db.Exec(`
 UPDATE "user_url_relation" SET user_id=$1 WHERE user_email=$2;
 `, key, email)
+		if err != nil {
+			panic(err)
+		}
 		count++
 	}
 	d.logger.Info(fmt.Sprintf("Migrated %d accounts.", count))

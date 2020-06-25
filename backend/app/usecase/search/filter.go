@@ -10,7 +10,12 @@ import (
 type Resource uint
 
 const (
-	ShortLink Resource = iota
+	// Unknown implies the resource type is not support by the search module.
+	// This is usually used as the fallback resource by the callers of search API.
+	Unknown Resource = iota
+	// ShortLink represents the short links.
+	ShortLink
+	// User represents the internal user.
 	User
 )
 
