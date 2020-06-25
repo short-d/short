@@ -6,14 +6,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/short-d/app/fw/router"
 	"github.com/short-d/short/backend/app/entity"
+
+	"github.com/short-d/app/fw/router"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/search"
 	"github.com/short-d/short/backend/app/usecase/search/order"
 )
-
-const maxResults = 100
 
 var searchResource = map[string]search.Resource{
 	"short_link": search.ShortLink,
@@ -38,13 +37,29 @@ type Filter struct {
 }
 
 // SearchResponse represents the response to the Search API request.
-type SearchResponse search.Result
+type SearchResponse struct {
+	ShortLinks []ShortLink `json:"short_links,omitempty"`
+	Users      []User      `json:"users,omitempty"`
+}
 
 // ShortLink represents the short_link field of Search API respond.
-type ShortLink entity.ShortLink
+type ShortLink struct {
+	Alias     string     `json:"alias,omitempty"`
+	LongLink  string     `json:"long_link,omitempty"`
+	ExpireAt  *time.Time `json:"expire_at,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+}
 
 // User represents the user field of Search API respond.
-type User entity.User
+type User struct {
+	ID             string     `json:"id,omitempty"`
+	Name           string     `json:"name,omitempty"`
+	Email          string     `json:"email,omitempty"`
+	LastSignedInAt *time.Time `json:"last_signed_in_at,omitempty"`
+	CreatedAt      *time.Time `json:"created_at,omitempty"`
+	UpdatedAt      *time.Time `json:"updated_at,omitempty"`
+}
 
 // Search fetches resources under certain criteria.
 func Search(
@@ -71,9 +86,6 @@ func Search(
 			Query: body.Query,
 			User:  user,
 		}
-		if body.Filter.MaxResults == 0 {
-			body.Filter.MaxResults = maxResults
-		}
 		filter, err := search.NewFilter(body.Filter.MaxResults, body.Filter.Resources, body.Filter.Orders)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -86,7 +98,7 @@ func Search(
 			return
 		}
 
-		response := SearchResponse(results)
+		response := resultToResponse(results)
 		respBody, err := json.Marshal(&response)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -131,64 +143,39 @@ func (f *Filter) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// MarshalJSON formats the search result into json format.
-func (s *SearchResponse) MarshalJSON() ([]byte, error) {
-	shortLinks := make([]ShortLink, len(s.ShortLinks))
-	for i := 0; i < len(s.ShortLinks); i++ {
-		shortLinks[i] = ShortLink(s.ShortLinks[i])
+func resultToResponse(result search.Result) SearchResponse {
+	shortLinks := make([]ShortLink, len(result.ShortLinks))
+	for i := 0; i < len(result.ShortLinks); i++ {
+		shortLinks[i] = convertShortLink(result.ShortLinks[i])
 	}
-	users := make([]User, len(s.Users))
-	for i := 0; i < len(s.Users); i++ {
-		users[i] = User(s.Users[i])
+	users := make([]User, len(result.Users))
+	for i := 0; i < len(result.Users); i++ {
+		users[i] = convertUser(result.Users[i])
 	}
 
-	buf := struct {
-		ShortLinks []ShortLink `json:"short_links,omitempty"`
-		Users      []User      `json:"users,omitempty"`
-	}{
+	return SearchResponse{
 		ShortLinks: shortLinks,
 		Users:      users,
 	}
-
-	return json.Marshal(&buf)
 }
 
-// MarshalJSON formats the short link into json format.
-func (s *ShortLink) MarshalJSON() ([]byte, error) {
-	buf := struct {
-		Alias     string     `json:"alias,omitempty"`
-		LongLink  string     `json:"long_link,omitempty"`
-		ExpireAt  *time.Time `json:"expire_at,omitempty"`
-		CreatedAt *time.Time `json:"created_at,omitempty"`
-		UpdatedAt *time.Time `json:"updated_at,omitempty"`
-	}{
-		s.Alias,
-		s.LongLink,
-		s.ExpireAt,
-		s.CreatedAt,
-		s.UpdatedAt,
+func convertShortLink(shortLink entity.ShortLink) ShortLink {
+	return ShortLink{
+		Alias:     shortLink.Alias,
+		LongLink:  shortLink.LongLink,
+		ExpireAt:  shortLink.ExpireAt,
+		CreatedAt: shortLink.CreatedAt,
+		UpdatedAt: shortLink.UpdatedAt,
 	}
-
-	return json.Marshal(&buf)
 }
 
-// MarshalJSON formats the user into json format.
-func (u *User) MarshalJSON() ([]byte, error) {
-	buf := struct {
-		ID             string     `json:"id,omitempty"`
-		Name           string     `json:"name,omitempty"`
-		Email          string     `json:"email,omitempty"`
-		LastSignedInAt *time.Time `json:"last_signed_in_at,omitempty"`
-		CreatedAt      *time.Time `json:"created_at,omitempty"`
-		UpdatedAt      *time.Time `json:"updated_at,omitempty"`
-	}{
-		u.ID,
-		u.Name,
-		u.Email,
-		u.LastSignedInAt,
-		u.CreatedAt,
-		u.UpdatedAt,
+func convertUser(user entity.User) User {
+	return User{
+		ID:             user.ID,
+		Name:           user.Name,
+		Email:          user.Email,
+		LastSignedInAt: user.LastSignedInAt,
+		CreatedAt:      user.CreatedAt,
+		UpdatedAt:      user.UpdatedAt,
 	}
-
-	return json.Marshal(&buf)
 }

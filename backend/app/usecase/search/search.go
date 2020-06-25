@@ -138,6 +138,10 @@ func getKeywords(query string) []string {
 }
 
 func filterShortLinks(shortLinks []entity.ShortLink, filter Filter) []entity.ShortLink {
+	if filter.maxResults == 0 {
+		return shortLinks
+	}
+
 	if len(shortLinks) > filter.maxResults {
 		shortLinks = shortLinks[:filter.maxResults]
 	}
