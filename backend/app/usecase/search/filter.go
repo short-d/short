@@ -10,11 +10,11 @@ import (
 type Resource uint
 
 const (
-	// Unknown represent the resource that is not listed or known.
+	// Unknown represents the resource that is not listed or known.
 	Unknown Resource = iota
 	// ShortLink represents the short link resource.
 	ShortLink
-	// User represent the user resource.
+	// User represents the user resource.
 	User
 )
 

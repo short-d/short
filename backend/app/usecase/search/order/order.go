@@ -6,9 +6,9 @@ import "github.com/short-d/short/backend/app/entity"
 type By uint
 
 const (
-	// ByUnsorted represent the order type which does not sort the resource.
+	// ByUnsorted represents the order type which does not sort the resource.
 	ByUnsorted By = iota
-	// ByCreatedTimeASC represent the order type which sorts resources based on created time.
+	// ByCreatedTimeASC represents the order type which sorts resources based on created time.
 	ByCreatedTimeASC
 )
 
