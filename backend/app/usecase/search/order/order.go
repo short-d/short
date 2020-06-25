@@ -5,9 +5,10 @@ import "github.com/short-d/short/backend/app/entity"
 // By represents the order of resources being sorted in.
 type By uint
 
-// By constants represent supported types of order.
 const (
+	// ByUnsorted keeps the original order of search results.
 	ByUnsorted By = iota
+	// ByCreatedTimeASC sorts search results based on their creation time.
 	ByCreatedTimeASC
 )
 

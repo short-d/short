@@ -68,6 +68,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 			retrieverFake := shortlink.NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 			entryRepo := logger.NewEntryRepoFake()
 			lg, err := logger.NewFake(logger.LogOff, &entryRepo)
+			assert.Equal(t, nil, err)
 
 			keyFetcher := keygen.NewKeyFetcherFake([]keygen.Key{})
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
