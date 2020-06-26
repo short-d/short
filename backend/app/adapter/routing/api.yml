@@ -1,0 +1,267 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: Short Computing Cloud
+  description: |
+    Here are the APIs for short-d.com & Short Computing Cloud.
+    Cloud APIs require you to attach an API key.
+    You can generate the API keys here: https://short-d.com/admin/key
+  contact:
+    url: https://short-d.com/r/slack
+  license:
+    name: MIT
+    url: https://github.com/short-d/short/blob/master/LICENSE
+servers:
+  - url: https://api.short-d.com
+  - url: https://api-staging.short-d.com
+  - url: https://api-testing.short-d.com
+tags:
+  - name: short
+    description: The foundamental web APIs for short-d.com.
+  - name: cloud
+    description: External developers can integrate Cloud APIs into their own application.
+  - name: oauth
+    description: Integrate single sign on through user's Github, Google and Facebook account
+paths:
+  /r/{alias}:
+    get:
+      tags:
+        - short
+      summary: |
+        Redirect user to the original long link.
+        This API can only be tested in real browser.
+      parameters:
+        - name: alias
+          in: path
+          required: true
+          schema:
+            type: string
+            format: url
+      responses:
+        '303':
+          description: Redirect user to the long link
+        '404':
+          description: Short link not found
+  /features/{featureID}:
+    get:
+      tags:
+        - cloud
+      summary: Find whether a feature with given feature ID is enabled for the user.
+      parameters:
+        - name: featureID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request succeed
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - web_api: []
+  /analytics/track/{event}:
+    get:
+      tags:
+        - cloud
+      summary: Record a event has just happened
+      parameters:
+        - name: event
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Event is successfully recorded
+      security:
+        - web_api: []
+  /search:
+    post:
+      tags:
+        - cloud
+      summary: Search resources matching the provided query
+      requestBody:
+        description: user query and filters
+        content:
+          'application/json':
+            schema:
+              type: object
+              required:
+                - query
+                - filter
+              properties:
+                query:
+                  type: string
+                filter:
+                  $ref: '#/components/schemas/Filter'
+      responses:
+        '200':
+          description: search succeed
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - short_links
+                  - users
+                properties:
+                  short_links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ShortLink'
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+      security:
+        - web_api: []
+  /oauth/github/sign-in:
+    get:
+      tags:
+        - oauth
+      summary: Sign in with Github account
+      responses:
+        '303':
+          description: |
+            Redirect user to the Github sign in portal or Short's home page if
+            already signed in
+  /oauth/github/sign-in/callback:
+    get:
+      tags:
+        - oauth
+      summary: Callback for Github sign in
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '303':
+          description: |
+            Redirect user to Short's home page after signed in
+  /oauth/google/sign-in:
+    get:
+      tags:
+        - oauth
+      summary: Sign in with Google account
+      responses:
+        '303':
+          description: |
+            Redirect user to the Google sign in portal or Short's home page if
+            already signed in
+  /oauth/google/sign-in/callback:
+    get:
+      tags:
+        - oauth
+      summary: Callback for Google sign in
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '303':
+          description: |
+            Redirect user to Short's home page after signed in
+  /oauth/facebook/sign-in:
+    get:
+      tags:
+        - oauth
+      summary: Sign in with Facebook account
+      responses:
+        '303':
+          description: |
+            Redirect user to the Facebook sign in portal or Short's home page if
+            already signed in
+  /oauth/facebook/sign-in/callback:
+    get:
+      tags:
+        - oauth
+      summary: Callback for Facebook sign in
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '303':
+          description: |
+            Redirect user to Short's home page after signed in
+components:
+  schemas:
+    Filter:
+      type: object
+      properties:
+        resources:
+          type: array
+          items:
+            type: string
+            enum:
+              - short_link
+              - user
+        orders:
+          type: array
+          items:
+            type: string
+            enum:
+              - created_time_asc
+        max_results:
+          type: integer
+          format: int64
+    ShortLink:
+      type: object
+      required:
+        - alias
+        - long_link
+      properties:
+        alias:
+          type: string
+        long_link:
+          type: string
+          format: url
+        expire_at:
+          type: string
+          format: data-time
+        created_at:
+          type: string
+          format: data-time
+        updated_at:
+          type: string
+          format: data-time
+    User:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          format: url
+        email:
+          type: string
+          format: email
+        last_signed_in_at:
+          type: string
+          format: data-time
+        created_at:
+          type: string
+          format: data-time
+        updated_at:
+          type: string
+          format: data-time
+  securitySchemes:
+    web_api:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cloud_api:
+      type: apiKey
+      name: api_key
+      in: header
