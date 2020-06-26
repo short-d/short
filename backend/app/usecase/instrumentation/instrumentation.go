@@ -2,6 +2,7 @@ package instrumentation
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/ctx"
@@ -94,10 +95,16 @@ func (i Instrumentation) FeatureToggleRetrievalFailed(err error) {
 }
 
 // SearchSucceed tracks the successes when searching the short resources.
-func (i Instrumentation) SearchSucceed() {
+func (i Instrumentation) SearchSucceed(keywords string, t time.Time) {
 	go func() {
 		c := <-i.searchSucceedCh
 		i.metrics.Count("search-succeed", 1, 1, c)
+		userID := i.getUserID(nil)
+		props := map[string]string{
+			"keywords": keywords,
+			"time":     t.String(),
+		}
+		i.analytics.Track("Search", props, userID, c)
 	}()
 }
 

@@ -114,7 +114,7 @@ func Search(
 		}
 
 		w.Write(respBody)
-		i.SearchSucceed()
+		i.SearchSucceed(query.Query, time.Now())
 	}
 }
 
