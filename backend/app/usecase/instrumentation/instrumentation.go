@@ -102,7 +102,7 @@ func (i Instrumentation) SearchSucceed(user *entity.User, keywords string, resou
 		userID := i.getUserID(user)
 		props := map[string]string{
 			"keywords":  keywords,
-			"resources": strings.Join(resources, ", "),
+			"resources": strings.Join(resources, ","),
 		}
 		i.analytics.Track("Search", props, userID, c)
 	}()
