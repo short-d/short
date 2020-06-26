@@ -1,14 +1,13 @@
 # Configure Github Sign In
 
-Create a new Client ID at
-   [Google API Credentials](https://console.developers.google.com/apis/credentials):
+Create a new OAuth App at
+   [Github Developer](https://github.com/settings/developers):
 
-1. Click on `Create Credentials` and select `OAuth client ID`.
+1. Click on `OAuth Apps` and select `New OAuth App`.
 
-1. Select `Web application` for `Application type`.
-
-1. Fill in `http://localhost/oauth/google/sign-in/callback` for `Authorized redirect URIs` and click on `Create`.
+1. Fill in `http://localhost/oauth/github/sign-in/callback` for `Authorization callback URL`
+   and click on `Register application`.
  
-1. Replace the value of `GOOGLE_CLIENT_ID` in `backend/.env` file with `Your Client ID`.
-1. Replace the value of `GOOGLE_CLIENT_SECRET` in `backend/.env` file with
-   `Your Client Secret`.
+1. Replace the value of `GITHUB_CLIENT_ID` in `backend/.env` file with `Client ID`.
+1. Replace the value of `GITHUB_CLIENT_SECRET` in `backend/.env` file with
+   Client Secret`.
