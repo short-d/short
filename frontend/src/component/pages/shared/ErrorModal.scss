@@ -1,0 +1,40 @@
+@import '../../styles/font';
+@import '../../styles/color';
+
+.error-modal-content {
+  background-color: $color-error-modal-background-color;
+  box-sizing: border-box;
+  font-family: $font-family-primary;
+  padding: 60px;
+  width: 600px;
+
+  > .title {
+    color: $color-white;
+    font-size: 24px;
+    font-weight: $font-weight-medium;
+    line-height: 24px;
+    margin-bottom: 40px;
+    text-align: center;
+    text-transform: capitalize;
+  }
+
+  > .description {
+    color: $color-white;
+    font-size: 18px;
+    font-weight: $font-weight-semi-bold;
+    line-height: 1.5;
+  }
+
+  > .close-icon {
+    fill: $color-white;
+    opacity: 0.6;
+    position: fixed;
+    right: 10px;
+    top: 10px;
+
+    &:hover {
+      cursor: pointer;
+      opacity: 0.9;
+    }
+  }
+}
