@@ -95,11 +95,11 @@ func (i Instrumentation) FeatureToggleRetrievalFailed(err error) {
 }
 
 // SearchSucceed tracks the successes when searching the short resources.
-func (i Instrumentation) SearchSucceed(keywords string, t time.Time) {
+func (i Instrumentation) SearchSucceed(user *entity.User, keywords string, t time.Time) {
 	go func() {
 		c := <-i.searchSucceedCh
 		i.metrics.Count("search-succeed", 1, 1, c)
-		userID := i.getUserID(nil)
+		userID := i.getUserID(user)
 		props := map[string]string{
 			"keywords": keywords,
 			"time":     t.String(),
@@ -159,7 +159,7 @@ func (i Instrumentation) getUserID(user *entity.User) string {
 	if user == nil {
 		return "anonymous"
 	}
-	return user.Email
+	return user.ID
 }
 
 // NewInstrumentation initializes instrumentation code.
