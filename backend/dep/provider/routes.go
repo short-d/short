@@ -17,6 +17,9 @@ import (
 // WebFrontendURL represents the URL of the web frontend
 type WebFrontendURL string
 
+type SwaggerUIDir string
+type OpenAPISpecPath string
+
 // NewShortRoutes creates HTTP routes for Short API with WwwRoot to uniquely identify WwwRoot during dependency injection.
 func NewShortRoutes(
 	instrumentationFactory request.InstrumentationFactory,
@@ -29,6 +32,8 @@ func NewShortRoutes(
 	googleSSO google.SingleSignOn,
 	authenticator authenticator.Authenticator,
 	search search.Search,
+	swaggerUIDir SwaggerUIDir,
+	openAPISpecPath OpenAPISpecPath,
 ) []router.Route {
 	return routing.NewShort(
 		instrumentationFactory,
@@ -41,5 +46,7 @@ func NewShortRoutes(
 		googleSSO,
 		authenticator,
 		search,
+		string(swaggerUIDir),
+		string(openAPISpecPath),
 	)
 }
