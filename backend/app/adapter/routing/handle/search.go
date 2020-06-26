@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/short-d/app/fw/router"
+	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/search"
@@ -16,6 +17,11 @@ import (
 var searchResource = map[string]search.Resource{
 	"short_link": search.ShortLink,
 	"user":       search.User,
+}
+
+var searchResourceString = map[search.Resource]string{
+	search.ShortLink: "short_link",
+	search.User:      "user",
 }
 
 var searchOrder = map[string]order.By{
@@ -62,13 +68,17 @@ type User struct {
 
 // Search fetches resources under certain criteria.
 func Search(
+	instrumentationFactory request.InstrumentationFactory,
 	searcher search.Search,
 	authenticator authenticator.Authenticator,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
+		i := instrumentationFactory.NewHTTP(r)
+
 		buf, err := ioutil.ReadAll(r.Body)
 		defer r.Body.Close()
 		if err != nil {
+			i.SearchFailed(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -76,6 +86,7 @@ func Search(
 		var body SearchRequest
 		err = json.Unmarshal(buf, &body)
 		if err != nil {
+			i.SearchFailed(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -87,12 +98,14 @@ func Search(
 		}
 		filter, err := search.NewFilter(body.Filter.MaxResults, body.Filter.Resources, body.Filter.Orders)
 		if err != nil {
+			i.SearchFailed(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		results, err := searcher.Search(query, filter)
 		if err != nil {
+			i.SearchFailed(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -100,11 +113,13 @@ func Search(
 		response := newSearchResponse(results)
 		respBody, err := json.Marshal(&response)
 		if err != nil {
+			i.SearchFailed(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		w.Write(respBody)
+		i.SearchSucceed(user, query.Query, body.Filter.resourcesString())
 	}
 }
 
@@ -140,6 +155,17 @@ func (f *Filter) UnmarshalJSON(data []byte) error {
 		f.Orders = append(f.Orders, val)
 	}
 	return nil
+}
+
+func (f *Filter) resourcesString() []string {
+	var resources []string
+	for _, resource := range f.Resources {
+		val, ok := searchResourceString[resource]
+		if ok {
+			resources = append(resources, val)
+		}
+	}
+	return resources
 }
 
 func newSearchResponse(result search.Result) SearchResponse {
