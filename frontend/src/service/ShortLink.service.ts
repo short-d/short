@@ -1,6 +1,6 @@
 import { Url } from '../entity/Url';
 import { Err, ErrorService } from './Error.service';
-import { ShortLinkGraphQLApi } from './ShortLinkGraphQL.api';
+import { ShortLinkGraphQLApi } from './shortGraphQL/ShortLinkGraphQL.api';
 
 export interface IPagedShortLinks {
   shortLinks: Url[];
@@ -36,6 +36,10 @@ export class ShortLinkService {
           });
         });
     });
+  }
+
+  async updateShortLink(oldAlias: string, shortLink: Partial<Url>) {
+    return this.shortLinkGraphQLApi.updateShortLink(oldAlias, shortLink);
   }
 
   private getPagedShortLinks(

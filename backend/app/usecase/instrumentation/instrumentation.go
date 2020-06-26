@@ -2,6 +2,7 @@ package instrumentation
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/ctx"
@@ -24,6 +25,8 @@ type Instrumentation struct {
 	longLinkRetrievalFailedCh       chan ctx.ExecutionContext
 	featureToggleRetrievalSucceedCh chan ctx.ExecutionContext
 	featureToggleRetrievalFailedCh  chan ctx.ExecutionContext
+	searchSucceedCh                 chan ctx.ExecutionContext
+	searchFailedCh                  chan ctx.ExecutionContext
 	madeFeatureDecisionCh           chan ctx.ExecutionContext
 	trackCh                         chan ctx.ExecutionContext
 }
@@ -91,6 +94,29 @@ func (i Instrumentation) FeatureToggleRetrievalFailed(err error) {
 	}()
 }
 
+// SearchSucceed tracks the successes when searching the short resources.
+func (i Instrumentation) SearchSucceed(user *entity.User, keywords string, resources []string) {
+	go func() {
+		c := <-i.searchSucceedCh
+		i.metrics.Count("search-succeed", 1, 1, c)
+		userID := i.getUserID(user)
+		props := map[string]string{
+			"keywords":  keywords,
+			"resources": strings.Join(resources, ","),
+		}
+		i.analytics.Track("Search", props, userID, c)
+	}()
+}
+
+// SearchFailed tracks the failures when searching the short resources.
+func (i Instrumentation) SearchFailed(err error) {
+	go func() {
+		c := <-i.searchFailedCh
+		i.logger.Error(err)
+		i.metrics.Count("search-failed", 1, 1, c)
+	}()
+}
+
 // MadeFeatureDecision tracks MadeFeatureDecision event.
 func (i Instrumentation) MadeFeatureDecision(
 	featureID string,
@@ -133,7 +159,7 @@ func (i Instrumentation) getUserID(user *entity.User) string {
 	if user == nil {
 		return "anonymous"
 	}
-	return user.Email
+	return user.ID
 }
 
 // NewInstrumentation initializes instrumentation code.
@@ -150,6 +176,8 @@ func NewInstrumentation(
 	longLinkRetrievalFailedCh := make(chan ctx.ExecutionContext)
 	featureToggleRetrievalSucceedCh := make(chan ctx.ExecutionContext)
 	featureToggleRetrievalFailedCh := make(chan ctx.ExecutionContext)
+	searchSucceedCh := make(chan ctx.ExecutionContext)
+	searchFailedCh := make(chan ctx.ExecutionContext)
 	madeFeatureDecisionCh := make(chan ctx.ExecutionContext)
 	trackCh := make(chan ctx.ExecutionContext)
 
@@ -165,6 +193,8 @@ func NewInstrumentation(
 		longLinkRetrievalFailedCh:       longLinkRetrievalFailedCh,
 		featureToggleRetrievalSucceedCh: featureToggleRetrievalSucceedCh,
 		featureToggleRetrievalFailedCh:  featureToggleRetrievalFailedCh,
+		searchSucceedCh:                 searchSucceedCh,
+		searchFailedCh:                  searchFailedCh,
 		madeFeatureDecisionCh:           madeFeatureDecisionCh,
 		trackCh:                         trackCh,
 	}
@@ -176,6 +206,8 @@ func NewInstrumentation(
 		go func() { longLinkRetrievalFailedCh <- c }()
 		go func() { featureToggleRetrievalSucceedCh <- c }()
 		go func() { featureToggleRetrievalFailedCh <- c }()
+		go func() { searchSucceedCh <- c }()
+		go func() { searchFailedCh <- c }()
 		go func() { madeFeatureDecisionCh <- c }()
 		go func() { trackCh <- c }()
 		close(ctxCh)

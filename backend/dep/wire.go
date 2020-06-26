@@ -163,14 +163,16 @@ func InjectGraphQLService(
 		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.ChangeLog), new(sqldb.ChangeLogSQL)),
 		wire.Bind(new(repository.UserChangeLog), new(sqldb.UserChangeLogSQL)),
-		wire.Bind(new(repository.ShortLink), new(*sqldb.ShortLinkSql)),
+		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSQL)),
 
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
 		wire.Bind(new(shortlink.Retriever), new(shortlink.RetrieverPersist)),
 		wire.Bind(new(shortlink.Creator), new(shortlink.CreatorPersist)),
+		wire.Bind(new(shortlink.Updater), new(shortlink.UpdaterPersist)),
 
 		observabilitySet,
 		authenticatorSet,
+		authorizerSet,
 		keyGenSet,
 
 		env.NewDeployment,
@@ -187,7 +189,7 @@ func InjectGraphQLService(
 		provider.NewReCaptchaService,
 		sqldb.NewChangeLogSQL,
 		sqldb.NewUserChangeLogSQL,
-		sqldb.NewShortLinkSql,
+		sqldb.NewShortLinkSQL,
 		sqldb.NewUserShortLinkSQL,
 
 		validator.NewLongLink,
@@ -195,6 +197,7 @@ func InjectGraphQLService(
 		changelog.NewPersist,
 		shortlink.NewRetrieverPersist,
 		shortlink.NewCreatorPersist,
+		shortlink.NewUpdaterPersist,
 		requester.NewVerifier,
 	)
 	return service.GraphQL{}, nil
@@ -219,6 +222,7 @@ func InjectRoutingService(
 	kgsRPCConfig provider.KgsRPCConfig,
 	webFrontendURL provider.WebFrontendURL,
 	tokenValidDuration provider.TokenValidDuration,
+	searchTimeout provider.SearchTimeout,
 	dataDogAPIKey provider.DataDogAPIKey,
 	segmentAPIKey provider.SegmentAPIKey,
 	ipStackAPIKey provider.IPStackAPIKey,
@@ -229,8 +233,8 @@ func InjectRoutingService(
 
 		wire.Bind(new(shortlink.Retriever), new(shortlink.RetrieverPersist)),
 		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
-		wire.Bind(new(repository.User), new(*sqldb.UserSQL)),
-		wire.Bind(new(repository.ShortLink), new(*sqldb.ShortLinkSql)),
+		wire.Bind(new(repository.User), new(sqldb.UserSQL)),
+		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSQL)),
 
 		observabilitySet,
 		authenticatorSet,
@@ -259,12 +263,13 @@ func InjectRoutingService(
 		sqldb.NewFacebookSSOSql,
 		sqldb.NewGoogleSSOSql,
 		sqldb.NewUserSQL,
-		sqldb.NewShortLinkSql,
+		sqldb.NewShortLinkSQL,
 		sqldb.NewUserShortLinkSQL,
 
 		sso.NewAccountLinkerFactory,
 		sso.NewFactory,
 		shortlink.NewRetrieverPersist,
+		provider.NewSearch,
 		provider.NewShortRoutes,
 	)
 	return service.Routing{}, nil

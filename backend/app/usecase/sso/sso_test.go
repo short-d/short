@@ -108,6 +108,7 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 
 			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
 			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			assert.Equal(t, nil, err)
 
 			userRepo := repository.NewUserFake(testCase.users)
 			linkerFactory := NewAccountLinkerFactory(keyGen, &userRepo)

@@ -75,9 +75,9 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	http := webreq.NewHTTP(client)
 	entryRepository := provider.NewEntryRepositorySwitch(runtime2, deployment, stdOut, dataDogAPIKey, http)
 	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, entryRepository)
-	shortLinkSql := sqldb.NewShortLinkSql(sqlDB)
+	shortLinkSQL := sqldb.NewShortLinkSQL(sqlDB)
 	userShortLinkSQL := sqldb.NewUserShortLinkSQL(sqlDB)
-	retrieverPersist := shortlink.NewRetrieverPersist(shortLinkSql, userShortLinkSQL)
+	retrieverPersist := shortlink.NewRetrieverPersist(shortLinkSQL, userShortLinkSQL)
 	rpc, err := provider.NewKgsRPC(kgsRPCConfig)
 	if err != nil {
 		return service.GraphQL{}, err
@@ -90,22 +90,26 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	customAlias := validator.NewCustomAlias()
 	safeBrowsing := provider.NewSafeBrowsing(googleAPIKey, http)
 	detector := risk.NewDetector(safeBrowsing)
-	creatorPersist := shortlink.NewCreatorPersist(shortLinkSql, userShortLinkSQL, keyGenerator, longLink, customAlias, system, detector)
+	creatorPersist := shortlink.NewCreatorPersist(shortLinkSQL, userShortLinkSQL, keyGenerator, longLink, customAlias, system, detector)
+	updaterPersist := shortlink.NewUpdaterPersist(shortLinkSQL, userShortLinkSQL, longLink, customAlias, system, detector)
 	changeLogSQL := sqldb.NewChangeLogSQL(sqlDB)
 	userChangeLogSQL := sqldb.NewUserChangeLogSQL(sqlDB)
-	persist := changelog.NewPersist(keyGenerator, system, changeLogSQL, userChangeLogSQL)
+	userRoleSQL := sqldb.NewUserRoleSQL(sqlDB)
+	rbacRBAC := rbac.NewRBAC(userRoleSQL)
+	authorizerAuthorizer := authorizer.NewAuthorizer(rbacRBAC)
+	persist := changelog.NewPersist(keyGenerator, system, changeLogSQL, userChangeLogSQL, authorizerAuthorizer)
 	reCaptcha := provider.NewReCaptchaService(http, secret)
 	verifier := requester.NewVerifier(reCaptcha)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
-	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, persist, verifier, authenticator)
+	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, updaterPersist, persist, verifier, authenticator)
 	api := gqlapi.NewShort(resolverResolver)
 	graphGopherHandler := graphql.NewGraphGopherHandler(api)
 	graphQL := provider.NewGraphQLService(graphqlPath, graphGopherHandler, loggerLogger)
 	return graphQL, nil
 }
 
-func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, webFrontendURL provider.WebFrontendURL, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey) (service.Routing, error) {
+func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, webFrontendURL provider.WebFrontendURL, tokenValidDuration provider.TokenValidDuration, searchTimeout provider.SearchTimeout, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey) (service.Routing, error) {
 	system := timer.NewSystem()
 	program := runtime.NewProgram()
 	deployment := env.NewDeployment(runtime2)
@@ -128,9 +132,9 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	ipStack := provider.NewIPStack(ipStackAPIKey, http, loggerLogger)
 	requestClient := request.NewClient(proxy, ipStack)
 	instrumentationFactory := request.NewInstrumentationFactory(loggerLogger, system, dataDog, segment, keyGenerator, requestClient)
-	shortLinkSql := sqldb.NewShortLinkSql(sqlDB)
+	shortLinkSQL := sqldb.NewShortLinkSQL(sqlDB)
 	userShortLinkSQL := sqldb.NewUserShortLinkSQL(sqlDB)
-	retrieverPersist := shortlink.NewRetrieverPersist(shortLinkSql, userShortLinkSQL)
+	retrieverPersist := shortlink.NewRetrieverPersist(shortLinkSQL, userShortLinkSQL)
 	featureToggleSQL := sqldb.NewFeatureToggleSQL(sqlDB)
 	userRoleSQL := sqldb.NewUserRoleSQL(sqlDB)
 	rbacRBAC := rbac.NewRBAC(userRoleSQL)
@@ -157,7 +161,8 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	googleSSOSql := sqldb.NewGoogleSSOSql(sqlDB, loggerLogger)
 	googleAccountLinker := provider.NewGoogleAccountLinker(accountLinkerFactory, googleSSOSql)
 	googleSingleSignOn := provider.NewGoogleSSO(factory, googleIdentityProvider, googleAccount, googleAccountLinker)
-	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticator)
+	search := provider.NewSearch(loggerLogger, shortLinkSQL, userShortLinkSQL, searchTimeout)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticator, search)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
 }

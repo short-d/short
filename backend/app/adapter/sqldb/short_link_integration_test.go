@@ -133,9 +133,113 @@ func TestShortLinkSql_UpdateOGMetaTags(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 
 					shortLink, err := shortLinkRepo.UpdateOpenGraphTags(testCase.alias, testCase.metaTags)
+					assert.Equal(t, nil, err)
+					assert.Equal(t, testCase.expectedShortLink, shortLink)
+				})
+		})
+	}
+}
+
+func TestShortLinkSql_UpdateTwitterTags(t *testing.T) {
+	title1 := "title1"
+	description1 := "description1"
+	imageURL1 := "url1"
+	title2 := "title2"
+	description2 := "description2"
+	imageURL2 := "url2"
+
+	testCases := []struct {
+		name              string
+		tableRows         []shortLinkTableRow
+		alias             string
+		metaTags          metatag.Twitter
+		expectedShortLink entity.ShortLink
+	}{
+		{
+			name: "Twitter tags not provided",
+			tableRows: []shortLinkTableRow{
+				{
+					alias:         "220uFicCJj",
+					longLink:      "http://www.google.com",
+					ogTitle:       &title1,
+					ogDescription: &description1,
+					ogImageURL:    &imageURL1,
+				},
+			},
+			alias: "220uFicCJj",
+			metaTags: metatag.Twitter{
+				Title:       &title2,
+				Description: &description2,
+				ImageURL:    &imageURL2,
+			},
+			expectedShortLink: entity.ShortLink{
+				Alias:    "220uFicCJj",
+				LongLink: "http://www.google.com",
+				OpenGraphTags: metatag.OpenGraph{
+					Title:       &title1,
+					Description: &description1,
+					ImageURL:    &imageURL1,
+				},
+				TwitterTags: metatag.Twitter{
+					Title:       &title2,
+					Description: &description2,
+					ImageURL:    &imageURL2,
+				},
+			},
+		},
+		{
+			name: "Twitter tags provided",
+			tableRows: []shortLinkTableRow{
+				{
+					alias:              "220uFicCJj",
+					longLink:           "http://www.google.com",
+					ogTitle:            &title1,
+					ogDescription:      &description1,
+					ogImageURL:         &imageURL1,
+					twitterTitle:       &title1,
+					twitterDescription: &description1,
+					twitterImageURL:    &imageURL1,
+				},
+			},
+			alias: "220uFicCJj",
+			metaTags: metatag.Twitter{
+				Title:       &title2,
+				Description: &description2,
+				ImageURL:    &imageURL2,
+			},
+			expectedShortLink: entity.ShortLink{
+				Alias:    "220uFicCJj",
+				LongLink: "http://www.google.com",
+				OpenGraphTags: metatag.OpenGraph{
+					Title:       &title1,
+					Description: &description1,
+					ImageURL:    &imageURL1,
+				},
+				TwitterTags: metatag.Twitter{
+					Title:       &title2,
+					Description: &description2,
+					ImageURL:    &imageURL2,
+				},
+			},
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			dbtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
+
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
+
+					shortLink, err := shortLinkRepo.UpdateTwitterTags(testCase.alias, testCase.metaTags)
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expectedShortLink, shortLink)
 				})
@@ -176,7 +280,7 @@ func TestShortLinkSql_IsAliasExist(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					gotIsExist, err := shortLinkRepo.IsAliasExist(testCase.alias)
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expIsExist, gotIsExist)
@@ -320,7 +424,7 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					shortLink, err := shortLinkRepo.GetShortLinkByAlias(testCase.alias)
 
 					if testCase.hasErr {
@@ -426,7 +530,7 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					err := shortLinkRepo.CreateShortLink(testCase.shortLink)
 
 					if testCase.hasErr {
@@ -523,7 +627,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 					expectedShortLink := testCase.expectedShortLink
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					shortLink, err := shortLinkRepo.UpdateShortLink(
 						testCase.oldAlias,
 						testCase.newShortLink,
@@ -651,7 +755,7 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 				func(sqlDB *sql.DB) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
-					shortLinkRepo := sqldb.NewShortLinkSql(sqlDB)
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					shortLink, err := shortLinkRepo.GetShortLinksByAliases(testCase.aliases)
 
 					if testCase.hasErr {
