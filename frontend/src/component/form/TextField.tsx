@@ -1,25 +1,34 @@
 import React, { ChangeEvent, Component, createRef } from 'react';
 import './TextField.scss';
 
-interface Props {
-  text?: string;
+interface IProps {
+  defaultText?: string;
   placeHolder?: string;
   onChange?: (text: string) => void;
   onBlur?: () => void;
 }
 
-interface State {
-  value: string;
+interface IState {
+  text: string;
 }
 
-export class TextField extends Component<Props, State> {
+export class TextField extends Component<IProps, IState> {
   textInput = createRef<HTMLInputElement>();
 
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      text: props.defaultText || ''
+    };
+  }
+
   handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const text = event.target.value;
+    this.setState({ text: text });
     if (!this.props.onChange) {
       return;
     }
-    this.props.onChange(event.target.value);
+    this.props.onChange(text);
   };
 
   handleBlur = () => {
@@ -39,7 +48,7 @@ export class TextField extends Component<Props, State> {
         ref={this.textInput}
         className={'text-field'}
         type={'text'}
-        value={this.props.text}
+        value={this.state.text}
         onChange={this.handleChange}
         onBlur={this.handleBlur}
         placeholder={this.props.placeHolder}
