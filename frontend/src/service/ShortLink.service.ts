@@ -38,6 +38,10 @@ export class ShortLinkService {
     });
   }
 
+  async updateShortLink(oldAlias: string, shortLink: Partial<Url>) {
+    return this.shortLinkGraphQLApi.updateShortLink(oldAlias, shortLink);
+  }
+
   private getPagedShortLinks(
     urls: Url[],
     offset: number,

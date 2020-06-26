@@ -21,6 +21,11 @@ export interface IShortGraphQLShortLink {
   longLink: string;
 }
 
+export interface IShortGraphQLShortLinkInput {
+  customAlias?: string;
+  longLink?: string;
+}
+
 export interface IShortGraphQLChangeLog {
   changes: IShortGraphQLChange[];
   lastViewedAt: string;

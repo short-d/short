@@ -7,6 +7,7 @@ export interface ReCaptcha {
 }
 
 export const CREATE_SHORT_LINK = 'createShortLink';
+export const UPDATE_SHORT_LINK = 'updateShortLink';
 export const SEARCH_SHORT_LINK = 'searchShortLink';
 export const VIEW_CHANGE_LOG = 'viewChangeLog';
 
