@@ -9,5 +9,4 @@ Create a new OAuth App at
    and click on `Register application`.
  
 1. Replace the value of `GITHUB_CLIENT_ID` in `backend/.env` file with `Client ID`.
-1. Replace the value of `GITHUB_CLIENT_SECRET` in `backend/.env` file with
-   Client Secret`.
+1. Replace the value of `GITHUB_CLIENT_SECRET` in `backend/.env` file with `Client Secret`.
