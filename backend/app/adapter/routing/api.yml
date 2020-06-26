@@ -5,7 +5,7 @@ info:
   description: |
     Here are the APIs for short-d.com & Short Computing Cloud.
     Cloud APIs require you to attach an API key.
-    You can generate the API keys here: https://short-d.com/admin/key
+    You can generate the API keys at: https://short-d.com/admin/key
   contact:
     url: https://short-d.com/r/slack
   license:
