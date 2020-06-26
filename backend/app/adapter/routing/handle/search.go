@@ -19,6 +19,11 @@ var searchResource = map[string]search.Resource{
 	"user":       search.User,
 }
 
+var searchResourceString = map[search.Resource]string{
+	search.ShortLink: "short_link",
+	search.User:      "user",
+}
+
 var searchOrder = map[string]order.By{
 	"created_time_asc": order.ByCreatedTimeASC,
 }
@@ -114,7 +119,7 @@ func Search(
 		}
 
 		w.Write(respBody)
-		i.SearchSucceed(user, query.Query, time.Now())
+		i.SearchSucceed(user, query.Query, body.Filter.resourcesString())
 	}
 }
 
@@ -150,6 +155,17 @@ func (f *Filter) UnmarshalJSON(data []byte) error {
 		f.Orders = append(f.Orders, val)
 	}
 	return nil
+}
+
+func (f *Filter) resourcesString() []string {
+	var resources []string
+	for _, resource := range f.Resources {
+		val, ok := searchResourceString[resource]
+		if ok {
+			resources = append(resources, val)
+		}
+	}
+	return resources
 }
 
 func newSearchResponse(result search.Result) SearchResponse {
