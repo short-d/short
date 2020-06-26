@@ -34,6 +34,8 @@ type ServiceConfig struct {
 	KgsPort              int
 	AuthTokenLifetime    time.Duration
 	SearchTimeout        time.Duration
+	SwaggerUIDir         string
+	OpenAPISpecPath      string
 	DataDogAPIKey        string
 	SegmentAPIKey        string
 	IPStackAPIKey        string
@@ -109,6 +111,8 @@ func Start(
 		provider.WebFrontendURL(config.WebFrontendURL),
 		provider.TokenValidDuration(config.AuthTokenLifetime),
 		provider.SearchTimeout(config.SearchTimeout),
+		provider.SwaggerUIDir(config.SwaggerUIDir),
+		provider.OpenAPISpecPath(config.OpenAPISpecPath),
 		dataDogAPIKey,
 		segmentAPIKey,
 		ipStackAPIKey,
