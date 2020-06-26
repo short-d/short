@@ -64,7 +64,8 @@ export class ShortLinkGraphQLApi {
         $authToken: String!,
         $captchaResponse: String!, 
         $oldAlias: String!, 
-        $shortLink: ShortLinkInput!) {
+        $shortLink: ShortLinkInput!
+      ) {
         authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
           updateShortLink(oldAlias: $oldAlias, shortLink: $shortLink) {
             alias
@@ -94,7 +95,6 @@ export class ShortLinkGraphQLApi {
   }
 
   private toShortLinkInput(url: Partial<Url>): IShortGraphQLShortLinkInput {
-    console.log(url);
     return {
       customAlias: url.alias,
       longLink: url.originalUrl
