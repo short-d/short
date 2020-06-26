@@ -17,7 +17,10 @@ import (
 // WebFrontendURL represents the URL of the web frontend
 type WebFrontendURL string
 
+// SwaggerUIDir represents the root directory of Swagger UI static assets.
 type SwaggerUIDir string
+
+// OpenAPISpecPath represents the location of OpenAPI specification.
 type OpenAPISpecPath string
 
 // NewShortRoutes creates HTTP routes for Short API with WwwRoot to uniquely identify WwwRoot during dependency injection.
