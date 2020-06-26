@@ -14,7 +14,7 @@ func ServeDir(dir string) router.Handle {
 	}
 }
 
-// ServeDir reads a given file and makes it accessible on the web.
+// ServeFile reads a given file and makes it accessible on the web.
 func ServeFile(fileName string) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
 		http.ServeFile(w, r, fileName)
