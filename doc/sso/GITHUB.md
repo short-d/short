@@ -3,7 +3,7 @@
 Create a new OAuth App at
    [Github Developer](https://github.com/settings/developers):
 
-1. Click on `OAuth Apps` and select `New OAuth App`.
+1. Click on `New OAuth App`.
 
 1. Fill in `http://localhost/oauth/github/sign-in/callback` for `Authorization callback URL`
    and click on `Register application`.
