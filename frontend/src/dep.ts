@@ -77,7 +77,8 @@ export function initUIFactory(
   const shortLinkGraphQLApi = new ShortLinkGraphQLApi(
     authService,
     envService,
-    graphQLService
+    graphQLService,
+    captchaService
   );
   const shortLinkService = new ShortLinkService(
     shortLinkGraphQLApi,
