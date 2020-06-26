@@ -41,7 +41,7 @@ export class CreateShortLinkSection extends Component<Props> {
         <div className={'control create-short-link'}>
           <div className={'text-field-wrapper'}>
             <TextField
-              text={this.props.longLinkText}
+              defaultText={this.props.longLinkText}
               placeHolder={'Long Link'}
               onBlur={this.props.onLongLinkTextFieldBlur}
               onChange={this.props.onLongLinkTextFieldChange}
@@ -50,7 +50,7 @@ export class CreateShortLinkSection extends Component<Props> {
           <div className={'text-field-wrapper'}>
             <TextField
               ref={this.shortLinkTextField}
-              text={this.props.alias}
+              defaultText={this.props.alias}
               placeHolder={'Custom Short Link ( Optional )'}
               onBlur={this.props.onShortLinkTextFieldBlur}
               onChange={this.props.onShortLinkTextFieldChange}
