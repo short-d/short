@@ -66,7 +66,7 @@ func InjectEnv() env.Env {
 	return goDotEnv
 }
 
-func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQLPath, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey, googleAPIKey provider.GoogleAPIKey) (service.GraphQL, error) {
+func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQLPath, graphiQLDefaultQuery provider.GraphiQLDefaultQuery, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey, googleAPIKey provider.GoogleAPIKey) (service.GraphQL, error) {
 	system := timer.NewSystem()
 	program := runtime.NewProgram()
 	deployment := env.NewDeployment(runtime2)
@@ -105,7 +105,8 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, updaterPersist, persist, verifier, authenticator)
 	api := gqlapi.NewShort(resolverResolver)
 	graphGopherHandler := graphql.NewGraphGopherHandler(api)
-	graphQL := provider.NewGraphQLService(graphqlPath, graphGopherHandler, loggerLogger)
+	graphiQL := provider.NewGraphiQL(graphqlPath, graphiQLDefaultQuery)
+	graphQL := provider.NewGraphQLService(graphqlPath, graphGopherHandler, graphiQL, loggerLogger)
 	return graphQL, nil
 }
 

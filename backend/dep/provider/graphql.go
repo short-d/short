@@ -11,6 +11,17 @@ type GraphQLPath string
 
 // NewGraphQLService creates GraphQL service with GraphQlPath to uniquely
 // identify graphqlPath during dependency injection.
-func NewGraphQLService(gqlPath GraphQLPath, handler graphql.Handler, logger logger.Logger) service.GraphQL {
-	return service.NewGraphQL(logger, string(gqlPath), handler)
+func NewGraphQLService(
+	gqlPath GraphQLPath,
+	handler graphql.Handler,
+	webUI graphql.WebUI,
+	logger logger.Logger,
+) service.GraphQL {
+	return service.NewGraphQL(logger, string(gqlPath), handler, webUI)
+}
+
+type GraphiQLDefaultQuery string
+
+func NewGraphiQL(gqlPath GraphQLPath, defaultQuery GraphiQLDefaultQuery) graphql.GraphiQL {
+	return graphql.NewGraphiQL(string(gqlPath), string(defaultQuery))
 }
