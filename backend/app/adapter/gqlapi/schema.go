@@ -15,9 +15,9 @@ type Mutation {
 }
 
 type AuthQuery {
-	ShortLink(alias: String!, expireAfter: Time): ShortLink
+	shortLink(alias: String!, expireAfter: Time): ShortLink
 	changeLog: ChangeLog!
-	ShortLinks: [ShortLink!]!
+	shortLinks: [ShortLink!]!
 }
 
 type ChangeLog {
