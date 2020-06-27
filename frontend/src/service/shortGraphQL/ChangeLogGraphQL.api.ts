@@ -3,11 +3,10 @@ import { EnvService } from '../Env.service';
 
 import { GraphQLService, IGraphQLRequestError } from '../GraphQL.service';
 import { ChangeLog } from '../../entity/ChangeLog';
-import { Change } from '../../entity/Change';
+import { parseChange } from '../../entity/Change';
 import { getErrorCodes } from '../GraphQLError';
 import { CaptchaService, VIEW_CHANGE_LOG } from '../Captcha.service';
 import {
-  IShortGraphQLChange,
   IShortGraphQLChangeLog,
   IShortGraphQLMutation,
   IShortGraphQLQuery
@@ -101,22 +100,13 @@ export class ChangeLogGraphQLApi {
   private parseChangeLog(changeLog: IShortGraphQLChangeLog): ChangeLog {
     if (changeLog.lastViewedAt) {
       return {
-        changes: changeLog.changes.map(this.parseChange),
+        changes: changeLog.changes.map(parseChange),
         lastViewedAt: new Date(changeLog.lastViewedAt)
       };
     }
 
     return {
-      changes: changeLog.changes.map(this.parseChange)
-    };
-  }
-
-  private parseChange(change: IShortGraphQLChange): Change {
-    return {
-      id: change.id,
-      title: change.title,
-      summaryMarkdown: change.summaryMarkdown,
-      releasedAt: new Date(change.releasedAt)
+      changes: changeLog.changes.map(parseChange)
     };
   }
 }
