@@ -4,6 +4,7 @@ package dep
 
 import (
 	"database/sql"
+
 	"github.com/short-d/short/backend/app/adapter/grpcapi"
 
 	"github.com/google/wire"

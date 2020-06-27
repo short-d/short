@@ -1,8 +1,9 @@
 package app
 
 import (
-	"google.golang.org/grpc"
 	"time"
+
+	"google.golang.org/grpc"
 
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/app/fw/env"
@@ -31,7 +32,7 @@ type ServiceConfig struct {
 	WebFrontendURL       string
 	GraphQLAPIPort       int
 	HTTPAPIPort          int
-	GRPCAPIPort			 int
+	GRPCAPIPort          int
 	KeyGenBufferSize     int
 	KgsHostname          string
 	KgsPort              int
