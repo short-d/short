@@ -9,8 +9,8 @@ import (
 // GraphQLPath represents the path for GraphQL APIs.
 type GraphQLPath string
 
-// NewGraphQLService creates GraphQL service with GraphQlPath to uniquely
-// identify graphqlPath during dependency injection.
+// NewGraphQLService creates GraphQL service with GraphQLPath to uniquely
+// identify graphQLPath during dependency injection.
 func NewGraphQLService(
 	gqlPath GraphQLPath,
 	handler graphql.Handler,
@@ -20,8 +20,12 @@ func NewGraphQLService(
 	return service.NewGraphQL(logger, string(gqlPath), handler, webUI)
 }
 
+// GraphiQLDefaultQuery represents the default GraphQL query showing up in
+// GraphiQL editor when it first loads.
 type GraphiQLDefaultQuery string
 
+// NewGraphiQL creates GraphiQL with GraphiQLDefaultQuery to uniquely identify
+// constructor parameters during dependency injection.
 func NewGraphiQL(gqlPath GraphQLPath, defaultQuery GraphiQLDefaultQuery) graphql.GraphiQL {
 	return graphql.NewGraphiQL(string(gqlPath), string(defaultQuery))
 }
