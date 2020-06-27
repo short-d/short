@@ -28,7 +28,7 @@ func (m MetaTagServer) GetOGTags(ctx context.Context, req *proto.GetOGTagsReques
 	}, nil
 }
 
-// GetOGTags fetches Twitter Tags from persistent storage given alias
+// GetTwitterTags fetches Twitter Tags from persistent storage given alias
 func (m MetaTagServer) GetTwitterTags(ctx context.Context, req *proto.GetTwitterTagsRequest) (*proto.GetTwitterTagsResponse, error) {
 	twitterMetaTags, err := m.metaTag.GetTwitterTags(req.GetAlias())
 	if err != nil {
