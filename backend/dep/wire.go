@@ -145,6 +145,7 @@ func InjectGraphQLService(
 	logLevel logger.LogLevel,
 	sqlDB *sql.DB,
 	graphqlPath provider.GraphQLPath,
+	graphiQLDefaultQuery provider.GraphiQLDefaultQuery,
 	secret provider.ReCaptchaSecret,
 	jwtSecret provider.JwtSecret,
 	bufferSize provider.KeyGenBufferSize,
@@ -158,6 +159,7 @@ func InjectGraphQLService(
 	wire.Build(
 		wire.Bind(new(timer.Timer), new(timer.System)),
 		wire.Bind(new(graphql.Handler), new(graphql.GraphGopherHandler)),
+		wire.Bind(new(graphql.WebUI), new(graphql.GraphiQL)),
 
 		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
 		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
@@ -178,6 +180,7 @@ func InjectGraphQLService(
 		env.NewDeployment,
 		provider.NewGraphQLService,
 		graphql.NewGraphGopherHandler,
+		provider.NewGraphiQL,
 		webreq.NewHTTPClient,
 		webreq.NewHTTP,
 		timer.NewSystem,

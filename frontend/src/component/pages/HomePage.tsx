@@ -5,7 +5,6 @@ import { Header } from './shared/Header';
 import { Url } from '../../entity/Url';
 import { Footer } from './shared/Footer';
 import { SignInModal } from './shared/sign-in/SignInModal';
-import { Modal } from '../ui/Modal';
 import { ExtPromo } from './shared/promos/ExtPromo';
 import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
@@ -16,9 +15,8 @@ import { VersionService } from '../../service/Version.service';
 import { QrCodeService } from '../../service/QrCode.service';
 import { UIFactory } from '../UIFactory';
 import { IAppState } from '../../state/reducers';
-import { Store } from 'redux';
+import { Store, Unsubscribe } from 'redux';
 import {
-  clearError,
   raiseCreateShortLinkError,
   raiseGetUserShortLinksError,
   raiseGetChangeLogError,
@@ -28,7 +26,6 @@ import {
   updateLongLink
 } from '../../state/actions';
 import { ErrorService } from '../../service/Error.service';
-import { IErr } from '../../entity/Err';
 import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
@@ -41,9 +38,9 @@ import {
   ShortLinkService
 } from '../../service/ShortLink.service';
 import { AnalyticsService } from '../../service/Analytics.service';
-import { Icon, IconID } from '../ui/Icon';
 import { Change } from '../../entity/Change';
 import { IFeatureDecisionService } from '../../service/feature-decision/FeatureDecision.service';
+import { ErrorModal } from './shared/ErrorModal';
 
 interface Props {
   uiFactory: UIFactory;
@@ -73,7 +70,6 @@ interface State {
   shortLink?: string;
   createdUrl?: Url;
   qrCodeUrl?: string;
-  err?: IErr;
   inputErr?: string;
   isShortLinkPublic?: boolean;
   autoCompleteSuggestions?: Array<Url>;
@@ -82,11 +78,11 @@ interface State {
 }
 
 export class HomePage extends Component<Props, State> {
-  errModal = React.createRef<Modal>();
   signInModal = React.createRef<SignInModal>();
   createShortLinkSection = React.createRef<CreateShortLinkSection>();
   changeLogModalRef = React.createRef<ChangeLogModal>();
   toastRef = React.createRef<Toast>();
+  unsubscribeStateChange: Unsubscribe | null = null;
 
   constructor(props: Props) {
     super(props);
@@ -114,6 +110,12 @@ export class HomePage extends Component<Props, State> {
     this.handleStateChange();
     this.autoFillLongLink();
     this.autoShowChangeLog();
+  }
+
+  componentWillUnmount(): void {
+    if (this.unsubscribeStateChange) {
+      this.unsubscribeStateChange();
+    }
   }
 
   private showAdminButton = async () => {
@@ -168,13 +170,12 @@ export class HomePage extends Component<Props, State> {
   }
 
   handleStateChange() {
-    this.props.store.subscribe(async () => {
+    this.unsubscribeStateChange = this.props.store.subscribe(async () => {
       const state = this.props.store.getState();
 
       const newState: State = {
         longLink: state.editingUrl.originalUrl,
         alias: state.editingUrl.alias,
-        err: state.err,
         createdUrl: state.createdUrl,
         inputErr: state.inputErr
       };
@@ -187,10 +188,6 @@ export class HomePage extends Component<Props, State> {
         newState.qrCodeUrl = await this.props.qrCodeService.newQrCode(
           shortLink
         );
-      }
-
-      if (newState.err) {
-        this.showError(newState.err);
       }
       this.setState(newState);
     });
@@ -236,14 +233,6 @@ export class HomePage extends Component<Props, State> {
 
   handleAliasChange = (newAlias: string) => {
     this.props.store.dispatch(updateAlias(newAlias));
-  };
-
-  handleOnErrModalCloseClick = () => {
-    this.errModal.current!.close();
-  };
-
-  handleOnErrModalClose = () => {
-    this.props.store.dispatch(clearError());
   };
 
   handleLongLinkTextFieldBlur = () => {
@@ -304,13 +293,6 @@ export class HomePage extends Component<Props, State> {
   getLongLinkFromQueryParams(): string {
     let urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('long_link')!;
-  }
-
-  showError(error?: IErr) {
-    if (!error) {
-      return;
-    }
-    this.errModal.current!.open();
   }
 
   handleOpenChangeLogModal = () => {
@@ -418,24 +400,7 @@ export class HomePage extends Component<Props, State> {
         />
 
         <SignInModal ref={this.signInModal} uiFactory={this.props.uiFactory} />
-        <Modal
-          canClose={true}
-          onModalClose={this.handleOnErrModalClose}
-          ref={this.errModal}
-        >
-          {this.state.err && (
-            <div className={'err'}>
-              <div className={'close-icon'}>
-                <Icon
-                  defaultIconID={IconID.Close}
-                  onClick={this.handleOnErrModalCloseClick}
-                />
-              </div>
-              <div className={'title'}>{this.state.err.name}</div>
-              <div className={'description'}>{this.state.err.description}</div>
-            </div>
-          )}
-        </Modal>
+        <ErrorModal store={this.props.store} />
 
         <Toast ref={this.toastRef} />
       </div>
