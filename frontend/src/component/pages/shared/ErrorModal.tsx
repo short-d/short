@@ -18,7 +18,7 @@ interface IState {
 
 export class ErrorModal extends Component<IProps, IState> {
   private modalRef = React.createRef<Modal>();
-  private stopErrorListener: Unsubscribe | undefined;
+  private unsubscribeStateChange: Unsubscribe | undefined;
 
   constructor(props: IProps) {
     super(props);
@@ -29,11 +29,11 @@ export class ErrorModal extends Component<IProps, IState> {
   }
 
   componentDidMount(): void {
-    this.startErrorListener();
+    this.subscribeErrorChanges();
   }
 
-  private startErrorListener() {
-    this.stopErrorListener = this.props.store.subscribe(() => {
+  private subscribeErrorChanges() {
+    this.unsubscribeStateChange = this.props.store.subscribe(() => {
       const { err } = this.props.store.getState();
       this.setState({ error: err });
       if (err) {
@@ -43,8 +43,8 @@ export class ErrorModal extends Component<IProps, IState> {
   }
 
   componentWillUnmount(): void {
-    if (this.stopErrorListener) {
-      this.stopErrorListener();
+    if (this.unsubscribeStateChange) {
+      this.unsubscribeStateChange();
     }
   }
 
