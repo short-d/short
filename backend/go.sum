@@ -330,6 +330,8 @@ github.com/sendgrid/sendgrid-go v3.5.0+incompatible/go.mod h1:QRQt+LX/NmgVEvmdRw
 github.com/short-d/app v0.0.0-20200118110133-668ef4ee1b79/go.mod h1:KmB7e1AnY+JhyC3Cm6hb7+Oik/x/WOC+zSrDtYp26pg=
 github.com/short-d/app v0.0.0-20200604170134-3b388c3411c6 h1:MgcDUuOB/uj3CCm3ucPOXaIuzooRQO/GwJ9m2lJlnKs=
 github.com/short-d/app v0.0.0-20200604170134-3b388c3411c6/go.mod h1:P6ujGr7sLKgyRHRWNZM75vcfjXjfL25qJRgepRUv3nY=
+github.com/short-d/app v0.0.0-20200627081605-eabc0539025f h1:S9fwe4l/F9aFIqnKsnnURc+yiBr2sOl/TorP/AkYhzs=
+github.com/short-d/app v0.0.0-20200627081605-eabc0539025f/go.mod h1:P6ujGr7sLKgyRHRWNZM75vcfjXjfL25qJRgepRUv3nY=
 github.com/short-d/eventbus v0.0.0-20200105092235-2dfc4be1f9ee h1:LNafZ4caEAcTlgGe9zJ18njsyR+uogkE5+dzZ5LeeAI=
 github.com/short-d/eventbus v0.0.0-20200105092235-2dfc4be1f9ee/go.mod h1:S3Nww0QNubrzHbWTpfzAg8YQLwXuM9GH2cGshOU6GJQ=
 github.com/short-d/eventbus v0.0.0-20200515152349-a8a7cb883a47 h1:Goj2PHNcRwk2CYxuQdyG7983FnP6HYovFlvoY7QjBz8=
