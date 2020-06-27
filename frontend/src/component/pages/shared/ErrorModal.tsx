@@ -29,10 +29,10 @@ export class ErrorModal extends Component<IProps, IState> {
   }
 
   componentDidMount(): void {
-    this.subscribeErrorChanges();
+    this.subscribeErrorChange();
   }
 
-  private subscribeErrorChanges() {
+  private subscribeErrorChange() {
     this.unsubscribeStateChange = this.props.store.subscribe(() => {
       const { err } = this.props.store.getState();
       this.setState({ error: err });
