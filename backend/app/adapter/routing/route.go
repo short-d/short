@@ -29,6 +29,8 @@ func NewShort(
 	googleSSO google.SingleSignOn,
 	authenticator authenticator.Authenticator,
 	search search.Search,
+	swaggerUIDir string,
+	openAPISpecPath string,
 ) []router.Route {
 	frontendURL, err := url.Parse(webFrontendURL)
 	if err != nil {
@@ -111,9 +113,22 @@ func NewShort(
 			Method: "POST",
 			Path:   "/search",
 			Handle: handle.Search(
+				instrumentationFactory,
 				search,
 				authenticator,
 			),
+		},
+		{
+			Method:      "GET",
+			Path:        "/api",
+			MatchPrefix: true,
+			Handle:      handle.ServeFile(openAPISpecPath),
+		},
+		{
+			Method:      "GET",
+			Path:        "/",
+			MatchPrefix: true,
+			Handle:      handle.ServeDir(swaggerUIDir),
 		},
 	}
 }

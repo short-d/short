@@ -43,6 +43,8 @@ func main() {
 		GRPCAPIPort          int           `env:"GRPC_API_PORT" default:"8081"`
 		AuthTokenLifeTime    time.Duration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
 		SearchTimeout        time.Duration `env:"SEARCH_TIMEOUT" default:"1s"`
+		SwaggerUIDir         string        `env:"SWAGGER_UI_DIR" default:"app/adapter/routing/public"`
+		OpenAPISpecPath      string        `env:"OPEN_API_SPEC_PATH" default:"app/adapter/routing/api.yml"`
 		DataDogAPIKey        string        `env:"DATA_DOG_API_KEY" default:""`
 		SegmentAPIKey        string        `env:"SEGMENT_API_KEY" default:""`
 		IPStackAPIKey        string        `env:"IP_STACK_API_KEY" default:""`
@@ -89,6 +91,8 @@ func main() {
 		KgsPort:              config.KgsPort,
 		AuthTokenLifetime:    config.AuthTokenLifeTime,
 		SearchTimeout:        config.SearchTimeout,
+		SwaggerUIDir:         config.SwaggerUIDir,
+		OpenAPISpecPath:      config.OpenAPISpecPath,
 		DataDogAPIKey:        config.DataDogAPIKey,
 		SegmentAPIKey:        config.SegmentAPIKey,
 		IPStackAPIKey:        config.IPStackAPIKey,

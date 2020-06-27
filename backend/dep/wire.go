@@ -237,6 +237,8 @@ func InjectRoutingService(
 	webFrontendURL provider.WebFrontendURL,
 	tokenValidDuration provider.TokenValidDuration,
 	searchTimeout provider.SearchTimeout,
+	swaggerUIDir provider.SwaggerUIDir,
+	openAPISpecPath provider.OpenAPISpecPath,
 	dataDogAPIKey provider.DataDogAPIKey,
 	segmentAPIKey provider.SegmentAPIKey,
 	ipStackAPIKey provider.IPStackAPIKey,

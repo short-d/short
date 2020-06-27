@@ -118,7 +118,7 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	return graphQL, nil
 }
 
-func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, webFrontendURL provider.WebFrontendURL, tokenValidDuration provider.TokenValidDuration, searchTimeout provider.SearchTimeout, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey) (service.Routing, error) {
+func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, githubClientID provider.GithubClientID, githubClientSecret provider.GithubClientSecret, facebookClientID provider.FacebookClientID, facebookClientSecret provider.FacebookClientSecret, facebookRedirectURI provider.FacebookRedirectURI, googleClientID provider.GoogleClientID, googleClientSecret provider.GoogleClientSecret, googleRedirectURI provider.GoogleRedirectURI, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, webFrontendURL provider.WebFrontendURL, tokenValidDuration provider.TokenValidDuration, searchTimeout provider.SearchTimeout, swaggerUIDir provider.SwaggerUIDir, openAPISpecPath provider.OpenAPISpecPath, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey) (service.Routing, error) {
 	system := timer.NewSystem()
 	program := runtime.NewProgram()
 	deployment := env.NewDeployment(runtime2)
@@ -171,7 +171,7 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	googleAccountLinker := provider.NewGoogleAccountLinker(accountLinkerFactory, googleSSOSql)
 	googleSingleSignOn := provider.NewGoogleSSO(factory, googleIdentityProvider, googleAccount, googleAccountLinker)
 	search := provider.NewSearch(loggerLogger, shortLinkSQL, userShortLinkSQL, searchTimeout)
-	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticator, search)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticator, search, swaggerUIDir, openAPISpecPath)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
 }
