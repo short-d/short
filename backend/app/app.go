@@ -1,11 +1,13 @@
 package app
 
 import (
+	"google.golang.org/grpc"
 	"time"
 
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/app/fw/env"
 	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/service"
 	"github.com/short-d/short/backend/dep"
 	"github.com/short-d/short/backend/dep/provider"
 )
@@ -29,6 +31,7 @@ type ServiceConfig struct {
 	WebFrontendURL       string
 	GraphQLAPIPort       int
 	HTTPAPIPort          int
+	GRPCAPIPort			 int
 	KeyGenBufferSize     int
 	KgsHostname          string
 	KgsPort              int
@@ -117,5 +120,19 @@ func Start(
 		panic(err)
 	}
 
-	httpAPI.StartAndWait(config.HTTPAPIPort)
+	httpAPI.StartAsync(config.HTTPAPIPort)
+
+	gRPCAPI := dep.InjectGRPCApi(sqlDB)
+	gRPCService, err := service.
+		NewGRPCBuilder(config.LogPrefix).
+		RegisterHandler(func(server *grpc.Server) {
+			gRPCAPI.RegisterServers(server)
+		}).
+		Build()
+
+	if err != nil {
+		panic(err)
+	}
+
+	gRPCService.StartAndWait(config.GRPCAPIPort)
 }
