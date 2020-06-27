@@ -140,6 +140,7 @@ func InjectEnv() env.Env {
 	return env.GoDotEnv{}
 }
 
+// InjectGRPCApi creates gRPC API with configured dependencies.
 func InjectGRPCApi(sqlDB *sql.DB) grpcapi.ShortGRPCApi {
 	wire.Build(
 		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSQL)),

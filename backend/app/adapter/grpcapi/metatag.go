@@ -7,12 +7,14 @@ import (
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 )
 
+// MetaTagServer represents MetaTag gRPC server
 type MetaTagServer struct {
 	metaTag shortlink.MetaTag
 }
 
 var _ proto.MetaTagServiceServer = (*MetaTagServer)(nil)
 
+// GetOGTags fetches Open Graph Tags from persistent storage given alias
 func (m MetaTagServer) GetOGTags(ctx context.Context, req *proto.GetOGTagsRequest) (*proto.GetOGTagsResponse, error) {
 	ogMetaTags, err := m.metaTag.GetOpenGraphTags(req.GetAlias())
 	if err != nil {
@@ -26,6 +28,7 @@ func (m MetaTagServer) GetOGTags(ctx context.Context, req *proto.GetOGTagsReques
 	}, nil
 }
 
+// GetOGTags fetches Twitter Tags from persistent storage given alias
 func (m MetaTagServer) GetTwitterTags(ctx context.Context, req *proto.GetTwitterTagsRequest) (*proto.GetTwitterTagsResponse, error) {
 	twitterMetaTags, err := m.metaTag.GetTwitterTags(req.GetAlias())
 	if err != nil {
@@ -39,6 +42,7 @@ func (m MetaTagServer) GetTwitterTags(ctx context.Context, req *proto.GetTwitter
 	}, nil
 }
 
+// NewMetaTagServer creates MetaTag gRPC server
 func NewMetaTagServer(metaTag shortlink.MetaTag) proto.MetaTagServiceServer {
 	return MetaTagServer{metaTag: metaTag}
 }
