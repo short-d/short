@@ -6,7 +6,6 @@ import (
 	"database/sql"
 
 	"github.com/short-d/short/backend/app/adapter/grpcapi"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"

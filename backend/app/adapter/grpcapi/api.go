@@ -8,17 +8,17 @@ import (
 
 var _ rpc.API = (*ShortGRPCApi)(nil)
 
-// ShortGRPCApi represents gRPC API
+// ShortGRPCApi provides an efficient way for remote systems to interact with Short backend.
 type ShortGRPCApi struct {
 	metaTagServer proto.MetaTagServiceServer
 }
 
-// RegisterServers registers all gRPC servers
+// RegisterServers registers gRPC servers that handle user requests.
 func (s ShortGRPCApi) RegisterServers(server *grpc.Server) {
 	proto.RegisterMetaTagServiceServer(server, s.metaTagServer)
 }
 
-// NewShortGRPCApi creates gRPC API
+// NewShortGRPCApi creates ShortGRPCApi.
 func NewShortGRPCApi(metaTagServer proto.MetaTagServiceServer) ShortGRPCApi {
 	return ShortGRPCApi{metaTagServer: metaTagServer}
 }
