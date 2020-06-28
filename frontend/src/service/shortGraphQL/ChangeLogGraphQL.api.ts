@@ -7,7 +7,7 @@ import { Change } from '../../entity/Change';
 import { getErrorCodes } from '../GraphQLError';
 import {
   CaptchaService,
-  CREATE_CHANGE, UPDATE_SHORT_LINK,
+  CREATE_CHANGE,
   VIEW_CHANGE_LOG
 } from '../Captcha.service';
 import {
@@ -159,12 +159,12 @@ export class ChangeLogGraphQLApi {
     };
   }
 
-  private parseChange(gqlChange: IShortGraphQLChange): Change {
+  private parseChange(change: IShortGraphQLChange): Change {
     return {
-      id: gqlChange.id,
-      title: gqlChange.title,
-      summaryMarkdown: gqlChange.summaryMarkdown,
-      releasedAt: new Date(gqlChange.releasedAt)
+      id: change.id,
+      title: change.title,
+      summaryMarkdown: change.summaryMarkdown,
+      releasedAt: new Date(change.releasedAt)
     };
   }
 }
