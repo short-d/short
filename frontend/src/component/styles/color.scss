@@ -24,6 +24,9 @@ $color-page-indicator-active-hover-text: white;
 
 $color-admin-panel-background: #f6f6f6;
 
+// Error Modal
+$color-error-modal-background: #424242;
+
 @function color-transparent-white($opacity) {
   @return rgba(255, 255, 255, $opacity);
 }
