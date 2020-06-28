@@ -512,7 +512,7 @@ func TestPersist_GetChanges(t *testing.T) {
 				},
 			},
 			expectedChanges: []entity.Change{},
-			availableKeys: []keygen.Key{},
+			availableKeys:   []keygen.Key{},
 			roles: map[string][]role.Role{
 				"alpha": {role.Basic},
 			},
