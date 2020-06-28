@@ -3,7 +3,7 @@ package gqlapi
 const schema = `
 schema {
 	query: Query
-    mutation: Mutation
+	mutation: Mutation
 }
 
 """Read APIs for Short"""
