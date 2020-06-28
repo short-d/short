@@ -448,6 +448,116 @@ func TestPersist_ViewChangeLog(t *testing.T) {
 	}
 }
 
+func TestPersist_GetChanges(t *testing.T) {
+	t.Parallel()
+
+	now := time.Now()
+	summaryMarkdown1 := "summary 1"
+	summaryMarkdown2 := "summary 2"
+	testCases := []struct {
+		name            string
+		changes         []entity.Change
+		expectedChanges []entity.Change
+		availableKeys   []keygen.Key
+		roles           map[string][]role.Role
+		user            entity.User
+		hasErr          bool
+	}{
+		{
+			name: "get full changelog successfully",
+			changes: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			expectedChanges: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			availableKeys: []keygen.Key{},
+			roles: map[string][]role.Role{
+				"alpha": {role.Admin},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
+			hasErr: false,
+		}, {
+			name: "user is not allowed to get changes",
+			changes: []entity.Change{
+				{
+					ID:              "12345",
+					Title:           "title 1",
+					SummaryMarkdown: &summaryMarkdown1,
+				},
+				{
+					ID:              "54321",
+					Title:           "title 2",
+					SummaryMarkdown: &summaryMarkdown2,
+				},
+			},
+			expectedChanges: []entity.Change{},
+			availableKeys: []keygen.Key{},
+			roles: map[string][]role.Role{
+				"alpha": {role.Basic},
+			},
+			user: entity.User{
+				ID: "alpha",
+			},
+			hasErr: true,
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
+			changeLogRepo := repository.NewChangeLogFake(testCase.changes)
+			keyFetcher := keygen.NewKeyFetcherFake(testCase.availableKeys)
+			keyGen, err := keygen.NewKeyGenerator(2, &keyFetcher)
+			assert.Equal(t, nil, err)
+
+			fakeRolesRepo := repository.NewUserRoleFake(testCase.roles)
+			rb := rbac.NewRBAC(fakeRolesRepo)
+			au := authorizer.NewAuthorizer(rb)
+
+			tm := timer.NewStub(now)
+			userChangeLogRepo := repository.NewUserChangeLogFake(map[string]time.Time{})
+			persist := NewPersist(
+				keyGen,
+				tm,
+				&changeLogRepo,
+				&userChangeLogRepo,
+				au,
+			)
+
+			changeLog, err := persist.GetChanges(testCase.user)
+			if testCase.hasErr {
+				assert.NotEqual(t, nil, err)
+				return
+			}
+			assert.Equal(t, nil, err)
+			assert.SameElements(t, testCase.expectedChanges, changeLog)
+		})
+	}
+}
+
 func TestPersist_DeleteChange(t *testing.T) {
 	t.Parallel()
 
