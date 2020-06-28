@@ -7,7 +7,7 @@ export interface IShortGraphQLQuery {
 }
 
 export interface IShortGraphQLAuthQuery {
-  ShortLinks: IShortGraphQLShortLink[];
+  shortLinks: IShortGraphQLShortLink[];
   changeLog: IShortGraphQLChangeLog;
 }
 
