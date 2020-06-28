@@ -26,7 +26,7 @@ export class ShortLinkGraphQLApi {
     const getUserShortLinksQuery = `
       query params($authToken: String!) {
         authQuery(authToken: $authToken) {
-          ShortLinks {
+          shortLinks {
             alias
             longLink
           }
@@ -41,8 +41,8 @@ export class ShortLinkGraphQLApi {
           variables: variables
         })
         .then((res: IShortGraphQLQuery) => {
-          const { ShortLinks } = res.authQuery;
-          resolve(ShortLinks.map(this.parseUrl));
+          const { shortLinks } = res.authQuery;
+          resolve(shortLinks.map(this.parseUrl));
         })
         .catch((err: IGraphQLRequestError) => {
           const errCodes = getErrorCodes(err);
