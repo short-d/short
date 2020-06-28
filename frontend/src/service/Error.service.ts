@@ -74,7 +74,7 @@ const networkErr = {
 const unauthorizedErr = {
   name: 'Unauthorized error',
   description: `
-              You are not authorized to perform this action.
+              You don't have permission needed to perform this action.
               `
 };
 

@@ -3,10 +3,15 @@ import { EnvService } from '../Env.service';
 
 import { GraphQLService, IGraphQLRequestError } from '../GraphQL.service';
 import { ChangeLog } from '../../entity/ChangeLog';
-import { parseChange } from '../../entity/Change';
+import { Change } from '../../entity/Change';
 import { getErrorCodes } from '../GraphQLError';
-import { CaptchaService, VIEW_CHANGE_LOG } from '../Captcha.service';
 import {
+  CaptchaService,
+  CREATE_CHANGE, UPDATE_SHORT_LINK,
+  VIEW_CHANGE_LOG
+} from '../Captcha.service';
+import {
+  IShortGraphQLChange,
   IShortGraphQLChangeLog,
   IShortGraphQLMutation,
   IShortGraphQLQuery
@@ -97,16 +102,69 @@ export class ChangeLogGraphQLApi {
     });
   }
 
+  async createChange(title: string, summary: string): Promise<Change> {
+    let captchaResponse;
+    try {
+      captchaResponse = await this.captchaService.execute(CREATE_CHANGE);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+
+    const createChangeMutation = `
+      mutation params(
+        $authToken: String!
+        $captchaResponse: String!
+        $change: ChangeInput!
+      ) {
+        authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
+          createChange(change: $change) {
+            id
+            title
+            summaryMarkdown
+            releasedAt
+          }
+        }
+      }
+    `;
+    const variables = {
+      captchaResponse,
+      authToken: this.authService.getAuthToken(),
+      change: { title: title, summaryMarkdown: summary }
+    };
+
+    return new Promise<Change>((resolve, reject) => {
+      this.graphQLService
+        .mutate<IShortGraphQLMutation>(this.baseURL, {
+          mutation: createChangeMutation,
+          variables: variables
+        })
+        .then(res => resolve(this.parseChange(res.authMutation.createChange)))
+        .catch(err => {
+          const errCodes = getErrorCodes(err);
+          reject(errCodes[0]);
+        });
+    });
+  }
+
   private parseChangeLog(changeLog: IShortGraphQLChangeLog): ChangeLog {
     if (changeLog.lastViewedAt) {
       return {
-        changes: changeLog.changes.map(parseChange),
+        changes: changeLog.changes.map(this.parseChange),
         lastViewedAt: new Date(changeLog.lastViewedAt)
       };
     }
 
     return {
-      changes: changeLog.changes.map(parseChange)
+      changes: changeLog.changes.map(this.parseChange)
+    };
+  }
+
+  private parseChange(gqlChange: IShortGraphQLChange): Change {
+    return {
+      id: gqlChange.id,
+      title: gqlChange.title,
+      summaryMarkdown: gqlChange.summaryMarkdown,
+      releasedAt: new Date(gqlChange.releasedAt)
     };
   }
 }
