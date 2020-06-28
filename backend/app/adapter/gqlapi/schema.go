@@ -33,14 +33,14 @@ type Mutation {
 	): AuthMutation
 }
 
-"""Authentication protected read APIs"""
+"""Read APIs protected with authentication"""
 type AuthQuery {
-	"""Fetch a short link which still valid at the given expiration time"""
+	"""Fetch a short link that is still valid at the given expiration time"""
 	shortLink(
 		"Alias of the short link"
 		alias: String!,
 
-		"Time at which an existing short link may expire"
+		"Time when an existing short link may expire"
 		expireAfter: Time
 	): ShortLink
 
@@ -56,7 +56,10 @@ type ChangeLog {
 	"""The changes announced to the user"""
   	changes: [Change!]!
 
-	"""The time when the user view the change log"""
+	"""
+	The time when the user views the change log. 
+	It's nil if the user has never viewed the change log before.
+	"""
   	lastViewedAt: Time
 }
 
@@ -71,13 +74,13 @@ type Change {
 	"""The detailed description of the change in markdown format"""
   	summaryMarkdown: String
 
-	"""The time at when the change is announced"""
+	"""The time when the change is announced"""
   	releasedAt: Time!
 }
 
-"""Authentication protected write APIs"""
+"""Write APIs protected authentication"""
 type AuthMutation {
-	"""Create a new short link owned by the user"""
+	"""Create a new short link. The creator is the owner of the short link."""
 	createShortLink(
 		shortLink: ShortLinkInput!,
 
@@ -85,7 +88,7 @@ type AuthMutation {
 		isPublic: Boolean!
 	): ShortLink
 
-	"""Create an existing short link owned by the user"""
+	"""Update an existing short link owned by the user"""
 	updateShortLink(
 		"The current alias of the short link"
 		oldAlias: String!,
@@ -93,7 +96,7 @@ type AuthMutation {
 		shortLink: ShortLinkInput!
 	): ShortLink
 
-	"""Announce a change to the system to the users"""
+	"""Announce a change happened to the system to all users"""
 	createChange(
 		change: ChangeInput!
 	): Change
@@ -110,14 +113,14 @@ type AuthMutation {
 	): Change
 
 	"""
-	Mark the change log is viewed by the given user so that change log modal 
-	won't popup again if there is no new change is announced in the middle.
+	Mark the change log as viewed by the given user so that change log modal 
+	won't popup again if there is no new change announced in the meantime.
 	"""
 	viewChangeLog: Time!
 }
 
 input ShortLinkInput {
-	"""The long link that the short link should redirect to"""
+	"""The long link which the short link redirects to"""
 	longLink: String
 
 	"""The alias of the short link"""
@@ -135,7 +138,7 @@ input ChangeInput {
   	summaryMarkdown: String
 }
 
-"""The short link which redirects to a long link"""
+"""The short link mapped to a long link"""
 type ShortLink {
 	"""The alias of the short link"""
 	alias: String
@@ -148,8 +151,8 @@ type ShortLink {
 }
 
 """
-The time is represented either by an integer unix timestamp or a string in 
-RFC3339 format
+The time is represented either by a unix timestamp (integer/float64)  or a string in 
+RFC3339 format (2019-10-12T07:20:50.52Z).
 """
 scalar Time
 `
