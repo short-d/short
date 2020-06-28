@@ -80,6 +80,7 @@ export class ChangeLogService {
         .createChange(title, summaryMarkdown)
         .then(resolve)
         .catch(errCode => {
+          // TODO(issue#904): impose definite error handling mechanism in client classes.
           if (errCode === Err.Unauthenticated) {
             reject({ authenticationErr: 'User is not authenticated' });
             return;
