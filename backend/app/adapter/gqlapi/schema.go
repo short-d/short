@@ -47,6 +47,9 @@ type AuthQuery {
 	"""Fetch the all the changes visible to the current user"""
 	changeLog: ChangeLog!
 
+	"""Fetch all the changes that exists in the system"""
+	changes: [Change!]!
+
 	"""Fetch all the short links created by the current user"""
 	shortLinks: [ShortLink!]!
 }

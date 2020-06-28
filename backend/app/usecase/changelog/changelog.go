@@ -27,10 +27,11 @@ func (e ErrUnauthorizedAction) Error() string {
 
 // ChangeLog retrieves change log and create changes.
 type ChangeLog interface {
-	CreateChange(title string, summaryMarkdown *string, user entity.User) (entity.Change, error)
 	GetChangeLog() ([]entity.Change, error)
 	GetLastViewedAt(user entity.User) (*time.Time, error)
 	ViewChangeLog(user entity.User) (time.Time, error)
+	CreateChange(title string, summaryMarkdown *string, user entity.User) (entity.Change, error)
+	GetChanges(user entity.User) ([]entity.Change, error)
 	DeleteChange(id string, user entity.User) error
 	UpdateChange(id string, title string, summaryMarkdown *string, user entity.User) (entity.Change, error)
 }
@@ -113,6 +114,23 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 	}
 
 	return time.Time{}, err
+}
+
+// GetChanges retrieves all the changes from the persistent date store
+func (p Persist) GetChanges(user entity.User) ([]entity.Change, error) {
+	canGetChanges, err := p.authorizer.CanGetChanges(user)
+	if err != nil {
+		return []entity.Change{}, err
+	}
+
+	if !canGetChanges {
+		return []entity.Change{}, ErrUnauthorizedAction{
+			user:   user,
+			action: "get changes",
+		}
+	}
+
+	return p.changeLogRepo.GetChangeLog()
 }
 
 // DeleteChange removes the change with given id
