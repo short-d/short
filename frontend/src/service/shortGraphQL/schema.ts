@@ -15,6 +15,7 @@ export interface IShortGraphQLAuthMutation {
   createShortLink: IShortGraphQLShortLink;
   viewChangeLog: string;
   createChange: IShortGraphQLChange;
+  deleteChange: string;
 }
 
 export interface IShortGraphQLShortLink {
