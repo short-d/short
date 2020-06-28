@@ -11,6 +11,8 @@ export const UPDATE_SHORT_LINK = 'updateShortLink';
 export const SEARCH_SHORT_LINK = 'searchShortLink';
 export const VIEW_CHANGE_LOG = 'viewChangeLog';
 
+export const CREATE_CHANGE = 'createChange';
+
 const INVALID_SITE_KEY_ERR_MSG = 'Invalid site key or not loaded in api.js';
 
 export class CaptchaService {

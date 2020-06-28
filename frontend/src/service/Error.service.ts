@@ -8,6 +8,7 @@ export enum Err {
   AliasInvalid = 'invalidCustomAlias',
   UserNotHuman = 'requesterNotHuman',
   Unauthenticated = 'invalidAuthToken',
+  Unauthorized = 'unauthorizedAction',
   NetworkError = 'networkError',
   Unknown = 'unknownError'
 }
@@ -70,6 +71,13 @@ const networkErr = {
               `
 };
 
+const unauthorizedErr = {
+  name: 'Unauthorized error',
+  description: `
+              You don't have permission needed to perform this action.
+              `
+};
+
 export class ErrorService {
   getErr(errCode: Err): IErr {
     switch (errCode) {
@@ -85,6 +93,8 @@ export class ErrorService {
         return invalidReCaptchaSiteKeyErr;
       case Err.MaliciousContent:
         return maliciousContentErr;
+      case Err.Unauthorized:
+        return unauthorizedErr;
       case Err.Unknown:
       default:
         return unknownErr;
