@@ -17,7 +17,7 @@ func (a Authorizer) CanCreateChange(user entity.User) (bool, error) {
 	return a.rbac.HasPermission(user, permission.CreateChange)
 }
 
-// CanViewChanges decides whether a user is allowed to get changes
+// CanGetChanges decides whether a user is allowed to get changes
 func (a Authorizer) CanGetChanges(user entity.User) (bool, error) {
 	return a.rbac.HasPermission(user, permission.ViewChange)
 }
