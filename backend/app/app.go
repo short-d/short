@@ -3,13 +3,13 @@ package app
 import (
 	"time"
 
-	"google.golang.org/grpc"
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/app/fw/env"
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/app/fw/service"
 	"github.com/short-d/short/backend/dep"
 	"github.com/short-d/short/backend/dep/provider"
+	"google.golang.org/grpc"
 )
 
 // ServiceConfig represents require parameters for the backend APIs

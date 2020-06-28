@@ -5,7 +5,6 @@ package dep
 import (
 	"database/sql"
 
-	"github.com/short-d/short/backend/app/adapter/grpcapi"
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"
@@ -26,6 +25,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
+	"github.com/short-d/short/backend/app/adapter/grpcapi"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"

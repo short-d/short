@@ -15,13 +15,13 @@ type MetaTagServer struct {
 var _ proto.MetaTagServiceServer = (*MetaTagServer)(nil)
 
 // GetOpenGraphTags fetches Open Graph tags for a given short link.
-func (m MetaTagServer) GetOGTags(ctx context.Context, req *proto.GetOGTagsRequest) (*proto.GetOGTagsResponse, error) {
+func (m MetaTagServer) GetOpenGraphTags(ctx context.Context, req *proto.GetOpenGraphTagsRequest) (*proto.GetOpenGraphTagsResponse, error) {
 	ogMetaTags, err := m.metaTag.GetOpenGraphTags(req.GetAlias())
 	if err != nil {
-		return &proto.GetOGTagsResponse{}, err
+		return &proto.GetOpenGraphTagsResponse{}, err
 	}
 
-	return &proto.GetOGTagsResponse{
+	return &proto.GetOpenGraphTagsResponse{
 		Title:       *ogMetaTags.Title,
 		Description: *ogMetaTags.Description,
 		ImageUrl:    *ogMetaTags.ImageURL,
