@@ -89,4 +89,20 @@ export class ChangeLogService {
         });
     });
   }
+
+  deleteChange(changeId: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.changeLogGraphQLApi
+        .deleteChange(changeId)
+        .then(resolve)
+        .catch(errCode => {
+          // TODO(issue#904): impose definite error handling mechanism in client classes.
+          if (errCode === Err.Unauthenticated) {
+            reject({ authenticationErr: 'User is not authenticated' });
+            return;
+          }
+          reject({ changeErr: this.errorService.getErr(errCode) });
+        });
+    });
+  }
 }
