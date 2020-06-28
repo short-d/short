@@ -16,15 +16,26 @@ var _ proto.MetaTagServiceServer = (*MetaTagServer)(nil)
 
 // GetOpenGraphTags fetches Open Graph tags for a given short link.
 func (m MetaTagServer) GetOpenGraphTags(ctx context.Context, req *proto.GetOpenGraphTagsRequest) (*proto.GetOpenGraphTagsResponse, error) {
-	ogMetaTags, err := m.metaTag.GetOpenGraphTags(req.GetAlias())
+	openGraphMetaTags, err := m.metaTag.GetOpenGraphTags(req.GetAlias())
 	if err != nil {
 		return &proto.GetOpenGraphTagsResponse{}, err
 	}
 
+	emptyString := ""
+	if openGraphMetaTags.Title == nil {
+		openGraphMetaTags.Title = &emptyString
+	}
+	if openGraphMetaTags.Description == nil {
+		openGraphMetaTags.Description = &emptyString
+	}
+	if openGraphMetaTags.ImageURL == nil {
+		openGraphMetaTags.ImageURL = &emptyString
+	}
+
 	return &proto.GetOpenGraphTagsResponse{
-		Title:       *ogMetaTags.Title,
-		Description: *ogMetaTags.Description,
-		ImageUrl:    *ogMetaTags.ImageURL,
+		Title:       *openGraphMetaTags.Title,
+		Description: *openGraphMetaTags.Description,
+		ImageUrl:    *openGraphMetaTags.ImageURL,
 	}, nil
 }
 
@@ -33,6 +44,17 @@ func (m MetaTagServer) GetTwitterTags(ctx context.Context, req *proto.GetTwitter
 	twitterMetaTags, err := m.metaTag.GetTwitterTags(req.GetAlias())
 	if err != nil {
 		return &proto.GetTwitterTagsResponse{}, err
+	}
+
+	emptyString := ""
+	if twitterMetaTags.Title == nil {
+		twitterMetaTags.Title = &emptyString
+	}
+	if twitterMetaTags.Description == nil {
+		twitterMetaTags.Description = &emptyString
+	}
+	if twitterMetaTags.ImageURL == nil {
+		twitterMetaTags.ImageURL = &emptyString
 	}
 
 	return &proto.GetTwitterTagsResponse{
