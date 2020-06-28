@@ -73,4 +73,20 @@ export class ChangeLogService {
 
     return changes;
   }
+
+  createChange(title: string, summaryMarkdown: string): Promise<Change> {
+    return new Promise<Change>((resolve, reject) => {
+      this.changeLogGraphQLApi
+        .createChange(title, summaryMarkdown)
+        .then(resolve)
+        .catch(errCode => {
+          // TODO(issue#904): impose definite error handling mechanism in client classes.
+          if (errCode === Err.Unauthenticated) {
+            reject({ authenticationErr: 'User is not authenticated' });
+            return;
+          }
+          reject({ changeErr: this.errorService.getErr(errCode) });
+        });
+    });
+  }
 }

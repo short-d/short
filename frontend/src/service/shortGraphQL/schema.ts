@@ -7,13 +7,14 @@ export interface IShortGraphQLQuery {
 }
 
 export interface IShortGraphQLAuthQuery {
-  ShortLinks: IShortGraphQLShortLink[];
+  shortLinks: IShortGraphQLShortLink[];
   changeLog: IShortGraphQLChangeLog;
 }
 
 export interface IShortGraphQLAuthMutation {
   createShortLink: IShortGraphQLShortLink;
   viewChangeLog: string;
+  createChange: IShortGraphQLChange;
 }
 
 export interface IShortGraphQLShortLink {
