@@ -55,14 +55,14 @@ func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	return newChangeLog(changeLog, lastViewedAt), err
 }
 
-// Changes retrieves all the changes that exists in the persistent storage.
-func (v AuthQuery) Changes() ([]Change, error) {
+// AllChanges retrieves all the changes that exists in the persistent storage.
+func (v AuthQuery) AllChanges() ([]Change, error) {
 	user, err := viewer(v.authToken, v.authenticator)
 	if err != nil {
 		return []Change{}, ErrInvalidAuthToken{}
 	}
 
-	changes, err := v.changeLog.GetChanges(user)
+	changes, err := v.changeLog.GetAllChanges(user)
 	if err != nil {
 		return []Change{}, err
 	}

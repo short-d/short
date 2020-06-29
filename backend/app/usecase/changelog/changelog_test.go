@@ -448,7 +448,7 @@ func TestPersist_ViewChangeLog(t *testing.T) {
 	}
 }
 
-func TestPersist_GetChanges(t *testing.T) {
+func TestPersist_GetAllChanges(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now()
@@ -547,7 +547,7 @@ func TestPersist_GetChanges(t *testing.T) {
 				au,
 			)
 
-			changeLog, err := persist.GetChanges(testCase.user)
+			changeLog, err := persist.GetAllChanges(testCase.user)
 			if testCase.hasErr {
 				assert.NotEqual(t, nil, err)
 				return
