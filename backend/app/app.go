@@ -36,6 +36,7 @@ type ServiceConfig struct {
 	SearchTimeout        time.Duration
 	SwaggerUIDir         string
 	OpenAPISpecPath      string
+	GraphQLSchemaPath    string
 	GraphiQLDefaultQuery string
 	DataDogAPIKey        string
 	SegmentAPIKey        string
@@ -76,6 +77,7 @@ func Start(
 		provider.LogPrefix(config.LogPrefix),
 		config.LogLevel,
 		sqlDB,
+		provider.GraphQLSchemaPath(config.GraphQLSchemaPath),
 		"/graphql",
 		provider.GraphiQLDefaultQuery(config.GraphiQLDefaultQuery),
 		provider.ReCaptchaSecret(config.RecaptchaSecret),

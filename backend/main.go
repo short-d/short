@@ -44,6 +44,7 @@ func main() {
 		SearchTimeout        time.Duration `env:"SEARCH_TIMEOUT" default:"1s"`
 		SwaggerUIDir         string        `env:"SWAGGER_UI_DIR" default:"app/adapter/routing/public"`
 		OpenAPISpecPath      string        `env:"OPEN_API_SPEC_PATH" default:"app/adapter/routing/api.yml"`
+		GraphQLSchemaPath    string        `env:"GRAPHQL_SCHEMA_PATH" default:"app/adapter/gqlapi/schema.graphql"`
 		GraphiQLDefaultQuery string        `env:"GRAPH_I_QL_DEFAULT_QUERY" default:""`
 		DataDogAPIKey        string        `env:"DATA_DOG_API_KEY" default:""`
 		SegmentAPIKey        string        `env:"SEGMENT_API_KEY" default:""`
@@ -92,6 +93,7 @@ func main() {
 		SearchTimeout:        config.SearchTimeout,
 		SwaggerUIDir:         config.SwaggerUIDir,
 		OpenAPISpecPath:      config.OpenAPISpecPath,
+		GraphQLSchemaPath:    config.GraphQLSchemaPath,
 		GraphiQLDefaultQuery: config.GraphiQLDefaultQuery,
 		DataDogAPIKey:        config.DataDogAPIKey,
 		SegmentAPIKey:        config.SegmentAPIKey,
