@@ -116,7 +116,7 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 	return time.Time{}, err
 }
 
-// GetChanges retrieves all the changes from the persistent date store
+// GetChanges retrieves all the changes from the persistent date store.
 func (p Persist) GetChanges(user entity.User) ([]entity.Change, error) {
 	canGetChanges, err := p.authorizer.CanGetChanges(user)
 	if err != nil {

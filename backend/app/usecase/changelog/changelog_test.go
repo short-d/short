@@ -491,7 +491,7 @@ func TestPersist_GetChanges(t *testing.T) {
 			},
 			availableKeys: []keygen.Key{},
 			roles: map[string][]role.Role{
-				"alpha": {role.Admin},
+				"alpha": {role.ChangeLogViewer},
 			},
 			user: entity.User{
 				ID: "alpha",

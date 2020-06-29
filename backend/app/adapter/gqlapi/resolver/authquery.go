@@ -55,7 +55,7 @@ func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	return newChangeLog(changeLog, lastViewedAt), err
 }
 
-// Changes retrieves all the changes that exists in the persistent storage
+// Changes retrieves all the changes that exists in the persistent storage.
 func (v AuthQuery) Changes() ([]Change, error) {
 	user, err := viewer(v.authToken, v.authenticator)
 	if err != nil {
