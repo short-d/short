@@ -4,7 +4,22 @@ import (
 	"github.com/short-d/app/fw/graphql"
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/app/fw/service"
+	"github.com/short-d/short/backend/app/adapter/gqlapi"
+	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
+	"github.com/short-d/short/backend/app/fw/filesystem"
 )
+
+// GraphQLSchemaPath represents the local of GraphQL schema.
+type GraphQLSchemaPath string
+
+// NewShortGraphQLAPI creates graphql.API given its dependencies.
+func NewShortGraphQLAPI(
+	schemaPath GraphQLSchemaPath,
+	fileSystem filesystem.FileSystem,
+	resolver resolver.Resolver,
+) (graphql.API, error) {
+	return gqlapi.NewShort(string(schemaPath), fileSystem, resolver)
+}
 
 // GraphQLPath represents the path for GraphQL APIs.
 type GraphQLPath string

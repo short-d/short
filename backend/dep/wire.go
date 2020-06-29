@@ -23,11 +23,11 @@ import (
 	"github.com/short-d/short/backend/app/adapter/facebook"
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
-	"github.com/short-d/short/backend/app/adapter/gqlapi"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
+	"github.com/short-d/short/backend/app/fw/filesystem"
 	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
 	"github.com/short-d/short/backend/app/usecase/changelog"
@@ -144,6 +144,7 @@ func InjectGraphQLService(
 	prefix provider.LogPrefix,
 	logLevel logger.LogLevel,
 	sqlDB *sql.DB,
+	graphqlSchemaPath provider.GraphQLSchemaPath,
 	graphqlPath provider.GraphQLPath,
 	graphiQLDefaultQuery provider.GraphiQLDefaultQuery,
 	secret provider.ReCaptchaSecret,
@@ -161,6 +162,7 @@ func InjectGraphQLService(
 		wire.Bind(new(graphql.Handler), new(graphql.GraphGopherHandler)),
 		wire.Bind(new(graphql.WebUI), new(graphql.GraphiQL)),
 
+		wire.Bind(new(filesystem.FileSystem), new(filesystem.Local)),
 		wire.Bind(new(risk.BlackList), new(google.SafeBrowsing)),
 		wire.Bind(new(repository.UserShortLink), new(sqldb.UserShortLinkSQL)),
 		wire.Bind(new(repository.ChangeLog), new(sqldb.ChangeLogSQL)),
@@ -185,8 +187,9 @@ func InjectGraphQLService(
 		webreq.NewHTTP,
 		timer.NewSystem,
 
+		filesystem.NewLocal,
 		resolver.NewResolver,
-		gqlapi.NewShort,
+		provider.NewShortGraphQLAPI,
 		provider.NewSafeBrowsing,
 		risk.NewDetector,
 		provider.NewReCaptchaService,
