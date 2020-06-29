@@ -9,10 +9,12 @@ import {
   CaptchaService,
   CREATE_CHANGE,
   DELETE_CHANGE,
+  UPDATE_CHANGE,
   VIEW_CHANGE_LOG
 } from '../Captcha.service';
 import {
   IShortGraphQLChange,
+  IShortGraphQLChangeInput,
   IShortGraphQLChangeLog,
   IShortGraphQLMutation,
   IShortGraphQLQuery
@@ -147,6 +149,48 @@ export class ChangeLogGraphQLApi {
     });
   }
 
+  async updateChange(id: string, change: Change): Promise<void> {
+    let captchaResponse;
+    try {
+      captchaResponse = await this.captchaService.execute(UPDATE_CHANGE);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+
+    const updateChangeMutation = `
+      mutation params(
+        $authToken: String!
+        $captchaResponse: String!
+        $id: String!
+        $change: ChangeInput!
+      ) {
+        authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
+          updateChange(id: $id, change: $change) { id }
+        }
+      }
+    `;
+    const changeInput = this.toChangeInput(change);
+    const variables = {
+      captchaResponse,
+      id,
+      change: changeInput,
+      authToken: this.authService.getAuthToken()
+    };
+
+    return new Promise<void>((resolve, reject) => {
+      this.graphQLService
+        .mutate<IShortGraphQLMutation>(this.baseURL, {
+          mutation: updateChangeMutation,
+          variables: variables
+        })
+        .then(_ => resolve())
+        .catch(err => {
+          const errCodes = getErrorCodes(err);
+          reject(errCodes[0]);
+        });
+    });
+  }
+
   async deleteChange(id: string): Promise<string> {
     let captchaResponse;
     try {
@@ -234,6 +278,13 @@ export class ChangeLogGraphQLApi {
       title: change.title,
       summaryMarkdown: change.summaryMarkdown,
       releasedAt: new Date(change.releasedAt)
+    };
+  }
+
+  private toChangeInput(change: Change): IShortGraphQLChangeInput {
+    return {
+      title: change.title,
+      summaryMarkdown: change.summaryMarkdown
     };
   }
 }
