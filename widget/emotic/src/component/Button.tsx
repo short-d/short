@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
-import './Button.scss'
+import './Button.scss';
 
 interface IProps {
-  onClick?: () => void
+  onClick?: () => void;
 }
 
 export class Button extends Component<IProps, any> {
@@ -12,13 +12,13 @@ export class Button extends Component<IProps, any> {
       <button className={'Button'} onClick={this.handleOnClick}>
         {this.props.children}
       </button>
-    )
+    );
   }
 
   handleOnClick = () => {
     if (!this.props.onClick) {
-      return
+      return;
     }
-    this.props.onClick()
-  }
+    this.props.onClick();
+  };
 }

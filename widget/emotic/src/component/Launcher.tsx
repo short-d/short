@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
-import './Launcher.scss'
-import face from './face.svg'
+import './Launcher.scss';
+import face from './face.svg';
 
 interface IProps {
-  onClick: () => void
+  onClick: () => void;
 }
 
 export class Launcher extends Component<IProps> {
@@ -13,6 +13,6 @@ export class Launcher extends Component<IProps> {
       <div className='Launcher' onClick={this.props.onClick}>
         <img width={36} src={face} />
       </div>
-    )
+    );
   }
 }

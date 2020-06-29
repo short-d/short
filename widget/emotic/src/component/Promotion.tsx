@@ -1,5 +1,5 @@
-import './Promotion.scss'
-import React, { Component } from 'react'
+import './Promotion.scss';
+import React, { Component } from 'react';
 
 export class Promotion extends Component<any, any> {
   render() {
@@ -9,6 +9,6 @@ export class Promotion extends Component<any, any> {
           Learn more about Emotic
         </a>
       </div>
-    )
+    );
   }
 }
