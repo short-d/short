@@ -186,6 +186,35 @@ export class ChangeLogGraphQLApi {
     });
   }
 
+  getAllChanges(): Promise<Change[]> {
+    const getChangesQuery = `
+      query params($authToken: String!) {
+        authQuery(authToken: $authToken) {
+          allChanges {
+            id
+            title
+            summaryMarkdown
+            releasedAt
+          }
+        }
+      }
+    `;
+    const variables = { authToken: this.authService.getAuthToken() };
+
+    return new Promise<Change[]>((resolve, reject) => {
+      this.graphQLService
+        .query<IShortGraphQLQuery>(this.baseURL, {
+          query: getChangesQuery,
+          variables: variables
+        })
+        .then(res => resolve(res.authQuery.allChanges.map(this.parseChange)))
+        .catch(err => {
+          const errCodes = getErrorCodes(err);
+          reject(errCodes[0]);
+        });
+    });
+  }
+
   private parseChangeLog(changeLog: IShortGraphQLChangeLog): ChangeLog {
     if (changeLog.lastViewedAt) {
       return {
