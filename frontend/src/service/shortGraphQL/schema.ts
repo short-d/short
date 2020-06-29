@@ -9,12 +9,14 @@ export interface IShortGraphQLQuery {
 export interface IShortGraphQLAuthQuery {
   shortLinks: IShortGraphQLShortLink[];
   changeLog: IShortGraphQLChangeLog;
+  allChanges: IShortGraphQLChange[];
 }
 
 export interface IShortGraphQLAuthMutation {
   createShortLink: IShortGraphQLShortLink;
   viewChangeLog: string;
   createChange: IShortGraphQLChange;
+  deleteChange: string;
 }
 
 export interface IShortGraphQLShortLink {

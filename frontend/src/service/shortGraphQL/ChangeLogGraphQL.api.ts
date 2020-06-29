@@ -8,6 +8,7 @@ import { getErrorCodes } from '../GraphQLError';
 import {
   CaptchaService,
   CREATE_CHANGE,
+  DELETE_CHANGE,
   VIEW_CHANGE_LOG
 } from '../Captcha.service';
 import {
@@ -139,6 +140,74 @@ export class ChangeLogGraphQLApi {
           variables: variables
         })
         .then(res => resolve(this.parseChange(res.authMutation.createChange)))
+        .catch(err => {
+          const errCodes = getErrorCodes(err);
+          reject(errCodes[0]);
+        });
+    });
+  }
+
+  async deleteChange(id: string): Promise<string> {
+    let captchaResponse;
+    try {
+      captchaResponse = await this.captchaService.execute(DELETE_CHANGE);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+
+    const deleteChangeMutation = `
+      mutation params(
+        $authToken: String!
+        $captchaResponse: String!
+        $id: String!
+      ) {
+        authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
+          deleteChange(id: $id)
+        }
+      }
+    `;
+    const variables = {
+      captchaResponse,
+      authToken: this.authService.getAuthToken(),
+      id
+    };
+
+    return new Promise<string>((resolve, reject) => {
+      this.graphQLService
+        .mutate<IShortGraphQLMutation>(this.baseURL, {
+          mutation: deleteChangeMutation,
+          variables: variables
+        })
+        .then(res => resolve(res.authMutation.deleteChange))
+        .catch(err => {
+          const errCodes = getErrorCodes(err);
+          reject(errCodes[0]);
+        });
+    });
+  }
+
+  getAllChanges(): Promise<Change[]> {
+    const getAllChangesQuery = `
+      query params($authToken: String!) {
+        authQuery(authToken: $authToken) {
+          allChanges {
+            id
+            title
+            summaryMarkdown
+            releasedAt
+          }
+        }
+      }
+    `;
+    const variables = { authToken: this.authService.getAuthToken() };
+
+    return new Promise<Change[]>((resolve, reject) => {
+      this.graphQLService
+        .query<IShortGraphQLQuery>(this.baseURL, {
+          query: getAllChangesQuery,
+          variables: variables
+        })
+        .then(res => resolve(res.authQuery.allChanges.map(this.parseChange)))
         .catch(err => {
           const errCodes = getErrorCodes(err);
           reject(errCodes[0]);
