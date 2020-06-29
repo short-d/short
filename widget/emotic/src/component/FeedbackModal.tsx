@@ -41,7 +41,7 @@ export class FeedbackModal extends Component<IProps, IState> {
     }
 
     return (
-      <div className={'FeedbackModal'}>
+      <div className={'Emotic FeedbackModal'}>
         <ul className={'tabs'}>
           <li
             className={classNames({

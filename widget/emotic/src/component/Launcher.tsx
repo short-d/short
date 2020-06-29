@@ -10,7 +10,7 @@ interface IProps {
 export class Launcher extends Component<IProps> {
   render() {
     return (
-      <div className='Launcher' onClick={this.props.onClick}>
+      <div className='Emotic Launcher' onClick={this.props.onClick}>
         <img width={36} src={face} />
       </div>
     );
