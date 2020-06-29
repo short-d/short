@@ -5,7 +5,12 @@ import { GraphQLService, IGraphQLRequestError } from '../GraphQL.service';
 import { ChangeLog } from '../../entity/ChangeLog';
 import { Change } from '../../entity/Change';
 import { getErrorCodes } from '../GraphQLError';
-import { CaptchaService, VIEW_CHANGE_LOG } from '../Captcha.service';
+import {
+  CaptchaService,
+  CREATE_CHANGE,
+  DELETE_CHANGE,
+  VIEW_CHANGE_LOG
+} from '../Captcha.service';
 import {
   IShortGraphQLChange,
   IShortGraphQLChangeLog,
@@ -95,6 +100,89 @@ export class ChangeLogGraphQLApi {
         const errCodes = getErrorCodes(err);
         reject(errCodes[0]);
       }
+    });
+  }
+
+  async createChange(title: string, summary: string): Promise<Change> {
+    let captchaResponse;
+    try {
+      captchaResponse = await this.captchaService.execute(CREATE_CHANGE);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+
+    const createChangeMutation = `
+      mutation params(
+        $authToken: String!
+        $captchaResponse: String!
+        $change: ChangeInput!
+      ) {
+        authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
+          createChange(change: $change) {
+            id
+            title
+            summaryMarkdown
+            releasedAt
+          }
+        }
+      }
+    `;
+    const variables = {
+      captchaResponse,
+      authToken: this.authService.getAuthToken(),
+      change: { title: title, summaryMarkdown: summary }
+    };
+
+    return new Promise<Change>((resolve, reject) => {
+      this.graphQLService
+        .mutate<IShortGraphQLMutation>(this.baseURL, {
+          mutation: createChangeMutation,
+          variables: variables
+        })
+        .then(res => resolve(this.parseChange(res.authMutation.createChange)))
+        .catch(err => {
+          const errCodes = getErrorCodes(err);
+          reject(errCodes[0]);
+        });
+    });
+  }
+
+  async deleteChange(id: string): Promise<string> {
+    let captchaResponse;
+    try {
+      captchaResponse = await this.captchaService.execute(DELETE_CHANGE);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+
+    const deleteChangeMutation = `
+      mutation params(
+        $authToken: String!
+        $captchaResponse: String!
+        $id: String!
+      ) {
+        authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
+          deleteChange(id: $id)
+        }
+      }
+    `;
+    const variables = {
+      captchaResponse,
+      authToken: this.authService.getAuthToken(),
+      id
+    };
+
+    return new Promise<string>((resolve, reject) => {
+      this.graphQLService
+        .mutate<IShortGraphQLMutation>(this.baseURL, {
+          mutation: deleteChangeMutation,
+          variables: variables
+        })
+        .then(res => resolve(res.authMutation.deleteChange))
+        .catch(err => {
+          const errCodes = getErrorCodes(err);
+          reject(errCodes[0]);
+        });
     });
   }
 
