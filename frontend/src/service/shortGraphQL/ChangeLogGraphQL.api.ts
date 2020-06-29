@@ -187,7 +187,7 @@ export class ChangeLogGraphQLApi {
   }
 
   getAllChanges(): Promise<Change[]> {
-    const getChangesQuery = `
+    const getAllChangesQuery = `
       query params($authToken: String!) {
         authQuery(authToken: $authToken) {
           allChanges {
@@ -204,7 +204,7 @@ export class ChangeLogGraphQLApi {
     return new Promise<Change[]>((resolve, reject) => {
       this.graphQLService
         .query<IShortGraphQLQuery>(this.baseURL, {
-          query: getChangesQuery,
+          query: getAllChangesQuery,
           variables: variables
         })
         .then(res => resolve(res.authQuery.allChanges.map(this.parseChange)))
