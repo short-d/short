@@ -9,7 +9,7 @@ interface IProps {
 export class Button extends Component<IProps, any> {
   render() {
     return (
-      <button className={'Button'} onClick={this.handleOnClick}>
+      <button className={'Emotic Button'} onClick={this.handleOnClick}>
         {this.props.children}
       </button>
     );

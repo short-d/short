@@ -14,7 +14,7 @@ export class CollectEmailTab extends Component<IProps> {
 
   render() {
     return (
-      <div className={'collect-email-tab'}>
+      <div className={'Emotic collect-email-tab'}>
         <div className={'title'}>
           Please enter your email if you would like us to follow up with you.
         </div>

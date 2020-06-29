@@ -11,7 +11,7 @@ interface IProps {
 export class ThankYouTab extends Component<IProps, any> {
   render() {
     return (
-      <div className={'thank-you-tab'}>
+      <div className={'Emotic thank-you-tab'}>
         <div className={'title'}>Thanks for your feedback!</div>
         <div className={'description'}>
           We highly value all your suggestions and will constantly improve our

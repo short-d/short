@@ -70,7 +70,7 @@ export class EmotionTab extends Component<IProps, IState> {
     }
 
     return (
-      <div className={'emotion-tab'}>
+      <div className={'Emotic emotion-tab'}>
         <div className={'emotion-section'}>
           <div className={'title'}>How would you rate your experience?</div>
           <ul className={'emotions'}>
