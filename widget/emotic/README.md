@@ -7,7 +7,7 @@
 ## Install
 
 ```bash
-npm install --save emotic
+yarn add --save emotic
 ```
 
 ## Usage
@@ -15,12 +15,12 @@ npm install --save emotic
 ```tsx
 import React, { Component } from 'react'
 
-import MyComponent from 'emotic'
+import { Emotic } from 'emotic'
 import 'emotic/dist/index.css'
 
 class Example extends Component {
   render() {
-    return <MyComponent />
+    return <Emotic onFeedbackFiled={this.handleOnFeedbackFiled}/>;
   }
 }
 ```
