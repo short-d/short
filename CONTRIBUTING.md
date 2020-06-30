@@ -26,12 +26,12 @@ distributed cloud infrastructure & drive innovations.
 
 We are specificly looking for the following characters for the potential member of the core team:
 
-- You are excited about learn new things and learn them very fast.
+- You are excited about learning new things and learning them very fast.
 - You write clean code & constantly look for corners to simplify the existing systems.
-- You believe in automatiom instead of doing everything manually in the long run.
+- You believe in automation instead of doing everything manually in the long run.
 - You strive for excellence in term of code quality, system design, and process optimization.
 - You are a team player, who schedule pair programming sessions & solve difficult problems together with team members.
-- You thrieve in complexities & difficulties. Compilers, operating systems, pragramming languages, bitwise optimizations, 
+- You thrive in complexities & difficulties. Compilers, operating systems, programming languages, bitwise optimizations, 
 distributed systems, machine learning vector optimization, computer vision algorithms excites you.
 - You make things happen independently. Not dreaming or talking about them. You deliver them all the way onto production!
 
