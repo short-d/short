@@ -26,7 +26,8 @@ type Mutation {
         authToken: String,
 
         "The page interaction patterns needed to verify the requester is human"
-        captchaResponse: String!
+        captchaResponse: String,
+        apiKey: String
     ): AuthMutation
 }
 
@@ -80,6 +81,8 @@ type Change {
 
 """Write APIs protected authentication"""
 type AuthMutation {
+    generateApiKey(appID: String!): String!
+
     """Create a new short link. The creator is the owner of the short link."""
     createShortLink(
         shortLink: ShortLinkInput!,
@@ -117,6 +120,8 @@ type AuthMutation {
     won't popup again if there is no new change announced in the meantime.
     """
     viewChangeLog: Time!
+
+    receiveFeedback(feedback: FeedbackInput!): Feedback!
 }
 
 input ShortLinkInput {
@@ -148,6 +153,21 @@ type ShortLink {
 
     """The time when the short link expires"""
     expireAt: Time
+}
+
+type Feedback {
+    appID: String!
+    feedbackID: String!
+    customerRating: Int!
+    comment: String
+    customerEmail: String
+    receivedAt: Time!
+}
+
+input FeedbackInput {
+    customerRating: Int
+    comment: String
+    customerEmail: String
 }
 
 """

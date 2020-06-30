@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"fmt"
+	"github.com/short-d/short/backend/app/usecase/emotic"
 	"time"
 
 	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
@@ -15,10 +16,27 @@ import (
 // on the identify of the user
 type AuthMutation struct {
 	authToken        *string
+	apiKey           *string
 	authenticator    authenticator.Authenticator
+	cloudApiAuth     authenticator.CloudAPI
 	changeLog        changelog.ChangeLog
 	shortLinkCreator shortlink.Creator
 	shortLinkUpdater shortlink.Updater
+	feedback         emotic.Feedback
+}
+
+type GenerateApiKeyArgs struct {
+	AppID string
+}
+
+// ViewChangeLog records the time when the user viewed the change log
+func (a AuthMutation) GenerateApiKey(args GenerateApiKeyArgs) (string, error) {
+	//user, err := viewer(a.authToken, a.authenticator)
+	//if err != nil {
+	//	return "", ErrInvalidAuthToken{}
+	//}
+
+	return a.cloudApiAuth.GenerateApiKey(args.AppID)
 }
 
 // ShortLinkInput represents possible ShortLink attributes
@@ -234,18 +252,60 @@ func (a AuthMutation) ViewChangeLog() (scalar.Time, error) {
 	return scalar.Time{Time: lastViewedAt}, err
 }
 
+type FeedbackInput struct {
+	CustomerRating *float64
+	Comment        *string
+	CustomerEmail  *string
+}
+
+type ReceiveFeedbackArgs struct {
+	Feedback FeedbackInput
+}
+
+func (a AuthMutation) ReceiveFeedback(args ReceiveFeedbackArgs) (Feedback, error) {
+	app, err := app(a.apiKey, a.cloudApiAuth)
+	if err != nil {
+		return Feedback{}, ErrInvalidAuthToken{}
+	}
+
+	var rating *int
+	if args.Feedback.CustomerRating != nil {
+		num := int(*args.Feedback.CustomerRating)
+		rating = &num
+	}
+	feedbackInput := entity.FeedbackInput{
+		AppID:          &app.ID,
+		CustomerRating: rating,
+		Comment:        args.Feedback.Comment,
+		CustomerEmail:  args.Feedback.CustomerEmail,
+	}
+	fb, err := a.feedback.ReceiveFeedback(feedbackInput)
+	if err != nil {
+		return Feedback{}, err
+	}
+	return Feedback{
+		feedback: fb,
+	}, nil
+}
+
 func newAuthMutation(
 	authToken *string,
+	apiKey *string,
 	authenticator authenticator.Authenticator,
+	cloudApiAuth authenticator.CloudAPI,
 	changeLog changelog.ChangeLog,
 	shortLinkCreator shortlink.Creator,
 	shortLinkUpdater shortlink.Updater,
+	feedback emotic.Feedback,
 ) AuthMutation {
 	return AuthMutation{
 		authToken:        authToken,
+		apiKey:           apiKey,
 		authenticator:    authenticator,
+		cloudApiAuth:     cloudApiAuth,
 		changeLog:        changeLog,
 		shortLinkCreator: shortLinkCreator,
 		shortLinkUpdater: shortLinkUpdater,
+		feedback:         feedback,
 	}
 }

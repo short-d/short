@@ -42,6 +42,7 @@ func main() {
 		HTTPAPIPort          int           `env:"HTTP_API_PORT" default:"80"`
 		AuthTokenLifeTime    time.Duration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
 		SearchTimeout        time.Duration `env:"SEARCH_TIMEOUT" default:"1s"`
+		FeedbackSlackWebHook string        `env:"FEEDBACK_SLACK_WEB_HOOK" default:""`
 		SwaggerUIDir         string        `env:"SWAGGER_UI_DIR" default:"app/adapter/routing/public"`
 		OpenAPISpecPath      string        `env:"OPEN_API_SPEC_PATH" default:"app/adapter/routing/api.yml"`
 		GraphQLSchemaPath    string        `env:"GRAPHQL_SCHEMA_PATH" default:"app/adapter/gqlapi/schema.graphql"`
@@ -91,6 +92,7 @@ func main() {
 		KgsPort:              config.KgsPort,
 		AuthTokenLifetime:    config.AuthTokenLifeTime,
 		SearchTimeout:        config.SearchTimeout,
+		FeedbackSlackWebHook: config.FeedbackSlackWebHook,
 		SwaggerUIDir:         config.SwaggerUIDir,
 		OpenAPISpecPath:      config.OpenAPISpecPath,
 		GraphQLSchemaPath:    config.GraphQLSchemaPath,

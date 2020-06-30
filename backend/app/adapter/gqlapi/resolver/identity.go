@@ -14,3 +14,10 @@ func viewer(authToken *string, auth authenticator.Authenticator) (entity.User, e
 
 	return auth.GetUser(*authToken)
 }
+
+func app(apiKey *string, auth authenticator.CloudAPI) (entity.App, error) {
+	if apiKey == nil {
+		return entity.App{}, errors.New("API key can't be empty")
+	}
+	return auth.GetApp(*apiKey)
+}

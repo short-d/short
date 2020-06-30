@@ -52,7 +52,10 @@ export class App extends Component<any, IState> {
             can provide you the full refund.
           </div>
         )}
-        <Emotic onFeedbackFiled={this.handleOnFeedbackFiled} />
+        <Emotic
+          apiKey={'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfaWQiOiJlbW90aWMiLCJrZXkiOiJpZ0kifQ.hWgGu9PsOYEDsTPtrw2BCHN8T1gA9w-H64_XJwwo4Io'}
+          onFeedbackFiled={this.handleOnFeedbackFiled}
+        />
       </div>
     )
   }

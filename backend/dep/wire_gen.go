@@ -7,7 +7,6 @@ package dep
 
 import (
 	"database/sql"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"
@@ -28,8 +27,11 @@ import (
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/adapter/slack"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/fw/filesystem"
+	"github.com/short-d/short/backend/app/fw/slackapi"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
 	"github.com/short-d/short/backend/app/usecase/changelog"
@@ -66,7 +68,7 @@ func InjectEnv() env.Env {
 	return goDotEnv
 }
 
-func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, graphqlSchemaPath provider.GraphQLSchemaPath, graphqlPath provider.GraphQLPath, graphiQLDefaultQuery provider.GraphiQLDefaultQuery, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey, googleAPIKey provider.GoogleAPIKey) (service.GraphQL, error) {
+func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, graphqlSchemaPath provider.GraphQLSchemaPath, graphqlPath provider.GraphQLPath, graphiQLDefaultQuery provider.GraphiQLDefaultQuery, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, feedbackSlackWebHook provider.FeedbackSlackWebHook, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey, googleAPIKey provider.GoogleAPIKey) (service.GraphQL, error) {
 	local := filesystem.NewLocal()
 	system := timer.NewSystem()
 	program := runtime.NewProgram()
@@ -99,11 +101,18 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	rbacRBAC := rbac.NewRBAC(userRoleSQL)
 	authorizerAuthorizer := authorizer.NewAuthorizer(rbacRBAC)
 	persist := changelog.NewPersist(keyGenerator, system, changeLogSQL, userChangeLogSQL, authorizerAuthorizer)
+	feedbackSQL := sqldb.NewFeedbackSQL(sqlDB)
+	slackapiSlack := slackapi.NewSlack(http)
+	emoticNotifierFactory := slack.NewEmoticNotifierFactory(slackapiSlack)
+	feedback := provider.NewFeedback(system, feedbackSQL, keyGenerator, emoticNotifierFactory, feedbackSlackWebHook)
 	reCaptcha := provider.NewReCaptchaService(http, secret)
 	verifier := requester.NewVerifier(reCaptcha)
 	tokenizer := provider.NewJwtGo(jwtSecret)
-	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
-	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, updaterPersist, persist, verifier, authenticator)
+	authenticatorAuthenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
+	apiKeySQL := sqldb.NewApiKeySQL(sqlDB)
+	appSQL := sqldb.NewAppSQL(sqlDB)
+	cloudAPI := authenticator.NewCloudAPI(system, keyGenerator, tokenizer, apiKeySQL, appSQL)
+	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, updaterPersist, persist, feedback, verifier, authenticatorAuthenticator, cloudAPI)
 	api, err := provider.NewShortGraphQLAPI(graphqlSchemaPath, local, resolverResolver)
 	if err != nil {
 		return service.GraphQL{}, err
@@ -146,8 +155,8 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	authorizerAuthorizer := authorizer.NewAuthorizer(rbacRBAC)
 	decisionMakerFactory := provider.NewFeatureDecisionMakerFactorySwitch(deployment, featureToggleSQL, authorizerAuthorizer)
 	tokenizer := provider.NewJwtGo(jwtSecret)
-	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
-	factory := sso.NewFactory(authenticator)
+	authenticatorAuthenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
+	factory := sso.NewFactory(authenticatorAuthenticator)
 	userSQL := sqldb.NewUserSQL(sqlDB)
 	accountLinkerFactory := sso.NewAccountLinkerFactory(keyGenerator, userSQL)
 	githubSSOSql := sqldb.NewGithubSSOSql(sqlDB, loggerLogger)
@@ -167,7 +176,7 @@ func InjectRoutingService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	googleAccountLinker := provider.NewGoogleAccountLinker(accountLinkerFactory, googleSSOSql)
 	googleSingleSignOn := provider.NewGoogleSSO(factory, googleIdentityProvider, googleAccount, googleAccountLinker)
 	search := provider.NewSearch(loggerLogger, shortLinkSQL, userShortLinkSQL, searchTimeout)
-	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticator, search, swaggerUIDir, openAPISpecPath)
+	v := provider.NewShortRoutes(instrumentationFactory, webFrontendURL, system, retrieverPersist, decisionMakerFactory, singleSignOn, facebookSingleSignOn, googleSingleSignOn, authenticatorAuthenticator, search, swaggerUIDir, openAPISpecPath)
 	routing := service.NewRouting(loggerLogger, v)
 	return routing, nil
 }
@@ -195,7 +204,7 @@ func InjectDataTool(prefix provider.LogPrefix, logLevel logger.LogLevel, dbConfi
 
 // wire.go:
 
-var authenticatorSet = wire.NewSet(provider.NewJwtGo, provider.NewAuthenticator)
+var authenticatorSet = wire.NewSet(wire.Bind(new(repository.ApiKey), new(sqldb.ApiKeySQL)), provider.NewJwtGo, provider.NewAuthenticator, authenticator.NewCloudAPI, sqldb.NewApiKeySQL)
 
 var authorizerSet = wire.NewSet(wire.Bind(new(repository.UserRole), new(sqldb.UserRoleSQL)), sqldb.NewUserRoleSQL, rbac.NewRBAC, authorizer.NewAuthorizer)
 
@@ -210,3 +219,5 @@ var googleAPISet = wire.NewSet(provider.NewGoogleIdentityProvider, google.NewAcc
 var keyGenSet = wire.NewSet(wire.Bind(new(keygen.KeyFetcher), new(kgs.RPC)), provider.NewKgsRPC, provider.NewKeyGenerator)
 
 var featureDecisionSet = wire.NewSet(wire.Bind(new(repository.FeatureToggle), new(sqldb.FeatureToggleSQL)), sqldb.NewFeatureToggleSQL, provider.NewFeatureDecisionMakerFactorySwitch)
+
+var emoticSet = wire.NewSet(wire.Bind(new(repository.Feedback), new(sqldb.FeedbackSQL)), slack.NewEmoticNotifierFactory, sqldb.NewFeedbackSQL, provider.NewFeedback)

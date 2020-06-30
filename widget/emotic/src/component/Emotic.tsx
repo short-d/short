@@ -2,16 +2,20 @@ import React, { Component, createRef, RefObject } from 'react';
 import { Launcher } from './Launcher';
 import { FeedbackModal } from './FeedbackModal';
 import { Feedback } from '../entity/feedback';
-
-// import {ThemingService} from '../service/Theming.service';
+import {EmoticGraphQLApi} from '../service/graphql/EmoticGraphQL.api';
+import {
+  GraphQLService,
+  IGraphQLRequestError
+} from '../service/graphql/GraphQL.service';
+import {FetchHTTPService} from '../service/HTTP.service';
 
 interface IProps {
-  // apiKey: string;
+  apiKey: string;
   onFeedbackFiled?: (feedback: Feedback) => void;
 }
 
 export class Emotic extends Component<IProps, any> {
-  // private themingService: ThemingService;
+  private emoticGraphQLApi: EmoticGraphQLApi;
 
   private feedbackModalRef: RefObject<FeedbackModal> = createRef<
     FeedbackModal
@@ -19,7 +23,9 @@ export class Emotic extends Component<IProps, any> {
 
   constructor(props: IProps) {
     super(props);
-    // this.themingService = new ThemingService(props.apiKey);
+    const httpService = new FetchHTTPService();
+    const graphQLService = new GraphQLService(httpService);
+    this.emoticGraphQLApi = new EmoticGraphQLApi(this.props.apiKey, graphQLService);
   }
 
   render() {
@@ -46,9 +52,26 @@ export class Emotic extends Component<IProps, any> {
   };
 
   handleRequestFilingFeedback = (feedback: Feedback) => {
-    console.log(`Feedback filed: ${JSON.stringify(feedback, null, 2)}`);
-    if (this.props.onFeedbackFiled) {
-      this.props.onFeedbackFiled(feedback);
-    }
+    this.emoticGraphQLApi.fileFeedback(feedback).then(()=>{
+      console.log(`Feedback filed: ${JSON.stringify(feedback, null, 2)}`);
+      if (this.props.onFeedbackFiled) {
+        this.props.onFeedbackFiled(feedback);
+      }
+    }).catch((error: IGraphQLRequestError) => {
+      if (error.networkError) {
+        this.showNetworkError();
+        return;
+      }
+      if (error.graphQLErrors) {
+        this.showGraphQLError(error.graphQLErrors[0].extensions.code)
+      }
+    })
   };
+
+  private showGraphQLError(errorCode: string) {
+    alert(errorCode);
+  }
+
+  private showNetworkError() {
+  }
 }

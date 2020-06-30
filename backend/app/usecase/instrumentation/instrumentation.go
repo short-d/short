@@ -35,7 +35,7 @@ type Instrumentation struct {
 func (i Instrumentation) RedirectingAliasToLongLink(alias string) {
 	go func() {
 		c := <-i.redirectingAliasToLongLinkCh
-		userID := i.getUserID(nil)
+		userID := getUserID(nil)
 		props := map[string]string{
 			"request-id": c.RequestID,
 			"alias":      alias,
@@ -48,7 +48,7 @@ func (i Instrumentation) RedirectingAliasToLongLink(alias string) {
 func (i Instrumentation) RedirectedAliasToLongLink(shortLink entity.ShortLink) {
 	go func() {
 		c := <-i.redirectedAliasToLongLinkCh
-		userID := i.getUserID(nil)
+		userID := getUserID(nil)
 		props := map[string]string{
 			"request-id": c.RequestID,
 			"alias":      shortLink.Alias,
@@ -99,7 +99,7 @@ func (i Instrumentation) SearchSucceed(user *entity.User, keywords string, resou
 	go func() {
 		c := <-i.searchSucceedCh
 		i.metrics.Count("search-succeed", 1, 1, c)
-		userID := i.getUserID(user)
+		userID := getUserID(user)
 		props := map[string]string{
 			"keywords":  keywords,
 			"resources": strings.Join(resources, ","),
@@ -124,7 +124,7 @@ func (i Instrumentation) MadeFeatureDecision(
 ) {
 	go func() {
 		c := <-i.madeFeatureDecisionCh
-		userID := i.getUserID(nil)
+		userID := getUserID(nil)
 		isEnabledStr := fmt.Sprintf("%v", isEnabled)
 		props := map[string]string{
 			"request-id": c.RequestID,
@@ -139,7 +139,7 @@ func (i Instrumentation) MadeFeatureDecision(
 func (i Instrumentation) Track(event string) {
 	go func() {
 		c := <-i.trackCh
-		userID := i.getUserID(nil)
+		userID := getUserID(nil)
 		props := map[string]string{}
 		i.analytics.Track(event, props, userID, c)
 	}()
@@ -153,13 +153,6 @@ func (i Instrumentation) Done() {
 	close(i.longLinkRetrievalFailedCh)
 	close(i.featureToggleRetrievalSucceedCh)
 	close(i.featureToggleRetrievalFailedCh)
-}
-
-func (i Instrumentation) getUserID(user *entity.User) string {
-	if user == nil {
-		return "anonymous"
-	}
-	return user.ID
 }
 
 // NewInstrumentation initializes instrumentation code.
@@ -181,7 +174,7 @@ func NewInstrumentation(
 	madeFeatureDecisionCh := make(chan ctx.ExecutionContext)
 	trackCh := make(chan ctx.ExecutionContext)
 
-	ins := &Instrumentation{
+	ins := Instrumentation{
 		logger:                          logger,
 		timer:                           timer,
 		metrics:                         metrics,
@@ -212,5 +205,5 @@ func NewInstrumentation(
 		go func() { trackCh <- c }()
 		close(ctxCh)
 	}()
-	return *ins
+	return ins
 }

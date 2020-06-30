@@ -4,7 +4,6 @@ package dep
 
 import (
 	"database/sql"
-
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
 	"github.com/short-d/app/fw/cli"
@@ -26,8 +25,11 @@ import (
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
+	"github.com/short-d/short/backend/app/adapter/slack"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/fw/filesystem"
+	"github.com/short-d/short/backend/app/fw/slackapi"
+	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
 	"github.com/short-d/short/backend/app/usecase/changelog"
@@ -43,8 +45,11 @@ import (
 )
 
 var authenticatorSet = wire.NewSet(
+	wire.Bind(new(repository.ApiKey), new(sqldb.ApiKeySQL)),
 	provider.NewJwtGo,
 	provider.NewAuthenticator,
+	authenticator.NewCloudAPI,
+	sqldb.NewApiKeySQL,
 )
 
 var authorizerSet = wire.NewSet(
@@ -102,6 +107,13 @@ var featureDecisionSet = wire.NewSet(
 	provider.NewFeatureDecisionMakerFactorySwitch,
 )
 
+var emoticSet = wire.NewSet(
+	wire.Bind(new(repository.Feedback), new(sqldb.FeedbackSQL)),
+	slack.NewEmoticNotifierFactory,
+	sqldb.NewFeedbackSQL,
+	provider.NewFeedback,
+	)
+
 // InjectCommandFactory creates CommandFactory with configured dependencies.
 func InjectCommandFactory() cli.CommandFactory {
 	wire.Build(
@@ -152,6 +164,7 @@ func InjectGraphQLService(
 	bufferSize provider.KeyGenBufferSize,
 	kgsRPCConfig provider.KgsRPCConfig,
 	tokenValidDuration provider.TokenValidDuration,
+	feedbackSlackWebHook provider.FeedbackSlackWebHook,
 	dataDogAPIKey provider.DataDogAPIKey,
 	segmentAPIKey provider.SegmentAPIKey,
 	ipStackAPIKey provider.IPStackAPIKey,
@@ -168,6 +181,7 @@ func InjectGraphQLService(
 		wire.Bind(new(repository.ChangeLog), new(sqldb.ChangeLogSQL)),
 		wire.Bind(new(repository.UserChangeLog), new(sqldb.UserChangeLogSQL)),
 		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSQL)),
+		wire.Bind(new(repository.App), new(sqldb.AppSQL)),
 
 		wire.Bind(new(changelog.ChangeLog), new(changelog.Persist)),
 		wire.Bind(new(shortlink.Retriever), new(shortlink.RetrieverPersist)),
@@ -178,6 +192,7 @@ func InjectGraphQLService(
 		authenticatorSet,
 		authorizerSet,
 		keyGenSet,
+		emoticSet,
 
 		env.NewDeployment,
 		provider.NewGraphQLService,
@@ -188,6 +203,7 @@ func InjectGraphQLService(
 		timer.NewSystem,
 
 		filesystem.NewLocal,
+		slackapi.NewSlack,
 		resolver.NewResolver,
 		provider.NewShortGraphQLAPI,
 		provider.NewSafeBrowsing,
@@ -197,6 +213,7 @@ func InjectGraphQLService(
 		sqldb.NewUserChangeLogSQL,
 		sqldb.NewShortLinkSQL,
 		sqldb.NewUserShortLinkSQL,
+		sqldb.NewAppSQL,
 
 		validator.NewLongLink,
 		validator.NewCustomAlias,

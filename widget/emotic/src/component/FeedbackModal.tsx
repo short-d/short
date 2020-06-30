@@ -81,16 +81,13 @@ export class FeedbackModal extends Component<IProps, IState> {
     );
   }
 
-  handleEmotionTabOnNextClick = (
-    emotion: EmotionType,
-    feedbackMessage: string
-  ) => {
+  handleEmotionTabOnNextClick = (emotion: EmotionType, comment: string) => {
     const feedback = Object.assign<any, Partial<Feedback>, Partial<Feedback>>(
       {},
       this.state.feedback || {},
       {
-        emotion: emotion,
-        message: feedbackMessage
+        emotion,
+        comment
       }
     );
     this.setState(
@@ -134,7 +131,6 @@ export class FeedbackModal extends Component<IProps, IState> {
   }
 
   handleOnDoneClick = () => {
-    this.fileFeedback();
     this.close();
   };
 
