@@ -1,13 +1,13 @@
 # Contributing
-
 When contributing to this repository, please first discuss the change you wish
-to make via [Slack channel](https://short-d.com/r/slack) with the owner
-of this repository before making a change.
+to make via [Slack channel](https://short-d.com/r/slack) with the core team before making a change.
 
-Please open a draft pull request when you are working on an issue so that the
-owner knows it is in progress. The owner may take over or reassign the issue if no body replies after 10 days assigned to you.
+Please open a draft pull request when you are working on an issue so that the team knows it is in progress. 
+The core team reserves the rights to reassign the issue to other developers who are interested in taking over if there is no update
+after 3 weeks assigned to you.
 
-Please post your weekly contributions on our Slack every Friday during your convenient hours. All of the followings counts as contributions: 
+## Joining the Core Team
+Please post your weekly contributions on our Slack every Sunday during your convenient hours. All of the followings counts as contributions: 
 
 - Exploring the codebase
 - Learnings new tools, infrastructures, libraries, algorithms, designs, or concepts
@@ -20,7 +20,22 @@ Please post your weekly contributions on our Slack every Friday during your conv
 - Creating UI mockups
 - Organizing or participating sync meetings
 
-The owner reserves the rights to deactivate your Slack account after missing 3 consecutive standups without any heads up.
+After 2 months of consistent high quality contributions, you will receive an invitation to join the core team, 
+where people together plan the product roadmap for Short, design complex systems, create new libraries, building 
+distributed cloud infrastructure & drive innovations.
+
+We are specificly looking for the following characters for the potential member of the core team:
+
+- You are excited about learn new things and learn them very fast.
+- You write clean code & constantly look for corners to simplify the existing systems.
+- You believe in automatiom instead of doing everything manually in the long run.
+- You strive for excellence in term of code quality, system design, and process optimization.
+- You are a team player, who schedule pair programming sessions & solve difficult problems together with team members.
+- You thrieve in complexities & difficulties. Compilers, operating systems, pragramming languages, bitwise optimizations, 
+distributed systems, machine learning vector optimization, computer vision algorithms excites you.
+- You make things happen independently. Not dreaming or talking about them. You deliver them all the way onto production!
+
+After joining the core team, the tech lead reserves the rights to remove you from core after missing 3 consecutive standups.
 
 ## Pull Request Process
 
