@@ -32,7 +32,7 @@ We are specificly looking for the following characters for the potential member 
 - You strive for excellence in term of code quality, system design, and process optimization.
 - You are a team player, who schedule pair programming sessions & solve difficult problems together with team members.
 - You thrive in complexities & difficulties. Compilers, operating systems, programming languages, bitwise optimizations, 
-distributed systems, machine learning vector optimization, computer vision algorithms excites you.
+distributed systems, machine learning vector optimization, computer vision algorithms excite you.
 - You make things happen independently. Not dreaming or talking about them. You deliver them all the way onto production!
 
 After joining the core team, the tech lead reserves the rights to remove you from core after missing 3 consecutive standups.
