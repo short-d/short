@@ -75,7 +75,7 @@ func TestAppSQL_FindAppByID(t *testing.T) {
 					insertAppRows(t, sqlDB, testCase.tableRows)
 
 					appRepo := sqldb.NewAppSQL(sqlDB)
-					gotApp, err := appRepo.FindAppByID(testCase.appID)
+					gotApp, err := appRepo.GetAppByID(testCase.appID)
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 						return
