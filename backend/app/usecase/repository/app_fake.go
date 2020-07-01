@@ -14,7 +14,7 @@ type AppFake struct {
 }
 
 // FindAppByID fetches an app with given ID from memory.
-func (a AppFake) FindAppByID(appID string) (entity.App, error) {
+func (a AppFake) FindAppByID(id string) (entity.App, error) {
 	for _, app := range a.apps {
 		if app.ID == appID {
 			return app, nil

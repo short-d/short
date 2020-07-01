@@ -12,12 +12,12 @@ import (
 
 var _ repository.App = (*AppSQL)(nil)
 
-// AppSQL access third party app info through SQL.
+// AppSQL access third party app info through in SQL database.
 type AppSQL struct {
 	db *sql.DB
 }
 
-// FindAppByID  fetches an app with given ID from SQL database.
+// FindAppByID fetches an app with given ID from SQL DB.
 func (a AppSQL) FindAppByID(id string) (entity.App, error) {
 	query := fmt.Sprintf(`
 SELECT "%s", "%s" 
