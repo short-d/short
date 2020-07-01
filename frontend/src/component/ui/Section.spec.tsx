@@ -13,7 +13,7 @@ describe('Section', () => {
     expect(container.textContent).toMatch('Content');
   });
 
-  it('renders content correctly', () => {
+  it('renders content with options correctly', () => {
     const options = [<div>Option1</div>, <div>Option2</div>];
     const { rerender, container } = render(
       <Section title="Section Title" options={options}>
