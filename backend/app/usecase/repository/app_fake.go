@@ -13,14 +13,14 @@ type AppFake struct {
 	apps []entity.App
 }
 
-// FindAppByID fetches an app with given ID from memory.
-func (a AppFake) FindAppByID(id string) (entity.App, error) {
+// GetAppByID fetches an app with given ID from memory.
+func (a AppFake) GetAppByID(id string) (entity.App, error) {
 	for _, app := range a.apps {
-		if app.ID == appID {
+		if app.ID == id {
 			return app, nil
 		}
 	}
-	return entity.App{}, ErrEntryNotFound(fmt.Sprintf("ID(%s)", appID))
+	return entity.App{}, ErrEntryNotFound(fmt.Sprintf("ID(%s)", id))
 }
 
 // NewAppFake create in-memory implementation of App repository.
