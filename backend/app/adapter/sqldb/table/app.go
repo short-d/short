@@ -1,5 +1,6 @@
 package table
 
+// App represents database table columns for 'app' table
 var App = struct {
 	TableName       string
 	ColumnID        string
