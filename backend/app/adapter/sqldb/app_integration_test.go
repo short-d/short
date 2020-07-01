@@ -84,9 +84,7 @@ func TestAppSQL_FindAppByID(t *testing.T) {
 					assert.Equal(t, nil, err)
 					assert.Equal(t, testCase.expectedApp.ID, gotApp.ID)
 					assert.Equal(t, testCase.expectedApp.Name, gotApp.Name)
-
-					timeDiff := testCase.expectedApp.CreatedAt.Sub(gotApp.CreatedAt)
-					assert.Equal(t, time.Duration(0), timeDiff)
+					assert.Equal(t, testCase.expectedApp.CreatedAt, gotApp.CreatedAt.UTC())
 				})
 		})
 	}
