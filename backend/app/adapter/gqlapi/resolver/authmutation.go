@@ -93,9 +93,9 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 
 	var (
 		ae shortlink.ErrAliasExist
-		l shortlink.ErrInvalidLongLink
-		c shortlink.ErrInvalidCustomAlias
-		m shortlink.ErrMaliciousLongLink
+		l  shortlink.ErrInvalidLongLink
+		c  shortlink.ErrInvalidCustomAlias
+		m  shortlink.ErrMaliciousLongLink
 	)
 	if errors.As(err, &ae) {
 		return nil, ErrAliasExist(*customAlias)
@@ -189,7 +189,7 @@ func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
 	}
 
 	var (
-		u changelog.ErrUnauthorizedAction 
+		u changelog.ErrUnauthorizedAction
 	)
 	if errors.As(err, &u) {
 		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to delete the change %s", user.ID, args.ID))
@@ -222,7 +222,7 @@ func (a AuthMutation) UpdateChange(args *UpdateChangeArgs) (*Change, error) {
 	}
 
 	var (
-		u changelog.ErrUnauthorizedAction 
+		u changelog.ErrUnauthorizedAction
 	)
 	if errors.As(err, &u) {
 		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to update the change %s", user.ID, args.ID))

@@ -132,7 +132,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 					UpdatedAt: &now,
 				},
 			},
-			expectedHasErr:    true,
+			expectedHasErr: true,
 		},
 		{
 			name:  "long link is invalid",
