@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -90,19 +91,22 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		return &ShortLink{shortLink: newShortLink}, nil
 	}
 
-	// TODO(issue#823): refactor error type checking
-	switch err.(type) {
-	case shortlink.ErrAliasExist:
+	var (
+		ae shortlink.ErrAliasExist
+		l shortlink.ErrInvalidLongLink
+		c shortlink.ErrInvalidCustomAlias
+		m shortlink.ErrMaliciousLongLink
+	)
+	if errors.As(err, &ae) {
 		return nil, ErrAliasExist(*customAlias)
-	case shortlink.ErrInvalidLongLink:
-		return nil, ErrInvalidLongLink{u.LongLink, string(err.(shortlink.ErrInvalidLongLink).Violation)}
-	case shortlink.ErrInvalidCustomAlias:
-		return nil, ErrInvalidCustomAlias{*customAlias, string(err.(shortlink.ErrInvalidCustomAlias).Violation)}
-	case shortlink.ErrMaliciousLongLink:
+	} else if errors.As(err, &l) {
+		return nil, ErrInvalidLongLink{u.LongLink, string(l.Violation)}
+	} else if errors.As(err, &c) {
+		return nil, ErrInvalidCustomAlias{*customAlias, string(c.Violation)}
+	} else if errors.As(err, &m) {
 		return nil, ErrMaliciousContent(u.LongLink)
-	default:
-		return nil, ErrUnknown{}
 	}
+	return nil, ErrUnknown{}
 }
 
 // UpdateShortLinkArgs represents the possible parameters for updateShortLink endpoint
@@ -155,13 +159,13 @@ func (a AuthMutation) CreateChange(args *CreateChangeArgs) (*Change, error) {
 		return &change, nil
 	}
 
-	// TODO(issue#823): refactor error type checking
-	switch err.(type) {
-	case changelog.ErrUnauthorizedAction:
+	var (
+		u changelog.ErrUnauthorizedAction
+	)
+	if errors.As(err, &u) {
 		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to create a change", user.ID))
-	default:
-		return nil, ErrUnknown{}
 	}
+	return nil, ErrUnknown{}
 }
 
 // DeleteChangeArgs represents the possible parameters for DeleteChange endpoint
@@ -181,13 +185,13 @@ func (a AuthMutation) DeleteChange(args *DeleteChangeArgs) (*string, error) {
 		return &args.ID, nil
 	}
 
-	// TODO(issue#823): refactor error type checking
-	switch err.(type) {
-	case changelog.ErrUnauthorizedAction:
+	var (
+		u changelog.ErrUnauthorizedAction 
+	)
+	if errors.As(err, &u) {
 		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to delete the change %s", user.ID, args.ID))
-	default:
-		return nil, ErrUnknown{}
 	}
+	return nil, ErrUnknown{}
 }
 
 // UpdateChangeArgs represents the possible parameters for UpdateChange endpoint.
@@ -214,13 +218,13 @@ func (a AuthMutation) UpdateChange(args *UpdateChangeArgs) (*Change, error) {
 		return &change, nil
 	}
 
-	// TODO(issue#823): refactor error type checking
-	switch err.(type) {
-	case changelog.ErrUnauthorizedAction:
+	var (
+		u changelog.ErrUnauthorizedAction 
+	)
+	if errors.As(err, &u) {
 		return nil, ErrUnauthorizedAction(fmt.Sprintf("user %s is not allowed to update the change %s", user.ID, args.ID))
-	default:
-		return nil, ErrUnknown{}
 	}
+	return nil, ErrUnknown{}
 }
 
 // ViewChangeLog records the time when the user viewed the change log
