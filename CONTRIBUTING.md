@@ -4,7 +4,7 @@ to make via [Slack channel](https://short-d.com/r/slack) with the core team befo
 
 You can contribute to the project at your own pace & schedule. Please open a draft pull request after you started working 
 on an issue so that everyone knows it's in progress. Please let the the core team know if you become too busy with life or lost 
-interests in the project so that the core team can reassign the issue to other developers interested in making progress.
+interests in the project so that we can reassign the issue to other developers interested in making progress.
 
 ## Joining the Core Team
 If you are dedicated to the project and want to have more impacts, you should consider joining the core team!
@@ -25,7 +25,7 @@ After 2 months of consistent high quality contributions, you will receive an inv
 where people together plan the product roadmap for Short, write design docs, build complex systems, create libraries, invent 
 new distributed cloud infrastructure & drive innovations.
 
-We are specificly looking for the following characters for the potential member of the core team:
+We are specificly looking for the following characters for the potential member:
 
 - You are excited about learning new things and learning them very fast.
 - You write clean code & constantly look for corners to simplify the existing systems.
@@ -36,7 +36,7 @@ We are specificly looking for the following characters for the potential member 
 distributed systems, machine learning vector optimization, computer vision algorithms excite you.
 - You make things happen independently. Not dreaming or talking about them. You deliver them all the way onto production!
 
-At the core team, the tech lead reserves the rights to move back to general community after missing 3 consecutive standups.
+At the core team, the tech lead reserves the rights to move you back to general community after missing 3 consecutive standups.
 
 ## Pull Request Process
 
