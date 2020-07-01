@@ -99,11 +99,14 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 	)
 	if errors.As(err, &ae) {
 		return nil, ErrAliasExist(*customAlias)
-	} else if errors.As(err, &l) {
+	}
+	if errors.As(err, &l) {
 		return nil, ErrInvalidLongLink{u.LongLink, string(l.Violation)}
-	} else if errors.As(err, &c) {
+	}
+	if errors.As(err, &c) {
 		return nil, ErrInvalidCustomAlias{*customAlias, string(c.Violation)}
-	} else if errors.As(err, &m) {
+	}
+	if errors.As(err, &m) {
 		return nil, ErrMaliciousContent(u.LongLink)
 	}
 	return nil, ErrUnknown{}
