@@ -34,6 +34,7 @@ type ServiceConfig struct {
 	KgsPort              int
 	AuthTokenLifetime    time.Duration
 	SearchTimeout        time.Duration
+	FeedbackSlackWebHook string
 	SwaggerUIDir         string
 	OpenAPISpecPath      string
 	GraphQLSchemaPath    string
@@ -85,6 +86,7 @@ func Start(
 		kgsBufferSize,
 		kgsRPCConfig,
 		provider.TokenValidDuration(config.AuthTokenLifetime),
+		provider.FeedbackSlackWebHook(config.FeedbackSlackWebHook),
 		dataDogAPIKey,
 		segmentAPIKey,
 		ipStackAPIKey,
