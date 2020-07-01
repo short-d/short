@@ -95,7 +95,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
-			name:  "update alias already exist",
+			name:  "alias already exist",
 			alias: "git",
 			shortlinks: shortLinks{
 				"git": entity.ShortLink{
@@ -133,7 +133,6 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				},
 			},
 			expectedHasErr:    true,
-			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:  "long link is invalid",
