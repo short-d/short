@@ -20,20 +20,18 @@ from [source](https://short-d.com/r/ext-code)
 
 ## Dependent Projects
 
-- [app](https://github.com/byliuyang/app): Reusable framework for Go apps & command
+- [app](https://github.com/short-d/app): Reusable framework for Go apps & command
    line tools.
-- [kgs](https://github.com/byliuyang/kgs): Offline unique key generation service.
-- [toggle](https://github.com/byliuyang/toggle): Dynamic system behavior controller.
+- [kgs](https://github.com/short-d/kgs): Offline unique key generation service.
 
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
    1. [Accessing the source code](#accessing-the-source-code)
    1. [Prerequisites](#prerequisites)
+   1. [Local environmental variables](#local-environmental-variables)
    1. [Create reCAPTCHA account](#create-recaptcha-account)
-   1. [Create Github OAuth application](#create-github-oauth-application)
-   1. [Create Facebook Application](#create-facebook-application)
-   1. [Create Google OAuth Client ID](#create-google-oauth-client-id)
+   1. [Configure Single Sign On](#configure-single-sign-on)
    1. [Backend](#backend)
    1. [Frontend](#frontend)
 1. [System Design](#system-design)
@@ -55,9 +53,9 @@ from [source](https://short-d.com/r/ext-code)
    1. [End To End Testing](#end-to-end-testing)
    1. [The Test Pyramid](#the-test-pyramid)
 1. [Deployment](#deployment)
+   1. [Continuous Delivery](#continuous-delivery)
    1. [Kubernetes](#kubernetes)
-   1. [Staging](#staging)
-   1. [Production](#production)
+   1. [GitOps](#gitops)
 1. [Tools We Use](#tools-we-use)
 1. [Contributing](#contributing)
 1. [Author](#author)
@@ -588,7 +586,7 @@ cluster and span up new services.
 
 - [Drone](https://short-d.com/r/ci): Continuous integration
   written in Go
-- [Code Climate](https://short-d.com/r/cs): Automated code
+- [Code Climate](https://codeclimate.com/): Automated code
   review
 - [ElephantSQL](https://www.elephantsql.com): Managed PostgreSQL service.
 
