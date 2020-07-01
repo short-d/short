@@ -14,7 +14,7 @@ describe('Section', () => {
   });
 
   it('renders content correctly', () => {
-    let options = [<div>Option1</div>, <div>Option2</div>];
+    const options = [<div>Option1</div>, <div>Option2</div>];
     const { rerender, container } = render(
       <Section title="Section Title" options={options}>
         <div>Content</div>
