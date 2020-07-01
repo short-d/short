@@ -2,17 +2,27 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { Section } from './Section';
 
-it('renders content correctly', () => {
-  const { container } = render(
-    <Section title="Section Title">
-      <div>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua
-      </div>
-    </Section>
-  );
-  expect(container.textContent).toMatch('Section Title');
-  expect(container.textContent).toMatch(
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
-  );
+describe('Section', () => {
+  it('renders content correctly', () => {
+    const { container } = render(
+      <Section title="Section Title">
+        <div>Content</div>
+      </Section>
+    );
+    expect(container.textContent).toMatch('Section Title');
+    expect(container.textContent).toMatch('Content');
+  });
+
+  it('renders content with options correctly', () => {
+    const options = [<div>Option1</div>, <div>Option2</div>];
+    const { container } = render(
+      <Section title="Section Title" options={options}>
+        <div>Content</div>
+      </Section>
+    );
+    expect(container.textContent).toMatch('Section Title');
+    expect(container.textContent).toMatch('Content');
+    expect(container.textContent).toMatch('Option1');
+    expect(container.textContent).toMatch('Option2');
+  });
 });
