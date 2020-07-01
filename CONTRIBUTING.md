@@ -2,11 +2,12 @@
 Everyone is welcome to join our community! When contributing to this repository, please first discuss the change you wish
 to make via [Slack channel](https://short-d.com/r/slack) with the core team before making a change.
 
-Please open a draft pull request when you are working on an issue so that the team knows it is in progress. 
-The core team reserves the rights to reassign the issue to other developers if there is no update after a month assigned to you.
+You can contribute to the project at your own pace & schedule. Please open a draft pull request after you started working 
+on an issue so that everyone knows it's in progress. Please let the the core team know if you become too busy with life or lost 
+interests in the project so that the core team can reassign the issue to other developers interested in making progress.
 
 ## Joining the Core Team
-If you are dedicated to the project and want to have more impacts, the core team is here to rescue!
+If you are dedicated to the project and want to have more impacts, you should consider joining the core team!
 Please post your weekly contributions on our Slack every Sunday during your convenient hours. All of the followings counts as contributions: 
 
 - Exploring the codebase
@@ -21,8 +22,8 @@ Please post your weekly contributions on our Slack every Sunday during your conv
 - Organizing or participating sync meetings
 
 After 2 months of consistent high quality contributions, you will receive an invitation to join the core team, 
-where people together plan the product roadmap for Short, design complex systems, create new libraries, building 
-distributed cloud infrastructure & drive innovations.
+where people together plan the product roadmap for Short, write design docs, build complex systems, create libraries, invent 
+new distributed cloud infrastructure & drive innovations.
 
 We are specificly looking for the following characters for the potential member of the core team:
 
@@ -35,7 +36,7 @@ We are specificly looking for the following characters for the potential member 
 distributed systems, machine learning vector optimization, computer vision algorithms excite you.
 - You make things happen independently. Not dreaming or talking about them. You deliver them all the way onto production!
 
-After joining the core team, the tech lead reserves the rights to remove you from core after missing 3 consecutive standups.
+At the core team, the tech lead reserves the rights to move back to general community after missing 3 consecutive standups.
 
 ## Pull Request Process
 
