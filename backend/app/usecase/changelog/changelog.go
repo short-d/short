@@ -1,6 +1,7 @@
 package changelog
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -85,12 +86,12 @@ func (p Persist) GetLastViewedAt(user entity.User) (*time.Time, error) {
 		return &lastViewedAt, nil
 	}
 
-	// TODO(issue#823): refactor error type checking
-	switch err.(type) {
-	case repository.ErrEntryNotFound:
+	var (
+		e repository.ErrEntryNotFound
+	)
+	if errors.As(err, &e) {
 		return nil, nil
 	}
-
 	return nil, err
 }
 
@@ -102,9 +103,10 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 		return lastViewedAt, nil
 	}
 
-	// TODO(issue#823): refactor error type checking
-	switch err.(type) {
-	case repository.ErrEntryNotFound:
+	var (
+		e repository.ErrEntryNotFound
+	)
+	if errors.As(err, &e) {
 		err = p.userChangeLogRepo.CreateRelation(user, now)
 		if err != nil {
 			return time.Time{}, err
@@ -112,7 +114,6 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 
 		return now, nil
 	}
-
 	return time.Time{}, err
 }
 
