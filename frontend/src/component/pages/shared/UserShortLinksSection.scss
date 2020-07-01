@@ -1,4 +1,6 @@
 @import '../../styles/dimension';
+@import '../../styles/color';
+@import '../../styles/corner';
 
 .UserShortLinksSection {
   width: $content-width;
@@ -14,5 +16,31 @@
   .long-link,
   .alias {
     word-break: break-all;
+  }
+
+  .option {
+    user-select: none;
+    fill: color-transparent-black(0.2);
+    padding: 5px;
+    @include round-corner();
+
+    &.done {
+      $background: #2e7d32;
+
+      background-color: $background;
+      fill: white;
+
+      &:hover {
+        fill: white;
+        opacity: 0.9;
+        background-color: $background;
+      }
+    }
+
+    &:hover {
+      fill: color-transparent-black(1);
+      background-color: color-transparent-black(0.05);
+      cursor: pointer;
+    }
   }
 }

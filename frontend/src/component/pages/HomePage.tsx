@@ -8,7 +8,7 @@ import { SignInModal } from './shared/sign-in/SignInModal';
 import { ExtPromo } from './shared/promos/ExtPromo';
 import { validateLongLinkFormat } from '../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
-import { Location, History } from 'history';
+import { History, Location } from 'history';
 import { AuthService } from '../../service/Auth.service';
 import { IBrowserExtensionService } from '../../service/extensionService/BrowserExtension.service';
 import { VersionService } from '../../service/Version.service';
@@ -18,8 +18,8 @@ import { IAppState } from '../../state/reducers';
 import { Store, Unsubscribe } from 'redux';
 import {
   raiseCreateShortLinkError,
-  raiseGetUserShortLinksError,
   raiseGetChangeLogError,
+  raiseGetUserShortLinksError,
   raiseInputError,
   updateAlias,
   updateCreatedUrl,
@@ -40,7 +40,9 @@ import {
 import { AnalyticsService } from '../../service/Analytics.service';
 import { Change } from '../../entity/Change';
 import { IFeatureDecisionService } from '../../service/feature-decision/FeatureDecision.service';
+
 import { ErrorModal } from './shared/ErrorModal';
+import { IUpdatedShortLinks } from './shared/UserShortLinksSection';
 
 interface Props {
   uiFactory: UIFactory;
@@ -345,6 +347,37 @@ export class HomePage extends Component<Props, State> {
     this.updateCurrentPagedShortLinks(offset, pageSize);
   };
 
+  handleOnShortLinksUpdated = (updatedShortLinks: IUpdatedShortLinks): void => {
+    const { currentPagedShortLinks } = this.state;
+    if (!currentPagedShortLinks) {
+      return;
+    }
+
+    const oldAliases = Object.keys(updatedShortLinks);
+
+    const promises = oldAliases.map(oldAlias =>
+      this.props.shortLinkService.updateShortLink(
+        oldAlias,
+        updatedShortLinks[oldAlias]
+      )
+    );
+    Promise.all(promises).then(() => {});
+
+    const shortLinks = currentPagedShortLinks.shortLinks.map((shortLink: Url) =>
+      Object.assign<any, Url, Partial<Url>>(
+        {},
+        shortLink,
+        updatedShortLinks[shortLink.alias]
+      )
+    );
+
+    this.setState({
+      currentPagedShortLinks: Object.assign({}, currentPagedShortLinks, {
+        shortLinks
+      })
+    });
+  };
+
   render = () => {
     return (
       <div className="home">
@@ -380,6 +413,7 @@ export class HomePage extends Component<Props, State> {
             <div className={'user-short-links-section'}>
               {this.props.uiFactory.createUserShortLinksSection({
                 onPageLoad: this.handleOnShortLinkPageLoad,
+                onShortLinksUpdated: this.handleOnShortLinksUpdated,
                 pagedShortLinks: this.state.currentPagedShortLinks
               })}
             </div>

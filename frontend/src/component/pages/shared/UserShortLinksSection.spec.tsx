@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { UserShortLinksSection } from './UserShortLinksSection';
+import {
+  IUpdatedShortLinks,
+  UserShortLinksSection
+} from './UserShortLinksSection';
 import { fireEvent, render } from '@testing-library/react';
 import { IPagedShortLinks } from '../../../service/ShortLink.service';
 
@@ -262,5 +265,96 @@ describe('UserShortLinksSection component', () => {
       expect(container.textContent).toContain(link.originalUrl);
     });
     jest.clearAllTimers();
+  });
+
+  test('should enter short link editing mode correctly', () => {
+    const pagedShortLinks: IPagedShortLinks = {
+      shortLinks: [
+        { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
+        { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
+        { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
+      ],
+      totalCount: 12,
+      offset: 0,
+      pageSize: 0
+    };
+
+    const { container } = render(
+      <UserShortLinksSection
+        onPageLoad={jest.fn}
+        pagedShortLinks={pagedShortLinks}
+      />
+    );
+
+    for (let urlIdx = 0; urlIdx < pagedShortLinks.shortLinks.length; urlIdx++) {
+      const shortLink = pagedShortLinks.shortLinks[urlIdx];
+      expect(container.textContent).toContain(shortLink.originalUrl);
+      expect(container.textContent).toContain(shortLink.alias);
+    }
+
+    const editButton = container.querySelector('.edit');
+    expect(editButton).toBeTruthy();
+    expect(container.querySelectorAll('input').length).toBe(0);
+
+    fireEvent.click(editButton!);
+
+    expect(container.querySelector('.edit')).toBeFalsy();
+    expect(container.querySelector('.done')).toBeTruthy();
+    expect(container.querySelectorAll('input').length).toBe(6);
+  });
+
+  test('should request edited short links to be updated', () => {
+    const pagedShortLinks: IPagedShortLinks = {
+      shortLinks: [
+        { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
+        { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
+        { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
+      ],
+      totalCount: 3,
+      offset: 0,
+      pageSize: 0
+    };
+
+    const onShortLinksUpdated = jest.fn();
+
+    const { container } = render(
+      <UserShortLinksSection
+        onPageLoad={jest.fn}
+        onShortLinksUpdated={onShortLinksUpdated}
+        pagedShortLinks={pagedShortLinks}
+      />
+    );
+
+    const editButton = container.querySelector('.edit');
+    expect(editButton).toBeTruthy();
+
+    fireEvent.click(editButton!);
+
+    expect(onShortLinksUpdated).toBeCalledTimes(0);
+
+    const aliasInput1 = container.querySelector(`input[value="alias1"]`);
+    expect(aliasInput1).toBeTruthy();
+
+    const longLinkInput2 = container.querySelector(
+      `input[value="https://longurl.com/2"]`
+    );
+    expect(longLinkInput2).toBeTruthy();
+
+    fireEvent.change(aliasInput1!, { target: { value: 'newAlias1' } });
+    fireEvent.change(longLinkInput2!, {
+      target: { value: 'http://www.google.com' }
+    });
+
+    const doneButton = container.querySelector('.done');
+    expect(doneButton).toBeTruthy();
+    fireEvent.click(doneButton!);
+
+    expect(onShortLinksUpdated).toBeCalledTimes(1);
+
+    const updatedShortLinks: IUpdatedShortLinks = {
+      alias1: { alias: 'newAlias1' },
+      alias2: { originalUrl: 'http://www.google.com' }
+    };
+    expect(onShortLinksUpdated).toBeCalledWith(updatedShortLinks);
   });
 });
