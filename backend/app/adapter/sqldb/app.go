@@ -17,8 +17,8 @@ type AppSQL struct {
 	db *sql.DB
 }
 
-// FindAppByID fetches an app with given ID from SQL DB.
-func (a AppSQL) FindAppByID(id string) (entity.App, error) {
+// GetAppByID fetches an app with given ID from SQL DB.
+func (a AppSQL) GetAppByID(id string) (entity.App, error) {
 	query := fmt.Sprintf(`
 SELECT "%s", "%s" 
 FROM "%s" WHERE "%s"=$1;
