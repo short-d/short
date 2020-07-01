@@ -1,12 +1,12 @@
 # Contributing
-When contributing to this repository, please first discuss the change you wish
+Everyone is welcome to join our community! When contributing to this repository, please first discuss the change you wish
 to make via [Slack channel](https://short-d.com/r/slack) with the core team before making a change.
 
 Please open a draft pull request when you are working on an issue so that the team knows it is in progress. 
-The core team reserves the rights to reassign the issue to other developers who are interested in taking over if there is no update
-after 3 weeks assigned to you.
+The core team reserves the rights to reassign the issue to other developers if there is no update after a month assigned to you.
 
 ## Joining the Core Team
+If you are dedicated to the project and want to have more impacts, the core team is here to rescue!
 Please post your weekly contributions on our Slack every Sunday during your convenient hours. All of the followings counts as contributions: 
 
 - Exploring the codebase
