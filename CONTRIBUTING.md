@@ -1,13 +1,14 @@
 # Contributing
+Everyone is welcome to join our community! When contributing to this repository, please first discuss the change you wish
+to make via [Slack channel](https://short-d.com/r/slack) with the core team before making a change.
 
-When contributing to this repository, please first discuss the change you wish
-to make via [Slack channel](https://short-d.com/r/slack) with the owner
-of this repository before making a change.
+You can contribute to the project at your own pace & schedule. Please open a draft pull request after you started working 
+on an issue so that everyone knows it's in progress. Please let the the core team know if you become too busy with life or lost 
+interests in the project so that we can reassign the issue to other developers interested in making progress.
 
-Please open a draft pull request when you are working on an issue so that the
-owner knows it is in progress. The owner may take over or reassign the issue if no body replies after 10 days assigned to you.
-
-Please post your weekly contributions on our Slack every Friday during your convenient hours. All of the followings counts as contributions: 
+## Joining the Core Team
+If you are dedicated to the project and want to have more impacts, you should consider joining the core team!
+Please post your weekly contributions on our Slack every Sunday during your convenient hours. All of the followings counts as contributions: 
 
 - Exploring the codebase
 - Learnings new tools, infrastructures, libraries, algorithms, designs, or concepts
@@ -20,7 +21,22 @@ Please post your weekly contributions on our Slack every Friday during your conv
 - Creating UI mockups
 - Organizing or participating sync meetings
 
-The owner reserves the rights to deactivate your Slack account after missing 3 consecutive standups without any heads up.
+After 2 months of consistent high quality contributions, you will receive an invitation to join the core team, 
+where people together plan the product roadmap for Short, write design docs, build complex systems, create libraries, invent 
+new distributed cloud infrastructure & drive innovations.
+
+We are specificly looking for the following characters for the potential member:
+
+- You are excited about learning new things and learning them very fast.
+- You write clean code & constantly look for corners to simplify the existing systems.
+- You believe in automation instead of doing everything manually in the long run.
+- You strive for excellence in term of code quality, system design, and process optimization.
+- You are a team player, who schedule pair programming sessions & solve difficult problems together with team members.
+- You thrive in complexities & difficulties. Compilers, operating systems, programming languages, bitwise optimizations, 
+distributed systems, machine learning vector optimization, computer vision algorithms excite you.
+- You make things happen independently. Not dreaming or talking about them. You deliver them all the way onto production!
+
+At the core team, the tech lead reserves the rights to move you back to general community after missing 3 consecutive standups.
 
 ## Pull Request Process
 
