@@ -3,7 +3,6 @@
 package gqlapi
 
 import (
-	"github.com/short-d/short/backend/app/fw/filesystem"
 	"testing"
 	"time"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/filesystem"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
@@ -82,6 +82,6 @@ func TestGraphQlAPI(t *testing.T) {
 	schema := "schema.graphql"
 	fileSystem := filesystem.NewLocal()
 	graphqlAPI, err := NewShort(schema, fileSystem, r)
-	assert.Equal(t,nil, err)
+	assert.Equal(t, nil, err)
 	assert.Equal(t, true, graphql.IsGraphQlAPIValid(graphqlAPI))
 }

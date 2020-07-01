@@ -95,6 +95,47 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
+			name:  "update alias already exist",
+			alias: "git",
+			shortlinks: shortLinks{
+				"git": entity.ShortLink{
+					Alias:     "git",
+					LongLink:  "https://github.com/short-d",
+					UpdatedAt: &now,
+				},
+				"short-d": entity.ShortLink{
+					Alias:     "short-d",
+					LongLink:  "http://short-d.com/",
+					UpdatedAt: &now,
+				},
+			},
+			user: entity.User{
+				ID:    "1",
+				Email: "gopher@golang.org",
+			},
+			update: entity.ShortLink{
+				Alias: "short-d",
+			},
+			relationUsers: []entity.User{
+				{ID: "1"},
+				{ID: "1"},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:     "git",
+					LongLink:  "https://github.com/short-d",
+					UpdatedAt: &now,
+				},
+				{
+					Alias:     "short-d",
+					LongLink:  "http://short-d.com/",
+					UpdatedAt: &now,
+				},
+			},
+			expectedHasErr:    true,
+			expectedShortLink: entity.ShortLink{},
+		},
+		{
 			name:  "long link is invalid",
 			alias: "boGp9w35",
 			shortlinks: shortLinks{
