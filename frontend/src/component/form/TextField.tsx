@@ -31,6 +31,12 @@ export class TextField extends Component<IProps, IState> {
     this.props.onChange(text);
   };
 
+  updateValue(text: string) {
+    this.setState({
+      text: text
+    });
+  }
+
   handleBlur = () => {
     if (!this.props.onBlur) {
       return;

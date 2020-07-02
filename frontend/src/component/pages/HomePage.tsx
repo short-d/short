@@ -6,8 +6,6 @@ import { Url } from '../../entity/Url';
 import { Footer } from './shared/Footer';
 import { SignInModal } from './shared/sign-in/SignInModal';
 import { ExtPromo } from './shared/promos/ExtPromo';
-import { validateLongLinkFormat } from '../../validators/LongLink.validator';
-import { validateCustomAliasFormat } from '../../validators/CustomAlias.validator';
 import { Location, History } from 'history';
 import { AuthService } from '../../service/Auth.service';
 import { IBrowserExtensionService } from '../../service/extensionService/BrowserExtension.service';
@@ -17,13 +15,8 @@ import { UIFactory } from '../UIFactory';
 import { IAppState } from '../../state/reducers';
 import { Store, Unsubscribe } from 'redux';
 import {
-  raiseCreateShortLinkError,
   raiseGetUserShortLinksError,
-  raiseGetChangeLogError,
-  raiseInputError,
-  updateAlias,
-  updateCreatedUrl,
-  updateLongLink
+  raiseGetChangeLogError
 } from '../../state/actions';
 import { ErrorService } from '../../service/Error.service';
 import { UrlService } from '../../service/Url.service';
@@ -65,13 +58,6 @@ interface State {
   isUserSignedIn?: boolean;
   shouldShowAdminButton?: boolean;
   shouldShowPromo?: boolean;
-  longLink?: string;
-  alias?: string;
-  shortLink?: string;
-  createdUrl?: Url;
-  qrCodeUrl?: string;
-  inputErr?: string;
-  isShortLinkPublic?: boolean;
   autoCompleteSuggestions?: Array<Url>;
   changeLog?: Array<Change>;
   currentPagedShortLinks?: IPagedShortLinks;
@@ -91,6 +77,60 @@ export class HomePage extends Component<Props, State> {
     };
   }
 
+  render = () => {
+    return (
+      <div className="home">
+        {this.state.shouldShowPromo && <ExtPromo />}
+        <Header
+          uiFactory={this.props.uiFactory}
+          onSearchBarInputChange={this.handleSearchBarInputChange}
+          autoCompleteSuggestions={this.state.autoCompleteSuggestions}
+          shouldShowSignOutButton={this.state.isUserSignedIn}
+          shouldShowAdminButton={this.state.shouldShowAdminButton}
+          onSignOutButtonClick={this.handleSignOutButtonClick}
+          onAdminButtonClick={this.handleAdminButtonClick}
+        />
+        <div className={'main'}>
+          <CreateShortLinkSection
+            store={this.props.store}
+            urlService={this.props.urlService}
+            qrCodeService={this.props.qrCodeService}
+            uiFactory={this.props.uiFactory}
+            ref={this.createShortLinkSection}
+            onShortLinkCreated={this.handleOnShortLinkCreated}
+            onRequestSignIn={this.handleOnRequestSignIn}
+          />
+          {this.state.isUserSignedIn && (
+            <div className={'user-short-links-section'}>
+              {this.props.uiFactory.createUserShortLinksSection({
+                onPageLoad: this.handleOnShortLinkPageLoad,
+                pagedShortLinks: this.state.currentPagedShortLinks
+              })}
+            </div>
+          )}
+        </div>
+        <Footer
+          uiFactory={this.props.uiFactory}
+          onShowChangeLogBtnClick={this.handleShowChangeLogBtnClick}
+          authorName={'Harry'}
+          authorPortfolio={'https://github.com/byliuyang'}
+          version={this.props.versionService.getAppVersion()}
+        />
+        <ChangeLogModal
+          ref={this.changeLogModalRef}
+          onModalOpen={this.handleOpenChangeLogModal}
+          changeLog={this.state.changeLog}
+          defaultVisibleLogs={3}
+        />
+
+        <SignInModal ref={this.signInModal} uiFactory={this.props.uiFactory} />
+        <ErrorModal store={this.props.store} />
+
+        <Toast ref={this.toastRef} />
+      </div>
+    );
+  };
+
   async componentDidMount() {
     this.props.analyticsService.track('homePageLoad');
     this.setPromoDisplayStatus();
@@ -107,7 +147,6 @@ export class HomePage extends Component<Props, State> {
       isUserSignedIn: true
     });
     this.showAdminButton();
-    this.handleStateChange();
     this.autoFillLongLink();
     this.autoShowChangeLog();
   }
@@ -162,35 +201,10 @@ export class HomePage extends Component<Props, State> {
 
   autoFillLongLink() {
     const longLink = this.getLongLinkFromQueryParams();
-    if (validateLongLinkFormat(longLink) != null) {
+    if (!this.createShortLinkSection.current) {
       return;
     }
-    this.props.store.dispatch(updateLongLink(longLink));
-    this.createShortLinkSection.current!.focusShortLinkTextField();
-  }
-
-  handleStateChange() {
-    this.unsubscribeStateChange = this.props.store.subscribe(async () => {
-      const state = this.props.store.getState();
-
-      const newState: State = {
-        longLink: state.editingUrl.originalUrl,
-        alias: state.editingUrl.alias,
-        createdUrl: state.createdUrl,
-        inputErr: state.inputErr
-      };
-
-      if (state.createdUrl && state.createdUrl.alias) {
-        const shortLink = this.props.urlService.aliasToFrontendLink(
-          state.createdUrl.alias!
-        );
-        newState.shortLink = shortLink;
-        newState.qrCodeUrl = await this.props.qrCodeService.newQrCode(
-          shortLink
-        );
-      }
-      this.setState(newState);
-    });
+    this.createShortLinkSection.current.autoFillInLongLink(longLink);
   }
 
   showSignInModal() {
@@ -227,26 +241,6 @@ export class HomePage extends Component<Props, State> {
     this.props.history.push('/admin');
   };
 
-  handleLongLinkChange = (newLongLink: string) => {
-    this.props.store.dispatch(updateLongLink(newLongLink));
-  };
-
-  handleAliasChange = (newAlias: string) => {
-    this.props.store.dispatch(updateAlias(newAlias));
-  };
-
-  handleLongLinkTextFieldBlur = () => {
-    let longLink = this.props.store.getState().editingUrl.originalUrl;
-    let err = validateLongLinkFormat(longLink);
-    this.props.store.dispatch(raiseInputError(err));
-  };
-
-  handleCustomAliasTextFieldBlur = () => {
-    const alias = this.props.store.getState().editingUrl.alias;
-    const err = validateCustomAliasFormat(alias);
-    this.props.store.dispatch(raiseInputError(err));
-  };
-
   // TODO(issue#604): refactor into ShortLinkService to decouple business logic from view.
   private copyShortenedLink = (shortLink: string) => {
     const COPY_SUCCESS_MESSAGE = 'Short Link copied into clipboard';
@@ -257,37 +251,6 @@ export class HomePage extends Component<Props, State> {
         this.toastRef.current!.notify(COPY_SUCCESS_MESSAGE, TOAST_DURATION)
       )
       .catch(() => console.log(`Failed to copy ${shortLink} into Clipboard`));
-  };
-
-  handleCreateShortLinkClick = () => {
-    const editingUrl = this.props.store.getState().editingUrl;
-    this.props.urlService
-      .createShortLink(editingUrl, this.state.isShortLinkPublic)
-      .then((createdUrl: Url) => {
-        this.props.store.dispatch(updateCreatedUrl(createdUrl));
-
-        const shortLink = this.props.urlService.aliasToFrontendLink(
-          createdUrl.alias!
-        );
-        this.copyShortenedLink(shortLink);
-
-        this.refreshUserShortLinks();
-      })
-      .catch(({ authenticationErr, createShortLinkErr }) => {
-        if (authenticationErr) {
-          this.requestSignIn();
-          return;
-        }
-        this.props.store.dispatch(
-          raiseCreateShortLinkError(createShortLinkErr)
-        );
-      });
-  };
-
-  handlePublicToggleClick = (enabled: boolean) => {
-    this.setState({
-      isShortLinkPublic: enabled
-    });
   };
 
   getLongLinkFromQueryParams(): string {
@@ -345,65 +308,12 @@ export class HomePage extends Component<Props, State> {
     this.updateCurrentPagedShortLinks(offset, pageSize);
   };
 
-  render = () => {
-    return (
-      <div className="home">
-        {this.state.shouldShowPromo && <ExtPromo />}
-        <Header
-          uiFactory={this.props.uiFactory}
-          onSearchBarInputChange={this.handleSearchBarInputChange}
-          autoCompleteSuggestions={this.state.autoCompleteSuggestions}
-          shouldShowSignOutButton={this.state.isUserSignedIn}
-          shouldShowAdminButton={this.state.shouldShowAdminButton}
-          onSignOutButtonClick={this.handleSignOutButtonClick}
-          onAdminButtonClick={this.handleAdminButtonClick}
-        />
-        <div className={'main'}>
-          <CreateShortLinkSection
-            uiFactory={this.props.uiFactory}
-            ref={this.createShortLinkSection}
-            longLinkText={this.state.longLink}
-            alias={this.state.alias}
-            shortLink={this.state.shortLink}
-            inputErr={this.state.inputErr}
-            createdUrl={this.state.createdUrl}
-            qrCodeUrl={this.state.qrCodeUrl}
-            isShortLinkPublic={this.state.isShortLinkPublic}
-            onLongLinkTextFieldBlur={this.handleLongLinkTextFieldBlur}
-            onLongLinkTextFieldChange={this.handleLongLinkChange}
-            onShortLinkTextFieldBlur={this.handleCustomAliasTextFieldBlur}
-            onShortLinkTextFieldChange={this.handleAliasChange}
-            onPublicToggleClick={this.handlePublicToggleClick}
-            onCreateShortLinkButtonClick={this.handleCreateShortLinkClick}
-          />
-          {this.state.isUserSignedIn && (
-            <div className={'user-short-links-section'}>
-              {this.props.uiFactory.createUserShortLinksSection({
-                onPageLoad: this.handleOnShortLinkPageLoad,
-                pagedShortLinks: this.state.currentPagedShortLinks
-              })}
-            </div>
-          )}
-        </div>
-        <Footer
-          uiFactory={this.props.uiFactory}
-          onShowChangeLogBtnClick={this.handleShowChangeLogBtnClick}
-          authorName={'Harry'}
-          authorPortfolio={'https://github.com/byliuyang'}
-          version={this.props.versionService.getAppVersion()}
-        />
-        <ChangeLogModal
-          ref={this.changeLogModalRef}
-          onModalOpen={this.handleOpenChangeLogModal}
-          changeLog={this.state.changeLog}
-          defaultVisibleLogs={3}
-        />
+  private handleOnShortLinkCreated = (shortLink: string) => {
+    this.copyShortenedLink(shortLink);
+    this.refreshUserShortLinks();
+  };
 
-        <SignInModal ref={this.signInModal} uiFactory={this.props.uiFactory} />
-        <ErrorModal store={this.props.store} />
-
-        <Toast ref={this.toastRef} />
-      </div>
-    );
+  private handleOnRequestSignIn = () => {
+    this.requestSignIn();
   };
 }
