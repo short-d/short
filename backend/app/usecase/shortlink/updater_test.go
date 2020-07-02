@@ -65,6 +65,45 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			},
 		},
 		{
+			name:  "successfully update alias",
+			alias: "boGp9w35",
+			shortlinks: shortLinks{
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			user: entity.User{
+				ID:    "1",
+				Email: "gopher@golang.org",
+			},
+			update: entity.ShortLink{
+				Alias: "http-bin",
+			},
+			relationUsers: []entity.User{
+				{ID: "1"},
+				{ID: "1"},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+				{
+					Alias:     "http-bin",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			expectedHasErr: false,
+			expectedShortLink: entity.ShortLink{
+				Alias:    "http-bin",
+				LongLink: "https://httpbin.org",
+			},
+		},
+		{
 			name:  "alias doesn't exist",
 			alias: "eBJRJJty",
 			shortlinks: shortLinks{
@@ -132,7 +171,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 					UpdatedAt: &now,
 				},
 			},
-			expectedHasErr:    true,
+			expectedHasErr: true,
 		},
 		{
 			name:  "long link is invalid",
@@ -150,6 +189,36 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			},
 			update: entity.ShortLink{
 				LongLink: "aaaaaaaaaaaaaaaaaaa",
+			},
+			relationUsers: []entity.User{
+				{ID: "1"},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			expectedHasErr:    true,
+			expectedShortLink: entity.ShortLink{},
+		},
+		{
+			name:  "alias is invalid",
+			alias: "boGp9w35",
+			shortlinks: shortLinks{
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			user: entity.User{
+				ID:    "1",
+				Email: "gopher@golang.org",
+			},
+			update: entity.ShortLink{
+				Alias: "#http-bin",
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -197,11 +266,29 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		{
 			name:  "reject malicious long link",
 			alias: "boGp9w35",
+			shortlinks: shortLinks{
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
 			user: entity.User{
+				ID:    "1",
 				Email: "gopher@golang.org",
 			},
 			update: entity.ShortLink{
 				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
+			},
+			relationUsers: []entity.User{
+				{ID: "1"},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
 			},
 			blockedLongLinks: map[string]bool{
 				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": true,
