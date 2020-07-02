@@ -8,7 +8,6 @@ import {
   RAISE_GET_USER_SHORT_LINKS_ERROR,
   RAISE_GET_CHANGELOG_ERROR,
   UPDATE_ALIAS,
-  UPDATE_CREATED_URL,
   UPDATE_LONG_LINK
 } from './actions';
 import { Reducer } from 'redux';
@@ -68,11 +67,6 @@ export const reducers: Reducer<IAppState> = (
       return {
         ...state,
         err: action.payload
-      };
-    case UPDATE_CREATED_URL:
-      return {
-        ...state,
-        createdUrl: action.payload
       };
     case CLEAR_ERROR:
       return {
