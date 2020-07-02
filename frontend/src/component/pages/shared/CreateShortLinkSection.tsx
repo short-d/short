@@ -36,7 +36,6 @@ interface IState {
 }
 
 export class CreateShortLinkSection extends Component<IProps, IState> {
-  private longLinkTextField = React.createRef<TextField>();
   private shortLinkTextField = React.createRef<TextField>();
 
   constructor(props: IProps) {
@@ -56,8 +55,7 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
         <div className={'control create-short-link'}>
           <div className={'text-field-wrapper'}>
             <TextField
-              ref={this.longLinkTextField}
-              defaultText={''}
+              text={this.state.longLink}
               placeHolder={'Long Link'}
               onBlur={this.handleLongLinkTextFieldBlur}
               onChange={this.handleLongLinkChange}
@@ -66,7 +64,7 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
           <div className={'text-field-wrapper'}>
             <TextField
               ref={this.shortLinkTextField}
-              defaultText={''}
+              text={this.state.alias}
               placeHolder={'Custom Short Link ( Optional )'}
               onBlur={this.handleCustomAliasTextFieldBlur}
               onChange={this.handleAliasChange}
@@ -98,17 +96,22 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
   }
 
   autoFillInLongLink(longLink: string) {
-    if (validateLongLinkFormat(longLink) != null) {
-      return;
-    }
-    if (!this.longLinkTextField.current) {
+    if (!longLink) {
       return;
     }
 
     this.setState({
       longLink: longLink
     });
-    this.longLinkTextField.current.updateValue(longLink);
+
+    const inputError = validateLongLinkFormat(longLink);
+    if (inputError != null) {
+      this.setState({
+        inputError: inputError
+      });
+      return;
+    }
+
     this.focusShortLinkTextField();
   }
 
