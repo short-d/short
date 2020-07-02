@@ -66,6 +66,22 @@ func TestRetriever_GetShortLink(t *testing.T) {
 			},
 		},
 		{
+			name: "without expiration",
+			shortLinks: shortLinks{
+				"220uFicCJj": entity.ShortLink{
+					Alias:    "220uFicCJj",
+					ExpireAt: &before,
+				},
+			},
+			alias:      "220uFicCJj",
+			expiringAt: nil,
+			hasErr:     false,
+			expectedShortLink: entity.ShortLink{
+				Alias:    "220uFicCJj",
+				ExpireAt: &before,
+			},
+		},
+		{
 			name: "unexpired short link found",
 			shortLinks: shortLinks{
 				"220uFicCJj": entity.ShortLink{
