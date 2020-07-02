@@ -12,6 +12,7 @@ import (
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/filesystem"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
@@ -77,6 +78,10 @@ func TestGraphQlAPI(t *testing.T) {
 	au := authorizer.NewAuthorizer(rb)
 	changeLog := changelog.NewPersist(keyGen, tm, &changeLogRepo, &userChangeLogRepo, au)
 	r := resolver.NewResolver(lg, retriever, creator, updater, changeLog, verifier, auth)
-	graphqlAPI := NewShort(r)
+
+	schema := "schema.graphql"
+	fileSystem := filesystem.NewLocal()
+	graphqlAPI, err := NewShort(schema, fileSystem, r)
+	assert.Equal(t, nil, err)
 	assert.Equal(t, true, graphql.IsGraphQlAPIValid(graphqlAPI))
 }

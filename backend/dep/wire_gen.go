@@ -25,11 +25,11 @@ import (
 	"github.com/short-d/short/backend/app/adapter/facebook"
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
-	"github.com/short-d/short/backend/app/adapter/gqlapi"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
+	"github.com/short-d/short/backend/app/fw/filesystem"
 	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
 	"github.com/short-d/short/backend/app/usecase/changelog"
@@ -66,7 +66,8 @@ func InjectEnv() env.Env {
 	return goDotEnv
 }
 
-func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, graphqlPath provider.GraphQLPath, graphiQLDefaultQuery provider.GraphiQLDefaultQuery, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey, googleAPIKey provider.GoogleAPIKey) (service.GraphQL, error) {
+func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, graphqlSchemaPath provider.GraphQLSchemaPath, graphqlPath provider.GraphQLPath, graphiQLDefaultQuery provider.GraphiQLDefaultQuery, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey, googleAPIKey provider.GoogleAPIKey) (service.GraphQL, error) {
+	local := filesystem.NewLocal()
 	system := timer.NewSystem()
 	program := runtime.NewProgram()
 	deployment := env.NewDeployment(runtime2)
@@ -103,7 +104,10 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
 	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, updaterPersist, persist, verifier, authenticator)
-	api := gqlapi.NewShort(resolverResolver)
+	api, err := provider.NewShortGraphQLAPI(graphqlSchemaPath, local, resolverResolver)
+	if err != nil {
+		return service.GraphQL{}, err
+	}
 	graphGopherHandler := graphql.NewGraphGopherHandler(api)
 	graphiQL := provider.NewGraphiQL(graphqlPath, graphiQLDefaultQuery)
 	graphQL := provider.NewGraphQLService(graphqlPath, graphGopherHandler, graphiQL, loggerLogger)

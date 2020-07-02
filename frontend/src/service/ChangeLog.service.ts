@@ -90,6 +90,22 @@ export class ChangeLogService {
     });
   }
 
+  updateChange(id: string, change: Change): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.changeLogGraphQLApi
+        .updateChange(id, change)
+        .then(resolve)
+        .catch(errCode => {
+          // TODO(issue#904): impose definite error handling mechanism in client classes.
+          if (errCode === Err.Unauthenticated) {
+            reject({ authenticationErr: 'User is not authenticated' });
+            return;
+          }
+          reject({ changeErr: this.errorService.getErr(errCode) });
+        });
+    });
+  }
+
   deleteChange(changeId: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.changeLogGraphQLApi
@@ -110,7 +126,7 @@ export class ChangeLogService {
     return new Promise(async (resolve, reject) => {
       this.changeLogGraphQLApi
         .getAllChanges()
-        .then(resolve)
+        .then(changes => resolve(this.sortChanges(changes)))
         .catch(errCode => {
           // TODO(issue#904): impose definite error handling mechanism in client classes.
           if (errCode === Err.Unauthenticated) {
