@@ -5,7 +5,6 @@ export interface IPayloadAction extends Action {
   payload?: any;
 }
 
-export const RAISE_INPUT_ERROR = 'RAISE_INPUT_ERROR';
 export const RAISE_CREATE_SHORT_LINK_ERROR = 'RAISE_CREATE_SHORT_LINK_ERROR';
 export const CLEAR_ERROR = 'CLEAR_ERROR';
 export const RAISE_GET_USER_SHORT_LINKS_ERROR =

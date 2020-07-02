@@ -4,7 +4,6 @@ import {
   CLEAR_ERROR,
   IPayloadAction,
   RAISE_CREATE_SHORT_LINK_ERROR,
-  RAISE_INPUT_ERROR,
   RAISE_GET_USER_SHORT_LINKS_ERROR,
   RAISE_GET_CHANGELOG_ERROR
 } from './actions';
@@ -30,11 +29,6 @@ export const reducers: Reducer<IAppState> = (
   action: IPayloadAction
 ): IAppState => {
   switch (action.type) {
-    case RAISE_INPUT_ERROR:
-      return {
-        ...state,
-        inputErr: action.payload
-      };
     case RAISE_CREATE_SHORT_LINK_ERROR:
       return {
         ...state,
