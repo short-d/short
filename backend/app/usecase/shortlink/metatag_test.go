@@ -34,6 +34,7 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 		name                  string
 		shortLinks            shortLinks
 		alias                 string
+		expHasErr             bool
 		expectedOpenGraphTags metatag.OpenGraph
 	}{
 		{
@@ -110,6 +111,13 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 				ImageURL:    &defaultImageURL,
 			},
 		},
+		{
+			name:                  "alias does not exist",
+			shortLinks:            shortLinks{},
+			alias:                 "654321",
+			expHasErr:             true,
+			expectedOpenGraphTags: metatag.OpenGraph{},
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -121,6 +129,11 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 			metaTag := NewMetaTagPersist(&shortLinkRepo)
 
 			ogTags, err := metaTag.GetOpenGraphTags(testCase.alias)
+			if testCase.expHasErr {
+				assert.NotEqual(t, nil, err)
+				return
+			}
+
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedOpenGraphTags, ogTags)
 		})
@@ -150,6 +163,7 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 		name                string
 		shortLinks          shortLinks
 		alias               string
+		expHasErr           bool
 		expectedTwitterTags metatag.Twitter
 	}{
 		{
@@ -225,6 +239,13 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 				ImageURL:    &defaultImageURL,
 			},
 		},
+		{
+			name:                "alias does not exist",
+			shortLinks:          shortLinks{},
+			alias:               "654321",
+			expHasErr:           true,
+			expectedTwitterTags: metatag.Twitter{},
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -236,6 +257,11 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 			metaTag := NewMetaTagPersist(&shortLinkRepo)
 
 			twitterTags, err := metaTag.GetTwitterTags(testCase.alias)
+			if testCase.expHasErr {
+				assert.NotEqual(t, nil, err)
+				return
+			}
+
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedTwitterTags, twitterTags)
 		})
