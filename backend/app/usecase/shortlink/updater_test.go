@@ -65,45 +65,6 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			},
 		},
 		{
-			name:  "successfully update alias",
-			alias: "boGp9w35",
-			shortlinks: shortLinks{
-				"boGp9w35": entity.ShortLink{
-					Alias:     "boGp9w35",
-					LongLink:  "https://httpbin.org",
-					UpdatedAt: &now,
-				},
-			},
-			user: entity.User{
-				ID:    "1",
-				Email: "gopher@golang.org",
-			},
-			update: entity.ShortLink{
-				Alias: "http-bin",
-			},
-			relationUsers: []entity.User{
-				{ID: "1"},
-				{ID: "1"},
-			},
-			relationShortLinks: []entity.ShortLink{
-				{
-					Alias:     "boGp9w35",
-					LongLink:  "https://httpbin.org",
-					UpdatedAt: &now,
-				},
-				{
-					Alias:     "http-bin",
-					LongLink:  "https://httpbin.org",
-					UpdatedAt: &now,
-				},
-			},
-			expectedHasErr: false,
-			expectedShortLink: entity.ShortLink{
-				Alias:    "http-bin",
-				LongLink: "https://httpbin.org",
-			},
-		},
-		{
 			name:  "alias doesn't exist",
 			alias: "eBJRJJty",
 			shortlinks: shortLinks{
