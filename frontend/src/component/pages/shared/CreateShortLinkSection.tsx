@@ -106,6 +106,9 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
       return;
     }
 
+    this.setState({
+      longLink: longLink
+    });
     this.longLinkTextField.current.updateValue(longLink);
     this.focusShortLinkTextField();
   }
