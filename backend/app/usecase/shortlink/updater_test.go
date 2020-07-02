@@ -165,7 +165,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
-			name:  "alias is invalid",
+			name:  "alias contains hash tag",
 			alias: "boGp9w35",
 			shortlinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
