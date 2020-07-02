@@ -21,13 +21,13 @@ interface IProps {
   urlService: UrlService;
   qrCodeService: QrCodeService;
   onShortLinkCreated?: (shortLink: string) => void;
-  onRequestSignIn?: () => void;
+  onAuthenticationFailed?: () => void;
 }
 
 interface IState {
   longLink: string;
   alias?: string;
-  inputError: string | null;
+  inputError?: string;
   isShortLinkPublic?: boolean;
   shouldShowUsage: boolean;
   createdShortLink: string;
@@ -43,7 +43,6 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
     super(props);
     this.state = {
       longLink: '',
-      inputError: null,
       shouldShowUsage: false,
       createdShortLink: '',
       createdLongLink: '',
@@ -117,7 +116,7 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
     const { longLink } = this.state;
     const err = validateLongLinkFormat(longLink);
     this.setState({
-      inputError: err
+      inputError: err || undefined
     });
   };
 
@@ -137,7 +136,7 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
     const { alias } = this.state;
     const err = validateCustomAliasFormat(alias);
     this.setState({
-      inputError: err
+      inputError: err || undefined
     });
   };
 
@@ -168,8 +167,8 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
       })
       .catch(({ authenticationErr, createShortLinkErr }) => {
         if (authenticationErr) {
-          if (this.props.onRequestSignIn) {
-            this.props.onRequestSignIn();
+          if (this.props.onAuthenticationFailed) {
+            this.props.onAuthenticationFailed();
           }
           return;
         }

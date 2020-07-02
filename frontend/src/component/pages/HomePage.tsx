@@ -98,7 +98,7 @@ export class HomePage extends Component<Props, State> {
             uiFactory={this.props.uiFactory}
             ref={this.createShortLinkSection}
             onShortLinkCreated={this.handleOnShortLinkCreated}
-            onRequestSignIn={this.handleOnRequestSignIn}
+            onAuthenticationFailed={this.handleOnAuthenticationFailed}
           />
           {this.state.isUserSignedIn && (
             <div className={'user-short-links-section'}>
@@ -313,7 +313,7 @@ export class HomePage extends Component<Props, State> {
     this.refreshUserShortLinks();
   };
 
-  private handleOnRequestSignIn = () => {
+  private handleOnAuthenticationFailed = () => {
     this.requestSignIn();
   };
 }
