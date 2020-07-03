@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package proto;
+
+message GetOpenGraphTagsRequest {
+    string alias = 1;
+}
+
+message GetOpenGraphTagsResponse {
+    string title = 1;
+    string description = 2;
+    string image_url = 3;
+}
+
+message GetTwitterTagsRequest {
+    string alias = 1;
+}
+
+message GetTwitterTagsResponse {
+    string title = 1;
+    string description = 2;
+    string image_url = 3;
+}
+
+service MetaTagService {
+	  rpc GetOpenGraphTags(GetOpenGraphTagsRequest) returns (GetOpenGraphTagsResponse) {}
+	  rpc GetTwitterTags(GetTwitterTagsRequest) returns (GetTwitterTagsResponse) {}
+}
