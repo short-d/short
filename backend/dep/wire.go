@@ -25,7 +25,6 @@ import (
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
-	"github.com/short-d/short/backend/app/adapter/grpcapi"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -137,19 +136,6 @@ func InjectEnv() env.Env {
 		env.NewGoDotEnv,
 	)
 	return env.GoDotEnv{}
-}
-
-// InjectGRPCApi creates gRPC API with configured dependencies.
-func InjectGRPCApi(sqlDB *sql.DB) grpcapi.ShortGRPCApi {
-	wire.Build(
-		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSQL)),
-		wire.Bind(new(shortlink.MetaTag), new(shortlink.MetaTagPersist)),
-		sqldb.NewShortLinkSQL,
-		shortlink.NewMetaTagPersist,
-		grpcapi.NewMetaTagServer,
-		grpcapi.NewShortGRPCApi,
-	)
-	return grpcapi.ShortGRPCApi{}
 }
 
 // InjectGraphQLService creates GraphQL service with configured dependencies.
