@@ -22,19 +22,20 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 	testCases := []struct {
 		name               string
 		alias              string
-		shortlinks         shortLinks
+		shortLinks         shortLinks
 		user               entity.User
 		update             entity.ShortLink
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
 		blockedLongLinks   map[string]bool
 		expectedHasErr     bool
+		err                error
 		expectedShortLink  entity.ShortLink
 	}{
 		{
 			name:  "successfully update existing long link",
 			alias: "boGp9w35",
-			shortlinks: shortLinks{
+			shortLinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
@@ -67,7 +68,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		{
 			name:  "alias doesn't exist",
 			alias: "eBJRJJty",
-			shortlinks: shortLinks{
+			shortLinks: shortLinks{
 				"boGp9w35zzzz": entity.ShortLink{
 					Alias:     "boGp9w35zzzz",
 					LongLink:  "https://httpbin.org",
@@ -92,12 +93,13 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				},
 			},
 			expectedHasErr:    true,
+			err:               ErrShortLinkNotFound,
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:  "alias already exist",
 			alias: "git",
-			shortlinks: shortLinks{
+			shortLinks: shortLinks{
 				"git": entity.ShortLink{
 					Alias:     "git",
 					LongLink:  "https://github.com/short-d",
@@ -133,11 +135,12 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				},
 			},
 			expectedHasErr: true,
+			err:            ErrAliasExist("short link alias already exist"),
 		},
 		{
 			name:  "long link is invalid",
 			alias: "boGp9w35",
-			shortlinks: shortLinks{
+			shortLinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
@@ -162,12 +165,13 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				},
 			},
 			expectedHasErr:    true,
+			err:               ErrInvalidLongLink{"aaaaaaaaaaaaaaaaaaa", validator.LongLinkNotURL},
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:  "alias contains hash tag",
 			alias: "boGp9w35",
-			shortlinks: shortLinks{
+			shortLinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
@@ -192,12 +196,13 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				},
 			},
 			expectedHasErr:    true,
+			err:               ErrInvalidCustomAlias{"#http-bin", validator.HasFragmentCharacter},
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:  "short link is not owned by the user",
 			alias: "boGp9w35",
-			shortlinks: shortLinks{
+			shortLinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
@@ -222,12 +227,13 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				},
 			},
 			expectedHasErr:    true,
+			err:               ErrShortLinkNotFound,
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
 			name:  "reject malicious long link",
 			alias: "boGp9w35",
-			shortlinks: shortLinks{
+			shortLinks: shortLinks{
 				"boGp9w35": entity.ShortLink{
 					Alias:     "boGp9w35",
 					LongLink:  "https://httpbin.org",
@@ -255,6 +261,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": true,
 			},
 			expectedHasErr:    true,
+			err:               ErrMaliciousLongLink("http://malware.wicar.org/data/ms14_064_ole_not_xp.html"),
 			expectedShortLink: entity.ShortLink{},
 		},
 	}
@@ -264,7 +271,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 			tm := timer.NewStub(now)
-			shortLinkRepo := repository.NewShortLinkFake(testCase.shortlinks)
+			shortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
 			userShortLinkRepo := repository.NewUserShortLinkRepoFake(
 				testCase.relationUsers,
 				testCase.relationShortLinks,
@@ -285,7 +292,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 
 			shortLink, err := updater.UpdateShortLink(testCase.alias, testCase.update, testCase.user)
 			if testCase.expectedHasErr {
-				assert.NotEqual(t, nil, err)
+				assert.Equal(t, testCase.err, err)
 
 				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.expectedShortLink.Alias)
 				assert.NotEqual(t, nil, err)

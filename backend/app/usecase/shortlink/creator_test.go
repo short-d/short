@@ -3,6 +3,7 @@
 package shortlink
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -39,6 +40,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 		isPublic           bool
 		// TODO(issue#803): Check error types in tests.
 		expHasErr         bool
+		err               error
 		expectedShortLink entity.ShortLink
 	}{
 		{
@@ -58,6 +60,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			},
 			isPublic:  false,
 			expHasErr: true,
+			err:       ErrAliasExist("short link alias already exist"),
 		},
 		{
 			name: "alias too long",
@@ -75,6 +78,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 				LongLink: "https://www.google.com",
 			},
 			expHasErr: true,
+			err:       ErrInvalidCustomAlias{longAlias, validator.AliasTooLong},
 		},
 		{
 			name:       "alias contains invalid URL fragment character",
@@ -87,6 +91,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 				LongLink: "https://www.google.com",
 			},
 			expHasErr: true,
+			err:       ErrInvalidCustomAlias{invalidFragmentAlias, validator.HasFragmentCharacter},
 		},
 		{
 			name:       "create alias successfully",
@@ -161,6 +166,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 				LongLink: "https://www.google.com",
 			},
 			expHasErr: true,
+			err:       errors.New("no available key"),
 		},
 		{
 			name:       "long link is invalid",
@@ -176,6 +182,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			},
 			isPublic:  false,
 			expHasErr: true,
+			err:       ErrInvalidLongLink{"aaaaaaaaaaaaaaaaaaa", validator.LongLinkNotURL},
 		},
 		{
 			name:       "reject malicious long link",
@@ -194,6 +201,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			},
 			isPublic:  false,
 			expHasErr: true,
+			err:       ErrMaliciousLongLink("http://malware.wicar.org/data/ms14_064_ole_not_xp.html"),
 		},
 	}
 
@@ -234,7 +242,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 
 			shortLink, err := creator.CreateShortLink(testCase.shortLink, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
-				assert.NotEqual(t, nil, err)
+				assert.Equal(t, testCase.err, err)
 
 				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.expectedShortLink.Alias)
 				assert.NotEqual(t, nil, err)

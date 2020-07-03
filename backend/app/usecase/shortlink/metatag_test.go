@@ -3,6 +3,7 @@
 package shortlink
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/short-d/app/fw/assert"
@@ -35,6 +36,7 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 		shortLinks            shortLinks
 		alias                 string
 		expHasErr             bool
+		err                   error
 		expectedOpenGraphTags metatag.OpenGraph
 	}{
 		{
@@ -116,6 +118,7 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 			shortLinks:            shortLinks{},
 			alias:                 "654321",
 			expHasErr:             true,
+			err:                   errors.New("alias not found"),
 			expectedOpenGraphTags: metatag.OpenGraph{},
 		},
 	}
@@ -130,7 +133,7 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 
 			ogTags, err := metaTag.GetOpenGraphTags(testCase.alias)
 			if testCase.expHasErr {
-				assert.NotEqual(t, nil, err)
+				assert.Equal(t, testCase.err, err)
 				return
 			}
 
@@ -164,6 +167,7 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 		shortLinks          shortLinks
 		alias               string
 		expHasErr           bool
+		err                 error
 		expectedTwitterTags metatag.Twitter
 	}{
 		{
@@ -244,6 +248,7 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 			shortLinks:          shortLinks{},
 			alias:               "654321",
 			expHasErr:           true,
+			err:                 errors.New("alias not found"),
 			expectedTwitterTags: metatag.Twitter{},
 		},
 	}
@@ -258,7 +263,7 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 
 			twitterTags, err := metaTag.GetTwitterTags(testCase.alias)
 			if testCase.expHasErr {
-				assert.NotEqual(t, nil, err)
+				assert.Equal(t, testCase.err, err)
 				return
 			}
 

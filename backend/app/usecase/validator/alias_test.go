@@ -15,6 +15,7 @@ func TestCustomAlias_IsValid(t *testing.T) {
 		name       string
 		alias      string
 		expIsValid bool
+		violation  Violation
 	}{
 		{
 			name:       "empty string",
@@ -25,11 +26,18 @@ func TestCustomAlias_IsValid(t *testing.T) {
 			name:       "alias too long",
 			alias:      strings.Repeat("helloworld", 5),
 			expIsValid: false,
+			violation:  AliasTooLong,
 		},
 		{
 			name:       "alias valid",
 			alias:      "fb",
 			expIsValid: true,
+		},
+		{
+			name:       "alias contains hash tag",
+			alias:      "#fb",
+			expIsValid: false,
+			violation:  HasFragmentCharacter,
 		},
 	}
 
@@ -38,7 +46,10 @@ func TestCustomAlias_IsValid(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			valid, _ := validator.IsValid(&testCase.alias)
+			valid, violation := validator.IsValid(&testCase.alias)
+			if !testCase.expIsValid {
+				assert.Equal(t, testCase.violation, violation)
+			}
 			assert.Equal(t, testCase.expIsValid, valid)
 		})
 	}

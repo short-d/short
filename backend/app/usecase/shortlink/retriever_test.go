@@ -3,6 +3,8 @@
 package shortlink
 
 import (
+	"errors"
+	"fmt"
 	"testing"
 	"time"
 
@@ -26,6 +28,7 @@ func TestRetriever_GetShortLink(t *testing.T) {
 		alias             string
 		expiringAt        *time.Time
 		hasErr            bool
+		err               error
 		expectedShortLink entity.ShortLink
 	}{
 		{
@@ -34,6 +37,7 @@ func TestRetriever_GetShortLink(t *testing.T) {
 			alias:             "220uFicCJj",
 			expiringAt:        &now,
 			hasErr:            true,
+			err:               errors.New("alias not found"),
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
@@ -47,6 +51,7 @@ func TestRetriever_GetShortLink(t *testing.T) {
 			alias:             "220uFicCJj",
 			expiringAt:        &now,
 			hasErr:            true,
+			err:               fmt.Errorf("shortlink expired (alias=%s,expiringAt=%v)", "220uFicCJj", &now),
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
@@ -110,7 +115,7 @@ func TestRetriever_GetShortLink(t *testing.T) {
 			shortLink, err := retriever.GetShortLink(testCase.alias, testCase.expiringAt)
 
 			if testCase.hasErr {
-				assert.NotEqual(t, nil, err)
+				assert.Equal(t, testCase.err, err)
 				return
 			}
 			assert.Equal(t, nil, err)
@@ -128,7 +133,6 @@ func TestRetrieverPersist_GetShortLinks(t *testing.T) {
 		users              []entity.User
 		createdShortLinks  []entity.ShortLink
 		user               entity.User
-		hasErr             bool
 		expectedShortLinks []entity.ShortLink
 	}{
 		{
@@ -181,7 +185,6 @@ func TestRetrieverPersist_GetShortLinks(t *testing.T) {
 				Name:  "Test User",
 				Email: "test@gmail.com",
 			},
-			hasErr: false,
 			expectedShortLinks: []entity.ShortLink{
 				{
 					Alias:    "google",
@@ -243,7 +246,6 @@ func TestRetrieverPersist_GetShortLinks(t *testing.T) {
 				Name:  "Test User 2",
 				Email: "test2@gmail.com",
 			},
-			hasErr:             false,
 			expectedShortLinks: []entity.ShortLink{},
 		},
 	}
@@ -258,10 +260,6 @@ func TestRetrieverPersist_GetShortLinks(t *testing.T) {
 			retriever := NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 
 			shortLinks, err := retriever.GetShortLinksByUser(testCase.user)
-			if testCase.hasErr {
-				assert.NotEqual(t, nil, err)
-				return
-			}
 
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedShortLinks, shortLinks)
