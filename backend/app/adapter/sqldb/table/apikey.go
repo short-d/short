@@ -1,6 +1,6 @@
 package table
 
-// App represents database table columns for 'api_key' table.
+// APIKey represents database table columns for 'api_key' table.
 var APIKey = struct {
 	TableName       string
 	ColumnAppID     string
