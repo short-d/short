@@ -133,7 +133,7 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 
 			ogTags, err := metaTag.GetOpenGraphTags(testCase.alias)
 			if testCase.expHasErr {
-				assert.Equal(t, testCase.err, err)
+				assert.Equal(t, true, errors.As(err, &testCase.err))
 				return
 			}
 
