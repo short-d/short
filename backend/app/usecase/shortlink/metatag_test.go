@@ -263,7 +263,7 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 
 			twitterTags, err := metaTag.GetTwitterTags(testCase.alias)
 			if testCase.expHasErr {
-				assert.Equal(t, testCase.err, err)
+				assert.Equal(t, true, errors.As(err, &testCase.err))
 				return
 			}
 

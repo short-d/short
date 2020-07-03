@@ -115,7 +115,7 @@ func TestRetriever_GetShortLink(t *testing.T) {
 			shortLink, err := retriever.GetShortLink(testCase.alias, testCase.expiringAt)
 
 			if testCase.hasErr {
-				assert.Equal(t, testCase.err, err)
+				assert.Equal(t, true, errors.As(err, &testCase.err))
 				return
 			}
 			assert.Equal(t, nil, err)

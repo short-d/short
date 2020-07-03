@@ -3,6 +3,7 @@
 package shortlink
 
 import (
+	"errors"
 	"testing"
 	"time"
 
@@ -292,7 +293,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 
 			shortLink, err := updater.UpdateShortLink(testCase.alias, testCase.update, testCase.user)
 			if testCase.expectedHasErr {
-				assert.Equal(t, testCase.err, err)
+				assert.Equal(t, true, errors.As(err, &testCase.err))
 
 				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.expectedShortLink.Alias)
 				assert.NotEqual(t, nil, err)

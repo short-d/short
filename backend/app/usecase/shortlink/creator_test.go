@@ -242,7 +242,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 
 			shortLink, err := creator.CreateShortLink(testCase.shortLink, testCase.alias, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
-				assert.Equal(t, testCase.err, err)
+				assert.Equal(t, true, errors.As(err, &testCase.err))
 
 				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.expectedShortLink.Alias)
 				assert.NotEqual(t, nil, err)
