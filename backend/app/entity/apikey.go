@@ -2,7 +2,7 @@ package entity
 
 import "time"
 
-// APIKey allows external systems to access contain API enabled for the given
+// APIKey allows external systems to access cloud APIs enabled for the given
 // third party app.
 type APIKey struct {
 	AppID      string
@@ -11,8 +11,7 @@ type APIKey struct {
 	CreatedAt  time.Time
 }
 
-// APIKeyInput represents APIKey with all fields optional and default values
-// for certain fields.
+// APIKeyInput represents APIKey with all fields as optional, with some of which having default values
 type APIKeyInput struct {
 	AppID      *string
 	Key        *string
