@@ -26,3 +26,4 @@ COPY --from=builder /short/scripts/wait-for-it ./scripts/wait-for-it
 COPY --from=builder /short/app/adapter/sqldb/migration ./app/adapter/sqldb/migration
 COPY --from=builder /short/app/adapter/routing/public ./app/adapter/routing/public
 COPY --from=builder /short/app/adapter/routing/api.yml ./app/adapter/routing/api.yml
+COPY --from=builder /short/app/adapter/gqlapi/schema.graphql ./app/adapter/gqlapi/schema.graphql

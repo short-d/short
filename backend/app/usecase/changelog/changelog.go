@@ -1,6 +1,7 @@
 package changelog
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -27,10 +28,11 @@ func (e ErrUnauthorizedAction) Error() string {
 
 // ChangeLog retrieves change log and create changes.
 type ChangeLog interface {
-	CreateChange(title string, summaryMarkdown *string, user entity.User) (entity.Change, error)
 	GetChangeLog() ([]entity.Change, error)
 	GetLastViewedAt(user entity.User) (*time.Time, error)
 	ViewChangeLog(user entity.User) (time.Time, error)
+	CreateChange(title string, summaryMarkdown *string, user entity.User) (entity.Change, error)
+	GetAllChanges(user entity.User) ([]entity.Change, error)
 	DeleteChange(id string, user entity.User) error
 	UpdateChange(id string, title string, summaryMarkdown *string, user entity.User) (entity.Change, error)
 }
@@ -84,12 +86,12 @@ func (p Persist) GetLastViewedAt(user entity.User) (*time.Time, error) {
 		return &lastViewedAt, nil
 	}
 
-	// TODO(issue#823): refactor error type checking
-	switch err.(type) {
-	case repository.ErrEntryNotFound:
+	var (
+		e repository.ErrEntryNotFound
+	)
+	if errors.As(err, &e) {
 		return nil, nil
 	}
-
 	return nil, err
 }
 
@@ -101,9 +103,10 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 		return lastViewedAt, nil
 	}
 
-	// TODO(issue#823): refactor error type checking
-	switch err.(type) {
-	case repository.ErrEntryNotFound:
+	var (
+		e repository.ErrEntryNotFound
+	)
+	if errors.As(err, &e) {
 		err = p.userChangeLogRepo.CreateRelation(user, now)
 		if err != nil {
 			return time.Time{}, err
@@ -111,8 +114,24 @@ func (p Persist) ViewChangeLog(user entity.User) (time.Time, error) {
 
 		return now, nil
 	}
-
 	return time.Time{}, err
+}
+
+// GetAllChanges retrieves all the changes from the persistent date store.
+func (p Persist) GetAllChanges(user entity.User) ([]entity.Change, error) {
+	canGetChanges, err := p.authorizer.CanGetChanges(user)
+	if err != nil {
+		return []entity.Change{}, err
+	}
+
+	if !canGetChanges {
+		return []entity.Change{}, ErrUnauthorizedAction{
+			user:   user,
+			action: "get changes",
+		}
+	}
+
+	return p.changeLogRepo.GetChangeLog()
 }
 
 // DeleteChange removes the change with given id

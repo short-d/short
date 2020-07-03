@@ -1,0 +1,89 @@
+.Emotic.emotion-tab {
+  .text-field {
+    flex: 1;
+    padding: 20px;
+
+    textarea {
+      background-color: inherit;
+      border: 0;
+      font-size: 22px;
+      height: 100%;
+      outline: none;
+      resize: none;
+      width: 100%;
+    }
+  }
+
+  .emotion-section {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: 280px;
+    justify-content: center;
+    padding: 0 60px;
+  }
+
+  .title {
+    font-size: 25px;
+    text-align: center;
+  }
+
+  .emotions {
+    display: flex;
+    justify-content: space-evenly;
+    list-style: none;
+    margin-top: 30px;
+    padding: 0;
+
+    > li {
+      .icon {
+        img {
+          width: 50px;
+          filter: grayscale(100%);
+        }
+
+        &.active, &:hover {
+          img {
+            filter: none;
+            cursor: pointer;
+            transform: scale(1.3);
+            transition: all 200ms ease-in-out;
+          }
+        }
+      }
+
+      .label {
+        font-size: 18px;
+        font-weight: 500;
+        margin-top: 10px;
+        text-align: center;
+      }
+    }
+  }
+
+  .bottom-section {
+    display: flex;
+    flex-direction: column;
+    height: 0;
+    overflow: hidden;
+    transition: all 300ms ease-in-out;
+
+    &.show {
+      height: 290px;
+    }
+
+    .text-feedback {
+      background-color: #f4f4f4;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+
+      .options {
+        align-items: center;
+        display: flex;
+        justify-content: flex-end;
+        padding: 30px;
+      }
+    }
+  }
+}

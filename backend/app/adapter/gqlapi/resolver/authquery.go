@@ -55,6 +55,26 @@ func (v AuthQuery) ChangeLog() (ChangeLog, error) {
 	return newChangeLog(changeLog, lastViewedAt), err
 }
 
+// AllChanges retrieves all the changes that exists in the persistent storage.
+func (v AuthQuery) AllChanges() ([]Change, error) {
+	user, err := viewer(v.authToken, v.authenticator)
+	if err != nil {
+		return []Change{}, ErrInvalidAuthToken{}
+	}
+
+	changes, err := v.changeLog.GetAllChanges(user)
+	if err != nil {
+		return []Change{}, err
+	}
+
+	var gqlChanges []Change
+	for _, change := range changes {
+		gqlChanges = append(gqlChanges, newChange(change))
+	}
+
+	return gqlChanges, nil
+}
+
 // ShortLinks retrieves short links created by a given user from persistent storage
 func (v AuthQuery) ShortLinks() ([]ShortLink, error) {
 	user, err := viewer(v.authToken, v.authenticator)

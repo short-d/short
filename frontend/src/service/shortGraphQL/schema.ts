@@ -9,11 +9,15 @@ export interface IShortGraphQLQuery {
 export interface IShortGraphQLAuthQuery {
   shortLinks: IShortGraphQLShortLink[];
   changeLog: IShortGraphQLChangeLog;
+  allChanges: IShortGraphQLChange[];
 }
 
 export interface IShortGraphQLAuthMutation {
   createShortLink: IShortGraphQLShortLink;
   viewChangeLog: string;
+  createChange: IShortGraphQLChange;
+  updateChange: IShortGraphQLChange;
+  deleteChange: string;
 }
 
 export interface IShortGraphQLShortLink {
@@ -36,4 +40,9 @@ export interface IShortGraphQLChange {
   title: string;
   summaryMarkdown: string;
   releasedAt: string;
+}
+
+export interface IShortGraphQLChangeInput {
+  title: string;
+  summaryMarkdown?: string;
 }

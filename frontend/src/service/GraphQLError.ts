@@ -16,6 +16,8 @@ function gqlErrorToCode(graphQLError: IGraphQLError): string {
   switch (graphQLError.extensions.code) {
     case Err.Unauthenticated:
       return Err.Unauthenticated;
+    case Err.Unauthorized:
+      return Err.Unauthorized;
     default:
       return Err.Unknown;
   }
