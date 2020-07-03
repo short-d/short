@@ -15,14 +15,14 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 )
 
-var insertApiKeyRowSQL = fmt.Sprintf(`
+var insertAPIKeyRowSQL = fmt.Sprintf(`
 INSERT INTO %s (%s, %s, %s, %s) 
 VALUES ($1, $2, $3, $4);`,
-	table.ApiKey.TableName,
-	table.ApiKey.ColumnAppID,
-	table.ApiKey.ColumnKey,
-	table.ApiKey.ColumnDisabled,
-	table.ApiKey.ColumnCreatedAt,
+	table.APIKey.TableName,
+	table.APIKey.ColumnAppID,
+	table.APIKey.ColumnKey,
+	table.APIKey.ColumnDisabled,
+	table.APIKey.ColumnCreatedAt,
 )
 
 type apiKeyTableRow struct {
@@ -32,7 +32,7 @@ type apiKeyTableRow struct {
 	createdAt  time.Time
 }
 
-func TestApiKeySQL_GetApiKey(t *testing.T) {
+func TestAPIKeySQL_GetAPIKey(t *testing.T) {
 	testCases := []struct {
 		name            string
 		appTableRows    []appTableRow
@@ -40,7 +40,7 @@ func TestApiKeySQL_GetApiKey(t *testing.T) {
 		appID           string
 		key             string
 		hasErr          bool
-		expectedApiKey  entity.ApiKey
+		expectedAPIKey  entity.APIKey
 	}{
 		{
 			name:            "app not found",
@@ -83,7 +83,7 @@ func TestApiKeySQL_GetApiKey(t *testing.T) {
 			appID:  "emotic",
 			key:    "key",
 			hasErr: false,
-			expectedApiKey: entity.ApiKey{
+			expectedAPIKey: entity.APIKey{
 				AppID:      "emotic",
 				Key:        "key",
 				IsDisabled: false,
@@ -100,25 +100,25 @@ func TestApiKeySQL_GetApiKey(t *testing.T) {
 				dbConfig,
 				func(sqlDB *sql.DB) {
 					insertAppRows(t, sqlDB, testCase.appTableRows)
-					insertApiKeyRows(t, sqlDB, testCase.apiKeyTableRows)
+					insertAPIKeyRows(t, sqlDB, testCase.apiKeyTableRows)
 
-					apiKeyRepo := sqldb.NewApiKeySQL(sqlDB)
-					gotApiKey, err := apiKeyRepo.GetApiKey(testCase.appID, testCase.key)
+					apiKeyRepo := sqldb.NewAPIKeySQL(sqlDB)
+					gotAPIKey, err := apiKeyRepo.GetAPIKey(testCase.appID, testCase.key)
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 						return
 					}
 
 					assert.Equal(t, nil, err)
-					assert.Equal(t, testCase.expectedApiKey.AppID, gotApiKey.AppID)
-					assert.Equal(t, testCase.expectedApiKey.Key, gotApiKey.Key)
-					assert.Equal(t, testCase.expectedApiKey.IsDisabled, gotApiKey.IsDisabled)
+					assert.Equal(t, testCase.expectedAPIKey.AppID, gotAPIKey.AppID)
+					assert.Equal(t, testCase.expectedAPIKey.Key, gotAPIKey.Key)
+					assert.Equal(t, testCase.expectedAPIKey.IsDisabled, gotAPIKey.IsDisabled)
 				})
 		})
 	}
 }
 
-func TestApiKeySQL_CreateApiKey(t *testing.T) {
+func TestAPIKeySQL_CreateAPIKey(t *testing.T) {
 	testCases := []struct {
 		name            string
 		appTableRows    []appTableRow
@@ -127,7 +127,7 @@ func TestApiKeySQL_CreateApiKey(t *testing.T) {
 		key             string
 		isDisabled      bool
 		hasErr          bool
-		expectedApiKey  entity.ApiKey
+		expectedAPIKey  entity.APIKey
 	}{
 		{
 			name:            "app not found",
@@ -171,7 +171,7 @@ func TestApiKeySQL_CreateApiKey(t *testing.T) {
 			key:        "key2",
 			isDisabled: false,
 			hasErr:     false,
-			expectedApiKey: entity.ApiKey{
+			expectedAPIKey: entity.APIKey{
 				AppID:      "emotic",
 				Key:        "key2",
 				IsDisabled: false,
@@ -188,34 +188,34 @@ func TestApiKeySQL_CreateApiKey(t *testing.T) {
 				dbConfig,
 				func(sqlDB *sql.DB) {
 					insertAppRows(t, sqlDB, testCase.appTableRows)
-					insertApiKeyRows(t, sqlDB, testCase.apiKeyTableRows)
+					insertAPIKeyRows(t, sqlDB, testCase.apiKeyTableRows)
 
-					apiKeyRepo := sqldb.NewApiKeySQL(sqlDB)
-					input := entity.ApiKeyInput{
+					apiKeyRepo := sqldb.NewAPIKeySQL(sqlDB)
+					input := entity.APIKeyInput{
 						AppID:      &testCase.appID,
 						Key:        &testCase.key,
 						IsDisabled: &testCase.isDisabled,
 						CreatedAt:  nil,
 					}
-					gotApiKey, err := apiKeyRepo.CreateApiKey(input)
+					gotAPIKey, err := apiKeyRepo.CreateAPIKey(input)
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 						return
 					}
 
 					assert.Equal(t, nil, err)
-					assert.Equal(t, testCase.expectedApiKey.AppID, gotApiKey.AppID)
-					assert.Equal(t, testCase.expectedApiKey.Key, gotApiKey.Key)
-					assert.Equal(t, testCase.expectedApiKey.IsDisabled, gotApiKey.IsDisabled)
+					assert.Equal(t, testCase.expectedAPIKey.AppID, gotAPIKey.AppID)
+					assert.Equal(t, testCase.expectedAPIKey.Key, gotAPIKey.Key)
+					assert.Equal(t, testCase.expectedAPIKey.IsDisabled, gotAPIKey.IsDisabled)
 				})
 		})
 	}
 }
 
-func insertApiKeyRows(t *testing.T, sqlDB *sql.DB, tableRows []apiKeyTableRow) {
+func insertAPIKeyRows(t *testing.T, sqlDB *sql.DB, tableRows []apiKeyTableRow) {
 	for _, tableRow := range tableRows {
 		_, err := sqlDB.Exec(
-			insertApiKeyRowSQL,
+			insertAPIKeyRowSQL,
 			tableRow.appID,
 			tableRow.key,
 			sqldb.SQLBool(tableRow.isDisabled),

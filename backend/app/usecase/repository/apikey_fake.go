@@ -8,40 +8,40 @@ import (
 	"github.com/short-d/short/backend/app/entity"
 )
 
-var _ ApiKey = (*ApiKeyFake)(nil)
+var _ APIKey = (*APIKeyFake)(nil)
 
-// ApiKeyFake represents in memory implementation of ApiKey repository
-type ApiKeyFake struct {
-	apiKeys []entity.ApiKey
+// APIKeyFake represents in memory implementation of APIKey repository
+type APIKeyFake struct {
+	apiKeys []entity.APIKey
 }
 
-// GetApiKey fetches an api key for a given app.
-func (a ApiKeyFake) GetApiKey(appID string, key string) (entity.ApiKey, error) {
+// GetAPIKey fetches an api key for a given app.
+func (a APIKeyFake) GetAPIKey(appID string, key string) (entity.APIKey, error) {
 	for _, apiKey := range a.apiKeys {
 		if apiKey.AppID == appID && apiKey.Key == key {
 			return apiKey, nil
 		}
 	}
-	return entity.ApiKey{}, ErrEntryNotFound(fmt.Sprintf("appID(%s),key(%s)", appID, key))
+	return entity.APIKey{}, ErrEntryNotFound(fmt.Sprintf("appID(%s),key(%s)", appID, key))
 }
 
-// CreateApiKey creates an api key for a given app.
-func (a *ApiKeyFake) CreateApiKey(input entity.ApiKeyInput) (entity.ApiKey, error) {
+// CreateAPIKey creates an api key for a given app.
+func (a *APIKeyFake) CreateAPIKey(input entity.APIKeyInput) (entity.APIKey, error) {
 	if input.AppID == nil {
-		return entity.ApiKey{}, errors.New("appID can't be nil")
+		return entity.APIKey{}, errors.New("appID can't be nil")
 	}
 
 	if input.Key == nil {
-		return entity.ApiKey{}, errors.New("key can't be nil")
+		return entity.APIKey{}, errors.New("key can't be nil")
 	}
 
-	apiKey, err := a.GetApiKey(input.GetAppID(""), input.GetKey(""))
+	apiKey, err := a.GetAPIKey(input.GetAppID(""), input.GetKey(""))
 	if err == nil {
-		return entity.ApiKey{}, ErrEntryExists(
+		return entity.APIKey{}, ErrEntryExists(
 			fmt.Sprintf("appID(%s),key(%s)", apiKey.AppID, apiKey.Key),
 		)
 	}
-	apiKey = entity.ApiKey{
+	apiKey = entity.APIKey{
 		AppID:      input.GetAppID(""),
 		Key:        input.GetKey(""),
 		IsDisabled: input.GetIsDisabled(false),
@@ -51,7 +51,7 @@ func (a *ApiKeyFake) CreateApiKey(input entity.ApiKeyInput) (entity.ApiKey, erro
 	return apiKey, nil
 }
 
-// NewApiKeyFake creates in memory implementation of ApiKey repository.
-func NewApiKeyFake(apiKeys []entity.ApiKey) ApiKeyFake {
-	return ApiKeyFake{apiKeys: apiKeys}
+// NewAPIKeyFake creates in memory implementation of APIKey repository.
+func NewAPIKeyFake(apiKeys []entity.APIKey) APIKeyFake {
+	return APIKeyFake{apiKeys: apiKeys}
 }

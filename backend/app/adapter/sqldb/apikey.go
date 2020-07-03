@@ -11,26 +11,26 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
-var _ repository.ApiKey = (*ApiKeySQL)(nil)
+var _ repository.APIKey = (*APIKeySQL)(nil)
 
-// ApiKeySQL accesses ApiKey from the database through SQL.
-type ApiKeySQL struct {
+// APIKeySQL accesses APIKey from the database through SQL.
+type APIKeySQL struct {
 	db *sql.DB
 }
 
-// GetApiKey fetches ApiKey from ApiKey table using SQL.
-func (a ApiKeySQL) GetApiKey(appID string, key string) (entity.ApiKey, error) {
+// GetAPIKey fetches APIKey from APIKey table using SQL.
+func (a APIKeySQL) GetAPIKey(appID string, key string) (entity.APIKey, error) {
 	query := fmt.Sprintf(`
 SELECT "%s", "%s" 
 FROM "%s" WHERE "%s"=$1 AND "%s"=$2;
 `,
-		table.ApiKey.ColumnDisabled,
-		table.ApiKey.ColumnCreatedAt,
-		table.ApiKey.TableName,
-		table.ApiKey.ColumnAppID,
-		table.ApiKey.ColumnKey,
+		table.APIKey.ColumnDisabled,
+		table.APIKey.ColumnCreatedAt,
+		table.APIKey.TableName,
+		table.APIKey.ColumnAppID,
+		table.APIKey.ColumnKey,
 	)
-	apiKey := entity.ApiKey{}
+	apiKey := entity.APIKey{}
 	err := a.db.QueryRow(query, appID, key).Scan(&apiKey.IsDisabled, &apiKey.CreatedAt)
 	if err == nil {
 		apiKey.AppID = appID
@@ -38,24 +38,24 @@ FROM "%s" WHERE "%s"=$1 AND "%s"=$2;
 		return apiKey, nil
 	}
 	if errors.Is(err, sql.ErrNoRows) {
-		return entity.ApiKey{},
+		return entity.APIKey{},
 			repository.ErrEntryNotFound(
 				fmt.Sprintf("appID(%s) and key(%s) not found", appID, key))
 	}
-	return entity.ApiKey{}, err
+	return entity.APIKey{}, err
 }
 
-// GetApiKey appends a new ApiKey entry to ApiKey table using SQL.
-func (a ApiKeySQL) CreateApiKey(input entity.ApiKeyInput) (entity.ApiKey, error) {
+// CreateAPIKey appends a new APIKey entry to APIKey table using SQL.
+func (a APIKeySQL) CreateAPIKey(input entity.APIKeyInput) (entity.APIKey, error) {
 	stmt := fmt.Sprintf(`
 INSERT INTO "%s"("%s", "%s", "%s", "%s")
 VALUES ($1, $2, $3, $4);
 `,
-		table.ApiKey.TableName,
-		table.ApiKey.ColumnAppID,
-		table.ApiKey.ColumnKey,
-		table.ApiKey.ColumnDisabled,
-		table.ApiKey.ColumnCreatedAt,
+		table.APIKey.TableName,
+		table.APIKey.ColumnAppID,
+		table.APIKey.ColumnKey,
+		table.APIKey.ColumnDisabled,
+		table.APIKey.ColumnCreatedAt,
 	)
 
 	isDisabled := input.GetIsDisabled(false)
@@ -67,7 +67,7 @@ VALUES ($1, $2, $3, $4);
 		input.GetCreatedAt(time.Time{}),
 	)
 
-	return entity.ApiKey{
+	return entity.APIKey{
 		AppID:      input.GetAppID(""),
 		Key:        input.GetKey(""),
 		IsDisabled: isDisabled,
@@ -75,7 +75,7 @@ VALUES ($1, $2, $3, $4);
 	}, err
 }
 
-// NewApiKeySQL creates database access object for ApiKey.
-func NewApiKeySQL(db *sql.DB) ApiKeySQL {
-	return ApiKeySQL{db: db}
+// NewAPIKeySQL creates database access object for APIKey.
+func NewAPIKeySQL(db *sql.DB) APIKeySQL {
+	return APIKeySQL{db: db}
 }
