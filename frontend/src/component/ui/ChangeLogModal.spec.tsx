@@ -48,6 +48,7 @@ describe('ChangeLogModal', () => {
     expect(queryAllByText('View All Updates').length).toBe(0);
     expect(container.getElementsByTagName('li').length).toBe(0);
 
+    expect(changeLogModalRef).toBeTruthy();
     changeLogModalRef.current!.open();
     jest.runAllTimers();
 
@@ -68,6 +69,7 @@ describe('ChangeLogModal', () => {
 
     expect(container.textContent).not.toContain("Since You've Been Gone");
 
+    expect(changeLogModalRef).toBeTruthy();
     changeLogModalRef.current!.open();
     jest.runAllTimers();
 
@@ -80,6 +82,7 @@ describe('ChangeLogModal', () => {
 
     expect(container.textContent).not.toContain("Since You've Been Gone");
 
+    expect(changeLogModalRef).toBeTruthy();
     changeLogModalRef.current!.open();
     jest.runAllTimers();
 
