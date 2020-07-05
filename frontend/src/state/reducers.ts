@@ -4,12 +4,8 @@ import {
   CLEAR_ERROR,
   IPayloadAction,
   RAISE_CREATE_SHORT_LINK_ERROR,
-  RAISE_INPUT_ERROR,
   RAISE_GET_USER_SHORT_LINKS_ERROR,
-  RAISE_GET_CHANGELOG_ERROR,
-  UPDATE_ALIAS,
-  UPDATE_CREATED_URL,
-  UPDATE_LONG_LINK
+  RAISE_GET_CHANGELOG_ERROR
 } from './actions';
 import { Reducer } from 'redux';
 
@@ -33,27 +29,6 @@ export const reducers: Reducer<IAppState> = (
   action: IPayloadAction
 ): IAppState => {
   switch (action.type) {
-    case UPDATE_LONG_LINK:
-      return {
-        ...state,
-        editingUrl: {
-          ...state.editingUrl,
-          originalUrl: action.payload
-        }
-      };
-    case UPDATE_ALIAS:
-      return {
-        ...state,
-        editingUrl: {
-          ...state.editingUrl,
-          alias: action.payload
-        }
-      };
-    case RAISE_INPUT_ERROR:
-      return {
-        ...state,
-        inputErr: action.payload
-      };
     case RAISE_CREATE_SHORT_LINK_ERROR:
       return {
         ...state,
@@ -68,11 +43,6 @@ export const reducers: Reducer<IAppState> = (
       return {
         ...state,
         err: action.payload
-      };
-    case UPDATE_CREATED_URL:
-      return {
-        ...state,
-        createdUrl: action.payload
       };
     case CLEAR_ERROR:
       return {

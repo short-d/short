@@ -165,6 +165,36 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
+			name:  "alias contains hash tag",
+			alias: "boGp9w35",
+			shortlinks: shortLinks{
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			user: entity.User{
+				ID:    "1",
+				Email: "gopher@golang.org",
+			},
+			update: entity.ShortLink{
+				Alias: "#http-bin",
+			},
+			relationUsers: []entity.User{
+				{ID: "1"},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			expectedHasErr:    true,
+			expectedShortLink: entity.ShortLink{},
+		},
+		{
 			name:  "short link is not owned by the user",
 			alias: "boGp9w35",
 			shortlinks: shortLinks{
@@ -197,11 +227,29 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		{
 			name:  "reject malicious long link",
 			alias: "boGp9w35",
+			shortlinks: shortLinks{
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
 			user: entity.User{
+				ID:    "1",
 				Email: "gopher@golang.org",
 			},
 			update: entity.ShortLink{
 				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
+			},
+			relationUsers: []entity.User{
+				{ID: "1"},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
 			},
 			blockedLongLinks: map[string]bool{
 				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": true,

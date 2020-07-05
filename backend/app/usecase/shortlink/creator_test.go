@@ -35,6 +35,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 		shortLink          entity.ShortLink
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
+		blockedLongLinks   map[string]bool
 		isPublic           bool
 		// TODO(issue#803): Check error types in tests.
 		expHasErr         bool
@@ -161,6 +162,39 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			},
 			expHasErr: true,
 		},
+		{
+			name:       "long link is invalid",
+			shortLinks: shortLinks{},
+			alias:      &alias,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			shortLink: entity.ShortLink{
+				Alias:    "220uFicCJj",
+				LongLink: "aaaaaaaaaaaaaaaaaaa",
+				ExpireAt: &now,
+			},
+			isPublic:  false,
+			expHasErr: true,
+		},
+		{
+			name:       "reject malicious long link",
+			shortLinks: shortLinks{},
+			alias:      &alias,
+			user: entity.User{
+				Email: "alpha@example.com",
+			},
+			shortLink: entity.ShortLink{
+				Alias:    "220uFicCJj",
+				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
+				ExpireAt: &now,
+			},
+			blockedLongLinks: map[string]bool{
+				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": true,
+			},
+			isPublic:  false,
+			expHasErr: true,
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -168,8 +202,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			blockedURLs := map[string]bool{}
-			blacklist := risk.NewBlackListFake(blockedURLs)
+			blacklist := risk.NewBlackListFake(testCase.blockedLongLinks)
 			shortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
 			userShortLinkRepo := repository.NewUserShortLinkRepoFake(
 				testCase.relationUsers,
