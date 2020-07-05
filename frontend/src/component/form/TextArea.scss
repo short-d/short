@@ -2,7 +2,7 @@
 @import '../styles/corner';
 @import '../styles/font';
 
-.text-field {
+.text-area {
   @include default-font();
   border: 2px solid $color-text-field-border;
   box-sizing: border-box;
