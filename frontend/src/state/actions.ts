@@ -10,6 +10,7 @@ export const CLEAR_ERROR = 'CLEAR_ERROR';
 export const RAISE_GET_USER_SHORT_LINKS_ERROR =
   'RAISE_GET_USER_SHORT_LINKS_ERROR';
 export const RAISE_GET_CHANGELOG_ERROR = 'RAISE_GET_CHANGELOG_ERROR';
+export const RAISE_CREATE_CHANGE_ERROR = 'RAISE_CREATE_CHANGE_ERROR';
 
 export const raiseCreateShortLinkError = (err: IErr): IPayloadAction => ({
   type: RAISE_CREATE_SHORT_LINK_ERROR,
@@ -23,6 +24,11 @@ export const raiseGetUserShortLinksError = (err: IErr): IPayloadAction => ({
 
 export const raiseGetChangeLogError = (err: IErr): IPayloadAction => ({
   type: RAISE_GET_CHANGELOG_ERROR,
+  payload: err
+});
+
+export const raiseCreateChangeError = (err: IErr): IPayloadAction => ({
+  type: RAISE_CREATE_CHANGE_ERROR,
   payload: err
 });
 

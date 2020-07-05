@@ -1,0 +1,42 @@
+@import '../../styles/color';
+
+.create-change-section {
+  .title {
+    margin: 0 auto;
+  }
+
+  .create-change-form {
+    display: flex;
+    flex-direction: column;
+
+    .change-summary {
+      display: flex;
+      flex-direction: row;
+      margin-top: 20px;
+      position: relative;
+
+      .text-area {
+        width: 49%;
+        box-sizing: border-box;
+      }
+
+      .markdown-viewer {
+        position: absolute;
+        height: 100%;
+        left: 51%;
+        width: 49%;
+        box-sizing: border-box;
+        padding: 0 10px;
+        background-color: $color-create-change-markdown-background;
+        overflow-y: auto;
+      }
+    }
+
+    .button {
+      background-color: #279b67;
+      padding: 15px 50px;
+      width: fit-content;
+      margin: 30px auto 0;
+    }
+  }
+}
