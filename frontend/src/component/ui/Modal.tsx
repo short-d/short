@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 
 import './Modal.scss';
 import classNames from 'classnames';
+import { Icon, IconID } from './Icon';
 
 interface Props {
   canClose?: boolean;
+  showCloseIcon?: boolean;
   onModalClose?: () => void;
   onModalOpen?: () => void;
 }
@@ -63,6 +65,12 @@ export class Modal extends Component<Props, State> {
     }
   };
 
+  handleCloseClick = () => {
+    if (this.props.canClose) {
+      this.close();
+    }
+  };
+
   render() {
     return (
       this.state.isOpen && (
@@ -74,7 +82,17 @@ export class Modal extends Component<Props, State> {
             transitionDuration: `${transitionDuration}ms`
           }}
         >
-          <div className={'card'}>{this.props.children}</div>
+          <div className={'card'}>
+            {this.props.showCloseIcon && (
+              <div className={'close-icon'}>
+                <Icon
+                  defaultIconID={IconID.Close}
+                  onClick={this.handleCloseClick}
+                />
+              </div>
+            )}
+            {this.props.children}
+          </div>
           <div className={'mask'} onClick={this.handleOnMaskClick} />
         </div>
       )

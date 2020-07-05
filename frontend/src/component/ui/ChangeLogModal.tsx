@@ -5,7 +5,6 @@ import './ChangeLogModal.scss';
 import { Change } from '../../entity/Change';
 import { Button } from './Button';
 import { Modal } from './Modal';
-import { Icon, IconID } from './Icon';
 
 interface State {
   shouldShowFullChangeLog: boolean;
@@ -79,15 +78,11 @@ export class ChangeLogModal extends Component<Props, State> {
       <Modal
         ref={this.modalRef}
         canClose={true}
+        showCloseIcon={true}
         onModalOpen={this.props.onModalOpen}
       >
         <div className={'modal-body'}>
-          <div className={'modal-header'}>
-            Since You've Been Gone
-            <span className={'close-button'}>
-              <Icon defaultIconID={IconID.Close} onClick={this.close} />
-            </span>
-          </div>
+          <div className={'modal-header'}>Since You've Been Gone</div>
           {this.createChangeLog()}
           {this.createShowCompleteChangeLogButton()}
         </div>

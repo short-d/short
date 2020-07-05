@@ -16,7 +16,9 @@ describe('Modal', () => {
     const { container } = render(<Modal ref={modalRef}>Modal Content</Modal>);
 
     expect(container.textContent).not.toContain('Modal Content');
-    modalRef.current.open();
+
+    expect(modalRef.current).toBeTruthy();
+    modalRef.current!.open();
     jest.runAllTimers();
     expect(container.textContent).toContain('Modal Content');
   });
@@ -25,11 +27,12 @@ describe('Modal', () => {
     const modalRef = React.createRef<Modal>();
     const { container } = render(<Modal ref={modalRef}>Modal Content</Modal>);
 
-    modalRef.current.open();
+    expect(modalRef.current).toBeTruthy();
+    modalRef.current!.open();
     jest.runAllTimers();
     expect(container.textContent).toContain('Modal Content');
 
-    modalRef.current.close();
+    modalRef.current!.close();
     jest.runAllTimers();
     expect(container.textContent).not.toContain('Modal Content');
   });
@@ -42,12 +45,14 @@ describe('Modal', () => {
       </Modal>
     );
 
-    modalRef.current.open();
+    expect(modalRef.current).toBeTruthy();
+    modalRef.current!.open();
     jest.runAllTimers();
     expect(container.textContent).toContain('Modal Content');
 
     const mask = container.querySelector('.mask');
-    fireEvent.click(mask);
+    expect(mask).toBeTruthy();
+    fireEvent.click(mask!);
     jest.runAllTimers();
     expect(container.textContent).not.toContain('Modal Content');
   });
@@ -60,12 +65,14 @@ describe('Modal', () => {
       </Modal>
     );
 
-    modalRef.current.open();
+    expect(modalRef.current).toBeTruthy();
+    modalRef.current!.open();
     jest.runAllTimers();
     expect(container.textContent).toContain('Modal Content');
 
     const mask = container.querySelector('.mask');
-    fireEvent.click(mask);
+    expect(mask).toBeTruthy();
+    fireEvent.click(mask!);
     jest.runAllTimers();
     expect(container.textContent).toContain('Modal Content');
   });

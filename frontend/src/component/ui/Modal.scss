@@ -23,6 +23,19 @@
     box-shadow: $shadow-modal;
     position: fixed;
     @include align-center;
+
+    > .close-icon {
+      opacity: 0.6;
+      position: fixed;
+      right: 10px;
+      top: 10px;
+      z-index: $layer-modal;
+
+      &:hover {
+        cursor: pointer;
+        opacity: 0.9;
+      }
+    }
   }
 
   .mask {
