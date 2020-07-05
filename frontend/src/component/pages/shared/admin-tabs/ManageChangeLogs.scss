@@ -1,0 +1,17 @@
+@import '../../../styles/color';
+
+.manage-change-logs {
+  .create-change-button > .button {
+    background-color: #5f5f5f;
+    padding: 10px 10px;
+    color: $color-light-gray;
+
+    :hover {
+      color: $color-white;
+    }
+  }
+
+  .modal .card {
+    width: 70%;
+  }
+}
