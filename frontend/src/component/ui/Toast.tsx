@@ -9,7 +9,7 @@ interface IStates {
   isShown: boolean;
 }
 
-const DEFAULT_DURATION = 2500;
+export const DEFAULT_DURATION = 2500;
 
 export class Toast extends Component<IProps, IStates> {
   private hideTimeoutHandle: any;
