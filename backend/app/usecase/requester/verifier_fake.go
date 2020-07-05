@@ -1,7 +1,7 @@
 package requester
 
 // VerifierFake is a stub of Verifier to be used in development only.
-type VerifierFake struct {}
+type VerifierFake struct{}
 
 // IsHuman checks whether the request is sent by a human user.
 func (r VerifierFake) IsHuman(recaptchaResponse string) (bool, error) {
