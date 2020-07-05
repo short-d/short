@@ -3,12 +3,10 @@ import { Section } from '../../../ui/Section';
 import { Button } from '../../../ui/Button';
 import { Store } from 'redux';
 import { IAppState } from '../../../../state/reducers';
-import { raiseCreateShortLinkError } from '../../../../state/actions';
 import { ChangeLogService } from '../../../../service/ChangeLog.service';
 import { Modal } from '../../../ui/Modal';
 import './ManageChangeLogs.scss';
 import { CreateChangeSection } from '../CreateChangeSection';
-import { Change } from '../../../../entity/Change';
 
 interface IProps {
   changeLogService: ChangeLogService;
@@ -17,11 +15,7 @@ interface IProps {
   onAuthenticationFailed: () => void;
 }
 
-interface IState {
-  changes: Change[];
-}
-
-export class ManageChangeLogs extends Component<IProps, IState> {
+export class ManageChangeLogs extends Component<IProps> {
   private createModalRef = React.createRef<Modal>();
 
   constructor(props: IProps) {
@@ -30,10 +24,6 @@ export class ManageChangeLogs extends Component<IProps, IState> {
     this.state = {
       changes: []
     };
-  }
-
-  componentDidMount(): void {
-    this.getChanges();
   }
 
   render() {
@@ -76,18 +66,6 @@ export class ManageChangeLogs extends Component<IProps, IState> {
   };
 
   private refreshChanges = () => {
-    this.getChanges();
-  };
-
-  private getChanges = () => {
-    this.props.changeLogService
-      .getAllChanges()
-      .then(res => this.setState({ changes: res }))
-      .catch(({ authenticationErr, changeErr }) => {
-        if (authenticationErr) {
-          this.props.onAuthenticationFailed();
-        }
-        this.props.store.dispatch(raiseCreateShortLinkError(changeErr));
-      });
+    // call to refresh the changes list while displaying the changes
   };
 }
