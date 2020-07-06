@@ -35,7 +35,6 @@ import (
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
-	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
@@ -100,7 +99,7 @@ func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLe
 	authorizerAuthorizer := authorizer.NewAuthorizer(rbacRBAC)
 	persist := changelog.NewPersist(keyGenerator, system, changeLogSQL, userChangeLogSQL, authorizerAuthorizer)
 	reCaptcha := provider.NewReCaptchaService(http, secret)
-	verifier := requester.NewVerifier(reCaptcha)
+	verifier := provider.NewVerifier(deployment, reCaptcha)
 	tokenizer := provider.NewJwtGo(jwtSecret)
 	authenticator := provider.NewAuthenticator(tokenizer, system, tokenValidDuration)
 	resolverResolver := resolver.NewResolver(loggerLogger, retrieverPersist, creatorPersist, updaterPersist, persist, verifier, authenticator)
