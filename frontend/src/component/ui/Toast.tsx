@@ -9,6 +9,8 @@ interface IStates {
   isShown: boolean;
 }
 
+export const DEFAULT_DURATION = 2500;
+
 export class Toast extends Component<IProps, IStates> {
   private hideTimeoutHandle: any;
 
@@ -20,7 +22,11 @@ export class Toast extends Component<IProps, IStates> {
     this.hideTimeoutHandle = null;
   }
 
-  public notify(toastMessage: string, duration: number) {
+  public notify(toastMessage: string, duration?: number) {
+    if (!duration) {
+      duration = DEFAULT_DURATION;
+    }
+
     // hide previously existing toast if exists, so that the subsequent show()
     // method will apply css effects while re-rendering the component. Will
     // help users realize that the component is being re-rendered.
