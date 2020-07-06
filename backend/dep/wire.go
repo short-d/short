@@ -33,7 +33,6 @@ import (
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/keygen"
 	"github.com/short-d/short/backend/app/usecase/repository"
-	"github.com/short-d/short/backend/app/usecase/requester"
 	"github.com/short-d/short/backend/app/usecase/risk"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
 	"github.com/short-d/short/backend/app/usecase/sso"
@@ -193,6 +192,7 @@ func InjectGraphQLService(
 		provider.NewSafeBrowsing,
 		risk.NewDetector,
 		provider.NewReCaptchaService,
+		provider.NewVerifier,
 		sqldb.NewChangeLogSQL,
 		sqldb.NewUserChangeLogSQL,
 		sqldb.NewShortLinkSQL,
@@ -204,7 +204,6 @@ func InjectGraphQLService(
 		shortlink.NewRetrieverPersist,
 		shortlink.NewCreatorPersist,
 		shortlink.NewUpdaterPersist,
-		requester.NewVerifier,
 	)
 	return service.GraphQL{}, nil
 }
