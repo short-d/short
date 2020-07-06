@@ -3,13 +3,15 @@ package validator
 import (
 	"regexp"
 	"strings"
+
+	"github.com/short-d/short/backend/app/entity"
 )
 
 const (
 	customAliasMaxLength = 50
 )
 
-var forbiddenCharacters = map[rune]struct{}{
+var forbiddenCharacters = map[rune]entity.Empty{
 	'#': {},
 }
 
@@ -39,7 +41,8 @@ func (c CustomAlias) IsValid(alias *string) (bool, Violation) {
 	return true, Valid
 }
 
-// hasForbiddenCharacter returns whether the alias contains the one of forbidden character which starts fragment identifiers in URLs
+// hasForbiddenCharacter returns whether the alias contains the one of forbidden character which starts
+// fragment identifiers in URLs which starts fragment identifiers in URLs.
 func (c CustomAlias) hasForbiddenCharacter(alias string) bool {
 	for ch := range forbiddenCharacters {
 		if strings.ContainsRune(alias, ch) {
