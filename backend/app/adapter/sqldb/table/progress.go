@@ -3,7 +3,7 @@ package table
 // Progress represents database table columns for 'progress' table
 var Progress = struct {
 	TableName        string
-	ColumnIncidentId string
+	ColumnIncidentID string
 	ColumnStatus     string
 	ColumnInfo       string
 	ColumnCreatedAt  string
