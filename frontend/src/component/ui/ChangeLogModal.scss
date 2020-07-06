@@ -33,7 +33,7 @@
     background-color: $color-modal-background;
     overflow: hidden;
 
-    ul {
+    > ul {
       flex: 1;
       list-style: none;
       display: block;
@@ -42,7 +42,7 @@
       margin: 4px;
       @include scroll-bar;
 
-      li {
+      > li {
         display: flex;
         flex-direction: column;
         padding: 20px;
@@ -54,17 +54,17 @@
         word-break: break-word;
         border-radius: 4px;
 
-        .title {
+        > .title {
           text-align: center;
           font-weight: $font-weight-semi-bold;
           font-size: 18px;
         }
 
-        .summary {
+        > .summary {
           margin-top: 10px;
         }
 
-        .released-date {
+        > .released-date {
           text-align: right;
           margin-top: 10px;
           color: $color-time;
