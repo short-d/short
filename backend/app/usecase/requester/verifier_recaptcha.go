@@ -1,6 +1,6 @@
 package requester
 
-// VerifierReCaptcha verifies incoming network using ReCaptcha to prevent cyber attacks.
+// VerifierReCaptcha verifies incoming network using ReCaptcha to prevent spamming attacks.
 type VerifierReCaptcha struct {
 	service ReCaptcha
 }

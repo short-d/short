@@ -1,6 +1,6 @@
 package requester
 
-// VerifierFake is a stub of Verifier to be used in development only.
+// VerifierFake turns off human verification during local development.
 type VerifierFake struct{}
 
 // IsHuman checks whether the request is sent by a human user.
