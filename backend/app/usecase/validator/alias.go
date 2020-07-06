@@ -9,6 +9,10 @@ const (
 	customAliasMaxLength = 50
 )
 
+var forbiddenCharacters = map[rune]struct{}{
+	'#': {},
+}
+
 // CustomAlias represents format validator for custom alias
 type CustomAlias struct {
 	uriPattern *regexp.Regexp
@@ -28,16 +32,21 @@ func (c CustomAlias) IsValid(alias *string) (bool, Violation) {
 		return false, AliasTooLong
 	}
 
-	if c.hasFragmentCharacter(*alias) {
+	if c.hasForbiddenCharacter(*alias) {
 		return false, HasFragmentCharacter
 	}
 
 	return true, Valid
 }
 
-// hasFragmentCharacter returns whether the alias contains the '#' character which starts fragment identifiers in URLs
-func (c CustomAlias) hasFragmentCharacter(alias string) bool {
-	return strings.ContainsRune(alias, rune('#'))
+// hasForbiddenCharacter returns whether the alias contains the one of forbidden character which starts fragment identifiers in URLs
+func (c CustomAlias) hasForbiddenCharacter(alias string) bool {
+	for ch := range forbiddenCharacters {
+		if strings.ContainsRune(alias, ch) {
+			return true
+		}
+	}
+	return false
 }
 
 // NewCustomAlias creates custom alias validator.
