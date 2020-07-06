@@ -23,7 +23,7 @@ describe('TextAreaField component', () => {
     expect(textarea!.placeholder).toMatch('placeholder');
   });
 
-  test('should fire onChange when input changes', () => {
+  test('should trigger onChange when input changes', () => {
     const onChange = jest.fn();
     const { container } = render(<TextAreaField onChange={onChange} />);
     const textarea = container.querySelector('textarea');
@@ -35,7 +35,7 @@ describe('TextAreaField component', () => {
     expect(onChange).toHaveBeenLastCalledWith('text');
   });
 
-  test('should fire onBlur when textarea blurs', () => {
+  test('should trigger onBlur when textarea blurs', () => {
     const onBlur = jest.fn();
     const { container } = render(<TextAreaField onBlur={onBlur} />);
     const textarea = container.querySelector('textarea');
