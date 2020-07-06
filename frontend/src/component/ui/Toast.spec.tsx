@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Toast } from './Toast';
+import { DEFAULT_DURATION, Toast } from './Toast';
 
 describe('Toast component', () => {
   beforeAll(() => {
@@ -23,6 +23,22 @@ describe('Toast component', () => {
     expect(container.textContent).not.toContain(toastMessage);
     toastRef.current!.notify(toastMessage, 1000);
     expect(container.textContent).toContain(toastMessage);
+  });
+
+  test('should show content for default duration when no delay given', () => {
+    const toastRef = React.createRef<Toast>();
+    const toastMessage = 'Toast Message';
+    const { container } = render(<Toast ref={toastRef} />);
+
+    expect(container.textContent).not.toContain(toastMessage);
+    toastRef.current!.notify(toastMessage);
+    expect(container.textContent).toContain(toastMessage);
+
+    jest.advanceTimersByTime(DEFAULT_DURATION - 1);
+    expect(container.textContent).toContain(toastMessage);
+
+    jest.advanceTimersByTime(1);
+    expect(container.textContent).not.toContain(toastMessage);
   });
 
   test('should automatically hide content after delay', () => {
