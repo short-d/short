@@ -12,7 +12,6 @@ $color-text-field-border: #9e9e9e;
 // Toast
 $color-toast-background: $color-dark-gray;
 $color-toast-text: $color-light-gray;
-$color-table-header-background: $color-light-gray;
 
 // Page Indicator
 $color-page-indicator-background: inherit;
@@ -29,6 +28,9 @@ $color-admin-panel-background: #f6f6f6;
 
 // Error Modal
 $color-error-modal-background: #424242;
+
+// Markdown
+$color-markdown-table-header-background: #616161;
 
 @function color-transparent-white($opacity) {
   @return rgba(255, 255, 255, $opacity);
