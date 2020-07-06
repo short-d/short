@@ -1,8 +1,7 @@
 import React, { ChangeEvent, Component } from 'react';
-import './TextArea.scss';
+import './TextAreaField.scss';
 
 interface IProps {
-  rows?: number;
   value?: string;
   placeholder?: string;
   onChange?: (value: string) => void;
@@ -14,7 +13,6 @@ export class TextAreaField extends Component<IProps, any> {
     return (
       <textarea
         className={'text-area'}
-        rows={this.props.rows}
         value={this.props.value}
         placeholder={this.props.placeholder}
         onChange={this.handleChange}
