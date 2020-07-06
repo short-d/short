@@ -1,14 +1,14 @@
 package requester
 
-// VerifierReCaptcha verifies incoming network using ReCaptcha to prevent spamming attacks.
-type VerifierReCaptcha struct {
+var _ Verifier = (*ReCaptchaVerifier)(nil)
+
+// ReCaptchaVerifier verifies incoming network using ReCaptcha to prevent spamming attacks.
+type ReCaptchaVerifier struct {
 	service ReCaptcha
 }
 
-var _ Verifier = (*VerifierReCaptcha)(nil)
-
 // IsHuman checks whether the request is sent by a human user.
-func (r VerifierReCaptcha) IsHuman(recaptchaResponse string) (bool, error) {
+func (r ReCaptchaVerifier) IsHuman(recaptchaResponse string) (bool, error) {
 	apiRes, err := r.service.Verify(recaptchaResponse)
 	if err != nil {
 		return false, err
@@ -16,9 +16,9 @@ func (r VerifierReCaptcha) IsHuman(recaptchaResponse string) (bool, error) {
 	return apiRes.Score > 0.7, nil
 }
 
-// NewVerifierReCaptcha creates new ReCaptcha-backed request verifier.
-func NewVerifierReCaptcha(service ReCaptcha) VerifierReCaptcha {
-	return VerifierReCaptcha{
+// NewReCaptchaVerifier creates new ReCaptcha-backed request verifier.
+func NewReCaptchaVerifier(service ReCaptcha) ReCaptchaVerifier {
+	return ReCaptchaVerifier{
 		service: service,
 	}
 }

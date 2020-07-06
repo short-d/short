@@ -14,5 +14,5 @@ func NewVerifier(
 	if deployment.IsDevelopment() {
 		return requester.NewVerifierFake()
 	}
-	return requester.NewVerifierReCaptcha(service)
+	return requester.NewReCaptchaVerifier(service)
 }
