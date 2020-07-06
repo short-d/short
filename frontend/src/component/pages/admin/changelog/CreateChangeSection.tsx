@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import './CreateChangeSection.scss';
-import { TextField } from '../../form/TextField';
-import { MarkdownViewer } from '../../ui/MarkdownViewer';
-import { TextAreaField } from '../../form/TextAreaField';
-import { Section } from '../../ui/Section';
-import { Button } from '../../ui/Button';
-import { ChangeLogService } from '../../../service/ChangeLog.service';
-import { raiseCreateChangeError } from '../../../state/actions';
+import { TextField } from '../../../form/TextField';
+import { MarkdownViewer } from '../../../ui/MarkdownViewer';
+import { TextAreaField } from '../../../form/TextAreaField';
+import { Section } from '../../../ui/Section';
+import { Button } from '../../../ui/Button';
+import { ChangeLogService } from '../../../../service/ChangeLog.service';
+import { raiseCreateChangeError } from '../../../../state/actions';
 import { Store } from 'redux';
-import { IAppState } from '../../../state/reducers';
+import { IAppState } from '../../../../state/reducers';
 
 interface IProps {
   changeLogService: ChangeLogService;
-  onChangeCreated?: () => void;
+  onChangeCreated: () => void;
   onAuthenticationFailed: () => void;
   store: Store<IAppState>;
 }
@@ -39,7 +39,6 @@ export class CreateChangeSection extends Component<IProps, IState> {
             <TextField onChange={this.handleTitleChange} placeHolder="Title" />
             <div className="change-summary">
               <TextAreaField
-                rows={12}
                 onChange={this.handleSummaryChange}
                 placeholder="Summary"
               />
@@ -65,11 +64,7 @@ export class CreateChangeSection extends Component<IProps, IState> {
 
     this.props.changeLogService
       .createChange(title, summary)
-      .then(_ => {
-        if (this.props.onChangeCreated) {
-          this.props.onChangeCreated();
-        }
-      })
+      .then(_ => this.props.onChangeCreated())
       .catch(({ authenticationErr, changeErr }) => {
         if (authenticationErr) {
           this.props.onAuthenticationFailed();

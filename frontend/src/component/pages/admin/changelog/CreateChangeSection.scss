@@ -1,4 +1,5 @@
-@import '../../styles/color';
+@import 'src/component/styles/color';
+@import 'src/component/styles/layouts';
 
 .create-change-section {
   .title {
@@ -12,23 +13,28 @@
     .change-summary {
       display: flex;
       flex-direction: row;
+      flex-wrap: wrap;
       margin-top: 20px;
-      position: relative;
-
-      .text-area {
-        width: 49%;
-        box-sizing: border-box;
-      }
+      justify-content: space-between;
 
       .markdown-viewer {
-        position: absolute;
-        height: 100%;
-        left: 51%;
-        width: 49%;
-        box-sizing: border-box;
         padding: 0 10px;
         background-color: $color-create-change-markdown-background;
         overflow-y: auto;
+      }
+
+      .text-area,
+      .markdown-viewer {
+        width: 49%;
+        box-sizing: border-box;
+        height: 250px;
+      }
+
+      @include respond-to($phone) {
+        .text-area,
+        .markdown-viewer {
+          width: 100%;
+        }
       }
     }
 
