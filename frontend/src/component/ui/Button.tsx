@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import './Button.scss';
+import styles from './Button.module.scss';
 
 interface Props {
   onClick?: () => void;
@@ -16,7 +16,7 @@ export class Button extends Component<Props> {
 
   render() {
     return (
-      <button className="button" onClick={this.handleClick}>
+      <button className={styles.button} onClick={this.handleClick}>
         {this.props.children}
       </button>
     );
