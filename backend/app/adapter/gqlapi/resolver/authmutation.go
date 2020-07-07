@@ -3,7 +3,6 @@ package resolver
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
 	"github.com/short-d/short/backend/app/entity"
@@ -22,51 +21,9 @@ type AuthMutation struct {
 	shortLinkUpdater shortlink.Updater
 }
 
-// ShortLinkInput represents possible ShortLink attributes
-type ShortLinkInput struct {
-	LongLink    *string
-	CustomAlias *string
-	ExpireAt    *time.Time
-}
-
-// TODO(#840): remove this business logic and move it to use cases
-func (s *ShortLinkInput) isEmpty() bool {
-	return *s == ShortLinkInput{}
-}
-
-// TODO(#840): remove this business logic and move it to use cases
-func (s *ShortLinkInput) longLink() string {
-	if s.LongLink == nil {
-		return ""
-	}
-	return *s.LongLink
-}
-
-// TODO(#840): remove this business logic and move it to use cases
-func (s *ShortLinkInput) customAlias() string {
-	if s.CustomAlias == nil {
-		return ""
-	}
-	return *s.CustomAlias
-}
-
-// TODO(#840): remove this business logic and move it to use cases
-func (s *ShortLinkInput) createUpdate() *entity.ShortLink {
-	if s.isEmpty() {
-		return nil
-	}
-
-	return &entity.ShortLink{
-		Alias:    s.customAlias(),
-		LongLink: s.longLink(),
-		ExpireAt: s.ExpireAt,
-	}
-
-}
-
 // CreateShortLinkArgs represents the possible parameters for CreateShortLink endpoint
 type CreateShortLinkArgs struct {
-	ShortLink ShortLinkInput
+	ShortLink entity.ShortLinkInput
 	IsPublic  bool
 }
 
@@ -77,16 +34,15 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	longLink := args.ShortLink.longLink()
 	customAlias := args.ShortLink.CustomAlias
-	u := entity.ShortLink{
-		LongLink: longLink,
-		ExpireAt: args.ShortLink.ExpireAt,
+	u := args.ShortLink.GetShortLink()
+	if u == nil {
+		return nil, ErrUnknown{}
 	}
 
 	isPublic := args.IsPublic
 
-	newShortLink, err := a.shortLinkCreator.CreateShortLink(u, customAlias, user, isPublic)
+	newShortLink, err := a.shortLinkCreator.CreateShortLink(*u, customAlias, user, isPublic)
 	if err == nil {
 		return &ShortLink{shortLink: newShortLink}, nil
 	}
@@ -115,7 +71,7 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 // UpdateShortLinkArgs represents the possible parameters for updateShortLink endpoint
 type UpdateShortLinkArgs struct {
 	OldAlias  string
-	ShortLink ShortLinkInput
+	ShortLink entity.ShortLinkInput
 }
 
 // UpdateShortLink updates the relationship between the short link and the user
@@ -125,9 +81,9 @@ func (a AuthMutation) UpdateShortLink(args *UpdateShortLinkArgs) (*ShortLink, er
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	update := args.ShortLink.createUpdate()
+	update := args.ShortLink.GetShortLink()
 	if update == nil {
-		return nil, nil
+		return nil, ErrUnknown{}
 	}
 
 	newShortLink, err := a.shortLinkUpdater.UpdateShortLink(args.OldAlias, *update, user)
