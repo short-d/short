@@ -11,8 +11,8 @@ export class GoogleSignInButton extends Component<IProps> {
   render() {
     return (
       <SignInButton
+        color={'red'}
         signInLink={this.props.googleSignInLink}
-        backgroundColor={'#c1423d'}
         oauthProviderIconSrc={googleLogo}
         oauthProviderName={'Google'}
       />
