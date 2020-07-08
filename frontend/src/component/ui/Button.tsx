@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import styles from './Button.module.scss';
-import { Styling, withCSSModule } from './style';
+import { Styling, withCSSModule } from './styling';
 
 interface Props extends Styling {
   onClick?: () => void;
