@@ -20,10 +20,6 @@ export class ManageChangeLogs extends Component<IProps> {
 
   constructor(props: IProps) {
     super(props);
-
-    this.state = {
-      changes: []
-    };
   }
 
   render() {
@@ -33,7 +29,7 @@ export class ManageChangeLogs extends Component<IProps> {
           title={'Manage Change Logs'}
           options={[this.renderCreateButton()]}
         />
-        <Modal ref={this.createModalRef} canClose={true} showCloseIcon={true}>
+        <Modal ref={this.createModalRef} canClose={true}>
           <CreateChangeSection
             onChangeCreated={this.handleChangeCreated}
             changeLogService={this.props.changeLogService}
