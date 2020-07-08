@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 
+import { Button } from '../../../ui/Button';
+
 import './SignInButton.scss';
 
 interface IProps {
+  color: string;
   signInLink: string;
-  backgroundColor: string;
   oauthProviderIconSrc: string;
   oauthProviderName: string;
 }
@@ -12,14 +14,9 @@ interface IProps {
 export class SignInButton extends Component<IProps> {
   render() {
     return (
-      <div className={'sign-in-button'}>
-        <a href={this.props.signInLink}>
-          <div
-            className={'button'}
-            style={{
-              backgroundColor: this.props.backgroundColor
-            }}
-          >
+      <a href={this.props.signInLink} className={'sign-in-button'}>
+        <Button styles={[this.props.color, 'full-width', 'shadow']}>
+          <div className={'content'}>
             <img
               alt={`Sign in with ${this.props.oauthProviderName} account`}
               className={'icon'}
@@ -27,8 +24,8 @@ export class SignInButton extends Component<IProps> {
             />
             Sign in with {this.props.oauthProviderName}
           </div>
-        </a>
-      </div>
+        </Button>
+      </a>
     );
   }
 }

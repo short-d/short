@@ -11,8 +11,8 @@ export class GithubSignInButton extends Component<IProps> {
   render() {
     return (
       <SignInButton
+        color={'black'}
         signInLink={this.props.githubSignInLink}
-        backgroundColor={'#343434'}
         oauthProviderIconSrc={githubLogo}
         oauthProviderName={'Github'}
       />
