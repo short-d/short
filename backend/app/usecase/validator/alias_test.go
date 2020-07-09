@@ -73,7 +73,7 @@ func TestCustomAlias_hasFragmentCharacter(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, testCase.expIsValid, validator.hasFragmentCharacter(testCase.alias))
+			assert.Equal(t, testCase.expIsValid, validator.hasForbiddenCharacter(testCase.alias))
 		})
 	}
 }
