@@ -2,16 +2,19 @@ import React, { Component, createRef, RefObject } from 'react';
 import { Launcher } from './Launcher';
 import { FeedbackModal } from './FeedbackModal';
 import { Feedback } from '../entity/feedback';
-
-// import {ThemingService} from '../service/Theming.service';
+import { EmoticGraphQLApi } from '../service/graphql/EmoticGraphQL.api';
+import { GraphQLService } from '../service/graphql/GraphQL.service';
+import { FetchHTTPService } from '../service/HTTP.service';
+import { FeedbackService } from '../service/feedback.service';
+import {Environment} from '../environment';
 
 interface IProps {
-  // apiKey: string;
+  apiKey: string;
   onFeedbackFiled?: (feedback: Feedback) => void;
 }
 
 export class Emotic extends Component<IProps, any> {
-  // private themingService: ThemingService;
+  private feedbackService: FeedbackService;
 
   private feedbackModalRef: RefObject<FeedbackModal> = createRef<
     FeedbackModal
@@ -19,7 +22,15 @@ export class Emotic extends Component<IProps, any> {
 
   constructor(props: IProps) {
     super(props);
-    // this.themingService = new ThemingService(props.apiKey);
+    const httpService = new FetchHTTPService();
+    const graphQLService = new GraphQLService(httpService);
+    const env = new Environment();
+    const emoticGraphQLApi = new EmoticGraphQLApi(
+      this.props.apiKey,
+      graphQLService,
+      env
+    );
+    this.feedbackService = new FeedbackService(emoticGraphQLApi);
   }
 
   render() {
@@ -27,14 +38,9 @@ export class Emotic extends Component<IProps, any> {
       <div className='Emotic'>
         <FeedbackModal
           ref={this.feedbackModalRef}
-          // color={this.themingService.getColor()}
           onRequestFilingFeedback={this.handleRequestFilingFeedback}
         />
-        <Launcher
-          // icon={this.themingService.getIcon()}
-          // location={this.themingService.getIconLocation()}
-          onClick={this.handleLauncherClick}
-        />
+        <Launcher onClick={this.handleLauncherClick} />
       </div>
     );
   }
@@ -46,9 +52,27 @@ export class Emotic extends Component<IProps, any> {
   };
 
   handleRequestFilingFeedback = (feedback: Feedback) => {
-    console.log(`Feedback filed: ${JSON.stringify(feedback, null, 2)}`);
-    if (this.props.onFeedbackFiled) {
-      this.props.onFeedbackFiled(feedback);
-    }
+    this.feedbackService
+      .fileFeedback(feedback)
+      .then(() => {
+        if (this.props.onFeedbackFiled) {
+          this.props.onFeedbackFiled(feedback);
+        }
+      })
+      .catch((error: any) => {
+        if (error.networkError) {
+          this.showNetworkError();
+          return;
+        }
+        if (error.fileFeedbackError) {
+          this.showError(error.fileFeedbackError);
+        }
+      });
   };
+
+  private showError(errorMessage: string) {
+    alert(errorMessage);
+  }
+
+  private showNetworkError() {}
 }
