@@ -20,7 +20,7 @@ import 'emotic/dist/index.css'
 
 class Example extends Component {
   render() {
-    return <Emotic apiKey='your_api_key' onFeedbackFiled={this.handleOnFeedbackFiled}/>;
+    return <Emotic onFeedbackFiled={this.handleOnFeedbackFiled}/>;
   }
 }
 ```
