@@ -29,7 +29,6 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 	testCases := []struct {
 		name               string
 		shortLinks         shortLinks
-		alias              *string
 		availableKeys      []keygen.Key
 		user               entity.User
 		shortLink          entity.ShortLink
@@ -49,12 +48,12 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			alias: &alias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
 			shortLink: entity.ShortLink{
 				LongLink: "https://www.google.com",
+				Alias: alias,
 			},
 			isPublic:  false,
 			expHasErr: true,
@@ -67,36 +66,35 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 					ExpireAt: &now,
 				},
 			},
-			alias: &longAlias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
 			shortLink: entity.ShortLink{
 				LongLink: "https://www.google.com",
+				Alias: longAlias,
 			},
 			expHasErr: true,
 		},
 		{
 			name:       "alias contains invalid URL fragment character",
 			shortLinks: shortLinks{},
-			alias:      &invalidFragmentAlias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
 			shortLink: entity.ShortLink{
 				LongLink: "https://www.google.com",
+				Alias: invalidFragmentAlias,
 			},
 			expHasErr: true,
 		},
 		{
 			name:       "create alias successfully",
 			shortLinks: shortLinks{},
-			alias:      &alias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
 			shortLink: entity.ShortLink{
-				Alias:    "220uFicCJj",
+				Alias:    alias,
 				LongLink: "https://www.google.com",
 				ExpireAt: &now,
 			},
@@ -110,37 +108,17 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			},
 		},
 		{
-			name:       "automatically generate alias if null alias provided",
-			shortLinks: shortLinks{},
-			availableKeys: []keygen.Key{
-				"test",
-			},
-			alias: nil,
-			user: entity.User{
-				Email: "alpha@example.com",
-			},
-			shortLink: entity.ShortLink{
-				LongLink: "https://www.google.com",
-			},
-			expHasErr: false,
-			expectedShortLink: entity.ShortLink{
-				Alias:     "test",
-				LongLink:  "https://www.google.com",
-				CreatedAt: &utc,
-			},
-		},
-		{
 			name:       "automatically generate alias if empty string alias provided",
 			shortLinks: shortLinks{},
 			availableKeys: []keygen.Key{
 				"test",
 			},
-			alias: &emptyAlias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
 			shortLink: entity.ShortLink{
 				LongLink: "https://www.google.com",
+				Alias: emptyAlias,
 			},
 			expHasErr: false,
 			expectedShortLink: entity.ShortLink{
@@ -153,19 +131,18 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			name:          "no available key",
 			shortLinks:    shortLinks{},
 			availableKeys: []keygen.Key{},
-			alias:         nil,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
 			shortLink: entity.ShortLink{
 				LongLink: "https://www.google.com",
+				Alias: emptyAlias,
 			},
 			expHasErr: true,
 		},
 		{
 			name:       "long link is invalid",
 			shortLinks: shortLinks{},
-			alias:      &alias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -180,7 +157,6 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 		{
 			name:       "reject malicious long link",
 			shortLinks: shortLinks{},
-			alias:      &alias,
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
@@ -226,13 +202,10 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 				riskDetector,
 			)
 
-			_, err = shortLinkRepo.GetShortLinkByAlias(testCase.shortLink.Alias)
-			assert.NotEqual(t, nil, err)
-
 			isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.shortLink)
 			assert.Equal(t, false, isExist)
 
-			shortLink, err := creator.CreateShortLink(testCase.shortLink, testCase.alias, testCase.user, testCase.isPublic)
+			shortLink, err := creator.CreateShortLink(testCase.shortLink, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
 				assert.NotEqual(t, nil, err)
 

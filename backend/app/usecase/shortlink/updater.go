@@ -1,8 +1,6 @@
 package shortlink
 
 import (
-	"errors"
-
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/repository"
@@ -13,7 +11,11 @@ import (
 var _ Updater = (*UpdaterPersist)(nil)
 
 // ErrShortLinkNotFound represents the failure of finding certain short link in the data store
-var ErrShortLinkNotFound = errors.New("short link not found")
+type ErrShortLinkNotFound string
+
+func (e ErrShortLinkNotFound) Error() string {
+	return string(e)
+}
 
 // Updater mutates existing short links.
 type Updater interface {
@@ -41,7 +43,7 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, err
 	}
 	if !hasMapping {
-		return entity.ShortLink{}, ErrShortLinkNotFound
+		return entity.ShortLink{}, ErrShortLinkNotFound("short link not found")
 	}
 
 	aliasExist, err := u.shortLinkRepo.IsAliasExist(update.Alias)
@@ -60,12 +62,12 @@ func (u UpdaterPersist) UpdateShortLink(
 	shortLink = u.updateAlias(shortLink, update)
 	shortLink = u.updateLongLink(shortLink, update)
 
-	isValid, violation := u.aliasValidator.IsValid(&shortLink.Alias)
+	isValid, violation := u.aliasValidator.IsValid(shortLink.Alias)
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidCustomAlias{shortLink.Alias, violation}
 	}
 
-	isValid, violation = u.longLinkValidator.IsValid(&shortLink.LongLink)
+	isValid, violation = u.longLinkValidator.IsValid(shortLink.LongLink)
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidLongLink{shortLink.LongLink, violation}
 	}

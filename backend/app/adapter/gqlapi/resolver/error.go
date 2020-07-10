@@ -7,6 +7,7 @@ type ErrCode string
 const (
 	ErrCodeUnknown            ErrCode = "unknown"
 	ErrCodeAliasAlreadyExist          = "aliasAlreadyExist"
+	ErrCodeShortLinkNotFound		  = "shortLinkNotFound"
 	ErrCodeRequesterNotHuman          = "requesterNotHuman"
 	ErrCodeInvalidLongLink            = "invalidLongLink"
 	ErrCodeInvalidCustomAlias         = "invalidCustomAlias"
@@ -58,6 +59,25 @@ func (e ErrAliasExist) Extensions() map[string]interface{} {
 // Error retrieves the human readable error message.
 func (e ErrAliasExist) Error() string {
 	return "shortlink alias already exists"
+}
+
+// ErrShortLinkNotFound signifies an expected short link alias does not exist.
+type ErrShortLinkNotFound string
+
+var _ GraphQlError = (*ErrShortLinkNotFound)(nil)
+
+// Extensions keeps structured error metadata so that the clients can reliably
+// handle the error.
+func (e ErrShortLinkNotFound) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code":  ErrCodeShortLinkNotFound,
+		"alias": string(e),
+	}
+}
+
+// Error retrieves the human readable error message.
+func (e ErrShortLinkNotFound) Error() string {
+	return "shortlink does not exist"
 }
 
 // ErrNotHuman signifies that the API consumer is not human.

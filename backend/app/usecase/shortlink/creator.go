@@ -47,7 +47,7 @@ func (e ErrMaliciousLongLink) Error() string {
 
 // Creator represents a ShortLink alias creator
 type Creator interface {
-	CreateShortLink(shortLink entity.ShortLink, alias *string, user entity.User, isPublic bool) (entity.ShortLink, error)
+	CreateShortLink(shortLink entity.ShortLink, user entity.User, isPublic bool) (entity.ShortLink, error)
 }
 
 // CreatorPersist represents a ShortLink alias creator which persist the generated
@@ -64,9 +64,9 @@ type CreatorPersist struct {
 
 // CreateShortLink persists a new short link with a given or auto generated alias in the repository.
 // TODO(issue#235): add functionality for public URLs
-func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
+func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, user entity.User, isPublic bool) (entity.ShortLink, error) {
 	longLink := shortLink.LongLink
-	isValid, violation := c.longLinkValidator.IsValid(&longLink)
+	isValid, violation := c.longLinkValidator.IsValid(longLink)
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidLongLink{longLink, violation}
 	}
@@ -75,34 +75,33 @@ func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, customAlias 
 		return entity.ShortLink{}, ErrMaliciousLongLink(longLink)
 	}
 
-	if !c.isAliasProvided(customAlias) {
-		return c.createShortLinkWithAutoAlias(shortLink, user)
+	if !(shortLink.Alias != "") {
+		autoAlias, err := c.createAutoAlias()
+		if err != nil {
+			// TODO create error type for fail create auto alias?
+			return entity.ShortLink{}, err
+		}
+		shortLink.Alias = autoAlias
+	} else {
+		isValid, violation = c.aliasValidator.IsValid(shortLink.Alias)
+		if !isValid {
+			return entity.ShortLink{}, ErrInvalidCustomAlias{shortLink.Alias, violation}
+		}
 	}
 
-	isValid, violation = c.aliasValidator.IsValid(customAlias)
-	if !isValid {
-		return entity.ShortLink{}, ErrInvalidCustomAlias{*customAlias, violation}
-	}
-	return c.createShortLinkWithCustomAlias(shortLink, *customAlias, user)
+	return c.createShortLink(shortLink, user)
 }
 
-func (c CreatorPersist) isAliasProvided(customAlias *string) bool {
-	return customAlias != nil && *customAlias != ""
-}
-
-func (c CreatorPersist) createShortLinkWithAutoAlias(shortLink entity.ShortLink, user entity.User) (entity.ShortLink, error) {
+func (c CreatorPersist) createAutoAlias() (string, error) {
 	key, err := c.keyGen.NewKey()
 	if err != nil {
-		return entity.ShortLink{}, err
+		return "", err
 	}
-	randomAlias := string(key)
-	return c.createShortLinkWithCustomAlias(shortLink, randomAlias, user)
+	return string(key), nil
 }
 
-func (c CreatorPersist) createShortLinkWithCustomAlias(shortLink entity.ShortLink, alias string, user entity.User) (entity.ShortLink, error) {
-	shortLink.Alias = alias
-
-	isExist, err := c.shortLinkRepo.IsAliasExist(alias)
+func (c CreatorPersist) createShortLink(shortLink entity.ShortLink, user entity.User) (entity.ShortLink, error) {
+	isExist, err := c.shortLinkRepo.IsAliasExist(shortLink.Alias)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}

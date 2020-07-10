@@ -25,11 +25,6 @@ type ShortLinkInput struct {
 	ExpireAt    *time.Time
 }
 
-// IsEmpty checks if ShortLinkInput has no attributes specified.
-func (s *ShortLinkInput) IsEmpty() bool {
-	return *s == ShortLinkInput{}
-}
-
 // GetLongLink fetches LongLink for ShortLinkInput, with empty string as the default value.
 func (s *ShortLinkInput) GetLongLink() string {
 	if s.LongLink == nil {
@@ -47,12 +42,8 @@ func (s *ShortLinkInput) GetCustomAlias() string {
 }
 
 // GetShortLink creates a ShortLink entity instance using ShortLinkInput.
-func (s *ShortLinkInput) GetShortLink() *ShortLink {
-	if s.IsEmpty() {
-		return nil
-	}
-
-	return &ShortLink{
+func (s *ShortLinkInput) GetShortLink() ShortLink {
+	return ShortLink{
 		Alias:    s.GetCustomAlias(),
 		LongLink: s.GetLongLink(),
 		ExpireAt: s.ExpireAt,

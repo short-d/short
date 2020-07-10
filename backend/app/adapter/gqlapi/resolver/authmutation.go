@@ -34,15 +34,10 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	customAlias := args.ShortLink.CustomAlias
-	u := args.ShortLink.GetShortLink()
-	if u == nil {
-		return nil, ErrUnknown{}
-	}
-
+	shortLink := args.ShortLink.GetShortLink()
 	isPublic := args.IsPublic
 
-	newShortLink, err := a.shortLinkCreator.CreateShortLink(*u, customAlias, user, isPublic)
+	newShortLink, err := a.shortLinkCreator.CreateShortLink(shortLink, user, isPublic)
 	if err == nil {
 		return &ShortLink{shortLink: newShortLink}, nil
 	}
@@ -54,16 +49,16 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		m  shortlink.ErrMaliciousLongLink
 	)
 	if errors.As(err, &ae) {
-		return nil, ErrAliasExist(*customAlias)
+		return nil, ErrAliasExist(shortLink.Alias)
 	}
 	if errors.As(err, &l) {
-		return nil, ErrInvalidLongLink{u.LongLink, string(l.Violation)}
+		return nil, ErrInvalidLongLink{shortLink.LongLink, string(l.Violation)}
 	}
 	if errors.As(err, &c) {
-		return nil, ErrInvalidCustomAlias{*customAlias, string(c.Violation)}
+		return nil, ErrInvalidCustomAlias{shortLink.Alias, string(c.Violation)}
 	}
 	if errors.As(err, &m) {
-		return nil, ErrMaliciousContent(u.LongLink)
+		return nil, ErrMaliciousContent(shortLink.LongLink)
 	}
 	return nil, ErrUnknown{}
 }
@@ -82,16 +77,35 @@ func (a AuthMutation) UpdateShortLink(args *UpdateShortLinkArgs) (*ShortLink, er
 	}
 
 	update := args.ShortLink.GetShortLink()
-	if update == nil {
-		return nil, ErrUnknown{}
+
+	newShortLink, err := a.shortLinkUpdater.UpdateShortLink(args.OldAlias, update, user)
+	if err == nil {
+		return &ShortLink{shortLink: newShortLink}, nil
 	}
 
-	newShortLink, err := a.shortLinkUpdater.UpdateShortLink(args.OldAlias, *update, user)
-	if err != nil {
-		return nil, err
+	var (
+		ae shortlink.ErrAliasExist
+		l  shortlink.ErrInvalidLongLink
+		c  shortlink.ErrInvalidCustomAlias
+		m  shortlink.ErrMaliciousLongLink
+		nf shortlink.ErrShortLinkNotFound
+	)
+	if errors.As(err, &ae) {
+		return nil, ErrAliasExist(update.Alias)
 	}
-
-	return &ShortLink{shortLink: newShortLink}, nil
+	if errors.As(err, &l) {
+		return nil, ErrInvalidLongLink{update.LongLink, string(l.Violation)}
+	}
+	if errors.As(err, &c) {
+		return nil, ErrInvalidCustomAlias{update.Alias, string(c.Violation)}
+	}
+	if errors.As(err, &m) {
+		return nil, ErrMaliciousContent(update.LongLink)
+	}
+	if errors.As(err, &nf) {
+		return nil, ErrShortLinkNotFound(update.Alias)
+	}
+	return nil, ErrUnknown{}
 }
 
 // ChangeInput represents possible properties for Change
