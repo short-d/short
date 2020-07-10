@@ -20,10 +20,29 @@ import 'emotic/dist/index.css'
 
 class Example extends Component {
   render() {
-    return <Emotic onFeedbackFiled={this.handleOnFeedbackFiled}/>;
+    return <Emotic apiKey='your_api_key' onFeedbackFiled={this.handleOnFeedbackFiled}/>;
   }
 }
 ```
+
+## Development
+
+1. Launch library dev server
+    
+   ```bash
+   yarn
+   yarn start
+   ```
+   
+1. Launch example page dev server
+   
+   ```bash
+   cd example
+   yarn
+   yarn start
+   ```
+   
+1. Visit `http://localhost:3000` to see the example.
 
 ## License
 
