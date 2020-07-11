@@ -195,21 +195,21 @@ steps:
         - push
 
   - name: create story assets
-      image: node:12.7.0-alpine
-      volumes:
-        - name: story-dep
-          path: /drone/src/story/node_modules
-      commands:
-        - apk add --no-cache bash git
-        - cd story
-        - yarn
-        - yarn build
-      when:
-        branch:
-          - testing
-          - master
-        event:
-          - push
+    image: node:12.7.0-alpine
+    volumes:
+      - name: story-dep
+        path: /drone/src/story/node_modules
+    commands:
+      - apk add --no-cache bash git
+      - cd story
+      - yarn
+      - yarn build
+    when:
+      branch:
+        - testing
+        - master
+      event:
+        - push
 
   - name: build testing frontend Docker image
     image: docker
