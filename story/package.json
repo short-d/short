@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
+    "build": "build-storybook -o build",
     "format": "yarn prettier:write",
     "prettier:base": "prettier --parser typescript --single-quote",
     "prettier:write": "yarn prettier:base --write \"src/**/*.{ts,tsx}\""
