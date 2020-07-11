@@ -46,12 +46,14 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, ErrShortLinkNotFound("short link not found")
 	}
 
-	aliasExist, err := u.shortLinkRepo.IsAliasExist(updateArgs.CustomAlias)
-	if err != nil {
-		return entity.ShortLink{}, err
-	}
-	if aliasExist {
-		return entity.ShortLink{}, ErrAliasExist("short link alias already exist")
+	if updateArgs.CustomAlias != "" {
+		aliasExist, err := u.shortLinkRepo.IsAliasExist(updateArgs.CustomAlias)
+		if err != nil {
+			return entity.ShortLink{}, err
+		}
+		if aliasExist {
+			return entity.ShortLink{}, ErrAliasExist("short link alias already exist")
+		}
 	}
 
 	shortLink, err := u.shortLinkRepo.GetShortLinkByAlias(oldAlias)
