@@ -95,7 +95,7 @@ func (e ErrEmptyAlias) Extensions() map[string]interface{} {
 }
 
 func (e ErrEmptyAlias) Error() string {
-	return "new alias not specified for shortlink update"
+	return "alias is empty"
 }
 
 // ErrNotHuman signifies that the API consumer is not human.

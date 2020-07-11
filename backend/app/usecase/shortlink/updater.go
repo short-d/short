@@ -75,7 +75,7 @@ func (u UpdaterPersist) UpdateShortLink(
 	}
 
 	shortLink.Alias = newAlias
-	shortLink.LongLink = shortLinkInput.GetLongLink("")
+	shortLink.LongLink = shortLinkInput.GetLongLink(shortLink.LongLink)
 
 	isValid, violation := u.aliasValidator.IsValid(shortLink.Alias)
 	if !isValid {
