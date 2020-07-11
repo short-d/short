@@ -11,8 +11,8 @@ export class FacebookSignInButton extends Component<IProps> {
   render() {
     return (
       <SignInButton
+        color={'blue'}
         signInLink={this.props.facebookSignInLink}
-        backgroundColor={'#385C8E'}
         oauthProviderIconSrc={facebookLogo}
         oauthProviderName={'Facebook'}
       />

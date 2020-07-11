@@ -1,0 +1,41 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "format": "yarn prettier:write",
+    "prettier:base": "prettier --parser typescript --single-quote",
+    "prettier:write": "yarn prettier:base --write \"src/**/*.{ts,tsx}\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "emotic": "link:../widget/emotic",
+    "react": "^16.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.4",
+    "@storybook/addon-actions": "^5.3.19",
+    "@storybook/addon-info": "^5.3.19",
+    "@storybook/addon-knobs": "^5.3.19",
+    "@storybook/addon-links": "^5.3.19",
+    "@storybook/addons": "^5.3.19",
+    "@storybook/preset-typescript": "^3.0.0",
+    "@storybook/react": "^5.3.19",
+    "@types/react": "^16.9.42",
+    "@types/react-dom": "^16.9.8",
+    "babel-loader": "^8.1.0",
+    "fork-ts-checker-webpack-plugin": "^5.0.7",
+    "node-sass": "^4.14.1",
+    "prettier": "^2.0.5",
+    "react-docgen-typescript-loader": "^3.7.2",
+    "sass-loader": "^9.0.2",
+    "ts-loader": "^8.0.0",
+    "typescript": "^3.9.6"
+  }
+}
