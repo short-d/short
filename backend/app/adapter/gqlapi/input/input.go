@@ -1,4 +1,4 @@
-package args
+package input
 
 import (
 	"time"

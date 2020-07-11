@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/short-d/short/backend/app/adapter/gqlapi/args"
+	"github.com/short-d/short/backend/app/adapter/gqlapi/input"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
@@ -23,7 +23,7 @@ type AuthMutation struct {
 
 // CreateShortLinkArgs represents the possible parameters for CreateShortLink endpoint
 type CreateShortLinkArgs struct {
-	ShortLink args.ShortLinkInput
+	ShortLink input.ShortLinkInput
 	IsPublic  bool
 }
 
@@ -66,7 +66,7 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 // UpdateShortLinkArgs represents the possible parameters for updateShortLink endpoint
 type UpdateShortLinkArgs struct {
 	OldAlias  string
-	ShortLink args.ShortLinkInput
+	ShortLink input.ShortLinkInput
 }
 
 // UpdateShortLink updates the relationship between the short link and the user

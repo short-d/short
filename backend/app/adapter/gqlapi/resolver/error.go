@@ -17,8 +17,8 @@ const (
 	ErrCodeUnauthorizedAction         = "unauthorizedAction"
 )
 
-// GraphQlError represents a GraphAPI error.
-type GraphQlError interface {
+// GraphQLError represents a GraphAPI error.
+type GraphQLError interface {
 	Extensions() map[string]interface{}
 	Error() string
 }
@@ -27,7 +27,7 @@ type GraphQlError interface {
 // order to prevent hackers from guessing security vulnerabilities.
 type ErrUnknown struct{}
 
-var _ GraphQlError = (*ErrUnknown)(nil)
+var _ GraphQLError = (*ErrUnknown)(nil)
 
 // Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
@@ -45,7 +45,7 @@ func (e ErrUnknown) Error() string {
 // ErrAliasExist signifies a wanted short link alias is not available.
 type ErrAliasExist string
 
-var _ GraphQlError = (*ErrAliasExist)(nil)
+var _ GraphQLError = (*ErrAliasExist)(nil)
 
 // Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
@@ -64,7 +64,7 @@ func (e ErrAliasExist) Error() string {
 // ErrShortLinkNotFound signifies an expected short link alias does not exist.
 type ErrShortLinkNotFound string
 
-var _ GraphQlError = (*ErrShortLinkNotFound)(nil)
+var _ GraphQLError = (*ErrShortLinkNotFound)(nil)
 
 // Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
@@ -83,7 +83,7 @@ func (e ErrShortLinkNotFound) Error() string {
 // ErrNotHuman signifies that the API consumer is not human.
 type ErrNotHuman struct{}
 
-var _ GraphQlError = (*ErrNotHuman)(nil)
+var _ GraphQLError = (*ErrNotHuman)(nil)
 
 // Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
@@ -104,7 +104,7 @@ type ErrInvalidLongLink struct {
 	violation string
 }
 
-var _ GraphQlError = (*ErrInvalidLongLink)(nil)
+var _ GraphQLError = (*ErrInvalidLongLink)(nil)
 
 // Extensions keeps structured error metadata so that the clients can gracefully
 // handle the error.
@@ -128,7 +128,7 @@ type ErrInvalidCustomAlias struct {
 	violation   string
 }
 
-var _ GraphQlError = (*ErrInvalidCustomAlias)(nil)
+var _ GraphQLError = (*ErrInvalidCustomAlias)(nil)
 
 // Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
@@ -148,7 +148,7 @@ func (e ErrInvalidCustomAlias) Error() string {
 // ErrInvalidAuthToken signifies the provided authentication is invalid.
 type ErrInvalidAuthToken struct{}
 
-var _ GraphQlError = (*ErrInvalidAuthToken)(nil)
+var _ GraphQLError = (*ErrInvalidAuthToken)(nil)
 
 // Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
@@ -166,7 +166,7 @@ func (e ErrInvalidAuthToken) Error() string {
 // ErrMaliciousContent signifies the input contains malicious content.
 type ErrMaliciousContent string
 
-var _ GraphQlError = (*ErrMaliciousContent)(nil)
+var _ GraphQLError = (*ErrMaliciousContent)(nil)
 
 // Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
@@ -185,7 +185,7 @@ func (e ErrMaliciousContent) Error() string {
 // ErrUnauthorizedAction signifies the requesting user is not allowed to perform certain action.
 type ErrUnauthorizedAction string
 
-var _ GraphQlError = (*ErrUnauthorizedAction)(nil)
+var _ GraphQLError = (*ErrUnauthorizedAction)(nil)
 
 // Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
