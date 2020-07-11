@@ -371,7 +371,7 @@ steps:
       - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
       - docker tag short-frontend:latest $DOCKERHUB_USERNAME/short-frontend:latest
       - docker tag short-backend:latest $DOCKERHUB_USERNAME/short-backend:latest
-      - docker tag short-backend:latest $DOCKERHUB_USERNAME/short-backend:latest
+      - docker tag story:latest $DOCKERHUB_ORG_IDE/story:latest
       - docker push $DOCKERHUB_USERNAME/short-frontend:latest
       - docker push $DOCKERHUB_USERNAME/short-backend:latest
       - docker push $DOCKERHUB_ORG_ID/story:latest
