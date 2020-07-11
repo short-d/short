@@ -5,17 +5,17 @@ type ErrCode string
 
 // The constants enumerate all supported error codes.
 const (
-	ErrCodeUnknown            ErrCode = "unknown"
-	ErrCodeAliasAlreadyExist          = "aliasAlreadyExist"
-	ErrCodeShortLinkNotFound          = "shortLinkNotFound"
-	ErrCodeNewAliasNotSpecified		  = "newAliasNotSpecified"
-	ErrCodeRequesterNotHuman          = "requesterNotHuman"
-	ErrCodeInvalidLongLink            = "invalidLongLink"
-	ErrCodeInvalidCustomAlias         = "invalidCustomAlias"
-	ErrCodeAliasWithFragment          = "aliasWithFragment"
-	ErrCodeMaliciousContent           = "maliciousContent"
-	ErrCodeInvalidAuthToken           = "invalidAuthToken"
-	ErrCodeUnauthorizedAction         = "unauthorizedAction"
+	ErrCodeUnknown              ErrCode = "unknown"
+	ErrCodeAliasAlreadyExist            = "aliasAlreadyExist"
+	ErrCodeShortLinkNotFound            = "shortLinkNotFound"
+	ErrCodeNewAliasNotSpecified         = "newAliasNotSpecified"
+	ErrCodeRequesterNotHuman            = "requesterNotHuman"
+	ErrCodeInvalidLongLink              = "invalidLongLink"
+	ErrCodeInvalidCustomAlias           = "invalidCustomAlias"
+	ErrCodeAliasWithFragment            = "aliasWithFragment"
+	ErrCodeMaliciousContent             = "maliciousContent"
+	ErrCodeInvalidAuthToken             = "invalidAuthToken"
+	ErrCodeUnauthorizedAction           = "unauthorizedAction"
 )
 
 // GraphQLError represents a GraphAPI error.

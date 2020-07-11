@@ -59,7 +59,7 @@ func (u UpdaterPersist) UpdateShortLink(
 	}
 
 	// Only check if it exists if user is changing the alias to something else
-	if (newAlias != oldAlias) {
+	if newAlias != oldAlias {
 		aliasExist, err := u.shortLinkRepo.IsAliasExist(newAlias)
 		if err != nil {
 			return entity.ShortLink{}, err
