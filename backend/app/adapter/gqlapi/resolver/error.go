@@ -5,17 +5,17 @@ type ErrCode string
 
 // The constants enumerate all supported error codes.
 const (
-	ErrCodeUnknown              ErrCode = "unknown"
-	ErrCodeAliasAlreadyExist            = "aliasAlreadyExist"
-	ErrCodeShortLinkNotFound            = "shortLinkNotFound"
-	ErrCodeNewAliasNotSpecified         = "newAliasNotSpecified"
-	ErrCodeRequesterNotHuman            = "requesterNotHuman"
-	ErrCodeInvalidLongLink              = "invalidLongLink"
-	ErrCodeInvalidCustomAlias           = "invalidCustomAlias"
-	ErrCodeAliasWithFragment            = "aliasWithFragment"
-	ErrCodeMaliciousContent             = "maliciousContent"
-	ErrCodeInvalidAuthToken             = "invalidAuthToken"
-	ErrCodeUnauthorizedAction           = "unauthorizedAction"
+	ErrCodeUnknown            ErrCode = "unknown"
+	ErrCodeAliasAlreadyExist          = "aliasAlreadyExist"
+	ErrCodeShortLinkNotFound          = "shortLinkNotFound"
+	ErrCodeEmptyAlias                 = "emptyAlias"
+	ErrCodeRequesterNotHuman          = "requesterNotHuman"
+	ErrCodeInvalidLongLink            = "invalidLongLink"
+	ErrCodeInvalidCustomAlias         = "invalidCustomAlias"
+	ErrCodeAliasWithFragment          = "aliasWithFragment"
+	ErrCodeMaliciousContent           = "maliciousContent"
+	ErrCodeInvalidAuthToken           = "invalidAuthToken"
+	ErrCodeUnauthorizedAction         = "unauthorizedAction"
 )
 
 // GraphQLError represents a GraphAPI error.
@@ -81,21 +81,20 @@ func (e ErrShortLinkNotFound) Error() string {
 	return "shortlink does not exist"
 }
 
-// ErrNewAliasNotSpecified signifies that user provided an empty alias when updating short link
-type ErrNewAliasNotSpecified string
+// ErrEmptyAlias signifies that user provided an empty alias when updating short link
+type ErrEmptyAlias struct{}
 
-var _ GraphQLError = (*ErrNewAliasNotSpecified)(nil)
+var _ GraphQLError = (*ErrEmptyAlias)(nil)
 
 // Extensions keeps structured error metadata so that the clients can reliably
 // handle the error.
-func (e ErrNewAliasNotSpecified) Extensions() map[string]interface{} {
+func (e ErrEmptyAlias) Extensions() map[string]interface{} {
 	return map[string]interface{}{
-		"code":  ErrCodeNewAliasNotSpecified,
-		"alias": string(e),
+		"code": ErrCodeEmptyAlias,
 	}
 }
 
-func (e ErrNewAliasNotSpecified) Error() string {
+func (e ErrEmptyAlias) Error() string {
 	return "new alias not specified for shortlink update"
 }
 

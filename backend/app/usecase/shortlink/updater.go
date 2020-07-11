@@ -26,7 +26,7 @@ func (e ErrNewAliasNotSpecified) Error() string {
 
 // Updater mutates existing short links.
 type Updater interface {
-	UpdateShortLink(oldAlias string, updateArgs entity.ShortLinkInput, user entity.User) (entity.ShortLink, error)
+	UpdateShortLink(oldAlias string, shortLinkInput entity.ShortLinkInput, user entity.User) (entity.ShortLink, error)
 }
 
 // UpdaterPersist persists the mutated short link in the data store.
@@ -42,7 +42,7 @@ type UpdaterPersist struct {
 // UpdateShortLink mutates a short link in the repository.
 func (u UpdaterPersist) UpdateShortLink(
 	oldAlias string,
-	updateArgs entity.ShortLinkInput,
+	shortLinkInput entity.ShortLinkInput,
 	user entity.User,
 ) (entity.ShortLink, error) {
 	hasMapping, err := u.userShortLinkRepo.HasMapping(user, oldAlias)
@@ -53,7 +53,7 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, ErrShortLinkNotFound("short link not found")
 	}
 
-	newAlias := updateArgs.GetCustomAlias(oldAlias)
+	newAlias := shortLinkInput.GetCustomAlias(oldAlias)
 	if newAlias == "" {
 		return entity.ShortLink{}, ErrNewAliasNotSpecified("new alias not specified")
 	}
@@ -75,7 +75,7 @@ func (u UpdaterPersist) UpdateShortLink(
 	}
 
 	shortLink.Alias = newAlias
-	shortLink.LongLink = updateArgs.GetLongLink("")
+	shortLink.LongLink = shortLinkInput.GetLongLink("")
 
 	isValid, violation := u.aliasValidator.IsValid(shortLink.Alias)
 	if !isValid {

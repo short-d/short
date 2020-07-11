@@ -49,16 +49,16 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		m  shortlink.ErrMaliciousLongLink
 	)
 	if errors.As(err, &ae) {
-		return nil, ErrAliasExist(ae.Error())
+		return nil, ErrAliasExist(shortLink.GetCustomAlias(""))
 	}
 	if errors.As(err, &l) {
-		return nil, ErrInvalidLongLink{l.Error(), string(l.Violation)}
+		return nil, ErrInvalidLongLink{shortLink.GetLongLink(""), string(l.Violation)}
 	}
 	if errors.As(err, &c) {
-		return nil, ErrInvalidCustomAlias{c.Error(), string(c.Violation)}
+		return nil, ErrInvalidCustomAlias{shortLink.GetCustomAlias(""), string(c.Violation)}
 	}
 	if errors.As(err, &m) {
-		return nil, ErrMaliciousContent(m.Error())
+		return nil, ErrMaliciousContent(shortLink.GetLongLink(""))
 	}
 	return nil, ErrUnknown{}
 }
@@ -89,21 +89,25 @@ func (a AuthMutation) UpdateShortLink(args *UpdateShortLinkArgs) (*ShortLink, er
 		c  shortlink.ErrInvalidCustomAlias
 		m  shortlink.ErrMaliciousLongLink
 		nf shortlink.ErrShortLinkNotFound
+		ns shortlink.ErrNewAliasNotSpecified
 	)
 	if errors.As(err, &ae) {
-		return nil, ErrAliasExist(ae.Error())
+		return nil, ErrAliasExist(update.GetCustomAlias(""))
 	}
 	if errors.As(err, &l) {
-		return nil, ErrInvalidLongLink{l.Error(), string(l.Violation)}
+		return nil, ErrInvalidLongLink{update.GetLongLink(""), string(l.Violation)}
 	}
 	if errors.As(err, &c) {
-		return nil, ErrInvalidCustomAlias{c.Error(), string(c.Violation)}
+		return nil, ErrInvalidCustomAlias{update.GetCustomAlias(""), string(c.Violation)}
 	}
 	if errors.As(err, &m) {
-		return nil, ErrMaliciousContent(m.Error())
+		return nil, ErrMaliciousContent(update.GetLongLink(""))
 	}
 	if errors.As(err, &nf) {
-		return nil, ErrShortLinkNotFound(nf.Error())
+		return nil, ErrShortLinkNotFound(update.GetCustomAlias(""))
+	}
+	if errors.As(err, &ns) {
+		return nil, ErrEmptyAlias{}
 	}
 	return nil, ErrUnknown{}
 }
