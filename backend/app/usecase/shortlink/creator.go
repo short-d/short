@@ -65,7 +65,7 @@ type CreatorPersist struct {
 // CreateShortLink persists a new short link with a given or auto generated alias in the repository.
 // TODO(issue#235): add functionality for public URLs
 func (c CreatorPersist) CreateShortLink(createArgs entity.ShortLinkInput, user entity.User, isPublic bool) (entity.ShortLink, error) {
-	longLink := createArgs.LongLink
+	longLink := createArgs.GetLongLink("")
 	isValid, violation := c.longLinkValidator.IsValid(longLink)
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidLongLink{longLink, violation}
@@ -75,23 +75,24 @@ func (c CreatorPersist) CreateShortLink(createArgs entity.ShortLinkInput, user e
 		return entity.ShortLink{}, ErrMaliciousLongLink(longLink)
 	}
 
-	if !(createArgs.CustomAlias != "") {
+	customAlias := createArgs.GetCustomAlias("")
+	isValid, violation = c.aliasValidator.IsValid(customAlias)
+	if !isValid {
+		return entity.ShortLink{}, ErrInvalidCustomAlias{customAlias, violation}
+	}
+
+	if customAlias == "" {
 		autoAlias, err := c.createAutoAlias()
 		if err != nil {
 			// TODO create error type for fail create auto alias?
 			return entity.ShortLink{}, err
 		}
-		createArgs.CustomAlias = autoAlias
-	} else {
-		isValid, violation = c.aliasValidator.IsValid(createArgs.CustomAlias)
-		if !isValid {
-			return entity.ShortLink{}, ErrInvalidCustomAlias{createArgs.CustomAlias, violation}
-		}
+		customAlias = autoAlias
 	}
 
 	return c.createShortLink(entity.ShortLink{
-		LongLink: createArgs.LongLink,
-		Alias:    createArgs.CustomAlias,
+		LongLink: longLink,
+		Alias:    customAlias,
 		ExpireAt: createArgs.ExpireAt,
 	}, user)
 }

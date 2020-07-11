@@ -8,6 +8,7 @@ const (
 	ErrCodeUnknown            ErrCode = "unknown"
 	ErrCodeAliasAlreadyExist          = "aliasAlreadyExist"
 	ErrCodeShortLinkNotFound          = "shortLinkNotFound"
+	ErrCodeNewAliasNotSpecified		  = "newAliasNotSpecified"
 	ErrCodeRequesterNotHuman          = "requesterNotHuman"
 	ErrCodeInvalidLongLink            = "invalidLongLink"
 	ErrCodeInvalidCustomAlias         = "invalidCustomAlias"
@@ -78,6 +79,24 @@ func (e ErrShortLinkNotFound) Extensions() map[string]interface{} {
 // Error retrieves the human readable error message.
 func (e ErrShortLinkNotFound) Error() string {
 	return "shortlink does not exist"
+}
+
+// ErrNewAliasNotSpecified signifies that user provided an empty alias when updating short link
+type ErrNewAliasNotSpecified string
+
+var _ GraphQLError = (*ErrNewAliasNotSpecified)(nil)
+
+// Extensions keeps structured error metadata so that the clients can reliably
+// handle the error.
+func (e ErrNewAliasNotSpecified) Extensions() map[string]interface{} {
+	return map[string]interface{}{
+		"code":  ErrCodeNewAliasNotSpecified,
+		"alias": string(e),
+	}
+}
+
+func (e ErrNewAliasNotSpecified) Error() string {
+	return "new alias not specified for shortlink update"
 }
 
 // ErrNotHuman signifies that the API consumer is not human.

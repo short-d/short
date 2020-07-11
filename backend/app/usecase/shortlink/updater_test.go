@@ -19,6 +19,21 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 
 	now := time.Now().UTC()
 
+	// ShortLink creator and updater methods require string pointers
+	// It is not possible to reference a literal string directly in Go
+	// To make the test suite as clean as possible, they are instead declared below and
+	// the variables are passed into the test case by reference, which is a legal semantic in Go.
+	// https://golang.org/ref/spec#Address_operators
+
+	// Set of aliases representing different classes of aliases to be tested.
+	alias := "short-d"
+	fragmentAlias := "#http-bin"
+
+	// Set of long links representing different classes of long links to be tested.
+	longLink := "https://httpbin.org/get?p1=v1"
+	invalidLongLink := "aaaaaaaaaaaaaaaaaaa"
+	maliciousLongLink := "http://malware.wicar.org/data/ms14_064_ole_not_xp.html"
+
 	testCases := []struct {
 		name               string
 		alias              string
@@ -46,7 +61,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				LongLink: "https://httpbin.org/get?p1=v1",
+				LongLink: &longLink,
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -79,7 +94,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				LongLink: "https://httpbin.org/get?p1=v1",
+				LongLink: &longLink,
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -114,7 +129,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				CustomAlias: "short-d",
+				CustomAlias: &alias,
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -149,7 +164,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				LongLink: "aaaaaaaaaaaaaaaaaaa",
+				LongLink: &invalidLongLink,
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -179,7 +194,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				CustomAlias: "#http-bin",
+				CustomAlias: &fragmentAlias,
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -209,7 +224,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				LongLink: "https://google.com/",
+				LongLink: &longLink,
 			},
 			relationUsers: []entity.User{
 				{ID: "2"},
@@ -239,7 +254,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
+				LongLink: &maliciousLongLink,
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -252,7 +267,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				},
 			},
 			blockedLongLinks: map[string]bool{
-				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": true,
+				maliciousLongLink: true,
 			},
 			expectedHasErr:    true,
 			expectedShortLink: entity.ShortLink{},
