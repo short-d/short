@@ -305,6 +305,8 @@ steps:
         from_secret: DOCKERHUB_USERNAME
       DOCKERHUB_PASSWORD:
         from_secret: DOCKERHUB_PASSWORD
+      DOCKERHUB_ORG_ID:
+        from_secret: DOCKERHUB_ORG_ID
     commands:
       - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
       - docker tag short-frontend:latest $DOCKERHUB_USERNAME/short-frontend-staging:latest
@@ -312,7 +314,7 @@ steps:
       - docker tag story:latest $DOCKERHUB_ORG_ID/story-staging:latest
       - docker push $DOCKERHUB_USERNAME/short-frontend-staging:latest
       - docker push $DOCKERHUB_USERNAME/short-backend-staging:latest
-      - docker push $DOCKERHUB_USERNAME/story-staging:latest
+      - docker push $DOCKERHUB_ORG_ID/story-staging:latest
     volumes:
       - name: docker
         path: /var/run/docker.sock
@@ -363,6 +365,8 @@ steps:
         from_secret: DOCKERHUB_USERNAME
       DOCKERHUB_PASSWORD:
         from_secret: DOCKERHUB_PASSWORD
+      DOCKERHUB_ORG_ID:
+        from_secret: DOCKERHUB_ORG_ID
     commands:
       - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
       - docker tag short-frontend:latest $DOCKERHUB_USERNAME/short-frontend:latest
@@ -370,7 +374,7 @@ steps:
       - docker tag short-backend:latest $DOCKERHUB_USERNAME/short-backend:latest
       - docker push $DOCKERHUB_USERNAME/short-frontend:latest
       - docker push $DOCKERHUB_USERNAME/short-backend:latest
-      - docker push $DOCKERHUB_USERNAME/story:latest
+      - docker push $DOCKERHUB_ORG_ID/story:latest
     volumes:
       - name: docker
         path: /var/run/docker.sock
