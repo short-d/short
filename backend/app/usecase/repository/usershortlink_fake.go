@@ -16,7 +16,11 @@ type UserShortLinkFake struct {
 
 // CreateRelation creates many to many relationship between User and ShortLink.
 func (u *UserShortLinkFake) CreateRelation(user entity.User, shortLink entity.ShortLink) error {
-	if u.IsRelationExist(user, shortLink) {
+	isExist, err := u.HasMapping(user, shortLink.Alias)
+	if err != nil {
+		return err
+	}
+	if isExist {
 		return errors.New("relationship exists")
 	}
 	u.users = append(u.users, user)
@@ -34,20 +38,6 @@ func (u UserShortLinkFake) FindAliasesByUser(user entity.User) ([]string, error)
 		aliases = append(aliases, u.shortLinks[idx].Alias)
 	}
 	return aliases, nil
-}
-
-// IsRelationExist checks whether the an ShortLink is own by a given user.
-func (u UserShortLinkFake) IsRelationExist(user entity.User, shortLink entity.ShortLink) bool {
-	for idx, currUser := range u.users {
-		if currUser.ID != user.ID {
-			continue
-		}
-
-		if u.shortLinks[idx].Alias == shortLink.Alias {
-			return true
-		}
-	}
-	return false
 }
 
 // HasMapping checks whether a given short link belongs to a user.

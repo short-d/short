@@ -18,34 +18,9 @@ type ShortLink struct {
 	TwitterTags   metatag.Twitter
 }
 
-// ShortLinkInput represents possible ShortLink attributes
+// ShortLinkInput represents possible ShortLink attributes for a new short link or an updated short link.
 type ShortLinkInput struct {
-	LongLink    *string
-	CustomAlias *string
+	LongLink    string
+	CustomAlias string
 	ExpireAt    *time.Time
-}
-
-// GetLongLink fetches LongLink for ShortLinkInput, with empty string as the default value.
-func (s *ShortLinkInput) GetLongLink() string {
-	if s.LongLink == nil {
-		return ""
-	}
-	return *s.LongLink
-}
-
-// GetCustomAlias fetches CustomAlias for ShortLinkInput, with empty string as the default value.
-func (s *ShortLinkInput) GetCustomAlias() string {
-	if s.CustomAlias == nil {
-		return ""
-	}
-	return *s.CustomAlias
-}
-
-// GetShortLink creates a ShortLink entity instance using ShortLinkInput.
-func (s *ShortLinkInput) GetShortLink() ShortLink {
-	return ShortLink{
-		Alias:    s.GetCustomAlias(),
-		LongLink: s.GetLongLink(),
-		ExpireAt: s.ExpireAt,
-	}
 }

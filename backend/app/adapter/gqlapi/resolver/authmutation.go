@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/short-d/short/backend/app/adapter/gqlapi/args"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
-	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
@@ -23,7 +23,7 @@ type AuthMutation struct {
 
 // CreateShortLinkArgs represents the possible parameters for CreateShortLink endpoint
 type CreateShortLinkArgs struct {
-	ShortLink entity.ShortLinkInput
+	ShortLink args.ShortLinkInput
 	IsPublic  bool
 }
 
@@ -34,7 +34,7 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	shortLink := args.ShortLink.GetShortLink()
+	shortLink := args.ShortLink.CreateShortLinkInput()
 	isPublic := args.IsPublic
 
 	newShortLink, err := a.shortLinkCreator.CreateShortLink(shortLink, user, isPublic)
@@ -49,13 +49,13 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		m  shortlink.ErrMaliciousLongLink
 	)
 	if errors.As(err, &ae) {
-		return nil, ErrAliasExist(shortLink.Alias)
+		return nil, ErrAliasExist(shortLink.CustomAlias)
 	}
 	if errors.As(err, &l) {
 		return nil, ErrInvalidLongLink{shortLink.LongLink, string(l.Violation)}
 	}
 	if errors.As(err, &c) {
-		return nil, ErrInvalidCustomAlias{shortLink.Alias, string(c.Violation)}
+		return nil, ErrInvalidCustomAlias{shortLink.CustomAlias, string(c.Violation)}
 	}
 	if errors.As(err, &m) {
 		return nil, ErrMaliciousContent(shortLink.LongLink)
@@ -66,7 +66,7 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 // UpdateShortLinkArgs represents the possible parameters for updateShortLink endpoint
 type UpdateShortLinkArgs struct {
 	OldAlias  string
-	ShortLink entity.ShortLinkInput
+	ShortLink args.ShortLinkInput
 }
 
 // UpdateShortLink updates the relationship between the short link and the user
@@ -76,7 +76,7 @@ func (a AuthMutation) UpdateShortLink(args *UpdateShortLinkArgs) (*ShortLink, er
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	update := args.ShortLink.GetShortLink()
+	update := args.ShortLink.CreateShortLinkInput()
 
 	newShortLink, err := a.shortLinkUpdater.UpdateShortLink(args.OldAlias, update, user)
 	if err == nil {
@@ -91,19 +91,19 @@ func (a AuthMutation) UpdateShortLink(args *UpdateShortLinkArgs) (*ShortLink, er
 		nf shortlink.ErrShortLinkNotFound
 	)
 	if errors.As(err, &ae) {
-		return nil, ErrAliasExist(update.Alias)
+		return nil, ErrAliasExist(update.CustomAlias)
 	}
 	if errors.As(err, &l) {
 		return nil, ErrInvalidLongLink{update.LongLink, string(l.Violation)}
 	}
 	if errors.As(err, &c) {
-		return nil, ErrInvalidCustomAlias{update.Alias, string(c.Violation)}
+		return nil, ErrInvalidCustomAlias{update.CustomAlias, string(c.Violation)}
 	}
 	if errors.As(err, &m) {
 		return nil, ErrMaliciousContent(update.LongLink)
 	}
 	if errors.As(err, &nf) {
-		return nil, ErrShortLinkNotFound(update.Alias)
+		return nil, ErrShortLinkNotFound(update.CustomAlias)
 	}
 	return nil, ErrUnknown{}
 }

@@ -19,7 +19,7 @@ func (e ErrShortLinkNotFound) Error() string {
 
 // Updater mutates existing short links.
 type Updater interface {
-	UpdateShortLink(oldAlias string, update entity.ShortLink, user entity.User) (entity.ShortLink, error)
+	UpdateShortLink(oldAlias string, updateArgs entity.ShortLinkInput, user entity.User) (entity.ShortLink, error)
 }
 
 // UpdaterPersist persists the mutated short link in the data store.
@@ -35,7 +35,7 @@ type UpdaterPersist struct {
 // UpdateShortLink mutates a short link in the repository.
 func (u UpdaterPersist) UpdateShortLink(
 	oldAlias string,
-	update entity.ShortLink,
+	updateArgs entity.ShortLinkInput,
 	user entity.User,
 ) (entity.ShortLink, error) {
 	hasMapping, err := u.userShortLinkRepo.HasMapping(user, oldAlias)
@@ -46,7 +46,7 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, ErrShortLinkNotFound("short link not found")
 	}
 
-	aliasExist, err := u.shortLinkRepo.IsAliasExist(update.Alias)
+	aliasExist, err := u.shortLinkRepo.IsAliasExist(updateArgs.CustomAlias)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
@@ -59,8 +59,8 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, err
 	}
 
-	shortLink = u.updateAlias(shortLink, update)
-	shortLink = u.updateLongLink(shortLink, update)
+	shortLink = u.updateAlias(shortLink, updateArgs)
+	shortLink = u.updateLongLink(shortLink, updateArgs)
 
 	isValid, violation := u.aliasValidator.IsValid(shortLink.Alias)
 	if !isValid {
@@ -82,16 +82,16 @@ func (u UpdaterPersist) UpdateShortLink(
 	return u.shortLinkRepo.UpdateShortLink(oldAlias, shortLink)
 }
 
-func (u UpdaterPersist) updateAlias(shortLink, update entity.ShortLink) entity.ShortLink {
-	newAlias := update.Alias
+func (u UpdaterPersist) updateAlias(shortLink entity.ShortLink, updateArgs entity.ShortLinkInput) entity.ShortLink {
+	newAlias := updateArgs.CustomAlias
 	if newAlias != "" {
 		shortLink.Alias = newAlias
 	}
 	return shortLink
 }
 
-func (u *UpdaterPersist) updateLongLink(shortLink, update entity.ShortLink) entity.ShortLink {
-	newLongLink := update.LongLink
+func (u *UpdaterPersist) updateLongLink(shortLink entity.ShortLink, updateArgs entity.ShortLinkInput) entity.ShortLink {
+	newLongLink := updateArgs.LongLink
 	if newLongLink != "" {
 		shortLink.LongLink = newLongLink
 	}

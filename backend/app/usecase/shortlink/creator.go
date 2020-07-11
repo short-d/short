@@ -47,7 +47,7 @@ func (e ErrMaliciousLongLink) Error() string {
 
 // Creator represents a ShortLink alias creator
 type Creator interface {
-	CreateShortLink(shortLink entity.ShortLink, user entity.User, isPublic bool) (entity.ShortLink, error)
+	CreateShortLink(createArgs entity.ShortLinkInput, user entity.User, isPublic bool) (entity.ShortLink, error)
 }
 
 // CreatorPersist represents a ShortLink alias creator which persist the generated
@@ -64,8 +64,8 @@ type CreatorPersist struct {
 
 // CreateShortLink persists a new short link with a given or auto generated alias in the repository.
 // TODO(issue#235): add functionality for public URLs
-func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, user entity.User, isPublic bool) (entity.ShortLink, error) {
-	longLink := shortLink.LongLink
+func (c CreatorPersist) CreateShortLink(createArgs entity.ShortLinkInput, user entity.User, isPublic bool) (entity.ShortLink, error) {
+	longLink := createArgs.LongLink
 	isValid, violation := c.longLinkValidator.IsValid(longLink)
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidLongLink{longLink, violation}
@@ -75,21 +75,25 @@ func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, user entity.
 		return entity.ShortLink{}, ErrMaliciousLongLink(longLink)
 	}
 
-	if !(shortLink.Alias != "") {
+	if !(createArgs.CustomAlias != "") {
 		autoAlias, err := c.createAutoAlias()
 		if err != nil {
 			// TODO create error type for fail create auto alias?
 			return entity.ShortLink{}, err
 		}
-		shortLink.Alias = autoAlias
+		createArgs.CustomAlias = autoAlias
 	} else {
-		isValid, violation = c.aliasValidator.IsValid(shortLink.Alias)
+		isValid, violation = c.aliasValidator.IsValid(createArgs.CustomAlias)
 		if !isValid {
-			return entity.ShortLink{}, ErrInvalidCustomAlias{shortLink.Alias, violation}
+			return entity.ShortLink{}, ErrInvalidCustomAlias{createArgs.CustomAlias, violation}
 		}
 	}
 
-	return c.createShortLink(shortLink, user)
+	return c.createShortLink(entity.ShortLink{
+		LongLink: createArgs.LongLink,
+		Alias:    createArgs.CustomAlias,
+		ExpireAt: createArgs.ExpireAt,
+	}, user)
 }
 
 func (c CreatorPersist) createAutoAlias() (string, error) {

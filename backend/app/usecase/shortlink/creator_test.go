@@ -31,7 +31,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 		shortLinks         shortLinks
 		availableKeys      []keygen.Key
 		user               entity.User
-		shortLink          entity.ShortLink
+		shortLinkArgs      entity.ShortLinkInput
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
 		blockedLongLinks   map[string]bool
@@ -51,9 +51,9 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			shortLink: entity.ShortLink{
-				LongLink: "https://www.google.com",
-				Alias: alias,
+			shortLinkArgs: entity.ShortLinkInput{
+				LongLink:    "https://www.google.com",
+				CustomAlias: alias,
 			},
 			isPublic:  false,
 			expHasErr: true,
@@ -69,9 +69,9 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			shortLink: entity.ShortLink{
-				LongLink: "https://www.google.com",
-				Alias: longAlias,
+			shortLinkArgs: entity.ShortLinkInput{
+				LongLink:    "https://www.google.com",
+				CustomAlias: longAlias,
 			},
 			expHasErr: true,
 		},
@@ -81,9 +81,9 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			shortLink: entity.ShortLink{
-				LongLink: "https://www.google.com",
-				Alias: invalidFragmentAlias,
+			shortLinkArgs: entity.ShortLinkInput{
+				LongLink:    "https://www.google.com",
+				CustomAlias: invalidFragmentAlias,
 			},
 			expHasErr: true,
 		},
@@ -93,10 +93,10 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			shortLink: entity.ShortLink{
-				Alias:    alias,
-				LongLink: "https://www.google.com",
-				ExpireAt: &now,
+			shortLinkArgs: entity.ShortLinkInput{
+				CustomAlias: alias,
+				LongLink:    "https://www.google.com",
+				ExpireAt:    &now,
 			},
 			isPublic:  false,
 			expHasErr: false,
@@ -116,9 +116,9 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			shortLink: entity.ShortLink{
-				LongLink: "https://www.google.com",
-				Alias: emptyAlias,
+			shortLinkArgs: entity.ShortLinkInput{
+				LongLink:    "https://www.google.com",
+				CustomAlias: emptyAlias,
 			},
 			expHasErr: false,
 			expectedShortLink: entity.ShortLink{
@@ -134,9 +134,9 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			shortLink: entity.ShortLink{
-				LongLink: "https://www.google.com",
-				Alias: emptyAlias,
+			shortLinkArgs: entity.ShortLinkInput{
+				LongLink:    "https://www.google.com",
+				CustomAlias: emptyAlias,
 			},
 			expHasErr: true,
 		},
@@ -146,10 +146,10 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			shortLink: entity.ShortLink{
-				Alias:    "220uFicCJj",
-				LongLink: "aaaaaaaaaaaaaaaaaaa",
-				ExpireAt: &now,
+			shortLinkArgs: entity.ShortLinkInput{
+				CustomAlias: "220uFicCJj",
+				LongLink:    "aaaaaaaaaaaaaaaaaaa",
+				ExpireAt:    &now,
 			},
 			isPublic:  false,
 			expHasErr: true,
@@ -160,10 +160,10 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			user: entity.User{
 				Email: "alpha@example.com",
 			},
-			shortLink: entity.ShortLink{
-				Alias:    "220uFicCJj",
-				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
-				ExpireAt: &now,
+			shortLinkArgs: entity.ShortLinkInput{
+				CustomAlias: "220uFicCJj",
+				LongLink:    "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
+				ExpireAt:    &now,
 			},
 			blockedLongLinks: map[string]bool{
 				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": true,
@@ -202,17 +202,19 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 				riskDetector,
 			)
 
-			isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.shortLink)
+			isExist, err := userShortLinkRepo.HasMapping(testCase.user, testCase.shortLinkArgs.CustomAlias)
+			assert.Equal(t, nil, err)
 			assert.Equal(t, false, isExist)
 
-			shortLink, err := creator.CreateShortLink(testCase.shortLink, testCase.user, testCase.isPublic)
+			shortLink, err := creator.CreateShortLink(testCase.shortLinkArgs, testCase.user, testCase.isPublic)
 			if testCase.expHasErr {
 				assert.NotEqual(t, nil, err)
 
 				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.expectedShortLink.Alias)
 				assert.NotEqual(t, nil, err)
 
-				isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.expectedShortLink)
+				isExist, err := userShortLinkRepo.HasMapping(testCase.user, testCase.expectedShortLink.Alias)
+				assert.Equal(t, nil, err)
 				assert.Equal(t, false, isExist)
 				return
 			}
@@ -223,7 +225,8 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedShortLink, savedShortLink)
 
-			isExist = userShortLinkRepo.IsRelationExist(testCase.user, testCase.expectedShortLink)
+			isExist, err = userShortLinkRepo.HasMapping(testCase.user, testCase.expectedShortLink.Alias)
+			assert.Equal(t, nil, err)
 			assert.Equal(t, true, isExist)
 		})
 	}

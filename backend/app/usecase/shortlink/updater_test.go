@@ -24,7 +24,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		alias              string
 		shortlinks         shortLinks
 		user               entity.User
-		update             entity.ShortLink
+		updateArgs         entity.ShortLinkInput
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
 		blockedLongLinks   map[string]bool
@@ -45,7 +45,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			update: entity.ShortLink{
+			updateArgs: entity.ShortLinkInput{
 				LongLink: "https://httpbin.org/get?p1=v1",
 			},
 			relationUsers: []entity.User{
@@ -78,7 +78,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			update: entity.ShortLink{
+			updateArgs: entity.ShortLinkInput{
 				LongLink: "https://httpbin.org/get?p1=v1",
 			},
 			relationUsers: []entity.User{
@@ -113,8 +113,8 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			update: entity.ShortLink{
-				Alias: "short-d",
+			updateArgs: entity.ShortLinkInput{
+				CustomAlias: "short-d",
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -148,7 +148,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			update: entity.ShortLink{
+			updateArgs: entity.ShortLinkInput{
 				LongLink: "aaaaaaaaaaaaaaaaaaa",
 			},
 			relationUsers: []entity.User{
@@ -178,8 +178,8 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			update: entity.ShortLink{
-				Alias: "#http-bin",
+			updateArgs: entity.ShortLinkInput{
+				CustomAlias: "#http-bin",
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -208,7 +208,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			update: entity.ShortLink{
+			updateArgs: entity.ShortLinkInput{
 				LongLink: "https://google.com/",
 			},
 			relationUsers: []entity.User{
@@ -238,7 +238,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			update: entity.ShortLink{
+			updateArgs: entity.ShortLinkInput{
 				LongLink: "http://malware.wicar.org/data/ms14_064_ole_not_xp.html",
 			},
 			relationUsers: []entity.User{
@@ -283,14 +283,15 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				riskDetector,
 			)
 
-			shortLink, err := updater.UpdateShortLink(testCase.alias, testCase.update, testCase.user)
+			shortLink, err := updater.UpdateShortLink(testCase.alias, testCase.updateArgs, testCase.user)
 			if testCase.expectedHasErr {
 				assert.NotEqual(t, nil, err)
 
 				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.expectedShortLink.Alias)
 				assert.NotEqual(t, nil, err)
 
-				isExist := userShortLinkRepo.IsRelationExist(testCase.user, testCase.expectedShortLink)
+				isExist, err := userShortLinkRepo.HasMapping(testCase.user, testCase.expectedShortLink.Alias)
+				assert.Equal(t, nil, err)
 				assert.Equal(t, false, isExist)
 				return
 			}
@@ -299,7 +300,9 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			assert.Equal(t, testCase.expectedShortLink.Alias, shortLink.Alias)
 			assert.Equal(t, testCase.expectedShortLink.CreatedAt, shortLink.CreatedAt)
 			assert.Equal(t, true, shortLink.UpdatedAt.After(now))
-			assert.Equal(t, true, userShortLinkRepo.IsRelationExist(testCase.user, shortLink))
+			isExist, err := userShortLinkRepo.HasMapping(testCase.user, shortLink.Alias)
+			assert.Equal(t, nil, err)
+			assert.Equal(t, true, isExist)
 		})
 	}
 }
