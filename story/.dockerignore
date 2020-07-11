@@ -1,0 +1,10 @@
+# Documentation
+README.md
+doc
+
+# Node.js dependencies
+node_modules
+
+# ignore files
+.gitignore
+.dockerignore
