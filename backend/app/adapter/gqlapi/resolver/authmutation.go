@@ -89,7 +89,7 @@ func (a AuthMutation) UpdateShortLink(args *UpdateShortLinkArgs) (*ShortLink, er
 		c  shortlink.ErrInvalidCustomAlias
 		m  shortlink.ErrMaliciousLongLink
 		nf shortlink.ErrShortLinkNotFound
-		ns shortlink.ErrNewAliasNotSpecified
+		ns shortlink.ErrEmptyAlias
 	)
 	if errors.As(err, &ae) {
 		return nil, ErrAliasExist(update.GetCustomAlias(""))

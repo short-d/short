@@ -9,6 +9,7 @@ import (
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/ptr"
 	"github.com/short-d/short/backend/app/usecase/repository"
 	"github.com/short-d/short/backend/app/usecase/risk"
 	"github.com/short-d/short/backend/app/usecase/validator"
@@ -18,21 +19,6 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now().UTC()
-
-	// ShortLink creator and updater methods require string pointers
-	// It is not possible to reference a literal string directly in Go
-	// To make the test suite as clean as possible, they are instead declared below and
-	// the variables are passed into the test case by reference, which is a legal semantic in Go.
-	// https://golang.org/ref/spec#Address_operators
-
-	// Set of aliases representing different classes of aliases to be tested.
-	alias := "short-d"
-	fragmentAlias := "#http-bin"
-
-	// Set of long links representing different classes of long links to be tested.
-	longLink := "https://httpbin.org/get?p1=v1"
-	invalidLongLink := "aaaaaaaaaaaaaaaaaaa"
-	maliciousLongLink := "http://malware.wicar.org/data/ms14_064_ole_not_xp.html"
 
 	testCases := []struct {
 		name               string
@@ -61,7 +47,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				LongLink: &longLink,
+				LongLink: ptr.String("https://httpbin.org/get?p1=v1"),
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -94,7 +80,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				LongLink: &longLink,
+				LongLink: ptr.String("https://httpbin.org/get?p1=v1"),
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -110,7 +96,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			expectedShortLink: entity.ShortLink{},
 		},
 		{
-			name:  "alias already exist",
+			name:  "alias already exists",
 			alias: "git",
 			shortlinks: shortLinks{
 				"git": entity.ShortLink{
@@ -129,7 +115,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				CustomAlias: &alias,
+				CustomAlias: ptr.String("short-d"),
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -150,6 +136,96 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			expectedHasErr: true,
 		},
 		{
+			name:  "alias is empty",
+			alias: "git",
+			shortlinks: shortLinks{
+				"git": entity.ShortLink{
+					Alias:     "git",
+					LongLink:  "https://github.com/short-d",
+					UpdatedAt: &now,
+				},
+			},
+			user: entity.User{
+				ID:    "1",
+				Email: "gopher@golang.org",
+			},
+			updateArgs: entity.ShortLinkInput{
+				CustomAlias: ptr.String(""),
+			},
+			relationUsers: []entity.User{
+				{ID: "1"},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:     "git",
+					LongLink:  "https://github.com/short-d",
+					UpdatedAt: &now,
+				},
+			},
+			expectedHasErr: true,
+		},
+		{
+			name:  "long link not changed if not specified",
+			alias: "boGp9w35",
+			shortlinks: shortLinks{
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			user: entity.User{
+				ID:    "1",
+				Email: "gopher@golang.org",
+			},
+			updateArgs: entity.ShortLinkInput{
+				CustomAlias: ptr.String("short-d"),
+			},
+			relationUsers: []entity.User{
+				{ID: "1"},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			expectedShortLink: entity.ShortLink{
+				Alias:    "short-d",
+				LongLink: "https://httpbin.org",
+			},
+		},
+		{
+			name:  "long link is empty",
+			alias: "boGp9w35",
+			shortlinks: shortLinks{
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			user: entity.User{
+				ID:    "1",
+				Email: "gopher@golang.org",
+			},
+			updateArgs: entity.ShortLinkInput{
+				CustomAlias: ptr.String(""),
+			},
+			relationUsers: []entity.User{
+				{ID: "1"},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			expectedHasErr: true,
+		},
+		{
 			name:  "long link is invalid",
 			alias: "boGp9w35",
 			shortlinks: shortLinks{
@@ -164,7 +240,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				LongLink: &invalidLongLink,
+				LongLink: ptr.String("aaaaaaaaaaaaaaaaaaa"),
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -194,7 +270,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				CustomAlias: &fragmentAlias,
+				CustomAlias: ptr.String("#http-bin"),
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -224,7 +300,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				LongLink: &longLink,
+				LongLink: ptr.String("https://httpbin.org/get?p1=v1"),
 			},
 			relationUsers: []entity.User{
 				{ID: "2"},
@@ -254,7 +330,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				Email: "gopher@golang.org",
 			},
 			updateArgs: entity.ShortLinkInput{
-				LongLink: &maliciousLongLink,
+				LongLink: ptr.String("http://malware.wicar.org/data/ms14_064_ole_not_xp.html"),
 			},
 			relationUsers: []entity.User{
 				{ID: "1"},
@@ -267,7 +343,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				},
 			},
 			blockedLongLinks: map[string]bool{
-				maliciousLongLink: true,
+				"http://malware.wicar.org/data/ms14_064_ole_not_xp.html": true,
 			},
 			expectedHasErr:    true,
 			expectedShortLink: entity.ShortLink{},

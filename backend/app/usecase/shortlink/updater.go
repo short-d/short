@@ -17,10 +17,10 @@ func (e ErrShortLinkNotFound) Error() string {
 	return string(e)
 }
 
-// ErrNewAliasNotSpecified represents no alias specified for update.
-type ErrNewAliasNotSpecified string
+// ErrEmptyAlias represents empty alias specified
+type ErrEmptyAlias string
 
-func (e ErrNewAliasNotSpecified) Error() string {
+func (e ErrEmptyAlias) Error() string {
 	return string(e)
 }
 
@@ -55,7 +55,7 @@ func (u UpdaterPersist) UpdateShortLink(
 
 	newAlias := shortLinkInput.GetCustomAlias(oldAlias)
 	if newAlias == "" {
-		return entity.ShortLink{}, ErrNewAliasNotSpecified("new alias not specified")
+		return entity.ShortLink{}, ErrEmptyAlias("alias is empty")
 	}
 
 	// Only check if it exists if user is changing the alias to something else
