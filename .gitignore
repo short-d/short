@@ -2,8 +2,5 @@
 .idea
 launch.json
 
-# Build
-build/
-
 # Code Coverage
 /coverage*
