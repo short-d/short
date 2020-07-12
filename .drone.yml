@@ -194,6 +194,27 @@ steps:
       event:
         - push
 
+  - name: create storybook assets
+      image: node:12.7.0-alpine
+      volumes:
+        - name: frontend-dep
+          path: /drone/src/frontend/node_modules
+        - name: story-dep
+          path: /drone/src/story/node_modules
+      commands:
+        - apk add --no-cache bash git
+        - cd frontend
+        - yarn
+        - cd ../story
+        - yarn
+        - yarn build
+      when:
+        branch:
+          - master
+          - testing
+        event:
+          - push
+
   - name: build testing frontend Docker image
     image: docker
     commands:
