@@ -15,8 +15,11 @@ type UserShortLinkFake struct {
 }
 
 // CreateRelation creates many to many relationship between User and ShortLink.
-func (u *UserShortLinkFake) CreateRelation(user entity.User, shortLink entity.ShortLink) error {
-	isExist, err := u.HasMapping(user, shortLink.Alias)
+func (u *UserShortLinkFake) CreateRelation(user entity.User, shortLinkInput entity.ShortLinkInput) error {
+	if shortLinkInput.CustomAlias == nil {
+		return errors.New("empty alias")
+	}
+	isExist, err := u.HasMapping(user, *shortLinkInput.CustomAlias)
 	if err != nil {
 		return err
 	}
@@ -24,7 +27,12 @@ func (u *UserShortLinkFake) CreateRelation(user entity.User, shortLink entity.Sh
 		return errors.New("relationship exists")
 	}
 	u.users = append(u.users, user)
-	u.shortLinks = append(u.shortLinks, shortLink)
+	u.shortLinks = append(u.shortLinks, entity.ShortLink{
+		Alias: *shortLinkInput.CustomAlias,
+		LongLink: shortLinkInput.GetLongLink(""),
+		ExpireAt: shortLinkInput.ExpireAt,
+		CreatedAt: shortLinkInput.CreatedAt,
+	})
 	return nil
 }
 

@@ -21,15 +21,23 @@ func (s ShortLinkFake) IsAliasExist(alias string) (bool, error) {
 }
 
 // CreateShortLink inserts a new ShortLink into short_link table.
-func (s *ShortLinkFake) CreateShortLink(shortLink entity.ShortLink) error {
-	isExist, err := s.IsAliasExist(shortLink.Alias)
+func (s *ShortLinkFake) CreateShortLink(shortLinkInput entity.ShortLinkInput) error {
+	if shortLinkInput.CustomAlias == nil {
+		return errors.New("alias empty")
+	}
+	isExist, err := s.IsAliasExist(*shortLinkInput.CustomAlias)
 	if err != nil {
 		return err
 	}
 	if isExist {
 		return errors.New("alias exists")
 	}
-	s.shortLinks[shortLink.Alias] = shortLink
+	s.shortLinks[*shortLinkInput.CustomAlias] = entity.ShortLink{
+		Alias: *shortLinkInput.CustomAlias,
+		LongLink: shortLinkInput.GetLongLink(""),
+		ExpireAt: shortLinkInput.ExpireAt,
+		CreatedAt: shortLinkInput.CreatedAt,
+	}
 	return nil
 }
 
@@ -65,7 +73,11 @@ func (s ShortLinkFake) GetShortLinksByAliases(aliases []string) ([]entity.ShortL
 }
 
 // UpdateShortLink updates an existing ShortLink with new properties.
-func (s ShortLinkFake) UpdateShortLink(oldAlias string, newShortLink entity.ShortLink) (entity.ShortLink, error) {
+func (s ShortLinkFake) UpdateShortLink(oldAlias string, shortLinkInput entity.ShortLinkInput) (entity.ShortLink, error) {
+	if shortLinkInput.CustomAlias == nil {
+		return entity.ShortLink{}, errors.New("alias empty")
+	}
+
 	prevShortLink, ok := s.shortLinks[oldAlias]
 	if !ok {
 		return entity.ShortLink{}, errors.New("alias not found")
@@ -75,9 +87,9 @@ func (s ShortLinkFake) UpdateShortLink(oldAlias string, newShortLink entity.Shor
 	createdBy := prevShortLink.CreatedBy
 	createdAt := prevShortLink.CreatedAt
 	return entity.ShortLink{
-		Alias:     newShortLink.Alias,
-		LongLink:  newShortLink.LongLink,
-		ExpireAt:  newShortLink.ExpireAt,
+		Alias:     *shortLinkInput.CustomAlias,
+		LongLink:  *shortLinkInput.LongLink,
+		ExpireAt:  shortLinkInput.ExpireAt,
 		CreatedBy: createdBy,
 		CreatedAt: createdAt,
 		UpdatedAt: &now,

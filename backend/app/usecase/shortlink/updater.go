@@ -92,9 +92,13 @@ func (u UpdaterPersist) UpdateShortLink(
 	}
 
 	updateTime := u.timer.Now()
-	shortLink.UpdatedAt = &updateTime
 
-	return u.shortLinkRepo.UpdateShortLink(oldAlias, shortLink)
+	return u.shortLinkRepo.UpdateShortLink(oldAlias, entity.ShortLinkInput{
+		CustomAlias: &shortLink.Alias,
+		LongLink: &shortLink.LongLink,
+		ExpireAt: shortLink.ExpireAt,
+		UpdatedAt: &updateTime,
+	})
 }
 
 // NewUpdaterPersist creates a new UpdaterPersist instance.

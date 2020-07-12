@@ -14,6 +14,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/entity/metatag"
+	"github.com/short-d/short/backend/app/fw/ptr"
 )
 
 var insertShortLinkRowSQL = fmt.Sprintf(`
@@ -444,14 +445,11 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 	title1 := "title1"
 	description1 := "description1"
 	imageURL1 := "url1"
-	title2 := "title2"
-	description2 := "description2"
-	imageURL2 := "url2"
 
 	testCases := []struct {
 		name      string
 		tableRows []shortLinkTableRow
-		shortLink entity.ShortLink
+		shortLinkInput entity.ShortLinkInput
 		hasErr    bool
 	}{
 		{
@@ -469,20 +467,11 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 					twitterImageURL:    &imageURL1,
 				},
 			},
-			shortLink: entity.ShortLink{
-				Alias:    "220uFicCJj",
-				LongLink: "http://www.google.com",
+			shortLinkInput: entity.ShortLinkInput{
+				CustomAlias: ptr.String("220uFicCJj"),
+				LongLink: ptr.String("http://www.google.com"),
 				ExpireAt: &now,
-				OpenGraphTags: metatag.OpenGraph{
-					Title:       &title2,
-					Description: &description2,
-					ImageURL:    &imageURL2,
-				},
-				TwitterTags: metatag.Twitter{
-					Title:       &title2,
-					Description: &description2,
-					ImageURL:    &imageURL2,
-				},
+				CreatedAt: &now,
 			},
 			hasErr: true,
 		},
@@ -501,20 +490,11 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 					twitterImageURL:    &imageURL1,
 				},
 			},
-			shortLink: entity.ShortLink{
-				Alias:    "220uFicCJj",
-				LongLink: "http://www.google.com",
+			shortLinkInput: entity.ShortLinkInput{
+				CustomAlias:    ptr.String("220uFicCJj"),
+				LongLink: ptr.String("http://www.google.com"),
 				ExpireAt: &now,
-				OpenGraphTags: metatag.OpenGraph{
-					Title:       &title2,
-					Description: &description2,
-					ImageURL:    &imageURL2,
-				},
-				TwitterTags: metatag.Twitter{
-					Title:       &title2,
-					Description: &description2,
-					ImageURL:    &imageURL2,
-				},
+				CreatedAt: &now,
 			},
 			hasErr: false,
 		},
@@ -531,7 +511,7 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
 					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
-					err := shortLinkRepo.CreateShortLink(testCase.shortLink)
+					err := shortLinkRepo.CreateShortLink(testCase.shortLinkInput)
 
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
@@ -540,9 +520,12 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 
 					assert.Equal(t, nil, err)
 
-					shortLink, err := shortLinkRepo.GetShortLinkByAlias(testCase.shortLink.Alias)
+					shortLink, err := shortLinkRepo.GetShortLinkByAlias(*testCase.shortLinkInput.CustomAlias)
 					assert.Equal(t, nil, err)
-					assert.Equal(t, testCase.shortLink, shortLink)
+					assert.Equal(t, *testCase.shortLinkInput.CustomAlias, shortLink.Alias)
+					assert.Equal(t, *testCase.shortLinkInput.LongLink, shortLink.LongLink)
+					assert.Equal(t, testCase.shortLinkInput.ExpireAt, shortLink.ExpireAt)
+					assert.Equal(t, testCase.shortLinkInput.CreatedAt, shortLink.CreatedAt)
 				},
 			)
 		})
@@ -556,7 +539,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 	testCases := []struct {
 		name              string
 		oldAlias          string
-		newShortLink      entity.ShortLink
+		shortLinkInput      entity.ShortLinkInput
 		tableRows         []shortLinkTableRow
 		hasErr            bool
 		expectedShortLink entity.ShortLink
@@ -595,9 +578,9 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 		{
 			name:     "valid new alias",
 			oldAlias: "220uFicCJj",
-			newShortLink: entity.ShortLink{
-				Alias:     "GxtKXM9V",
-				LongLink:  "https://www.google.com",
+			shortLinkInput: entity.ShortLinkInput{
+				CustomAlias:     ptr.String("GxtKXM9V"),
+				LongLink:  ptr.String("https://www.google.com"),
 				UpdatedAt: &now,
 			},
 			tableRows: []shortLinkTableRow{
@@ -630,11 +613,11 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
 					shortLink, err := shortLinkRepo.UpdateShortLink(
 						testCase.oldAlias,
-						testCase.newShortLink,
+						testCase.shortLinkInput,
 					)
 					assert.Equal(t, nil, err)
 
-					shortLink, err = shortLinkRepo.GetShortLinkByAlias(testCase.newShortLink.Alias)
+					shortLink, err = shortLinkRepo.GetShortLinkByAlias(*testCase.shortLinkInput.CustomAlias)
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 						return

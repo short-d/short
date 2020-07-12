@@ -19,7 +19,7 @@ type UserShortLinkSQL struct {
 
 // CreateRelation establishes bi-directional relationship between a user and a
 // short link in user_short_link table.
-func (u UserShortLinkSQL) CreateRelation(user entity.User, shortLink entity.ShortLink) error {
+func (u UserShortLinkSQL) CreateRelation(user entity.User, shortLinkInput entity.ShortLinkInput) error {
 	statement := fmt.Sprintf(`
 INSERT INTO "%s" ("%s","%s")
 VALUES ($1,$2)
@@ -29,7 +29,7 @@ VALUES ($1,$2)
 		table.UserShortLink.ColumnShortLinkAlias,
 	)
 
-	_, err := u.db.Exec(statement, user.ID, shortLink.Alias)
+	_, err := u.db.Exec(statement, user.ID, shortLinkInput.GetCustomAlias(""))
 	return err
 }
 

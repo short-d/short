@@ -90,11 +90,10 @@ func (c CreatorPersist) CreateShortLink(shortLinkInput entity.ShortLinkInput, us
 		customAlias = autoAlias
 	}
 
-	return c.createShortLink(entity.ShortLink{
-		LongLink: longLink,
-		Alias:    customAlias,
-		ExpireAt: shortLinkInput.ExpireAt,
-	}, user)
+	shortLinkInput.LongLink = &longLink
+	shortLinkInput.CustomAlias = &customAlias
+
+	return c.createShortLink(shortLinkInput, user)
 }
 
 func (c CreatorPersist) generateAlias() (string, error) {
@@ -105,8 +104,8 @@ func (c CreatorPersist) generateAlias() (string, error) {
 	return string(key), nil
 }
 
-func (c CreatorPersist) createShortLink(shortLink entity.ShortLink, user entity.User) (entity.ShortLink, error) {
-	isExist, err := c.shortLinkRepo.IsAliasExist(shortLink.Alias)
+func (c CreatorPersist) createShortLink(shortLinkInput entity.ShortLinkInput, user entity.User) (entity.ShortLink, error) {
+	isExist, err := c.shortLinkRepo.IsAliasExist(*shortLinkInput.CustomAlias)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
@@ -116,15 +115,20 @@ func (c CreatorPersist) createShortLink(shortLink entity.ShortLink, user entity.
 	}
 
 	now := c.timer.Now().UTC()
-	shortLink.CreatedAt = &now
+	shortLinkInput.CreatedAt = &now
 
-	err = c.shortLinkRepo.CreateShortLink(shortLink)
+	err = c.shortLinkRepo.CreateShortLink(shortLinkInput)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
 
-	err = c.userShortLinkRepo.CreateRelation(user, shortLink)
-	return shortLink, err
+	err = c.userShortLinkRepo.CreateRelation(user, shortLinkInput)
+	return entity.ShortLink{
+		LongLink: *shortLinkInput.LongLink,
+		Alias:    *shortLinkInput.CustomAlias,
+		ExpireAt: shortLinkInput.ExpireAt,
+		CreatedAt: shortLinkInput.CreatedAt,
+	}, err
 }
 
 // NewCreatorPersist creates CreatorPersist

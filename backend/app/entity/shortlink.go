@@ -23,6 +23,8 @@ type ShortLinkInput struct {
 	LongLink    *string
 	CustomAlias *string
 	ExpireAt    *time.Time
+	CreatedAt     *time.Time
+	UpdatedAt     *time.Time
 }
 
 // GetLongLink fetches LongLink for ShortLinkInput, with empty string as the default value.
