@@ -28,9 +28,9 @@ func (u *UserShortLinkFake) CreateRelation(user entity.User, shortLinkInput enti
 	}
 	u.users = append(u.users, user)
 	u.shortLinks = append(u.shortLinks, entity.ShortLink{
-		Alias: *shortLinkInput.CustomAlias,
-		LongLink: shortLinkInput.GetLongLink(""),
-		ExpireAt: shortLinkInput.ExpireAt,
+		Alias:     *shortLinkInput.CustomAlias,
+		LongLink:  shortLinkInput.GetLongLink(""),
+		ExpireAt:  shortLinkInput.ExpireAt,
 		CreatedAt: shortLinkInput.CreatedAt,
 	})
 	return nil

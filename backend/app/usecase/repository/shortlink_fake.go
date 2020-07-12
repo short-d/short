@@ -33,9 +33,9 @@ func (s *ShortLinkFake) CreateShortLink(shortLinkInput entity.ShortLinkInput) er
 		return errors.New("alias exists")
 	}
 	s.shortLinks[*shortLinkInput.CustomAlias] = entity.ShortLink{
-		Alias: *shortLinkInput.CustomAlias,
-		LongLink: shortLinkInput.GetLongLink(""),
-		ExpireAt: shortLinkInput.ExpireAt,
+		Alias:     *shortLinkInput.CustomAlias,
+		LongLink:  shortLinkInput.GetLongLink(""),
+		ExpireAt:  shortLinkInput.ExpireAt,
 		CreatedAt: shortLinkInput.CreatedAt,
 	}
 	return nil

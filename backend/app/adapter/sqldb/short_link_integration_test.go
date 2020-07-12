@@ -447,10 +447,10 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 	imageURL1 := "url1"
 
 	testCases := []struct {
-		name      string
-		tableRows []shortLinkTableRow
+		name           string
+		tableRows      []shortLinkTableRow
 		shortLinkInput entity.ShortLinkInput
-		hasErr    bool
+		hasErr         bool
 	}{
 		{
 			name: "alias exists",
@@ -469,9 +469,9 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 			},
 			shortLinkInput: entity.ShortLinkInput{
 				CustomAlias: ptr.String("220uFicCJj"),
-				LongLink: ptr.String("http://www.google.com"),
-				ExpireAt: &now,
-				CreatedAt: &now,
+				LongLink:    ptr.String("http://www.google.com"),
+				ExpireAt:    &now,
+				CreatedAt:   &now,
 			},
 			hasErr: true,
 		},
@@ -491,10 +491,10 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 				},
 			},
 			shortLinkInput: entity.ShortLinkInput{
-				CustomAlias:    ptr.String("220uFicCJj"),
-				LongLink: ptr.String("http://www.google.com"),
-				ExpireAt: &now,
-				CreatedAt: &now,
+				CustomAlias: ptr.String("220uFicCJj"),
+				LongLink:    ptr.String("http://www.google.com"),
+				ExpireAt:    &now,
+				CreatedAt:   &now,
 			},
 			hasErr: false,
 		},
@@ -539,7 +539,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 	testCases := []struct {
 		name              string
 		oldAlias          string
-		shortLinkInput      entity.ShortLinkInput
+		shortLinkInput    entity.ShortLinkInput
 		tableRows         []shortLinkTableRow
 		hasErr            bool
 		expectedShortLink entity.ShortLink
@@ -579,9 +579,9 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 			name:     "valid new alias",
 			oldAlias: "220uFicCJj",
 			shortLinkInput: entity.ShortLinkInput{
-				CustomAlias:     ptr.String("GxtKXM9V"),
-				LongLink:  ptr.String("https://www.google.com"),
-				UpdatedAt: &now,
+				CustomAlias: ptr.String("GxtKXM9V"),
+				LongLink:    ptr.String("https://www.google.com"),
+				UpdatedAt:   &now,
 			},
 			tableRows: []shortLinkTableRow{
 				{

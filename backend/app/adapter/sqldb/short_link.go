@@ -142,9 +142,9 @@ WHERE "%s"=$5;`,
 	}
 
 	return entity.ShortLink{
-		Alias: *shortLinkInput.CustomAlias,
-		LongLink: *shortLinkInput.LongLink,
-		ExpireAt: shortLinkInput.ExpireAt,
+		Alias:     *shortLinkInput.CustomAlias,
+		LongLink:  *shortLinkInput.LongLink,
+		ExpireAt:  shortLinkInput.ExpireAt,
 		UpdatedAt: shortLinkInput.UpdatedAt,
 	}, nil
 }

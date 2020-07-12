@@ -124,9 +124,9 @@ func (c CreatorPersist) createShortLink(shortLinkInput entity.ShortLinkInput, us
 
 	err = c.userShortLinkRepo.CreateRelation(user, shortLinkInput)
 	return entity.ShortLink{
-		LongLink: *shortLinkInput.LongLink,
-		Alias:    *shortLinkInput.CustomAlias,
-		ExpireAt: shortLinkInput.ExpireAt,
+		LongLink:  *shortLinkInput.LongLink,
+		Alias:     *shortLinkInput.CustomAlias,
+		ExpireAt:  shortLinkInput.ExpireAt,
 		CreatedAt: shortLinkInput.CreatedAt,
 	}, err
 }

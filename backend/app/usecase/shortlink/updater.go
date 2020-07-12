@@ -95,9 +95,9 @@ func (u UpdaterPersist) UpdateShortLink(
 
 	return u.shortLinkRepo.UpdateShortLink(oldAlias, entity.ShortLinkInput{
 		CustomAlias: &shortLink.Alias,
-		LongLink: &shortLink.LongLink,
-		ExpireAt: shortLink.ExpireAt,
-		UpdatedAt: &updateTime,
+		LongLink:    &shortLink.LongLink,
+		ExpireAt:    shortLink.ExpireAt,
+		UpdatedAt:   &updateTime,
 	})
 }
 
