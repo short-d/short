@@ -105,7 +105,7 @@ func (c CreatorPersist) generateAlias() (string, error) {
 }
 
 func (c CreatorPersist) createShortLink(shortLinkInput entity.ShortLinkInput, user entity.User) (entity.ShortLink, error) {
-	isExist, err := c.shortLinkRepo.IsAliasExist(*shortLinkInput.CustomAlias)
+	isExist, err := c.shortLinkRepo.IsAliasExist(shortLinkInput.GetCustomAlias(""))
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
@@ -124,8 +124,8 @@ func (c CreatorPersist) createShortLink(shortLinkInput entity.ShortLinkInput, us
 
 	err = c.userShortLinkRepo.CreateRelation(user, shortLinkInput)
 	return entity.ShortLink{
-		LongLink:  *shortLinkInput.LongLink,
-		Alias:     *shortLinkInput.CustomAlias,
+		LongLink:  shortLinkInput.GetLongLink(""),
+		Alias:     shortLinkInput.GetCustomAlias(""),
 		ExpireAt:  shortLinkInput.ExpireAt,
 		CreatedAt: shortLinkInput.CreatedAt,
 	}, err

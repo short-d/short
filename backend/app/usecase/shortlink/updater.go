@@ -74,15 +74,14 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, err
 	}
 
-	shortLink.Alias = newAlias
-	shortLink.LongLink = shortLinkInput.GetLongLink(shortLink.LongLink)
+	longLink = shortLinkInput.GetLongLink(shortLink.LongLink)
 
-	isValid, violation := u.aliasValidator.IsValid(shortLink.Alias)
+	isValid, violation := u.aliasValidator.IsValid(newAlias)
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidCustomAlias{shortLink.Alias, violation}
 	}
 
-	isValid, violation = u.longLinkValidator.IsValid(shortLink.LongLink)
+	isValid, violation = u.longLinkValidator.IsValid(longLink)
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidLongLink{shortLink.LongLink, violation}
 	}
@@ -94,8 +93,8 @@ func (u UpdaterPersist) UpdateShortLink(
 	updateTime := u.timer.Now()
 
 	return u.shortLinkRepo.UpdateShortLink(oldAlias, entity.ShortLinkInput{
-		CustomAlias: &shortLink.Alias,
-		LongLink:    &shortLink.LongLink,
+		CustomAlias: &newAlias,
+		LongLink:    &longLink,
 		ExpireAt:    shortLink.ExpireAt,
 		UpdatedAt:   &updateTime,
 	})

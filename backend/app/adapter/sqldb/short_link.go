@@ -106,8 +106,8 @@ VALUES ($1, $2, $3, $4);`,
 	)
 	_, err := s.db.Exec(
 		statement,
-		shortLinkInput.CustomAlias,
-		shortLinkInput.LongLink,
+		shortLinkInput.GetCustomAlias(""),
+		shortLinkInput.GetLongLink(""),
 		shortLinkInput.ExpireAt,
 		shortLinkInput.CreatedAt,
 	)
@@ -130,8 +130,8 @@ WHERE "%s"=$5;`,
 
 	_, err := s.db.Exec(
 		statement,
-		shortLinkInput.CustomAlias,
-		shortLinkInput.LongLink,
+		shortLinkInput.GetCustomAlias(""),
+		shortLinkInput.GetLongLink(""),
 		shortLinkInput.ExpireAt,
 		shortLinkInput.UpdatedAt,
 		oldAlias,
@@ -142,8 +142,8 @@ WHERE "%s"=$5;`,
 	}
 
 	return entity.ShortLink{
-		Alias:     *shortLinkInput.CustomAlias,
-		LongLink:  *shortLinkInput.LongLink,
+		Alias:     shortLinkInput.GetCustomAlias(""),
+		LongLink:  shortLinkInput.GetLongLink(""),
 		ExpireAt:  shortLinkInput.ExpireAt,
 		UpdatedAt: shortLinkInput.UpdatedAt,
 	}, nil

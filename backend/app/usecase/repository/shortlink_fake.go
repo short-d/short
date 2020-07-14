@@ -32,8 +32,9 @@ func (s *ShortLinkFake) CreateShortLink(shortLinkInput entity.ShortLinkInput) er
 	if isExist {
 		return errors.New("alias exists")
 	}
-	s.shortLinks[*shortLinkInput.CustomAlias] = entity.ShortLink{
-		Alias:     *shortLinkInput.CustomAlias,
+        customAlias := shortLinkInput.GetCustomAlias("")
+	s.shortLinks[customAlias] = entity.ShortLink{
+		Alias:     customAlias,
 		LongLink:  shortLinkInput.GetLongLink(""),
 		ExpireAt:  shortLinkInput.ExpireAt,
 		CreatedAt: shortLinkInput.CreatedAt,
@@ -87,8 +88,8 @@ func (s ShortLinkFake) UpdateShortLink(oldAlias string, shortLinkInput entity.Sh
 	createdBy := prevShortLink.CreatedBy
 	createdAt := prevShortLink.CreatedAt
 	return entity.ShortLink{
-		Alias:     *shortLinkInput.CustomAlias,
-		LongLink:  *shortLinkInput.LongLink,
+		Alias:     shortLinkInput.GetCustomAlias(""),
+		LongLink:  shortLinkInput.GetLongLink(""),
 		ExpireAt:  shortLinkInput.ExpireAt,
 		CreatedBy: createdBy,
 		CreatedAt: createdAt,

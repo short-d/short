@@ -27,7 +27,7 @@ type ShortLinkInput struct {
 	UpdatedAt   *time.Time
 }
 
-// GetLongLink fetches LongLink for ShortLinkInput, with empty string as the default value.
+// GetLongLink fetches LongLink for ShortLinkInput with default value.
 func (s *ShortLinkInput) GetLongLink(defaultVal string) string {
 	if s.LongLink == nil {
 		return defaultVal

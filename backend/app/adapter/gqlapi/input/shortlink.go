@@ -13,7 +13,7 @@ type ShortLinkInput struct {
 	ExpireAt    *time.Time
 }
 
-// CreateShortLinkInput will massage the GraphQL arguments into a form that use case will accept.
+// CreateShortLinkInput converts GraphQL ShortLinkInput into consumable entity for use cases.
 func (s ShortLinkInput) CreateShortLinkInput() entity.ShortLinkInput {
 	return entity.ShortLinkInput{
 		LongLink:    s.LongLink,

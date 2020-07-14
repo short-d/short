@@ -520,7 +520,7 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 
 					assert.Equal(t, nil, err)
 
-					shortLink, err := shortLinkRepo.GetShortLinkByAlias(*testCase.shortLinkInput.CustomAlias)
+					shortLink, err := shortLinkRepo.GetShortLinkByAlias(testCase.shortLinkInput.GetCustomAlias(""))
 					assert.Equal(t, nil, err)
 					assert.Equal(t, *testCase.shortLinkInput.CustomAlias, shortLink.Alias)
 					assert.Equal(t, *testCase.shortLinkInput.LongLink, shortLink.LongLink)
@@ -617,7 +617,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 					)
 					assert.Equal(t, nil, err)
 
-					shortLink, err = shortLinkRepo.GetShortLinkByAlias(*testCase.shortLinkInput.CustomAlias)
+					shortLink, err = shortLinkRepo.GetShortLinkByAlias(testCase.shortLinkInput.GetCustomAlias(""))
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 						return
