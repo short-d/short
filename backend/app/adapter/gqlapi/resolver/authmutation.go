@@ -104,7 +104,7 @@ func (a AuthMutation) UpdateShortLink(args *UpdateShortLinkArgs) (*ShortLink, er
 		return nil, ErrMaliciousContent(update.GetLongLink(""))
 	}
 	if errors.As(err, &nf) {
-		return nil, ErrShortLinkNotFound(update.GetCustomAlias(""))
+		return nil, ErrShortLinkNotFound(args.OldAlias)
 	}
 	if errors.As(err, &ns) {
 		return nil, ErrEmptyAlias{}

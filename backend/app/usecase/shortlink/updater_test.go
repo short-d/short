@@ -25,7 +25,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		alias              string
 		shortlinks         shortLinks
 		user               entity.User
-		updateArgs         entity.ShortLinkInput
+		shortLinkInput     entity.ShortLinkInput
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
 		blockedLongLinks   map[string]bool
@@ -46,7 +46,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			updateArgs: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				LongLink: ptr.String("https://httpbin.org/get?p1=v1"),
 			},
 			relationUsers: []entity.User{
@@ -79,7 +79,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			updateArgs: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				LongLink: ptr.String("https://httpbin.org/get?p1=v1"),
 			},
 			relationUsers: []entity.User{
@@ -114,7 +114,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			updateArgs: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				CustomAlias: ptr.String("short-d"),
 			},
 			relationUsers: []entity.User{
@@ -149,7 +149,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			updateArgs: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				CustomAlias: ptr.String(""),
 			},
 			relationUsers: []entity.User{
@@ -178,7 +178,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			updateArgs: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				CustomAlias: ptr.String("short-d"),
 			},
 			relationUsers: []entity.User{
@@ -210,7 +210,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			updateArgs: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				CustomAlias: ptr.String(""),
 			},
 			relationUsers: []entity.User{
@@ -239,7 +239,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			updateArgs: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				LongLink: ptr.String("aaaaaaaaaaaaaaaaaaa"),
 			},
 			relationUsers: []entity.User{
@@ -269,7 +269,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			updateArgs: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				CustomAlias: ptr.String("#http-bin"),
 			},
 			relationUsers: []entity.User{
@@ -299,7 +299,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			updateArgs: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				LongLink: ptr.String("https://httpbin.org/get?p1=v1"),
 			},
 			relationUsers: []entity.User{
@@ -329,7 +329,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				ID:    "1",
 				Email: "gopher@golang.org",
 			},
-			updateArgs: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				LongLink: ptr.String("http://malware.wicar.org/data/ms14_064_ole_not_xp.html"),
 			},
 			relationUsers: []entity.User{
@@ -374,7 +374,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				riskDetector,
 			)
 
-			shortLink, err := updater.UpdateShortLink(testCase.alias, testCase.updateArgs, testCase.user)
+			shortLink, err := updater.UpdateShortLink(testCase.alias, testCase.shortLinkInput, testCase.user)
 			if testCase.expectedHasErr {
 				assert.NotEqual(t, nil, err)
 

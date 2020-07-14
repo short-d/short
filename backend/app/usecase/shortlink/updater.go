@@ -50,7 +50,7 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, err
 	}
 	if !hasMapping {
-		return entity.ShortLink{}, ErrShortLinkNotFound("short link not found")
+		return entity.ShortLink{}, ErrShortLinkNotFound(oldAlias)
 	}
 
 	newAlias := shortLinkInput.GetCustomAlias(oldAlias)
@@ -74,7 +74,7 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, err
 	}
 
-	longLink = shortLinkInput.GetLongLink(shortLink.LongLink)
+	longLink := shortLinkInput.GetLongLink(shortLink.LongLink)
 
 	isValid, violation := u.aliasValidator.IsValid(newAlias)
 	if !isValid {
