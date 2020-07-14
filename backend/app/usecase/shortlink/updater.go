@@ -78,16 +78,16 @@ func (u UpdaterPersist) UpdateShortLink(
 
 	isValid, violation := u.aliasValidator.IsValid(newAlias)
 	if !isValid {
-		return entity.ShortLink{}, ErrInvalidCustomAlias{shortLink.Alias, violation}
+		return entity.ShortLink{}, ErrInvalidCustomAlias{newAlias, violation}
 	}
 
 	isValid, violation = u.longLinkValidator.IsValid(longLink)
 	if !isValid {
-		return entity.ShortLink{}, ErrInvalidLongLink{shortLink.LongLink, violation}
+		return entity.ShortLink{}, ErrInvalidLongLink{longLink, violation}
 	}
 
-	if u.riskDetector.IsURLMalicious(shortLink.LongLink) {
-		return entity.ShortLink{}, ErrMaliciousLongLink(shortLink.LongLink)
+	if u.riskDetector.IsURLMalicious(longLink) {
+		return entity.ShortLink{}, ErrMaliciousLongLink(longLink)
 	}
 
 	updateTime := u.timer.Now()
