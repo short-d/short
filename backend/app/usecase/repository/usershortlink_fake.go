@@ -19,7 +19,7 @@ func (u *UserShortLinkFake) CreateRelation(user entity.User, shortLinkInput enti
 	if shortLinkInput.CustomAlias == nil {
 		return errors.New("empty alias")
 	}
-	isExist, err := u.HasMapping(user, *shortLinkInput.CustomAlias)
+	isExist, err := u.HasMapping(user, shortLinkInput.GetCustomAlias(""))
 	if err != nil {
 		return err
 	}

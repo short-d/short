@@ -18,7 +18,7 @@ type ShortLink struct {
 	TwitterTags   metatag.Twitter
 }
 
-// ShortLinkInput represents possible ShortLink attributes for a new short link or an updated short link.
+// ShortLinkInput represents possible ShortLink attributes for a short link.
 type ShortLinkInput struct {
 	LongLink    *string
 	CustomAlias *string
@@ -35,7 +35,7 @@ func (s *ShortLinkInput) GetLongLink(defaultVal string) string {
 	return *s.LongLink
 }
 
-// GetCustomAlias fetches CustomAlias for ShortLinkInput, with empty string as the default value.
+// GetCustomAlias fetches CustomAlias for ShortLinkInput with default value.
 func (s *ShortLinkInput) GetCustomAlias(defaultVal string) string {
 	if s.CustomAlias == nil {
 		return defaultVal
