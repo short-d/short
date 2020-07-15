@@ -25,6 +25,25 @@ class Example extends Component {
 }
 ```
 
+## Development
+
+1. Launch library dev server
+    
+   ```bash
+   yarn
+   yarn start
+   ```
+   
+1. Launch example page dev server
+   
+   ```bash
+   cd example
+   yarn
+   yarn start
+   ```
+   
+1. Visit `http://localhost:3000` to see the example.
+
 ## License
 
 MIT © [short-d](https://github.com/short-d)
