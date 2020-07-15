@@ -66,6 +66,38 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			},
 		},
 		{
+			name:  "successfully change alias",
+			alias: "boGp9w35",
+			shortlinks: shortLinks{
+				"boGp9w35": entity.ShortLink{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			user: entity.User{
+				ID:    "1",
+				Email: "gopher@golang.org",
+			},
+			shortLinkInput: entity.ShortLinkInput{
+				CustomAlias: ptr.String("short-d"),
+			},
+			relationUsers: []entity.User{
+				{ID: "1"},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:     "boGp9w35",
+					LongLink:  "https://httpbin.org",
+					UpdatedAt: &now,
+				},
+			},
+			expectedShortLink: entity.ShortLink{
+				Alias:    "short-d",
+				LongLink: "https://httpbin.org",
+			},
+		},
+		{
 			name:  "alias doesn't exist",
 			alias: "eBJRJJty",
 			shortlinks: shortLinks{
@@ -163,38 +195,6 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				},
 			},
 			expectedHasErr: true,
-		},
-		{
-			name:  "long link not changed if not specified",
-			alias: "boGp9w35",
-			shortlinks: shortLinks{
-				"boGp9w35": entity.ShortLink{
-					Alias:     "boGp9w35",
-					LongLink:  "https://httpbin.org",
-					UpdatedAt: &now,
-				},
-			},
-			user: entity.User{
-				ID:    "1",
-				Email: "gopher@golang.org",
-			},
-			shortLinkInput: entity.ShortLinkInput{
-				CustomAlias: ptr.String("short-d"),
-			},
-			relationUsers: []entity.User{
-				{ID: "1"},
-			},
-			relationShortLinks: []entity.ShortLink{
-				{
-					Alias:     "boGp9w35",
-					LongLink:  "https://httpbin.org",
-					UpdatedAt: &now,
-				},
-			},
-			expectedShortLink: entity.ShortLink{
-				Alias:    "short-d",
-				LongLink: "https://httpbin.org",
-			},
 		},
 		{
 			name:  "long link is empty",

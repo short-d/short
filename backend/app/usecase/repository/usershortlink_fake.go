@@ -58,6 +58,22 @@ func (u UserShortLinkFake) HasMapping(user entity.User, alias string) (bool, err
 	return false, nil
 }
 
+// UpdateRelation updates a user-shortlink relationship to reflect changes to alias.
+func (u UserShortLinkFake) UpdateRelation(user entity.User, oldAlias string, shortLinkInput entity.ShortLinkInput) error {
+	for idx, currUser := range u.users {
+		if currUser.ID == user.ID && u.shortLinks[idx].Alias == oldAlias {
+			u.shortLinks[idx] = entity.ShortLink{
+				Alias:     shortLinkInput.GetCustomAlias(""),
+				LongLink:  shortLinkInput.GetLongLink(""),
+				ExpireAt:  shortLinkInput.ExpireAt,
+				CreatedAt: shortLinkInput.CreatedAt,
+			}
+			return nil
+		}
+	}
+	return errors.New("relationship does not exist")
+}
+
 // NewUserShortLinkRepoFake creates UserShortLinkFake
 func NewUserShortLinkRepoFake(users []entity.User, shortLinks []entity.ShortLink) UserShortLinkFake {
 	return UserShortLinkFake{
