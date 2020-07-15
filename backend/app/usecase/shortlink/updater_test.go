@@ -360,6 +360,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				testCase.relationUsers,
 				testCase.relationShortLinks,
 			)
+			shortLinkRepo.ProvideUserShortLinkRepoFake(&userShortLinkRepo)
 
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()

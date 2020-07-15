@@ -83,12 +83,6 @@ func (u UserShortLinkSQL) HasMapping(user entity.User, alias string) (bool, erro
 	return true, nil
 }
 
-// UpdateRelation already done implicitly when updating short link in SQL, this is a stub.
-// TODO(issue#958) use eventbus for propagating short link change to user short link repo
-func (u UserShortLinkSQL) UpdateRelation(user entity.User, oldAlias string, shortLinkInput entity.ShortLinkInput) error {
-	return nil
-}
-
 // NewUserShortLinkSQL creates UserShortLinkSQL
 func NewUserShortLinkSQL(db *sql.DB) UserShortLinkSQL {
 	return UserShortLinkSQL{

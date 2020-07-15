@@ -7,5 +7,4 @@ type UserShortLink interface {
 	CreateRelation(user entity.User, shortLinkInput entity.ShortLinkInput) error
 	FindAliasesByUser(user entity.User) ([]string, error)
 	HasMapping(user entity.User, alias string) (bool, error)
-	UpdateRelation(user entity.User, oldAlias string, shortLinkInput entity.ShortLinkInput) error
 }

@@ -58,10 +58,11 @@ func (u UserShortLinkFake) HasMapping(user entity.User, alias string) (bool, err
 	return false, nil
 }
 
-// UpdateRelation updates a user-shortlink relationship to reflect changes to alias.
-func (u UserShortLinkFake) UpdateRelation(user entity.User, oldAlias string, shortLinkInput entity.ShortLinkInput) error {
-	for idx, currUser := range u.users {
-		if currUser.ID == user.ID && u.shortLinks[idx].Alias == oldAlias {
+// UpdateAliasCascade updates user-shortlink relationships to reflect changes to alias.
+// TODO(issue#958) use eventbus for propagating short link change to user short link repo
+func (u *UserShortLinkFake) UpdateAliasCascade(oldAlias string, shortLinkInput entity.ShortLinkInput) error {
+	for idx := range u.users {
+		if u.shortLinks[idx].Alias == oldAlias {
 			u.shortLinks[idx] = entity.ShortLink{
 				Alias:     shortLinkInput.GetCustomAlias(""),
 				LongLink:  shortLinkInput.GetLongLink(""),
@@ -71,7 +72,7 @@ func (u UserShortLinkFake) UpdateRelation(user entity.User, oldAlias string, sho
 			return nil
 		}
 	}
-	return errors.New("relationship does not exist")
+	return errors.New("no relationships with this alias exist")
 }
 
 // NewUserShortLinkRepoFake creates UserShortLinkFake
