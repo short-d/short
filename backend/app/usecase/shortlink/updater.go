@@ -17,7 +17,7 @@ func (e ErrShortLinkNotFound) Error() string {
 	return string(e)
 }
 
-// ErrEmptyAlias represents empty alias specified
+// ErrEmptyAlias represents empty alias provided.
 type ErrEmptyAlias string
 
 func (e ErrEmptyAlias) Error() string {
