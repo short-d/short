@@ -244,12 +244,9 @@ export class HomePage extends Component<Props, State> {
   // TODO(issue#604): refactor into ShortLinkService to decouple business logic from view.
   private copyShortenedLink = (shortLink: string) => {
     const COPY_SUCCESS_MESSAGE = 'Short Link copied into clipboard';
-    const TOAST_DURATION = 2500;
     this.props.clipboardService
       .copyTextToClipboard(shortLink)
-      .then(() =>
-        this.toastRef.current!.notify(COPY_SUCCESS_MESSAGE, TOAST_DURATION)
-      )
+      .then(() => this.toastRef.current!.notify(COPY_SUCCESS_MESSAGE))
       .catch(() => console.log(`Failed to copy ${shortLink} into Clipboard`));
   };
 

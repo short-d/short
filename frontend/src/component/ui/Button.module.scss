@@ -1,0 +1,57 @@
+@import '../styles/corner';
+@import '../styles/color';
+@import '../styles/font';
+@import '../styles/shadow';
+
+.button {
+  font-size: 16px;
+  font-weight: $font-weight-semi-bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @include round-corner;
+  padding: 5px 20px;
+  color: white;
+  border: none;
+  outline: none;
+
+  &.pink {
+    background-color: $color-primary;
+  }
+
+  &.blue {
+    background-color: #385c8e;
+  }
+
+  &.black {
+    background-color: #343434;
+  }
+
+  &.red {
+    background-color: #c1423d;
+  }
+
+  &.green {
+    background-color: $color-medium-green;
+  }
+
+  &.full-width {
+    padding: 0;
+    width: 100%;
+  }
+
+  &.full-height {
+    padding: 0;
+    height: 100%;
+  }
+
+  &.shadow {
+    box-shadow: $shadow-button;
+  }
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.9;
+  }
+}

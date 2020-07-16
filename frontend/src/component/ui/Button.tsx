@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 
-import './Button.scss';
+import styles from './Button.module.scss';
+import { Styling, withCSSModule } from './styling';
 
-interface Props {
+interface Props extends Styling {
   onClick?: () => void;
 }
 
 export class Button extends Component<Props> {
+  static defaultProps: Props = {
+    styles: ['pink']
+  };
   handleClick = () => {
     if (!this.props.onClick) {
       return;
@@ -16,7 +20,12 @@ export class Button extends Component<Props> {
 
   render() {
     return (
-      <button className="button" onClick={this.handleClick}>
+      <button
+        className={`${withCSSModule(this.props.styles, styles)} ${
+          styles.button
+        }`}
+        onClick={this.handleClick}
+      >
         {this.props.children}
       </button>
     );
