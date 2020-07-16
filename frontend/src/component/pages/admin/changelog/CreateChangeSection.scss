@@ -1,48 +1,71 @@
 @import 'src/component/styles/color';
+@import 'src/component/styles/dimension';
+@import 'src/component/styles/font';
 @import 'src/component/styles/layouts';
+@import 'src/component/styles/shape';
 
 .create-change-section {
-  .title {
-    margin: 0 auto;
+  width: 100%;
+  padding: 40px;
+  box-sizing: border-box;
+  overflow: auto;
+
+  > .create-change-section-title {
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
   }
 
-  .create-change-form {
+  > .create-change-form {
     display: flex;
     flex-direction: column;
 
-    .change-summary {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
+    > * {
       margin-top: 20px;
-      justify-content: space-between;
+    }
 
-      .markdown-viewer {
-        padding: 0 10px;
-        background-color: $color-create-change-markdown-background;
-        overflow-y: auto;
-      }
+    .label {
+      font-size: 24px;
+      color: #606060;
+      margin: 10px 0;
+    }
 
-      .text-area,
-      .markdown-viewer {
-        width: 49%;
-        box-sizing: border-box;
-        height: 250px;
-      }
+    > .summary-input {
+      > .change-summary {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
 
-      @include respond-to($phone) {
-        .text-area,
-        .markdown-viewer {
-          width: 100%;
+        > .summary-markdown {
+          padding: 0 10px;
+          background-color: $color-create-change-markdown-background;
+          overflow-y: auto;
+        }
+
+        > * {
+          flex-basis: 49%;
+          box-sizing: border-box;
+          height: 250px;
+        }
+
+        @include respond-to($phone) {
+          > * {
+            flex-basis: 100%;
+          }
         }
       }
     }
 
-    .button {
-      background-color: $color-medium-green;
-      padding: 15px 50px;
-      width: fit-content;
-      margin: 30px auto 0;
+    > .publish {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+
+      > .publish-button {
+        height: 60px;
+        width: 200px;
+      }
     }
   }
 }

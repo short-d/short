@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import './CreateChangeSection.scss';
-import { TextField } from '../../../form/TextField';
-import { MarkdownViewer } from '../../../ui/MarkdownViewer';
-import { TextAreaField } from '../../../form/TextAreaField';
-import { Section } from '../../../ui/Section';
-import { Button } from '../../../ui/Button';
 import { ChangeLogService } from '../../../../service/ChangeLog.service';
-import { raiseCreateChangeError } from '../../../../state/actions';
 import { Store } from 'redux';
 import { IAppState } from '../../../../state/reducers';
+import { TextField } from '../../../form/TextField';
+import { TextAreaField } from '../../../form/TextAreaField';
+import { MarkdownViewer } from '../../../ui/MarkdownViewer';
+import { Button } from '../../../ui/Button';
+import { raiseCreateChangeError } from '../../../../state/actions';
 
 interface IProps {
   changeLogService: ChangeLogService;
@@ -33,29 +32,44 @@ export class CreateChangeSection extends Component<IProps, IState> {
 
   render() {
     return (
-      <div className="create-change-section">
-        <Section title="Create New Change">
-          <div className="create-change-form">
-            <TextField onChange={this.handleTitleChange} placeHolder="Title" />
-            <div className="change-summary">
-              <TextAreaField
-                onChange={this.handleSummaryChange}
-                placeholder="Summary"
-              />
-              <MarkdownViewer markdown={this.state.summary} />
-            </div>
-            <Button onClick={this.handleOnPublishClick}>Publish</Button>
+      <div className={'create-change-section'}>
+        <div className={'create-change-section-title'}>Create New Change</div>
+        <div className={'create-change-form'}>
+          <div>
+            <div className={'label'}>Title</div>
+            <TextField onChange={this.handleOnTitleChange} />
           </div>
-        </Section>
+          <div className={'summary-input'}>
+            <div className={'label'}>Summary</div>
+            <div className={'change-summary'}>
+              <div className={'summary-textarea'}>
+                <TextAreaField onChange={this.handleOnSummaryChange} />
+              </div>
+              <div className={'summary-markdown'}>
+                <MarkdownViewer markdown={this.state.summary} />
+              </div>
+            </div>
+          </div>
+          <div className={'publish'}>
+            <div className={'publish-button'}>
+              <Button
+                styles={['green', 'full-width', 'full-height']}
+                onClick={this.handleOnPublishClick}
+              >
+                Publish
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
-  private handleTitleChange = (title: string) => {
+  private handleOnTitleChange = (title: string) => {
     this.setState({ title });
   };
 
-  private handleSummaryChange = (summary: string) => {
+  private handleOnSummaryChange = (summary: string) => {
     this.setState({ summary });
   };
 
