@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/short-d/short/backend/app/entity"
 )
@@ -19,7 +20,8 @@ func (u *UserShortLinkFake) CreateRelation(user entity.User, shortLinkInput enti
 	if shortLinkInput.CustomAlias == nil {
 		return errors.New("empty alias")
 	}
-	isExist, err := u.HasMapping(user, shortLinkInput.GetCustomAlias(""))
+	customAlias := shortLinkInput.GetCustomAlias("")
+	isExist, err := u.HasMapping(user, customAlias)
 	if err != nil {
 		return err
 	}
@@ -28,7 +30,7 @@ func (u *UserShortLinkFake) CreateRelation(user entity.User, shortLinkInput enti
 	}
 	u.users = append(u.users, user)
 	u.shortLinks = append(u.shortLinks, entity.ShortLink{
-		Alias:     shortLinkInput.GetCustomAlias(""),
+		Alias:     customAlias,
 		LongLink:  shortLinkInput.GetLongLink(""),
 		ExpireAt:  shortLinkInput.ExpireAt,
 		CreatedAt: shortLinkInput.CreatedAt,
@@ -59,7 +61,7 @@ func (u UserShortLinkFake) HasMapping(user entity.User, alias string) (bool, err
 }
 
 // UpdateAliasCascade updates user-shortlink relationships to reflect changes to alias.
-// TODO(issue#958) use eventbus for propagating short link change to user short link repo
+// TODO(issue#958) use eventbus for propagating short link change to all related repos
 func (u *UserShortLinkFake) UpdateAliasCascade(oldAlias string, shortLinkInput entity.ShortLinkInput) error {
 	for idx := range u.users {
 		if u.shortLinks[idx].Alias == oldAlias {
@@ -72,7 +74,7 @@ func (u *UserShortLinkFake) UpdateAliasCascade(oldAlias string, shortLinkInput e
 			return nil
 		}
 	}
-	return errors.New("no relationships with this alias exist")
+	return fmt.Errorf("no relationships with alias '%s' exist", oldAlias)
 }
 
 // NewUserShortLinkRepoFake creates UserShortLinkFake

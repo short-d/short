@@ -12,14 +12,8 @@ var _ ShortLink = (*ShortLinkFake)(nil)
 // ShortLinkFake accesses ShortLink information in short_link table through SQL.
 type ShortLinkFake struct {
 	shortLinks map[string]entity.ShortLink
-	// TODO(issue#958) use eventbus for propagating short link change to user short link repo
+	// TODO(issue#958) use eventbus for propagating short link change to all related repos
 	userShortLinkRepoFake *UserShortLinkFake
-}
-
-// ProvideUserShortLinkRepoFake allows ShortLinkFake to propagate new alias to user short link repo.
-// TODO(issue#958) use eventbus for propagating short link change to user short link repo
-func (s *ShortLinkFake) ProvideUserShortLinkRepoFake(userShortLinkRepoFake *UserShortLinkFake) {
-	s.userShortLinkRepoFake = userShortLinkRepoFake
 }
 
 // IsAliasExist checks whether a given alias exist in short_link table.
@@ -33,14 +27,14 @@ func (s *ShortLinkFake) CreateShortLink(shortLinkInput entity.ShortLinkInput) er
 	if shortLinkInput.CustomAlias == nil {
 		return errors.New("alias empty")
 	}
-	isExist, err := s.IsAliasExist(*shortLinkInput.CustomAlias)
+	customAlias := shortLinkInput.GetCustomAlias("")
+	isExist, err := s.IsAliasExist(customAlias)
 	if err != nil {
 		return err
 	}
 	if isExist {
 		return errors.New("alias exists")
 	}
-	customAlias := shortLinkInput.GetCustomAlias("")
 	s.shortLinks[customAlias] = entity.ShortLink{
 		Alias:     customAlias,
 		LongLink:  shortLinkInput.GetLongLink(""),
@@ -92,6 +86,7 @@ func (s ShortLinkFake) UpdateShortLink(oldAlias string, shortLinkInput entity.Sh
 		return entity.ShortLink{}, errors.New("alias not found")
 	}
 
+	// TODO(issue#958) use eventbus for propagating short link change to all related repos
 	err := s.userShortLinkRepoFake.UpdateAliasCascade(oldAlias, shortLinkInput)
 	if err != nil {
 		return entity.ShortLink{}, err
@@ -111,8 +106,9 @@ func (s ShortLinkFake) UpdateShortLink(oldAlias string, shortLinkInput entity.Sh
 }
 
 // NewShortLinkFake creates in memory ShortLink repository
-func NewShortLinkFake(shortLinks map[string]entity.ShortLink) ShortLinkFake {
+func NewShortLinkFake(shortLinks map[string]entity.ShortLink, userShortLinkRepoFake *UserShortLinkFake) ShortLinkFake {
 	return ShortLinkFake{
 		shortLinks: shortLinks,
+		userShortLinkRepoFake: userShortLinkRepoFake,
 	}
 }

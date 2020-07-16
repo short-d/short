@@ -355,12 +355,11 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 			tm := timer.NewStub(now)
-			shortLinkRepo := repository.NewShortLinkFake(testCase.shortlinks)
 			userShortLinkRepo := repository.NewUserShortLinkRepoFake(
 				testCase.relationUsers,
 				testCase.relationShortLinks,
 			)
-			shortLinkRepo.ProvideUserShortLinkRepoFake(&userShortLinkRepo)
+			shortLinkRepo := repository.NewShortLinkFake(testCase.shortlinks, &userShortLinkRepo)
 
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
