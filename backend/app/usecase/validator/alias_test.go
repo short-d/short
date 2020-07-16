@@ -31,6 +31,11 @@ func TestCustomAlias_IsValid(t *testing.T) {
 			alias:      "fb",
 			expIsValid: true,
 		},
+		{
+			name:       "alias has forbidden character",
+			alias:      "#fb",
+			expIsValid: false,
+		},
 	}
 
 	validator := NewCustomAlias()
