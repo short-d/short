@@ -8,6 +8,7 @@
   font-weight: $font-weight-semi-bold;
   display: flex;
   align-items: center;
+  justify-content: center;
 
   @include round-corner;
   padding: 5px 20px;
@@ -31,9 +32,18 @@
     background-color: #c1423d;
   }
 
+  &.green {
+    background-color: $color-medium-green;
+  }
+
   &.full-width {
     padding: 0;
     width: 100%;
+  }
+
+  &.full-height {
+    padding: 0;
+    height: 100%;
   }
 
   &.shadow {
