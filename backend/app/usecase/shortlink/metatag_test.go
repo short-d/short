@@ -125,7 +125,7 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			shortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks, nil)
+			shortLinkRepo := repository.NewShortLinkFake(nil, testCase.shortLinks)
 			metaTag := NewMetaTagPersist(&shortLinkRepo)
 
 			ogTags, err := metaTag.GetOpenGraphTags(testCase.alias)
@@ -253,7 +253,7 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			shortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks, nil)
+			shortLinkRepo := repository.NewShortLinkFake(nil, testCase.shortLinks)
 			metaTag := NewMetaTagPersist(&shortLinkRepo)
 
 			twitterTags, err := metaTag.GetTwitterTags(testCase.alias)
