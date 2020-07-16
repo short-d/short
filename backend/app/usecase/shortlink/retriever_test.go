@@ -104,7 +104,7 @@ func TestRetriever_GetShortLink(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
+			fakeShortLinkRepo := repository.NewShortLinkFake(nil, testCase.shortLinks)
 			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake([]entity.User{}, []entity.ShortLink{})
 			retriever := NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 			shortLink, err := retriever.GetShortLink(testCase.alias, testCase.expiringAt)
@@ -253,7 +253,7 @@ func TestRetrieverPersist_GetShortLinks(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			fakeShortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
+			fakeShortLinkRepo := repository.NewShortLinkFake(nil, testCase.shortLinks)
 			fakeUserShortLinkRepo := repository.NewUserShortLinkRepoFake(testCase.users, testCase.createdShortLinks)
 			retriever := NewRetrieverPersist(&fakeShortLinkRepo, &fakeUserShortLinkRepo)
 
