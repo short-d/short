@@ -33,8 +33,8 @@ export class CreateChangeSection extends Component<IProps, IState> {
   render() {
     return (
       <div className={'create-change-section'}>
-        <div className={'create-change-section-title'}>Create New Change</div>
-        <div className={'create-change-form'}>
+        <div className={'title'}>Create New Change</div>
+        <div className={'form'}>
           <div>
             <div className={'label'}>Title</div>
             <TextField onChange={this.handleOnTitleChange} />

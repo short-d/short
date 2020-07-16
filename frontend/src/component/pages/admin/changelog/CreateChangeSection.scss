@@ -10,13 +10,13 @@
   box-sizing: border-box;
   overflow: auto;
 
-  > .create-change-section-title {
+  > .title {
     display: flex;
     justify-content: center;
     font-size: 30px;
   }
 
-  > .create-change-form {
+  > .form {
     display: flex;
     flex-direction: column;
 
