@@ -79,7 +79,7 @@ func (c CreatorPersist) CreateShortLink(shortLinkInput entity.ShortLinkInput, us
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidCustomAlias{customAlias, violation}
 	}
-	
+
 	longLink := shortLinkInput.GetLongLink("")
 	isValid, violation = c.longLinkValidator.IsValid(longLink)
 	if !isValid {
@@ -91,7 +91,7 @@ func (c CreatorPersist) CreateShortLink(shortLinkInput entity.ShortLinkInput, us
 	}
 
 	shortLinkInput.LongLink = &longLink
-	
+
 	return c.createShortLink(shortLinkInput, user)
 }
 

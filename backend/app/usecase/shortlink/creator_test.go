@@ -35,6 +35,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 		// TODO(issue#803): Check error types in tests.
 		expHasErr         bool
 		expectedShortLink entity.ShortLink
+		shouldAliasExist  bool
 	}{
 		{
 			name: "alias exists",
@@ -51,8 +52,9 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 				LongLink:    ptr.String("https://www.google.com"),
 				CustomAlias: ptr.String("220uFicCJj"),
 			},
-			isPublic:  false,
-			expHasErr: true,
+			isPublic:         false,
+			expHasErr:        true,
+			shouldAliasExist: true,
 		},
 		{
 			name: "alias too long",
@@ -216,6 +218,11 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 				tm,
 				riskDetector,
 			)
+
+			if !testCase.shouldAliasExist {
+				_, err = shortLinkRepo.GetShortLinkByAlias(testCase.shortLinkArgs.GetCustomAlias(""))
+				assert.NotEqual(t, nil, err)
+			}
 
 			if testCase.shortLinkArgs.CustomAlias != nil {
 				isExist, err := userShortLinkRepo.HasMapping(testCase.user, *testCase.shortLinkArgs.CustomAlias)

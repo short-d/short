@@ -108,7 +108,7 @@ func (s ShortLinkFake) UpdateShortLink(oldAlias string, shortLinkInput entity.Sh
 // NewShortLinkFake creates in memory ShortLink repository
 func NewShortLinkFake(shortLinks map[string]entity.ShortLink, userShortLinkRepoFake *UserShortLinkFake) ShortLinkFake {
 	return ShortLinkFake{
-		shortLinks: shortLinks,
+		shortLinks:            shortLinks,
 		userShortLinkRepoFake: userShortLinkRepoFake,
 	}
 }
