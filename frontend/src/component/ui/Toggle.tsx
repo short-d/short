@@ -47,15 +47,18 @@ export class Toggle extends Component<Props, State> {
     return (
       <div className={`${withCSSModule([], styles)} ${styles.toggle}`}>
         <div
-          className={`${withCSSModule([], styles)} ${
+          className={`${
             styles.background
           } ${computedActiveClass}`}
           onClick={this.handleClick}
         >
           <div
-            className={`${withCSSModule([], styles)} ${
-              styles.knob
-            } ${computedActiveClass}`}
+            className={
+              classNames({
+                [styles.knob]: true,
+                [styles.active]: enabled
+              })
+            }
           />
         </div>
       </div>
