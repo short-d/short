@@ -1,0 +1,41 @@
+@import 'src/component/styles/color';
+@import 'src/component/styles/layouts';
+@import 'src/component/styles/shape';
+
+.manage-change-logs {
+  .create-change-button {
+    width: 150px;
+    height: 40px;
+  }
+
+  .create-change-modal-close-icon {
+    fill: $color-white;
+    background-color: $color-dark-gray;
+    padding: 2px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+
+    @include circle;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      cursor: pointer;
+      opacity: 0.9;
+    }
+  }
+
+  .create-change-section-container {
+    width: 60vw;
+    max-height: 80vh;
+    overflow-y: auto;
+
+    @include respond-to($phone) {
+      width: 95vw;
+    }
+  }
+}
