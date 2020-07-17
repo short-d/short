@@ -196,7 +196,7 @@ func TestShortLinkCreatorPersist_CreateShortLink(t *testing.T) {
 			t.Parallel()
 
 			blacklist := risk.NewBlackListFake(testCase.blockedLongLinks)
-			shortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks, nil)
+			shortLinkRepo := repository.NewShortLinkFake(nil, testCase.shortLinks)
 			userShortLinkRepo := repository.NewUserShortLinkRepoFake(
 				testCase.relationUsers,
 				testCase.relationShortLinks,

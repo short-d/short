@@ -359,8 +359,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				testCase.relationUsers,
 				testCase.relationShortLinks,
 			)
-			shortLinkRepo := repository.NewShortLinkFake(testCase.shortlinks, &userShortLinkRepo)
-
+			shortLinkRepo := repository.NewShortLinkFake(&userShortLinkRepo, testCase.shortlinks)
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
 			blacklist := risk.NewBlackListFake(testCase.blockedLongLinks)
@@ -390,7 +389,7 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 			assert.Equal(t, testCase.expectedShortLink.LongLink, shortLink.LongLink)
 			assert.Equal(t, testCase.expectedShortLink.Alias, shortLink.Alias)
 			assert.Equal(t, testCase.expectedShortLink.CreatedAt, shortLink.CreatedAt)
-			if assert.NotEqual(t, false, shortLink.UpdatedAt != nil) {
+			if shortLink.UpdatedAt != nil {
 				assert.Equal(t, true, shortLink.UpdatedAt.After(now))
 			}
 			isExist, err := userShortLinkRepo.HasMapping(testCase.user, shortLink.Alias)
