@@ -94,42 +94,28 @@ WHERE "%s"=$1;`,
 }
 
 // CreateShortLink inserts a new ShortLink into short_link table.
-func (s ShortLinkSQL) CreateShortLink(shortLink entity.ShortLink) error {
+func (s ShortLinkSQL) CreateShortLink(shortLinkInput entity.ShortLinkInput) error {
 	statement := fmt.Sprintf(`
-INSERT INTO "%s" ("%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s")
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);`,
+INSERT INTO "%s" ("%s","%s","%s","%s")
+VALUES ($1, $2, $3, $4);`,
 		table.ShortLink.TableName,
 		table.ShortLink.ColumnAlias,
 		table.ShortLink.ColumnLongLink,
 		table.ShortLink.ColumnExpireAt,
 		table.ShortLink.ColumnCreatedAt,
-		table.ShortLink.ColumnUpdatedAt,
-		table.ShortLink.ColumnOpenGraphTitle,
-		table.ShortLink.ColumnOpenGraphDescription,
-		table.ShortLink.ColumnOpenGraphImageURL,
-		table.ShortLink.ColumnTwitterTitle,
-		table.ShortLink.ColumnTwitterDescription,
-		table.ShortLink.ColumnTwitterImageURL,
 	)
 	_, err := s.db.Exec(
 		statement,
-		shortLink.Alias,
-		shortLink.LongLink,
-		shortLink.ExpireAt,
-		shortLink.CreatedAt,
-		shortLink.UpdatedAt,
-		shortLink.OpenGraphTags.Title,
-		shortLink.OpenGraphTags.Description,
-		shortLink.OpenGraphTags.ImageURL,
-		shortLink.TwitterTags.Title,
-		shortLink.TwitterTags.Description,
-		shortLink.TwitterTags.ImageURL,
+		shortLinkInput.GetCustomAlias(""),
+		shortLinkInput.GetLongLink(""),
+		shortLinkInput.ExpireAt,
+		shortLinkInput.CreatedAt,
 	)
 	return err
 }
 
 // UpdateShortLink updates a ShortLink that exists within the short_link table.
-func (s ShortLinkSQL) UpdateShortLink(oldAlias string, newShortLink entity.ShortLink) (entity.ShortLink, error) {
+func (s ShortLinkSQL) UpdateShortLink(oldAlias string, shortLinkInput entity.ShortLinkInput) (entity.ShortLink, error) {
 	statement := fmt.Sprintf(`
 UPDATE "%s"
 SET "%s"=$1, "%s"=$2, "%s"=$3, "%s"=$4
@@ -144,10 +130,10 @@ WHERE "%s"=$5;`,
 
 	_, err := s.db.Exec(
 		statement,
-		newShortLink.Alias,
-		newShortLink.LongLink,
-		newShortLink.ExpireAt,
-		newShortLink.UpdatedAt,
+		shortLinkInput.GetCustomAlias(""),
+		shortLinkInput.GetLongLink(""),
+		shortLinkInput.ExpireAt,
+		shortLinkInput.UpdatedAt,
 		oldAlias,
 	)
 
@@ -155,7 +141,12 @@ WHERE "%s"=$5;`,
 		return entity.ShortLink{}, err
 	}
 
-	return newShortLink, nil
+	return entity.ShortLink{
+		Alias:     shortLinkInput.GetCustomAlias(""),
+		LongLink:  shortLinkInput.GetLongLink(""),
+		ExpireAt:  shortLinkInput.ExpireAt,
+		UpdatedAt: shortLinkInput.UpdatedAt,
+	}, nil
 }
 
 // GetShortLinkByAlias finds an ShortLink in short_link table given alias.

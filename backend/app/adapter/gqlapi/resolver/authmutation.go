@@ -3,10 +3,9 @@ package resolver
 import (
 	"errors"
 	"fmt"
-	"time"
 
+	"github.com/short-d/short/backend/app/adapter/gqlapi/input"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/scalar"
-	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/changelog"
 	"github.com/short-d/short/backend/app/usecase/shortlink"
@@ -22,51 +21,9 @@ type AuthMutation struct {
 	shortLinkUpdater shortlink.Updater
 }
 
-// ShortLinkInput represents possible ShortLink attributes
-type ShortLinkInput struct {
-	LongLink    *string
-	CustomAlias *string
-	ExpireAt    *time.Time
-}
-
-// TODO(#840): remove this business logic and move it to use cases
-func (s *ShortLinkInput) isEmpty() bool {
-	return *s == ShortLinkInput{}
-}
-
-// TODO(#840): remove this business logic and move it to use cases
-func (s *ShortLinkInput) longLink() string {
-	if s.LongLink == nil {
-		return ""
-	}
-	return *s.LongLink
-}
-
-// TODO(#840): remove this business logic and move it to use cases
-func (s *ShortLinkInput) customAlias() string {
-	if s.CustomAlias == nil {
-		return ""
-	}
-	return *s.CustomAlias
-}
-
-// TODO(#840): remove this business logic and move it to use cases
-func (s *ShortLinkInput) createUpdate() *entity.ShortLink {
-	if s.isEmpty() {
-		return nil
-	}
-
-	return &entity.ShortLink{
-		Alias:    s.customAlias(),
-		LongLink: s.longLink(),
-		ExpireAt: s.ExpireAt,
-	}
-
-}
-
 // CreateShortLinkArgs represents the possible parameters for CreateShortLink endpoint
 type CreateShortLinkArgs struct {
-	ShortLink ShortLinkInput
+	ShortLink input.ShortLinkInput
 	IsPublic  bool
 }
 
@@ -77,16 +34,10 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	longLink := args.ShortLink.longLink()
-	customAlias := args.ShortLink.CustomAlias
-	u := entity.ShortLink{
-		LongLink: longLink,
-		ExpireAt: args.ShortLink.ExpireAt,
-	}
-
+	shortLink := args.ShortLink.CreateShortLinkInput()
 	isPublic := args.IsPublic
 
-	newShortLink, err := a.shortLinkCreator.CreateShortLink(u, customAlias, user, isPublic)
+	newShortLink, err := a.shortLinkCreator.CreateShortLink(shortLink, user, isPublic)
 	if err == nil {
 		return &ShortLink{shortLink: newShortLink}, nil
 	}
@@ -98,16 +49,16 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 		m  shortlink.ErrMaliciousLongLink
 	)
 	if errors.As(err, &ae) {
-		return nil, ErrAliasExist(*customAlias)
+		return nil, ErrAliasExist(shortLink.GetCustomAlias(""))
 	}
 	if errors.As(err, &l) {
-		return nil, ErrInvalidLongLink{u.LongLink, string(l.Violation)}
+		return nil, ErrInvalidLongLink{shortLink.GetLongLink(""), string(l.Violation)}
 	}
 	if errors.As(err, &c) {
-		return nil, ErrInvalidCustomAlias{*customAlias, string(c.Violation)}
+		return nil, ErrInvalidCustomAlias{shortLink.GetCustomAlias(""), string(c.Violation)}
 	}
 	if errors.As(err, &m) {
-		return nil, ErrMaliciousContent(u.LongLink)
+		return nil, ErrMaliciousContent(shortLink.GetLongLink(""))
 	}
 	return nil, ErrUnknown{}
 }
@@ -115,7 +66,7 @@ func (a AuthMutation) CreateShortLink(args *CreateShortLinkArgs) (*ShortLink, er
 // UpdateShortLinkArgs represents the possible parameters for updateShortLink endpoint
 type UpdateShortLinkArgs struct {
 	OldAlias  string
-	ShortLink ShortLinkInput
+	ShortLink input.ShortLinkInput
 }
 
 // UpdateShortLink updates the relationship between the short link and the user
@@ -125,17 +76,40 @@ func (a AuthMutation) UpdateShortLink(args *UpdateShortLinkArgs) (*ShortLink, er
 		return nil, ErrInvalidAuthToken{}
 	}
 
-	update := args.ShortLink.createUpdate()
-	if update == nil {
-		return nil, nil
+	update := args.ShortLink.CreateShortLinkInput()
+
+	newShortLink, err := a.shortLinkUpdater.UpdateShortLink(args.OldAlias, update, user)
+	if err == nil {
+		return &ShortLink{shortLink: newShortLink}, nil
 	}
 
-	newShortLink, err := a.shortLinkUpdater.UpdateShortLink(args.OldAlias, *update, user)
-	if err != nil {
-		return nil, err
+	var (
+		ae shortlink.ErrAliasExist
+		l  shortlink.ErrInvalidLongLink
+		c  shortlink.ErrInvalidCustomAlias
+		m  shortlink.ErrMaliciousLongLink
+		nf shortlink.ErrShortLinkNotFound
+		ns shortlink.ErrEmptyAlias
+	)
+	if errors.As(err, &ae) {
+		return nil, ErrAliasExist(update.GetCustomAlias(""))
 	}
-
-	return &ShortLink{shortLink: newShortLink}, nil
+	if errors.As(err, &l) {
+		return nil, ErrInvalidLongLink{update.GetLongLink(""), string(l.Violation)}
+	}
+	if errors.As(err, &c) {
+		return nil, ErrInvalidCustomAlias{update.GetCustomAlias(""), string(c.Violation)}
+	}
+	if errors.As(err, &m) {
+		return nil, ErrMaliciousContent(update.GetLongLink(""))
+	}
+	if errors.As(err, &nf) {
+		return nil, ErrShortLinkNotFound(args.OldAlias)
+	}
+	if errors.As(err, &ns) {
+		return nil, ErrEmptyAlias{}
+	}
+	return nil, ErrUnknown{}
 }
 
 // ChangeInput represents possible properties for Change

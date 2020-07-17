@@ -527,7 +527,7 @@ func TestSearch(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 			userShortLinkRepo := repository.NewUserShortLinkRepoFake(testCase.relationUsers, testCase.relationShortLinks)
-			shortLinkRepo := repository.NewShortLinkFake(testCase.shortLinks)
+			shortLinkRepo := repository.NewShortLinkFake(nil, testCase.shortLinks)
 			timeout := time.Second
 
 			entryRepo := logger.NewEntryRepoFake()

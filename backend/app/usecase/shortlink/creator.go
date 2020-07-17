@@ -47,7 +47,7 @@ func (e ErrMaliciousLongLink) Error() string {
 
 // Creator represents a ShortLink alias creator
 type Creator interface {
-	CreateShortLink(shortLink entity.ShortLink, alias *string, user entity.User, isPublic bool) (entity.ShortLink, error)
+	CreateShortLink(shortLinkInput entity.ShortLinkInput, user entity.User, isPublic bool) (entity.ShortLink, error)
 }
 
 // CreatorPersist represents a ShortLink alias creator which persist the generated
@@ -64,9 +64,24 @@ type CreatorPersist struct {
 
 // CreateShortLink persists a new short link with a given or auto generated alias in the repository.
 // TODO(issue#235): add functionality for public URLs
-func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, customAlias *string, user entity.User, isPublic bool) (entity.ShortLink, error) {
-	longLink := shortLink.LongLink
-	isValid, violation := c.longLinkValidator.IsValid(&longLink)
+func (c CreatorPersist) CreateShortLink(shortLinkInput entity.ShortLinkInput, user entity.User, isPublic bool) (entity.ShortLink, error) {
+	if shortLinkInput.CustomAlias == nil || shortLinkInput.GetCustomAlias("") == "" {
+		autoAlias, err := c.generateAlias()
+		if err != nil {
+			// TODO(issue#950) create error type for fail create auto alias
+			return entity.ShortLink{}, err
+		}
+		shortLinkInput.CustomAlias = &autoAlias
+	}
+
+	customAlias := shortLinkInput.GetCustomAlias("")
+	isValid, violation := c.aliasValidator.IsValid(customAlias)
+	if !isValid {
+		return entity.ShortLink{}, ErrInvalidCustomAlias{customAlias, violation}
+	}
+
+	longLink := shortLinkInput.GetLongLink("")
+	isValid, violation = c.longLinkValidator.IsValid(longLink)
 	if !isValid {
 		return entity.ShortLink{}, ErrInvalidLongLink{longLink, violation}
 	}
@@ -75,34 +90,21 @@ func (c CreatorPersist) CreateShortLink(shortLink entity.ShortLink, customAlias 
 		return entity.ShortLink{}, ErrMaliciousLongLink(longLink)
 	}
 
-	if !c.isAliasProvided(customAlias) {
-		return c.createShortLinkWithAutoAlias(shortLink, user)
-	}
+	shortLinkInput.LongLink = &longLink
 
-	isValid, violation = c.aliasValidator.IsValid(customAlias)
-	if !isValid {
-		return entity.ShortLink{}, ErrInvalidCustomAlias{*customAlias, violation}
-	}
-	return c.createShortLinkWithCustomAlias(shortLink, *customAlias, user)
+	return c.createShortLink(shortLinkInput, user)
 }
 
-func (c CreatorPersist) isAliasProvided(customAlias *string) bool {
-	return customAlias != nil && *customAlias != ""
-}
-
-func (c CreatorPersist) createShortLinkWithAutoAlias(shortLink entity.ShortLink, user entity.User) (entity.ShortLink, error) {
+func (c CreatorPersist) generateAlias() (string, error) {
 	key, err := c.keyGen.NewKey()
 	if err != nil {
-		return entity.ShortLink{}, err
+		return "", err
 	}
-	randomAlias := string(key)
-	return c.createShortLinkWithCustomAlias(shortLink, randomAlias, user)
+	return string(key), nil
 }
 
-func (c CreatorPersist) createShortLinkWithCustomAlias(shortLink entity.ShortLink, alias string, user entity.User) (entity.ShortLink, error) {
-	shortLink.Alias = alias
-
-	isExist, err := c.shortLinkRepo.IsAliasExist(alias)
+func (c CreatorPersist) createShortLink(shortLinkInput entity.ShortLinkInput, user entity.User) (entity.ShortLink, error) {
+	isExist, err := c.shortLinkRepo.IsAliasExist(shortLinkInput.GetCustomAlias(""))
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
@@ -112,15 +114,20 @@ func (c CreatorPersist) createShortLinkWithCustomAlias(shortLink entity.ShortLin
 	}
 
 	now := c.timer.Now().UTC()
-	shortLink.CreatedAt = &now
+	shortLinkInput.CreatedAt = &now
 
-	err = c.shortLinkRepo.CreateShortLink(shortLink)
+	err = c.shortLinkRepo.CreateShortLink(shortLinkInput)
 	if err != nil {
 		return entity.ShortLink{}, err
 	}
 
-	err = c.userShortLinkRepo.CreateRelation(user, shortLink)
-	return shortLink, err
+	err = c.userShortLinkRepo.CreateRelation(user, shortLinkInput)
+	return entity.ShortLink{
+		LongLink:  shortLinkInput.GetLongLink(""),
+		Alias:     shortLinkInput.GetCustomAlias(""),
+		ExpireAt:  shortLinkInput.ExpireAt,
+		CreatedAt: shortLinkInput.CreatedAt,
+	}, err
 }
 
 // NewCreatorPersist creates CreatorPersist

@@ -1,8 +1,6 @@
 package shortlink
 
 import (
-	"errors"
-
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/usecase/repository"
@@ -13,11 +11,22 @@ import (
 var _ Updater = (*UpdaterPersist)(nil)
 
 // ErrShortLinkNotFound represents the failure of finding certain short link in the data store
-var ErrShortLinkNotFound = errors.New("short link not found")
+type ErrShortLinkNotFound string
+
+func (e ErrShortLinkNotFound) Error() string {
+	return string(e)
+}
+
+// ErrEmptyAlias represents empty alias provided.
+type ErrEmptyAlias string
+
+func (e ErrEmptyAlias) Error() string {
+	return string(e)
+}
 
 // Updater mutates existing short links.
 type Updater interface {
-	UpdateShortLink(oldAlias string, update entity.ShortLink, user entity.User) (entity.ShortLink, error)
+	UpdateShortLink(oldAlias string, shortLinkInput entity.ShortLinkInput, user entity.User) (entity.ShortLink, error)
 }
 
 // UpdaterPersist persists the mutated short link in the data store.
@@ -33,7 +42,7 @@ type UpdaterPersist struct {
 // UpdateShortLink mutates a short link in the repository.
 func (u UpdaterPersist) UpdateShortLink(
 	oldAlias string,
-	update entity.ShortLink,
+	shortLinkInput entity.ShortLinkInput,
 	user entity.User,
 ) (entity.ShortLink, error) {
 	hasMapping, err := u.userShortLinkRepo.HasMapping(user, oldAlias)
@@ -41,15 +50,23 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, err
 	}
 	if !hasMapping {
-		return entity.ShortLink{}, ErrShortLinkNotFound
+		return entity.ShortLink{}, ErrShortLinkNotFound(oldAlias)
 	}
 
-	aliasExist, err := u.shortLinkRepo.IsAliasExist(update.Alias)
-	if err != nil {
-		return entity.ShortLink{}, err
+	newAlias := shortLinkInput.GetCustomAlias(oldAlias)
+	if newAlias == "" {
+		return entity.ShortLink{}, ErrEmptyAlias("alias is empty")
 	}
-	if aliasExist {
-		return entity.ShortLink{}, ErrAliasExist("short link alias already exist")
+
+	// Only check if it exists if user is changing the alias to something else
+	if newAlias != oldAlias {
+		aliasExist, err := u.shortLinkRepo.IsAliasExist(newAlias)
+		if err != nil {
+			return entity.ShortLink{}, err
+		}
+		if aliasExist {
+			return entity.ShortLink{}, ErrAliasExist("short link alias already exists")
+		}
 	}
 
 	shortLink, err := u.shortLinkRepo.GetShortLinkByAlias(oldAlias)
@@ -57,43 +74,30 @@ func (u UpdaterPersist) UpdateShortLink(
 		return entity.ShortLink{}, err
 	}
 
-	shortLink = u.updateAlias(shortLink, update)
-	shortLink = u.updateLongLink(shortLink, update)
+	longLink := shortLinkInput.GetLongLink(shortLink.LongLink)
 
-	isValid, violation := u.aliasValidator.IsValid(&shortLink.Alias)
+	isValid, violation := u.aliasValidator.IsValid(newAlias)
 	if !isValid {
-		return entity.ShortLink{}, ErrInvalidCustomAlias{shortLink.Alias, violation}
+		return entity.ShortLink{}, ErrInvalidCustomAlias{newAlias, violation}
 	}
 
-	isValid, violation = u.longLinkValidator.IsValid(&shortLink.LongLink)
+	isValid, violation = u.longLinkValidator.IsValid(longLink)
 	if !isValid {
-		return entity.ShortLink{}, ErrInvalidLongLink{shortLink.LongLink, violation}
+		return entity.ShortLink{}, ErrInvalidLongLink{longLink, violation}
 	}
 
-	if u.riskDetector.IsURLMalicious(shortLink.LongLink) {
-		return entity.ShortLink{}, ErrMaliciousLongLink(shortLink.LongLink)
+	if u.riskDetector.IsURLMalicious(longLink) {
+		return entity.ShortLink{}, ErrMaliciousLongLink(longLink)
 	}
 
 	updateTime := u.timer.Now()
-	shortLink.UpdatedAt = &updateTime
 
-	return u.shortLinkRepo.UpdateShortLink(oldAlias, shortLink)
-}
-
-func (u UpdaterPersist) updateAlias(shortLink, update entity.ShortLink) entity.ShortLink {
-	newAlias := update.Alias
-	if newAlias != "" {
-		shortLink.Alias = newAlias
-	}
-	return shortLink
-}
-
-func (u *UpdaterPersist) updateLongLink(shortLink, update entity.ShortLink) entity.ShortLink {
-	newLongLink := update.LongLink
-	if newLongLink != "" {
-		shortLink.LongLink = newLongLink
-	}
-	return shortLink
+	return u.shortLinkRepo.UpdateShortLink(oldAlias, entity.ShortLinkInput{
+		CustomAlias: &newAlias,
+		LongLink:    &longLink,
+		ExpireAt:    shortLink.ExpireAt,
+		UpdatedAt:   &updateTime,
+	})
 }
 
 // NewUpdaterPersist creates a new UpdaterPersist instance.

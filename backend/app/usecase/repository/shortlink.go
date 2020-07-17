@@ -8,7 +8,7 @@ import (
 type ShortLink interface {
 	IsAliasExist(alias string) (bool, error)
 	GetShortLinkByAlias(alias string) (entity.ShortLink, error)
-	CreateShortLink(shortLink entity.ShortLink) error
-	UpdateShortLink(oldAlias string, shortLink entity.ShortLink) (entity.ShortLink, error)
+	CreateShortLink(shortLinkInput entity.ShortLinkInput) error
+	UpdateShortLink(oldAlias string, shortLinkInput entity.ShortLinkInput) (entity.ShortLink, error)
 	GetShortLinksByAliases(aliases []string) ([]entity.ShortLink, error)
 }

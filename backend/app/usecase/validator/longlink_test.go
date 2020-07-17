@@ -53,7 +53,7 @@ func TestLongLink_IsValid(t *testing.T) {
 		testCase := testCase
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			valid, _ := validator.IsValid(&testCase.longLink)
+			valid, _ := validator.IsValid(testCase.longLink)
 			assert.Equal(t, testCase.expIsValid, valid)
 		})
 	}

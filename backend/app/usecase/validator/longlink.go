@@ -10,20 +10,16 @@ type LongLink struct {
 }
 
 // IsValid checks whether the given long link has valid format.
-func (l LongLink) IsValid(longLink *string) (bool, Violation) {
-	if longLink == nil {
+func (l LongLink) IsValid(longLink string) (bool, Violation) {
+	if longLink == "" {
 		return false, EmptyLongLink
 	}
 
-	if *longLink == "" {
-		return false, EmptyLongLink
-	}
-
-	if len(*longLink) >= longLinkMaxLength {
+	if len(longLink) >= longLinkMaxLength {
 		return false, LongLinkTooLong
 	}
 
-	if !l.uriPattern.MatchString(*longLink) {
+	if !l.uriPattern.MatchString(longLink) {
 		return false, LongLinkNotURL
 	}
 
