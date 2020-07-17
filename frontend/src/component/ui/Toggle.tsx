@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import styles from './Toggle.module.scss';
-import { withCSSModule } from './styling';
+import classNames from 'classnames';
 
 interface Props {
   defaultIsEnabled: boolean;
@@ -43,22 +43,20 @@ export class Toggle extends Component<Props, State> {
 
   render() {
     const { enabled } = this.state;
-    const computedActiveClass = enabled ? styles.active : '';
     return (
-      <div className={`${withCSSModule([], styles)} ${styles.toggle}`}>
+      <div className={styles.toggle}>
         <div
-          className={`${
-            styles.background
-          } ${computedActiveClass}`}
+          className={classNames({
+            [styles.background]: true,
+            [styles.active]: enabled
+          })}
           onClick={this.handleClick}
         >
           <div
-            className={
-              classNames({
-                [styles.knob]: true,
-                [styles.active]: enabled
-              })
-            }
+            className={classNames({
+              [styles.knob]: true,
+              [styles.active]: enabled
+            })}
           />
         </div>
       </div>
