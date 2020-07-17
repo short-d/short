@@ -1,0 +1,71 @@
+@import 'src/component/styles/color';
+@import 'src/component/styles/dimension';
+@import 'src/component/styles/font';
+@import 'src/component/styles/layouts';
+@import 'src/component/styles/shape';
+
+.create-change-section {
+  width: 100%;
+  padding: 40px;
+  box-sizing: border-box;
+  overflow: auto;
+
+  > .title {
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+  }
+
+  > .form {
+    display: flex;
+    flex-direction: column;
+
+    > * {
+      margin-top: 20px;
+    }
+
+    .label {
+      font-size: 24px;
+      color: #606060;
+      margin: 10px 0;
+    }
+
+    > .summary-input {
+      > .change-summary {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        > .summary-markdown {
+          padding: 0 10px;
+          background-color: $color-create-change-markdown-background;
+          overflow-y: auto;
+        }
+
+        > * {
+          flex-basis: 49%;
+          box-sizing: border-box;
+          height: 250px;
+        }
+
+        @include respond-to($phone) {
+          > * {
+            flex-basis: 100%;
+          }
+        }
+      }
+    }
+
+    > .publish {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+
+      > .publish-button {
+        height: 60px;
+        width: 200px;
+      }
+    }
+  }
+}

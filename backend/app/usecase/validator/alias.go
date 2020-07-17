@@ -21,20 +21,16 @@ type CustomAlias struct {
 }
 
 // IsValid checks whether the given alias has valid format.
-func (c CustomAlias) IsValid(alias *string) (bool, Violation) {
-	if alias == nil {
+func (c CustomAlias) IsValid(alias string) (bool, Violation) {
+	if alias == "" {
 		return true, Valid
 	}
 
-	if *alias == "" {
-		return true, Valid
-	}
-
-	if len(*alias) >= customAliasMaxLength {
+	if len(alias) >= customAliasMaxLength {
 		return false, AliasTooLong
 	}
 
-	if c.hasForbiddenCharacter(*alias) {
+	if c.hasForbiddenCharacter(alias) {
 		return false, HasFragmentCharacter
 	}
 
