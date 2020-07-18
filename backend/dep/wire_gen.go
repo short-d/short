@@ -19,6 +19,7 @@ import (
 	"github.com/short-d/app/fw/metrics"
 	"github.com/short-d/app/fw/network"
 	"github.com/short-d/app/fw/runtime"
+	"github.com/short-d/app/fw/security"
 	"github.com/short-d/app/fw/service"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/app/fw/webreq"
@@ -26,6 +27,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
+	"github.com/short-d/short/backend/app/adapter/grpcapi"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -63,6 +65,26 @@ func InjectDBMigrationTool() db.MigrationTool {
 func InjectEnv() env.Env {
 	goDotEnv := env.NewGoDotEnv()
 	return goDotEnv
+}
+
+func InjectGRPCService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, securityPolicy security.Policy, dataDogAPIKey provider.DataDogAPIKey) (service.GRPC, error) {
+	system := timer.NewSystem()
+	program := runtime.NewProgram()
+	deployment := env.NewDeployment(runtime2)
+	stdOut := io.NewStdOut()
+	client := webreq.NewHTTPClient()
+	http := webreq.NewHTTP(client)
+	entryRepository := provider.NewEntryRepositorySwitch(runtime2, deployment, stdOut, dataDogAPIKey, http)
+	loggerLogger := provider.NewLogger(prefix, logLevel, system, program, entryRepository)
+	shortLinkSQL := sqldb.NewShortLinkSQL(sqlDB)
+	metaTagPersist := shortlink.NewMetaTagPersist(shortLinkSQL)
+	metaTagServiceServer := grpcapi.NewMetaTagServer(metaTagPersist)
+	short := grpcapi.NewShort(metaTagServiceServer)
+	grpc, err := service.NewGRPC(loggerLogger, short, securityPolicy)
+	if err != nil {
+		return service.GRPC{}, err
+	}
+	return grpc, nil
 }
 
 func InjectGraphQLService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel logger.LogLevel, sqlDB *sql.DB, graphqlSchemaPath provider.GraphQLSchemaPath, graphqlPath provider.GraphQLPath, graphiQLDefaultQuery provider.GraphiQLDefaultQuery, secret provider.ReCaptchaSecret, jwtSecret provider.JwtSecret, bufferSize provider.KeyGenBufferSize, kgsRPCConfig provider.KgsRPCConfig, tokenValidDuration provider.TokenValidDuration, dataDogAPIKey provider.DataDogAPIKey, segmentAPIKey provider.SegmentAPIKey, ipStackAPIKey provider.IPStackAPIKey, googleAPIKey provider.GoogleAPIKey) (service.GraphQL, error) {

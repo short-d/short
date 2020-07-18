@@ -6,6 +6,7 @@ import (
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/app/fw/env"
 	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/security"
 	"github.com/short-d/short/backend/dep"
 	"github.com/short-d/short/backend/dep/provider"
 )
@@ -29,6 +30,10 @@ type ServiceConfig struct {
 	WebFrontendURL       string
 	GraphQLAPIPort       int
 	HTTPAPIPort          int
+	GRPCAPIPort          int
+	EnableEncryption     bool
+	CertFilePath         string
+	KeyFilePath          string
 	KeyGenBufferSize     int
 	KgsHostname          string
 	KgsPort              int
@@ -125,5 +130,23 @@ func Start(
 		panic(err)
 	}
 
-	httpAPI.StartAndWait(config.HTTPAPIPort)
+	httpAPI.StartAsync(config.HTTPAPIPort)
+
+	gRPCService, err := dep.InjectGRPCService(
+		env.Runtime(config.Runtime),
+		provider.LogPrefix(config.LogPrefix),
+		config.LogLevel,
+		sqlDB,
+		security.Policy{
+			IsEncrypted:         config.EnableEncryption,
+			CertificateFilePath: config.CertFilePath,
+			KeyFilePath:         config.KeyFilePath,
+		},
+		dataDogAPIKey,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	gRPCService.StartAndWait(config.GRPCAPIPort)
 }
