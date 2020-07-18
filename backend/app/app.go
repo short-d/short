@@ -3,11 +3,10 @@ package app
 import (
 	"time"
 
-	"github.com/short-d/app/fw/security"
-
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/app/fw/env"
 	"github.com/short-d/app/fw/logger"
+	"github.com/short-d/app/fw/security"
 	"github.com/short-d/short/backend/dep"
 	"github.com/short-d/short/backend/dep/provider"
 )

@@ -4,7 +4,6 @@ package dep
 
 import (
 	"database/sql"
-	"github.com/short-d/app/fw/rpc"
 
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
@@ -17,6 +16,7 @@ import (
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/app/fw/metrics"
 	"github.com/short-d/app/fw/network"
+	"github.com/short-d/app/fw/rpc"
 	"github.com/short-d/app/fw/runtime"
 	"github.com/short-d/app/fw/security"
 	"github.com/short-d/app/fw/service"
