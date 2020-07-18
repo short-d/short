@@ -4,6 +4,7 @@ package dep
 
 import (
 	"database/sql"
+	"github.com/short-d/app/fw/rpc"
 
 	"github.com/google/wire"
 	"github.com/short-d/app/fw/analytics"
@@ -17,6 +18,7 @@ import (
 	"github.com/short-d/app/fw/metrics"
 	"github.com/short-d/app/fw/network"
 	"github.com/short-d/app/fw/runtime"
+	"github.com/short-d/app/fw/security"
 	"github.com/short-d/app/fw/service"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/app/fw/webreq"
@@ -24,6 +26,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/github"
 	"github.com/short-d/short/backend/app/adapter/google"
 	"github.com/short-d/short/backend/app/adapter/gqlapi/resolver"
+	"github.com/short-d/short/backend/app/adapter/grpcapi"
 	"github.com/short-d/short/backend/app/adapter/kgs"
 	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -135,6 +138,38 @@ func InjectEnv() env.Env {
 		env.NewGoDotEnv,
 	)
 	return env.GoDotEnv{}
+}
+
+// InjectGRPCService creates gRPC service with configured dependencies.
+func InjectGRPCService(
+	runtime env.Runtime,
+	prefix provider.LogPrefix,
+	logLevel logger.LogLevel,
+	sqlDB *sql.DB,
+	securityPolicy security.Policy,
+	dataDogAPIKey provider.DataDogAPIKey,
+) (service.GRPC, error) {
+	wire.Build(
+		wire.Bind(new(timer.Timer), new(timer.System)),
+		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSQL)),
+		wire.Bind(new(rpc.API), new(grpcapi.ShortGRPCApi)),
+		wire.Bind(new(shortlink.MetaTag), new(shortlink.MetaTagPersist)),
+
+		observabilitySet,
+
+		sqldb.NewShortLinkSQL,
+		shortlink.NewMetaTagPersist,
+
+		grpcapi.NewMetaTagServer,
+		grpcapi.NewShortGRPCApi,
+
+		timer.NewSystem,
+		webreq.NewHTTPClient,
+		webreq.NewHTTP,
+		env.NewDeployment,
+		service.NewGRPC,
+	)
+	return service.GRPC{}, nil
 }
 
 // InjectGraphQLService creates GraphQL service with configured dependencies.
