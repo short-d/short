@@ -79,8 +79,8 @@ func InjectGRPCService(runtime2 env.Runtime, prefix provider.LogPrefix, logLevel
 	shortLinkSQL := sqldb.NewShortLinkSQL(sqlDB)
 	metaTagPersist := shortlink.NewMetaTagPersist(shortLinkSQL)
 	metaTagServiceServer := grpcapi.NewMetaTagServer(metaTagPersist)
-	shortGRPCApi := grpcapi.NewShortGRPCApi(metaTagServiceServer)
-	grpc, err := service.NewGRPC(loggerLogger, shortGRPCApi, securityPolicy)
+	short := grpcapi.NewShort(metaTagServiceServer)
+	grpc, err := service.NewGRPC(loggerLogger, short, securityPolicy)
 	if err != nil {
 		return service.GRPC{}, err
 	}

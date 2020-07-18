@@ -152,22 +152,22 @@ func InjectGRPCService(
 	wire.Build(
 		wire.Bind(new(timer.Timer), new(timer.System)),
 		wire.Bind(new(repository.ShortLink), new(sqldb.ShortLinkSQL)),
-		wire.Bind(new(rpc.API), new(grpcapi.ShortGRPCApi)),
+		wire.Bind(new(rpc.API), new(grpcapi.Short)),
 		wire.Bind(new(shortlink.MetaTag), new(shortlink.MetaTagPersist)),
 
 		observabilitySet,
-
-		sqldb.NewShortLinkSQL,
-		shortlink.NewMetaTagPersist,
-
-		grpcapi.NewMetaTagServer,
-		grpcapi.NewShortGRPCApi,
 
 		timer.NewSystem,
 		webreq.NewHTTPClient,
 		webreq.NewHTTP,
 		env.NewDeployment,
 		service.NewGRPC,
+
+		sqldb.NewShortLinkSQL,
+		shortlink.NewMetaTagPersist,
+		grpcapi.NewShort,
+
+		grpcapi.NewMetaTagServer,
 	)
 	return service.GRPC{}, nil
 }

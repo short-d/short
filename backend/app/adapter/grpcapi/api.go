@@ -6,19 +6,19 @@ import (
 	"google.golang.org/grpc"
 )
 
-var _ rpc.API = (*ShortGRPCApi)(nil)
+var _ rpc.API = (*Short)(nil)
 
-// ShortGRPCApi provides an efficient way for remote systems to interact with Short backend.
-type ShortGRPCApi struct {
+// Short provides an efficient way for remote systems to interact with Short backend.
+type Short struct {
 	metaTagServer proto.MetaTagServiceServer
 }
 
 // RegisterServers registers gRPC servers that handle user requests.
-func (s ShortGRPCApi) RegisterServers(server *grpc.Server) {
+func (s Short) RegisterServers(server *grpc.Server) {
 	proto.RegisterMetaTagServiceServer(server, s.metaTagServer)
 }
 
-// NewShortGRPCApi creates ShortGRPCApi.
-func NewShortGRPCApi(metaTagServer proto.MetaTagServiceServer) ShortGRPCApi {
-	return ShortGRPCApi{metaTagServer: metaTagServer}
+// NewShort creates Short.
+func NewShort(metaTagServer proto.MetaTagServiceServer) Short {
+	return Short{metaTagServer: metaTagServer}
 }

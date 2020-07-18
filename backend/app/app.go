@@ -31,6 +31,9 @@ type ServiceConfig struct {
 	GraphQLAPIPort       int
 	HTTPAPIPort          int
 	GRPCAPIPort          int
+	EnableEncryption     bool
+	CertFilePath         string
+	KeyFilePath          string
 	KeyGenBufferSize     int
 	KgsHostname          string
 	KgsPort              int
@@ -134,7 +137,11 @@ func Start(
 		provider.LogPrefix(config.LogPrefix),
 		config.LogLevel,
 		sqlDB,
-		security.Policy{},
+		security.Policy{
+			IsEncrypted:         config.EnableEncryption,
+			CertificateFilePath: config.CertFilePath,
+			KeyFilePath:         config.KeyFilePath,
+		},
 		dataDogAPIKey,
 	)
 	if err != nil {
