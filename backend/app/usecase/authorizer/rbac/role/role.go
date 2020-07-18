@@ -22,39 +22,41 @@ const (
 var permissions = map[Role][]permission.Permission{
 	Basic: {},
 	ShortLinkViewer: {
-		permission.ViewShortLink,
-
 		permission.ViewAdminPanel,
+
+		permission.ViewShortLink,
 	},
 	ShortLinkEditor: {
+		permission.ViewAdminPanel,
+
 		permission.ViewShortLink,
 		permission.CreateShortLink,
 		permission.EditShortLink,
 		permission.DisableShortLink,
 		permission.DeleteShortLink,
-
-		permission.ViewAdminPanel,
 	},
 	ChangeLogViewer: {
-		permission.ViewChange,
-
 		permission.ViewAdminPanel,
+
+		permission.ViewChange,
 	},
 	ChangeLogEditor: {
+		permission.ViewAdminPanel,
+
 		permission.ViewChange,
 		permission.CreateChange,
 		permission.EditChange,
 		permission.DeleteChange,
-
-		permission.ViewAdminPanel,
 	},
 	SecuritySpecialist: {
+		permission.ViewAdminPanel,
+
 		permission.DisableShortLink,
 		permission.DisableUser,
-
-		permission.ViewAdminPanel,
 	},
 	Admin: {
+		permission.ViewAdminPanel,
+
 		permission.ViewShortLink,
 		permission.CreateShortLink,
 		permission.EditShortLink,
@@ -71,7 +73,7 @@ var permissions = map[Role][]permission.Permission{
 		permission.DisableUser,
 		permission.DeleteUser,
 
-		permission.ViewAdminPanel,
+		permission.CreateAPIKey,
 	},
 }
 
