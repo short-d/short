@@ -26,7 +26,7 @@ export class CreateChangeModal extends Component<IProps> {
             onClick={this.handleOnModalCloseClick}
           />
         </div>
-        <div className={styles.createChangeSectionContainer}>
+        <div className={styles.content}>
           <CreateChangeSection
             onChangeCreated={this.props.handleOnChangeCreated}
             changeLogService={this.props.changeLogService}
