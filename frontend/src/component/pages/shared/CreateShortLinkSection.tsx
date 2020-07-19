@@ -160,6 +160,7 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
 
         this.setState({
           createdShortLink: shortLink,
+          createdLongLink: longLink,
           qrCodeURL: qrCodeURL,
           shouldShowUsage: true
         });
