@@ -724,10 +724,10 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 	)
 
 	testCases := []struct {
-		name      string
-		tableRows []shortLinkTableRow
-		input     entity.ShortLinkInput
-		hasErr    bool
+		name           string
+		tableRows      []shortLinkTableRow
+		shortLinkInput entity.ShortLinkInput
+		hasErr         bool
 	}{
 		{
 			name: "delete exisiting shortlink",
@@ -745,7 +745,7 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 					twitterImageURL:    nil,
 				},
 			},
-			input: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				LongLink:    &longLink,
 				CustomAlias: &customAlias,
 				CreatedAt:   nil,
@@ -768,7 +768,7 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 					twitterImageURL:    nil,
 				},
 			},
-			input: entity.ShortLinkInput{
+			shortLinkInput: entity.ShortLinkInput{
 				LongLink:    &longLink,
 				CustomAlias: &customAlias,
 				CreatedAt:   nil,
@@ -787,7 +787,7 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
 					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
-					err := shortLinkRepo.DeleteShortLink(testCase.input)
+					err := shortLinkRepo.DeleteShortLink(testCase.shortLinkInput)
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 					}
