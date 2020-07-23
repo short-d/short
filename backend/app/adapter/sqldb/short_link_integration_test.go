@@ -716,8 +716,8 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 
 func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 	var (
-		twoYearsAgo = mustParseTime(t, "2018-05-01T08:02:16-07:00")
-		now         = mustParseTime(t, "2020-05-01T08:02:16-07:00")
+		createdAt = mustParseTime(t, "2018-05-01T08:02:16-07:00")
+		now       = mustParseTime(t, "2020-05-01T08:02:16-07:00")
 
 		longLink    = "https://short-d.com/"
 		customAlias = "short_is_great"
@@ -735,7 +735,7 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 				{
 					alias:              "short_is_great",
 					longLink:           "https://short-d.com",
-					createdAt:          &twoYearsAgo,
+					createdAt:          &createdAt,
 					expireAt:           &now,
 					ogTitle:            nil,
 					ogDescription:      nil,
@@ -758,7 +758,7 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 				{
 					alias:              "i_luv_short",
 					longLink:           "https://short-d.com",
-					createdAt:          &twoYearsAgo,
+					createdAt:          &createdAt,
 					expireAt:           &now,
 					ogTitle:            nil,
 					ogDescription:      nil,
