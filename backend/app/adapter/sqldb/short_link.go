@@ -287,10 +287,16 @@ func (s ShortLinkSQL) composeParamList(numParams int) string {
 }
 
 // DeleteShortLink deletes an existing user short link.
-func (s ShortLinkSQL) DeleteShortLink(input entity.ShortLinkInput) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE %s=$1", table.ShortLink.TableName, table.ShortLink.ColumnAlias)
+func (s ShortLinkSQL) DeleteShortLink(shortLinkInput entity.ShortLinkInput) error {
+	query := fmt.Sprintf(`
+	DELETE FROM %s
+	WHERE %s=$1
+	`,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnAlias,
+	)
 
-	alias := input.GetCustomAlias("")
+	alias := shortLinkInput.GetCustomAlias("")
 	result, err := s.db.Exec(query, alias)
 	if err != nil {
 		return err
@@ -301,7 +307,7 @@ func (s ShortLinkSQL) DeleteShortLink(input entity.ShortLinkInput) error {
 		return err
 	}
 	if affectedRowCount == 0 {
-		return fmt.Errorf("failed to delete user short link alias(%s)", input.GetCustomAlias(""))
+		return fmt.Errorf("failed to delete user short link alias(%s)", alias)
 	}
 
 	return nil
