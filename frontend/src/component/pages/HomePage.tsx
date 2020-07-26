@@ -25,7 +25,6 @@ import { ChangeLogModal } from '../ui/ChangeLogModal';
 import { ChangeLogService } from '../../service/ChangeLog.service';
 import { CreateShortLinkSection } from './shared/CreateShortLinkSection';
 import { Toast } from '../ui/Toast';
-import { IClipboardService } from '../../service/clipboardService/Clipboard.service';
 import {
   IPagedShortLinks,
   ShortLinkService
@@ -40,7 +39,6 @@ interface Props {
   featureDecisionService: IFeatureDecisionService;
   urlService: UrlService;
   authService: AuthService;
-  clipboardService: IClipboardService;
   extensionService: IBrowserExtensionService;
   versionService: VersionService;
   qrCodeService: QrCodeService;
@@ -241,15 +239,6 @@ export class HomePage extends Component<Props, State> {
     this.props.history.push('/admin');
   };
 
-  // TODO(issue#604): refactor into ShortLinkService to decouple business logic from view.
-  private copyShortenedLink = (shortLink: string) => {
-    const COPY_SUCCESS_MESSAGE = 'Short Link copied into clipboard';
-    this.props.clipboardService
-      .copyTextToClipboard(shortLink)
-      .then(() => this.toastRef.current!.notify(COPY_SUCCESS_MESSAGE))
-      .catch(() => console.log(`Failed to copy ${shortLink} into Clipboard`));
-  };
-
   getLongLinkFromQueryParams(): string {
     let urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('long_link')!;
@@ -306,7 +295,12 @@ export class HomePage extends Component<Props, State> {
   };
 
   private handleOnShortLinkCreated = (shortLink: string) => {
-    this.copyShortenedLink(shortLink);
+    const COPY_SUCCESS_MESSAGE = 'Short Link copied into clipboard';
+    this.props.shortLinkService
+      .copyShortenedLinkToClipboard(shortLink)
+      .then(() => this.toastRef.current!.notify(COPY_SUCCESS_MESSAGE))
+      .catch(() => console.log(`Failed to copy ${shortLink} into Clipboard`));
+
     this.refreshUserShortLinks();
   };
 

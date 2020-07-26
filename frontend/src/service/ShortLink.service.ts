@@ -1,6 +1,7 @@
 import { Url } from '../entity/Url';
 import { Err, ErrorService } from './Error.service';
 import { ShortLinkGraphQLApi } from './shortGraphQL/ShortLinkGraphQL.api';
+import { IClipboardService } from './clipboardService/Clipboard.service';
 
 export interface IPagedShortLinks {
   shortLinks: Url[];
@@ -12,7 +13,8 @@ export interface IPagedShortLinks {
 export class ShortLinkService {
   constructor(
     private shortLinkGraphQLApi: ShortLinkGraphQLApi,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private clipboardService: IClipboardService
   ) {}
 
   getUserCreatedShortLinks(
@@ -54,4 +56,8 @@ export class ShortLinkService {
       totalCount: urls.length
     };
   }
+
+  copyShortenedLinkToClipboard = (shortLink: string): Promise<void> => {
+    return this.clipboardService.copyTextToClipboard(shortLink);
+  };
 }
