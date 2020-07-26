@@ -8,7 +8,7 @@ interface IProps {
   rows?: ReactChild[][];
   widths?: string[];
   alignHeaders?: TextAlignProperty[];
-  alignBody?: TextAlignProperty[];
+  alignBodyColumns?: TextAlignProperty[];
   headerFontSize?: string;
 }
 
@@ -49,14 +49,14 @@ export class Table extends Component<IProps> {
   }
 
   private createBodyRow(row: ReactChild[]) {
-    const { widths, alignBody } = this.props;
+    const { widths, alignBodyColumns } = this.props;
     return row.map((cell: ReactChild, cellIndex: number) => {
       return (
         <td
           key={`cell-${cellIndex}`}
           style={{
             width: widths?.[cellIndex],
-            textAlign: alignBody?.[cellIndex]
+            textAlign: alignBodyColumns?.[cellIndex]
           }}
         >
           {cell}
