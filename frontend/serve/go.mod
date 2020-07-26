@@ -3,8 +3,8 @@ module github.com/short-d/short/frontend/serve
 go 1.14
 
 require (
-	github.com/google/wire v0.4.0 // indirect
-	github.com/short-d/app v0.0.0-20200508200839-2e32dc189511 // indirect
+	github.com/short-d/app v0.0.0-20200627081605-eabc0539025f
+	github.com/short-d/short/backend v0.0.0-20200719202552-fc38924129cb
 )
 
 // Uncomment the following line when testing app framework
