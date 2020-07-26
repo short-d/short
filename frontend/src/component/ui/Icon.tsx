@@ -12,26 +12,11 @@ export enum IconID {
 }
 
 interface IProps {
-  defaultIconID: IconID;
+  iconID: IconID;
   onClick?: () => void;
 }
 
-interface IStates {
-  iconID: IconID;
-}
-
-export class Icon extends Component<IProps, IStates> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      iconID: props.defaultIconID
-    };
-  }
-
-  setIcon(iconID: IconID) {
-    this.setState({ iconID: iconID });
-  }
-
+export class Icon extends Component<IProps> {
   render() {
     return (
       <i className={'icon'} onClick={this.handleClick}>
@@ -48,7 +33,7 @@ export class Icon extends Component<IProps, IStates> {
   };
 
   private renderSVG() {
-    const { iconID } = this.state;
+    const { iconID } = this.props;
 
     switch (iconID) {
       case IconID.Menu:
