@@ -6,6 +6,11 @@ import (
 	"github.com/short-d/app/fw/crypto"
 )
 
+var (
+	ErrMissingAppID = errors.New("missing app id")
+	ErrMissingKey   = errors.New("missing key")
+)
+
 // APIKey represents the payload of an API key.
 type APIKey struct {
 	AppID string
@@ -16,11 +21,11 @@ type APIKey struct {
 func NewAPIKey(payload crypto.TokenPayload) (APIKey, error) {
 	appID, ok := payload["app_id"]
 	if !ok {
-		return APIKey{}, errors.New("missing app id")
+		return APIKey{}, ErrMissingAppID
 	}
 	key, ok := payload["key"]
 	if !ok {
-		return APIKey{}, errors.New("missing key")
+		return APIKey{}, ErrMissingKey
 	}
 	return APIKey{
 		AppID: appID.(string),

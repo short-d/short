@@ -188,7 +188,7 @@ func TestThirdPartyApp_GenerateAPIKey(t *testing.T) {
 			expectKeyExist: true,
 		},
 		{
-			name: "Out of available key",
+			name: "Out of available keys",
 			existingApps: []entity.App{
 				{ID: "app"},
 			},

@@ -5,6 +5,7 @@ type Permission int
 
 const (
 	ViewAdminPanel Permission = iota
+
 	CreateShortLink
 	ViewShortLink
 	EditShortLink

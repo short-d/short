@@ -13,7 +13,7 @@ import (
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
-// ThirdPartyApp authenticates the identify of a third application.
+// ThirdPartyApp authenticates the identity of a third party application.
 type ThirdPartyApp struct {
 	authorizer authorizer.Authorizer
 	tokenizer  crypto.Tokenizer
@@ -26,7 +26,7 @@ type ThirdPartyApp struct {
 // GetApp retrieves app information based on the credential provided.
 func (t ThirdPartyApp) GetApp(cred Credential) (entity.App, error) {
 	if cred.APIKey == nil {
-		return entity.App{}, nil
+		return entity.App{}, errors.New("no credential provided")
 	}
 	apiKeyStr := *cred.APIKey
 	tokenPayload, err := t.tokenizer.Decode(apiKeyStr)
@@ -36,14 +36,14 @@ func (t ThirdPartyApp) GetApp(cred Credential) (entity.App, error) {
 
 	apiKeyPayload, err := payload.NewAPIKey(tokenPayload)
 	if err != nil {
-		return entity.App{}, errors.New("invalid api key")
+		return entity.App{}, fmt.Errorf("invalid api key: %w", err)
 	}
 	apiKey, err := t.apiKeyRepo.GetAPIKey(apiKeyPayload.AppID, apiKeyPayload.Key)
 	if err != nil {
-		return entity.App{}, errors.New("invalid api key")
+		return entity.App{}, fmt.Errorf("invalid api key: %w", err)
 	}
 	if apiKey.IsDisabled {
-		return entity.App{}, errors.New("invalid api key")
+		return entity.App{}, fmt.Errorf("invalid api key: %w", err)
 	}
 	return t.appRepo.GetAppByID(apiKey.AppID)
 }
@@ -71,12 +71,12 @@ func (t ThirdPartyApp) GenerateAPIKey(user entity.User, app entity.App) (string,
 		return "", err
 	}
 
-	_, err = t.apiKeyRepo.GetAPIKey(app.ID, key)
-	if err == nil {
-		return "", fmt.Errorf("key(%s) already exists for app(%s)", key, app.ID)
-	}
-	if !errors.As(err, &entryNotFound) {
+	isExist, err := t.isAPIKeyExist(app.ID, key)
+	if err != nil {
 		return "", err
+	}
+	if isExist {
+		return "", fmt.Errorf("key(%s) already exists for app(%s)", key, app.ID)
 	}
 
 	isDisabled := false
@@ -98,6 +98,18 @@ func (t ThirdPartyApp) GenerateAPIKey(user entity.User, app entity.App) (string,
 	}
 	tokenPayload := apiKeyPayload.NewTokenPayload()
 	return t.tokenizer.Encode(tokenPayload)
+}
+
+func (t ThirdPartyApp) isAPIKeyExist(appID string, key string) (bool, error) {
+	_, err := t.apiKeyRepo.GetAPIKey(appID, key)
+	if err == nil {
+		return true, nil
+	}
+	var entryNotFound repository.ErrEntryNotFound
+	if errors.As(err, &entryNotFound) {
+		return false, nil
+	}
+	return false, err
 }
 
 func (t ThirdPartyApp) newKey() (string, error) {
