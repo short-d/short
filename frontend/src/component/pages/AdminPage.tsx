@@ -10,6 +10,7 @@ interface IProps {}
 
 interface IState {
   isMenuOpen: boolean;
+  menuIcon: IconID;
 }
 
 export class AdminPage extends Component<IProps, IState> {
@@ -19,7 +20,8 @@ export class AdminPage extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      isMenuOpen: true
+      isMenuOpen: true,
+      menuIcon: IconID.MenuOpen
     };
   }
 
@@ -41,10 +43,7 @@ export class AdminPage extends Component<IProps, IState> {
   private renderMenuButton() {
     return (
       <div className={'menu-button'}>
-        <Icon
-          iconID={this.state.isMenuOpen ? IconID.MenuOpen : IconID.Menu}
-          onClick={this.handleMenuIconClick}
-        />
+        <Icon iconID={this.state.menuIcon} onClick={this.handleMenuIconClick} />
       </div>
     );
   }
@@ -90,13 +89,13 @@ export class AdminPage extends Component<IProps, IState> {
     const { isMenuOpen } = this.state;
 
     if (isMenuOpen) {
-      this.setState({ isMenuOpen: false }, () => {
+      this.setState({ isMenuOpen: false, menuIcon: IconID.Menu }, () => {
         this.closeMenuDrawer();
       });
       return;
     }
 
-    this.setState({ isMenuOpen: true }, () => {
+    this.setState({ isMenuOpen: true, menuIcon: IconID.MenuOpen }, () => {
       this.openMenuDrawer();
     });
   };
