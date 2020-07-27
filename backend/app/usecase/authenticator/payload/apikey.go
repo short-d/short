@@ -7,8 +7,10 @@ import (
 )
 
 var (
+	// ErrMissingAppID implies that the payload of API key does NOT contain app ID.
 	ErrMissingAppID = errors.New("missing app id")
-	ErrMissingKey   = errors.New("missing key")
+	// ErrMissingKey implies that the payload of API key does NOT contain secret key.
+	ErrMissingKey = errors.New("missing key")
 )
 
 // APIKey represents the payload of an API key.
