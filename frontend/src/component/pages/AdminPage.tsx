@@ -1,4 +1,4 @@
-import React, { Component, RefObject } from 'react';
+import React, { Component } from 'react';
 
 import './AdminPage.scss';
 import { Icon, IconID } from '../ui/Icon';
@@ -10,17 +10,18 @@ interface IProps {}
 
 interface IState {
   isMenuOpen: boolean;
+  menuIcon: IconID;
 }
 
 export class AdminPage extends Component<IProps, IState> {
   private menuDrawerRef = React.createRef<Drawer>();
-  private menuIconRef = React.createRef<Icon>();
   private mainContentTabsRef = React.createRef<Tabs>();
 
   constructor(props: IProps) {
     super(props);
     this.state = {
-      isMenuOpen: true
+      isMenuOpen: true,
+      menuIcon: IconID.MenuOpen
     };
   }
 
@@ -42,11 +43,7 @@ export class AdminPage extends Component<IProps, IState> {
   private renderMenuButton() {
     return (
       <div className={'menu-button'}>
-        <Icon
-          ref={this.menuIconRef}
-          defaultIconID={IconID.MenuOpen}
-          onClick={this.handleMenuIconClick}
-        />
+        <Icon iconID={this.state.menuIcon} onClick={this.handleMenuIconClick} />
       </div>
     );
   }
@@ -92,15 +89,13 @@ export class AdminPage extends Component<IProps, IState> {
     const { isMenuOpen } = this.state;
 
     if (isMenuOpen) {
-      this.setState({ isMenuOpen: false }, () => {
-        this.setIcon(this.menuIconRef, IconID.Menu);
+      this.setState({ isMenuOpen: false, menuIcon: IconID.Menu }, () => {
         this.closeMenuDrawer();
       });
       return;
     }
 
-    this.setState({ isMenuOpen: true }, () => {
-      this.setIcon(this.menuIconRef, IconID.MenuOpen);
+    this.setState({ isMenuOpen: true, menuIcon: IconID.MenuOpen }, () => {
       this.openMenuDrawer();
     });
   };
@@ -118,11 +113,4 @@ export class AdminPage extends Component<IProps, IState> {
     }
     this.menuDrawerRef.current.close();
   };
-
-  private setIcon(iconRef: RefObject<Icon>, iconID: IconID) {
-    if (!iconRef || !iconRef.current) {
-      return;
-    }
-    iconRef.current.setIcon(iconID);
-  }
 }
