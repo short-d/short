@@ -12,26 +12,11 @@ export enum IconID {
 }
 
 interface IProps {
-  defaultIconID: IconID;
+  iconID: IconID;
   onClick?: () => void;
 }
 
-interface IStates {
-  iconID: IconID;
-}
-
-export class Icon extends Component<IProps, IStates> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      iconID: props.defaultIconID
-    };
-  }
-
-  setIcon(iconID: IconID) {
-    this.setState({ iconID: iconID });
-  }
-
+export class Icon extends Component<IProps> {
   render() {
     return (
       <i className={'icon'} onClick={this.handleClick}>
@@ -48,7 +33,7 @@ export class Icon extends Component<IProps, IStates> {
   };
 
   private renderSVG() {
-    const { iconID } = this.state;
+    const { iconID } = this.props;
 
     switch (iconID) {
       case IconID.Menu:
@@ -118,21 +103,21 @@ export class Icon extends Component<IProps, IStates> {
     );
   };
 
-  private renderEditIcon() {
+  private renderEditIcon = () => {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M0 0h24v24H0z" fill="none" />
         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
       </svg>
     );
-  }
+  };
 
-  private renderCheckIcon() {
+  private renderCheckIcon = () => {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M0 0h24v24H0z" fill="none" />
         <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
       </svg>
     );
-  }
+  };
 }
