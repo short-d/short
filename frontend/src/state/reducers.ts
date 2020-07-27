@@ -7,7 +7,7 @@ import {
   RAISE_GET_USER_SHORT_LINKS_ERROR,
   RAISE_GET_CHANGELOG_ERROR,
   RAISE_CREATE_CHANGE_ERROR,
-  RAISE_GET_ALL_CHANGEs_ERROR,
+  RAISE_GET_ALL_CHANGES_ERROR,
   RAISE_DELETE_CHANGE_ERROR
 } from './actions';
 import { Reducer } from 'redux';
@@ -57,7 +57,7 @@ export const reducers: Reducer<IAppState> = (
         ...state,
         err: action.payload
       };
-    case RAISE_GET_ALL_CHANGEs_ERROR:
+    case RAISE_GET_ALL_CHANGES_ERROR:
       return {
         ...state,
         err: action.payload

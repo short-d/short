@@ -7,7 +7,7 @@ import styles from './ChangeLogTab.module.scss';
 import { CreateChangeModal } from './CreateChangeModal';
 import { Change } from '../../../../entity/Change';
 import {
-  raiseCreateChangeError,
+  raiseDeleteChangeError,
   raiseGetAllChangesError
 } from '../../../../state/actions';
 import { ManageChangeLogsSection } from './ManageChangeLogsSection';
@@ -90,7 +90,7 @@ export class ChangeLogTab extends Component<IProps, IStates> {
         if (authenticationErr) {
           this.props.onAuthenticationFailed();
         }
-        this.props.store.dispatch(raiseCreateChangeError(changeErr));
+        this.props.store.dispatch(raiseDeleteChangeError(changeErr));
       });
   };
 
