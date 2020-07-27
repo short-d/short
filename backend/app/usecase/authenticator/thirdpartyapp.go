@@ -59,8 +59,6 @@ func (t ThirdPartyApp) GenerateAPIKey(user entity.User, app entity.App) (string,
 		return "", fmt.Errorf("user(%s) cannot generate api key for app(%s)", user.ID, app.ID)
 	}
 
-	var entryNotFound repository.ErrEntryNotFound
-
 	_, err = t.appRepo.GetAppByID(app.ID)
 	if err != nil {
 		return "", err
