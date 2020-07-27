@@ -1,0 +1,24 @@
+.deleteButton {
+  display: inline-block;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.collapsibleButton {
+  display: inline-block;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  svg {
+    height: 11px;
+  }
+}
