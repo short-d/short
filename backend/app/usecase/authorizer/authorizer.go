@@ -37,6 +37,11 @@ func (a Authorizer) CanViewAdminPanel(user entity.User) (bool, error) {
 	return a.rbac.HasPermission(user, permission.ViewAdminPanel)
 }
 
+// CanGenerateAPIKey decides whether a user is allowed to generate a new api key.
+func (a Authorizer) CanGenerateAPIKey(user entity.User) (bool, error) {
+	return a.rbac.HasPermission(user, permission.CreateAPIKey)
+}
+
 // NewAuthorizer creates a new Authorizer object
 func NewAuthorizer(rbac rbac.RBAC) Authorizer {
 	return Authorizer{rbac: rbac}

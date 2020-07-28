@@ -59,10 +59,7 @@ export class ErrorModal extends Component<IProps, IState> {
       >
         <div className={'error-modal-content'}>
           <div className={'close-icon'}>
-            <Icon
-              defaultIconID={IconID.Close}
-              onClick={this.handleCloseClick}
-            />
+            <Icon iconID={IconID.Close} onClick={this.handleCloseClick} />
           </div>
           <div className={'title'}>{error?.name}</div>
           <div className={'description'}>{error?.description}</div>

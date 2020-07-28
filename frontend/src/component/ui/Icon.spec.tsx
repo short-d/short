@@ -4,14 +4,11 @@ import { Icon, IconID } from './Icon';
 
 describe('Icon component', () => {
   test('should render without crash', () => {
-    render(<Icon defaultIconID={IconID.Close} />);
+    render(<Icon iconID={IconID.Close} />);
   });
 
   test('should render the icon correctly', () => {
-    const iconRef = React.createRef<Icon>();
-    const { container } = render(
-      <Icon ref={iconRef} defaultIconID={IconID.Search} />
-    );
+    const { container } = render(<Icon iconID={IconID.Search} />);
 
     expect(container.querySelector('.icon-search')).toBeTruthy();
   });
@@ -19,7 +16,7 @@ describe('Icon component', () => {
   test('should call click handler when clicked on icon', () => {
     const onClickHandler = jest.fn();
     const { container } = render(
-      <Icon defaultIconID={IconID.Close} onClick={onClickHandler} />
+      <Icon iconID={IconID.Close} onClick={onClickHandler} />
     );
 
     const icon = container.querySelector('.icon');
@@ -31,7 +28,7 @@ describe('Icon component', () => {
   });
 
   test('should not crash when clicked without onClick callback', () => {
-    const { container } = render(<Icon defaultIconID={IconID.Close} />);
+    const { container } = render(<Icon iconID={IconID.Close} />);
 
     const icon = container.querySelector('.icon');
 
@@ -39,15 +36,12 @@ describe('Icon component', () => {
     fireEvent.click(icon!);
   });
 
-  test('should change icon when setIcon is invoked', () => {
-    const iconRef = React.createRef<Icon>();
-    const { container } = render(
-      <Icon ref={iconRef} defaultIconID={IconID.Search} />
-    );
+  test('should change icon when passed a different icon as prop', () => {
+    const { rerender, container } = render(<Icon iconID={IconID.Search} />);
 
     expect(container.querySelector('.icon-search')).toBeTruthy();
 
-    iconRef.current!.setIcon(IconID.Close);
+    rerender(<Icon iconID={IconID.Close} />);
     expect(container.querySelector('.icon-search')).toBeFalsy();
     expect(container.querySelector('.icon-close')).toBeTruthy();
   });

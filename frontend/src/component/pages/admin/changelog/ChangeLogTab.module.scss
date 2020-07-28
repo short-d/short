@@ -1,0 +1,31 @@
+@import 'src/component/styles/color';
+@import 'src/component/styles/font';
+@import 'src/component/styles/layouts';
+@import 'src/component/styles/shape';
+
+.changelogTab {
+  margin: 30px;
+
+  > .header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+
+    > .title {
+      font-size: 50px;
+      font-weight: $font-weight-semi-bold;
+      padding-left: 10px;
+      color: #333;
+    }
+
+    > .createChangeButton {
+      $height: 40px;
+
+      width: 150px;
+      height: $height;
+      border-radius: $height / 2;
+      overflow: hidden;
+    }
+  }
+}
