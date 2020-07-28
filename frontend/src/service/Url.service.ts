@@ -84,7 +84,7 @@ export class UrlService {
   }
 
   aliasToFrontendLink(alias: string): string {
-    return `${window.location.protocol}//${window.location.hostname}/r/${alias}`;
+    return `${window.location.protocol}//${window.location.host}/r/${alias}`;
   }
 
   aliasToBackendLink(alias: string): string {
