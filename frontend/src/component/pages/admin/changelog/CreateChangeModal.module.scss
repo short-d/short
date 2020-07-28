@@ -1,0 +1,34 @@
+@import 'src/component/styles/color';
+@import 'src/component/styles/layouts';
+@import 'src/component/styles/shape';
+
+.modalCloseIcon {
+  fill: $color-white;
+  background-color: $color-dark-gray;
+  padding: 2px;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+
+  @include circle;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.9;
+  }
+}
+
+.content {
+  width: 60vw;
+  max-height: 80vh;
+  overflow-y: auto;
+
+  @include respond-to($phone) {
+    width: 95vw;
+  }
+}

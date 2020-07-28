@@ -40,6 +40,10 @@ func main() {
 		KgsPort              int           `env:"KEY_GEN_PORT" default:"8080"`
 		GraphQLAPIPort       int           `env:"GRAPHQL_API_PORT" default:"8080"`
 		HTTPAPIPort          int           `env:"HTTP_API_PORT" default:"80"`
+		GRPCAPIPort          int           `env:"GRPC_API_PORT" default:"8081"`
+		EnableEncryption     bool          `env:"ENABLE_ENCRYPTION" default:"false"`
+		CertFilePath         string        `env:"CERT_FILE_PATH" default:"/etc/certs/tls.crt"`
+		KeyFilePath          string        `env:"KEY_FILE_PATH" default:"/etc/certs/tls.key"`
 		AuthTokenLifeTime    time.Duration `env:"AUTH_TOKEN_LIFETIME" default:"1w"`
 		SearchTimeout        time.Duration `env:"SEARCH_TIMEOUT" default:"1s"`
 		SwaggerUIDir         string        `env:"SWAGGER_UI_DIR" default:"app/adapter/routing/public"`
@@ -86,6 +90,10 @@ func main() {
 		WebFrontendURL:       config.WebFrontendURL,
 		GraphQLAPIPort:       config.GraphQLAPIPort,
 		HTTPAPIPort:          config.HTTPAPIPort,
+		GRPCAPIPort:          config.GRPCAPIPort,
+		EnableEncryption:     config.EnableEncryption,
+		CertFilePath:         config.CertFilePath,
+		KeyFilePath:          config.KeyFilePath,
 		KeyGenBufferSize:     config.KeyGenBufferSize,
 		KgsHostname:          config.KgsHostname,
 		KgsPort:              config.KgsPort,

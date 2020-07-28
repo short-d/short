@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import './Toggle.scss';
+import styles from './Toggle.module.scss';
 import classNames from 'classnames';
 
 interface Props {
@@ -44,18 +44,18 @@ export class Toggle extends Component<Props, State> {
   render() {
     const { enabled } = this.state;
     return (
-      <div className={'toggle'}>
+      <div className={styles.toggle}>
         <div
           className={classNames({
-            background: true,
-            active: enabled
+            [styles.background]: true,
+            [styles.active]: enabled
           })}
           onClick={this.handleClick}
         >
           <div
             className={classNames({
-              knob: true,
-              active: enabled
+              [styles.knob]: true,
+              [styles.active]: enabled
             })}
           />
         </div>
