@@ -14,6 +14,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/entity/metatag"
+	"github.com/short-d/short/backend/app/fw/must"
 	"github.com/short-d/short/backend/app/fw/ptr"
 )
 
@@ -277,8 +278,8 @@ func TestShortLinkSql_IsAliasExist(t *testing.T) {
 }
 
 func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
-	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
-	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
+	twoYearsAgo := must.Time(t, "2017-05-01T08:02:16-07:00")
+	now := must.Time(t, "2019-05-01T08:02:16-07:00")
 
 	testCases := []struct {
 		name              string
@@ -421,7 +422,7 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 }
 
 func TestShortLinkSql_CreateShortLink(t *testing.T) {
-	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
+	now := must.Time(t, "2019-05-01T08:02:16-07:00")
 
 	testCases := []struct {
 		name           string
@@ -510,8 +511,8 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 }
 
 func TestShortLinkSql_UpdateShortLink(t *testing.T) {
-	createdAt := mustParseTime(t, "2017-05-01T08:02:16-07:00")
-	now := mustParseTime(t, "2020-05-01T08:02:16-07:00")
+	createdAt := must.Time(t, "2017-05-01T08:02:16-07:00")
+	now := must.Time(t, "2020-05-01T08:02:16-07:00")
 
 	testCases := []struct {
 		name              string
@@ -612,8 +613,8 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 }
 
 func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
-	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
-	now := mustParseTime(t, "2019-05-01T08:02:16-07:00")
+	twoYearsAgo := must.Time(t, "2017-05-01T08:02:16-07:00")
+	now := must.Time(t, "2019-05-01T08:02:16-07:00")
 
 	testCases := []struct {
 		name               string

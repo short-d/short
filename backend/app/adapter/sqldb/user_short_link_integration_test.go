@@ -12,6 +12,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/must"
 )
 
 var insertUserShortLinkRowSQL = fmt.Sprintf(`
@@ -28,7 +29,7 @@ type userShortLinkTableRow struct {
 }
 
 func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
-	now := mustParseTime(t, "2019-05-01T08:02:16Z")
+	now := must.Time(t, "2019-05-01T08:02:16Z")
 
 	testCases := []struct {
 		name               string
@@ -115,7 +116,7 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 }
 
 func TestListShortLinkSql_HasMapping(t *testing.T) {
-	now := mustParseTime(t, "2019-05-01T08:02:16Z")
+	now := must.Time(t, "2019-05-01T08:02:16Z")
 
 	testCases := []struct {
 		name               string

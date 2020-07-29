@@ -13,6 +13,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/must"
 )
 
 var insertUserRowSQL = fmt.Sprintf(`
@@ -117,7 +118,7 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 }
 
 func TestUserSql_GetUserByID(t *testing.T) {
-	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
+	twoYearsAgo := must.Time(t, "2017-05-01T08:02:16-07:00")
 
 	testCases := []struct {
 		name      string
@@ -204,7 +205,7 @@ func TestUserSql_GetUserByID(t *testing.T) {
 }
 
 func TestUserSql_GetUserByEmail(t *testing.T) {
-	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
+	twoYearsAgo := must.Time(t, "2017-05-01T08:02:16-07:00")
 
 	testCases := []struct {
 		name      string

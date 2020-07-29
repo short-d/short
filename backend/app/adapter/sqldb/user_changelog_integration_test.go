@@ -13,6 +13,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/must"
 )
 
 var insertUserChangeLogRowSQL = fmt.Sprintf(`
@@ -29,7 +30,7 @@ type userChangeLogTableRow struct {
 }
 
 func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
-	now := mustParseTime(t, "2020-04-04T08:02:16-07:00")
+	now := must.Time(t, "2020-04-04T08:02:16-07:00")
 	monthAgo := now.AddDate(0, -1, 0)
 
 	testCases := []struct {
@@ -129,7 +130,7 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 }
 
 func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
-	now := mustParseTime(t, "2020-04-04T08:02:16-07:00")
+	now := must.Time(t, "2020-04-04T08:02:16-07:00")
 	monthAgo := now.AddDate(0, -1, 0)
 
 	testCases := []struct {
@@ -229,7 +230,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 }
 
 func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
-	now := mustParseTime(t, "2020-04-04T08:02:16-07:00")
+	now := must.Time(t, "2020-04-04T08:02:16-07:00")
 	monthAgo := now.AddDate(0, -1, 0)
 	twoMonthsAgo := monthAgo.AddDate(0, -1, 0)
 
