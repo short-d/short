@@ -10,8 +10,7 @@ export enum IconID {
   Edit,
   Check,
   Delete,
-  RightArrow,
-  DownArrow
+  RightArrow
 }
 
 interface IProps {
@@ -55,8 +54,6 @@ export class Icon extends Component<IProps> {
         return this.renderDeleteIcon();
       case IconID.RightArrow:
         return this.renderRightArrowIcon();
-      case IconID.DownArrow:
-        return this.renderDownArrowIcon();
     }
   }
 
@@ -157,17 +154,6 @@ export class Icon extends Component<IProps> {
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path
           d="M 18.144531 11.523438 L 6.820312 0.199219 C 6.554688 -0.0664062 6.128906 -0.0664062 5.859375 0.199219 C 5.59375 0.464844 5.59375 0.894531 5.859375 1.160156 L 16.699219 12 L 5.859375 22.839844 C 5.59375 23.105469 5.59375 23.53125 5.859375 23.796875 C 5.992188 23.929688 6.167969 24 6.339844 24 C 6.511719 24 6.6875 23.933594 6.816406 23.796875 L 18.136719 12.476562 C 18.40625 12.214844 18.40625 11.78125 18.144531 11.523438 Z M 18.144531 11.523438 "
-          fill="#000000"
-        />
-      </svg>
-    );
-  };
-
-  private renderDownArrowIcon = () => {
-    return (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path
-          d="M 23.707031 5.792969 C 23.316406 5.402344 22.683594 5.402344 22.292969 5.792969 L 12 16.085938 L 1.707031 5.792969 C 1.316406 5.402344 0.683594 5.402344 0.292969 5.792969 C -0.0976562 6.183594 -0.0976562 6.816406 0.292969 7.207031 L 11.292969 18.207031 C 11.488281 18.402344 11.742188 18.5 12 18.5 C 12.257812 18.5 12.511719 18.402344 12.707031 18.207031 L 23.707031 7.207031 C 24.097656 6.816406 24.097656 6.183594 23.707031 5.792969 Z M 23.707031 5.792969 "
           fill="#000000"
         />
       </svg>

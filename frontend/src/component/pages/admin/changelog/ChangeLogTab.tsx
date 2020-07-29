@@ -35,7 +35,7 @@ export class ChangeLogTab extends Component<IProps, IStates> {
   }
 
   componentDidMount() {
-    this.getChanges();
+    this.fetchChanges();
   }
 
   render() {
@@ -52,7 +52,7 @@ export class ChangeLogTab extends Component<IProps, IStates> {
             </Button>
           </div>
         </div>
-        <div className={styles.viewChangeLogsContainer}>
+        <div className={styles.manageChangeLogsContainer}>
           <ManageChangeLogsSection
             changes={this.state.changes}
             onChangeDelete={this.handleOnChangeDelete}
@@ -73,7 +73,7 @@ export class ChangeLogTab extends Component<IProps, IStates> {
     this.createChangeModalRef.current!.close();
     this.refreshChanges();
 
-    const changeCreatedMessage = 'Changelog created successfully';
+    const changeCreatedMessage = 'Change created successfully';
     this.props.notifyToast(changeCreatedMessage);
   };
 
@@ -83,7 +83,7 @@ export class ChangeLogTab extends Component<IProps, IStates> {
       .then(_ => {
         this.refreshChanges();
 
-        const changeDeletedMessage = 'Changelog deleted successfully';
+        const changeDeletedMessage = 'Change deleted successfully';
         this.props.notifyToast(changeDeletedMessage);
       })
       .catch(({ authenticationErr, changeErr }) => {
@@ -99,10 +99,10 @@ export class ChangeLogTab extends Component<IProps, IStates> {
   };
 
   private refreshChanges = () => {
-    this.getChanges();
+    this.fetchChanges();
   };
 
-  private getChanges = () => {
+  private fetchChanges = () => {
     this.props.changeLogService
       .getAllChanges()
       .then(changes => {

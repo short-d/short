@@ -11,11 +11,16 @@
   }
 }
 
-.collapsibleButton {
+.expandableButton {
   display: inline-block;
+  transition: transform 0.1s;
 
   &:hover {
     cursor: pointer;
+  }
+
+  &.expand {
+    transform: rotate(90deg);
   }
 
   svg {

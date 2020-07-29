@@ -3,6 +3,7 @@ import { Table } from '../../../ui/Table';
 import { Change } from '../../../../entity/Change';
 import { Icon, IconID } from '../../../ui/Icon';
 import styles from './ManageChangeLogsSection.module.scss';
+import classNames from 'classnames';
 
 interface IProps {
   changes: Change[];
@@ -10,7 +11,7 @@ interface IProps {
 }
 
 interface IState {
-  expandedChangeId: string | undefined;
+  expandedChangeIds: Set<string>;
 }
 
 export class ManageChangeLogsSection extends Component<IProps, IState> {
@@ -18,7 +19,7 @@ export class ManageChangeLogsSection extends Component<IProps, IState> {
     super(props);
 
     this.state = {
-      expandedChangeId: undefined
+      expandedChangeIds: new Set<string>()
     };
   }
 
@@ -49,14 +50,14 @@ export class ManageChangeLogsSection extends Component<IProps, IState> {
             onClick={this.handleOnDeleteChange(change.id)}
           />
         </div>,
-        <div className={styles.collapsibleButton}>
+        <div
+          className={classNames(styles.expandableButton, {
+            [styles.expand]: this.isChangeRowExpanded(change.id)
+          })}
+        >
           <Icon
-            iconID={
-              this.isChangeRowExpanded(change.id)
-                ? IconID.DownArrow
-                : IconID.RightArrow
-            }
-            onClick={this.handleOnCollapsibleButtonClick(change.id)}
+            iconID={IconID.RightArrow}
+            onClick={this.handleOnExpandableButtonClick(change.id)}
           />
         </div>
       ];
@@ -67,23 +68,29 @@ export class ManageChangeLogsSection extends Component<IProps, IState> {
     this.props.onChangeDelete(changeId);
   };
 
-  private handleOnCollapsibleButtonClick = (changeId: string) => () => {
+  private handleOnExpandableButtonClick = (changeId: string) => () => {
     if (this.isChangeRowExpanded(changeId)) {
-      this.collapseChangeRow();
+      this.collapseChangeRow(changeId);
       return;
     }
     this.expandChangeRow(changeId);
   };
 
   private isChangeRowExpanded(changeId: string) {
-    return this.state.expandedChangeId === changeId;
+    return this.state.expandedChangeIds.has(changeId);
   }
 
-  private collapseChangeRow() {
-    this.setState({ expandedChangeId: undefined });
+  private collapseChangeRow(changeId: string) {
+    this.setState(({ expandedChangeIds }) => {
+      expandedChangeIds.delete(changeId);
+      return { expandedChangeIds };
+    });
   }
 
   private expandChangeRow(changeId: string) {
-    this.setState({ expandedChangeId: changeId });
+    this.setState(({ expandedChangeIds }) => {
+      expandedChangeIds.add(changeId);
+      return { expandedChangeIds };
+    });
   }
 }
