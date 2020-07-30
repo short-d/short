@@ -7,14 +7,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/short-d/short/backend/app/fw/ptr"
-
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/db/dbtest"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/fw/must"
+	"github.com/short-d/short/backend/app/fw/ptr"
 )
 
 var insertUserShortLinkRowSQL = fmt.Sprintf(`
