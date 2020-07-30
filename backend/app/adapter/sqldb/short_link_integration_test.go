@@ -278,9 +278,6 @@ func TestShortLinkSql_IsAliasExist(t *testing.T) {
 }
 
 func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
-	twoYearsAgo := must.Time(t, "2017-05-01T08:02:16-07:00")
-	now := must.Time(t, "2019-05-01T08:02:16-07:00")
-
 	testCases := []struct {
 		name              string
 		tableRows         []shortLinkTableRow
@@ -300,9 +297,9 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 				{
 					alias:              "220uFicCJj",
 					longLink:           "http://www.google.com",
-					createdAt:          &twoYearsAgo,
-					expireAt:           &now,
-					updatedAt:          &now,
+					createdAt:          ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					expireAt:           ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
+					updatedAt:          ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 					ogTitle:            ptr.String("title1"),
 					ogDescription:      ptr.String("description1"),
 					ogImageURL:         ptr.String("url1"),
@@ -313,9 +310,9 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 				{
 					alias:              "yDOBcj5HIPbUAsw",
 					longLink:           "http://www.facebook.com",
-					createdAt:          &twoYearsAgo,
-					expireAt:           &now,
-					updatedAt:          &now,
+					createdAt:          ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					expireAt:           ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
+					updatedAt:          ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 					ogTitle:            ptr.String("title2"),
 					ogDescription:      ptr.String("description2"),
 					ogImageURL:         ptr.String("url2"),
@@ -329,9 +326,9 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 			expectedShortLink: entity.ShortLink{
 				Alias:     "220uFicCJj",
 				LongLink:  "http://www.google.com",
-				CreatedAt: &twoYearsAgo,
-				ExpireAt:  &now,
-				UpdatedAt: &now,
+				CreatedAt: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+				ExpireAt:  ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
+				UpdatedAt: ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 				OpenGraphTags: metatag.OpenGraph{
 					Title:       ptr.String("title1"),
 					Description: ptr.String("description1"),
@@ -363,9 +360,9 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 				{
 					alias:              "yDOBcj5HIPbUAsw",
 					longLink:           "http://www.facebook.com",
-					createdAt:          &twoYearsAgo,
-					expireAt:           &now,
-					updatedAt:          &now,
+					createdAt:          ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					expireAt:           ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
+					updatedAt:          ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 					ogTitle:            ptr.String("title2"),
 					ogDescription:      ptr.String("description2"),
 					ogImageURL:         ptr.String("url2"),
@@ -422,8 +419,6 @@ func TestShortLinkSql_GetShortLinkByAlias(t *testing.T) {
 }
 
 func TestShortLinkSql_CreateShortLink(t *testing.T) {
-	now := must.Time(t, "2019-05-01T08:02:16-07:00")
-
 	testCases := []struct {
 		name           string
 		tableRows      []shortLinkTableRow
@@ -436,7 +431,7 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 				{
 					alias:              "220uFicCJj",
 					longLink:           "http://www.facebook.com",
-					expireAt:           &now,
+					expireAt:           ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 					ogTitle:            ptr.String("title1"),
 					ogDescription:      ptr.String("description1"),
 					ogImageURL:         ptr.String("url1"),
@@ -448,8 +443,8 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 			shortLinkInput: entity.ShortLinkInput{
 				CustomAlias: ptr.String("220uFicCJj"),
 				LongLink:    ptr.String("http://www.google.com"),
-				ExpireAt:    &now,
-				CreatedAt:   &now,
+				ExpireAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
+				CreatedAt:   ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 			},
 			hasErr: true,
 		},
@@ -459,7 +454,7 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 				{
 					alias:              "abc",
 					longLink:           "http://www.google.com",
-					expireAt:           &now,
+					expireAt:           ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 					ogTitle:            ptr.String("title1"),
 					ogDescription:      ptr.String("description1"),
 					ogImageURL:         ptr.String("url1"),
@@ -471,8 +466,8 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 			shortLinkInput: entity.ShortLinkInput{
 				CustomAlias: ptr.String("220uFicCJj"),
 				LongLink:    ptr.String("http://www.google.com"),
-				ExpireAt:    &now,
-				CreatedAt:   &now,
+				ExpireAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
+				CreatedAt:   ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 			},
 			hasErr: false,
 		},
@@ -511,9 +506,6 @@ func TestShortLinkSql_CreateShortLink(t *testing.T) {
 }
 
 func TestShortLinkSql_UpdateShortLink(t *testing.T) {
-	createdAt := must.Time(t, "2017-05-01T08:02:16-07:00")
-	now := must.Time(t, "2020-05-01T08:02:16-07:00")
-
 	testCases := []struct {
 		name              string
 		oldAlias          string
@@ -529,7 +521,7 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 				{
 					alias:     "220uFicCJj",
 					longLink:  "https://www.google.com",
-					createdAt: &createdAt,
+					createdAt: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
 				},
 			},
 			hasErr:            true,
@@ -542,12 +534,12 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 				{
 					alias:     "220uFicCJj",
 					longLink:  "https://www.google.com",
-					createdAt: &createdAt,
+					createdAt: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
 				},
 				{
 					alias:     "efpIZ4OS",
 					longLink:  "https://gmail.com",
-					createdAt: &createdAt,
+					createdAt: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
 				},
 			},
 			hasErr:            true,
@@ -559,20 +551,20 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 			shortLinkInput: entity.ShortLinkInput{
 				CustomAlias: ptr.String("GxtKXM9V"),
 				LongLink:    ptr.String("https://www.google.com"),
-				UpdatedAt:   &now,
+				UpdatedAt:   ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 			},
 			tableRows: []shortLinkTableRow{
 				{
 					alias:     "220uFicCJj",
 					longLink:  "https://www.google.com",
-					createdAt: &createdAt,
+					createdAt: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
 				},
 			},
 			hasErr: false,
 			expectedShortLink: entity.ShortLink{
 				Alias:     "GxtKXM9V",
 				LongLink:  "https://www.google.com",
-				UpdatedAt: &now,
+				UpdatedAt: ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 			},
 		},
 	}
@@ -613,9 +605,6 @@ func TestShortLinkSql_UpdateShortLink(t *testing.T) {
 }
 
 func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
-	twoYearsAgo := must.Time(t, "2017-05-01T08:02:16-07:00")
-	now := must.Time(t, "2019-05-01T08:02:16-07:00")
-
 	testCases := []struct {
 		name               string
 		tableRows          []shortLinkTableRow
@@ -635,9 +624,9 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 				{
 					alias:              "220uFicCJj",
 					longLink:           "http://www.google.com",
-					createdAt:          &twoYearsAgo,
-					expireAt:           &now,
-					updatedAt:          &now,
+					createdAt:          ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					expireAt:           ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
+					updatedAt:          ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 					ogTitle:            ptr.String("title1"),
 					ogDescription:      ptr.String("description1"),
 					ogImageURL:         ptr.String("url1"),
@@ -648,9 +637,9 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 				{
 					alias:              "yDOBcj5HIPbUAsw",
 					longLink:           "http://www.facebook.com",
-					createdAt:          &twoYearsAgo,
-					expireAt:           &now,
-					updatedAt:          &now,
+					createdAt:          ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					expireAt:           ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
+					updatedAt:          ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 					ogTitle:            ptr.String("title2"),
 					ogDescription:      ptr.String("description2"),
 					ogImageURL:         ptr.String("url2"),
@@ -665,9 +654,9 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 				{
 					Alias:     "220uFicCJj",
 					LongLink:  "http://www.google.com",
-					CreatedAt: &twoYearsAgo,
-					ExpireAt:  &now,
-					UpdatedAt: &now,
+					CreatedAt: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					ExpireAt:  ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
+					UpdatedAt: ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 					OpenGraphTags: metatag.OpenGraph{
 						Title:       ptr.String("title1"),
 						Description: ptr.String("description1"),
@@ -682,9 +671,9 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 				{
 					Alias:     "yDOBcj5HIPbUAsw",
 					LongLink:  "http://www.facebook.com",
-					CreatedAt: &twoYearsAgo,
-					ExpireAt:  &now,
-					UpdatedAt: &now,
+					CreatedAt: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					ExpireAt:  ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
+					UpdatedAt: ptr.Time(must.Time(t, "2019-05-01T08:02:16-07:00")),
 					OpenGraphTags: metatag.OpenGraph{
 						Title:       ptr.String("title2"),
 						Description: ptr.String("description2"),

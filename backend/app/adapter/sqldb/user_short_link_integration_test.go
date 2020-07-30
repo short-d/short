@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/short-d/short/backend/app/fw/ptr"
+
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/db/dbtest"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
@@ -29,8 +31,6 @@ type userShortLinkTableRow struct {
 }
 
 func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
-	now := must.Time(t, "2019-05-01T08:02:16Z")
-
 	testCases := []struct {
 		name               string
 		userTableRows      []userTableRow
@@ -49,9 +49,9 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
-				LastSignedInAt: &now,
-				CreatedAt:      &now,
-				UpdatedAt:      &now,
+				LastSignedInAt: ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+				CreatedAt:      ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+				UpdatedAt:      ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
 			},
 			hasErr:          false,
 			expectedAliases: nil,
@@ -78,9 +78,9 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
-				LastSignedInAt: &now,
-				CreatedAt:      &now,
-				UpdatedAt:      &now,
+				LastSignedInAt: ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+				CreatedAt:      ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+				UpdatedAt:      ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
 			},
 			hasErr: false,
 			expectedAliases: []string{
@@ -116,8 +116,6 @@ func TestListShortLinkSql_FindAliasesByUser(t *testing.T) {
 }
 
 func TestListShortLinkSql_HasMapping(t *testing.T) {
-	now := must.Time(t, "2019-05-01T08:02:16Z")
-
 	testCases := []struct {
 		name               string
 		userTableRows      []userTableRow
@@ -134,9 +132,9 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 					id:           "test",
 					email:        "test@example.com",
 					name:         "mockedUser",
-					lastSignedIn: &now,
-					createdAt:    &now,
-					updatedAt:    &now,
+					lastSignedIn: ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+					createdAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+					updatedAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
 				},
 			},
 			shortLinkTableRows: []shortLinkTableRow{},
@@ -146,9 +144,9 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
-				LastSignedInAt: &now,
-				CreatedAt:      &now,
-				UpdatedAt:      &now,
+				LastSignedInAt: ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+				CreatedAt:      ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+				UpdatedAt:      ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
 			},
 			expectIsFound: false,
 		},
@@ -159,17 +157,17 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 					id:           "test",
 					email:        "test@example.com",
 					name:         "mockedUser",
-					lastSignedIn: &now,
-					createdAt:    &now,
-					updatedAt:    &now,
+					lastSignedIn: ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+					createdAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+					updatedAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
 				},
 				{
 					id:           "test2",
 					email:        "test2@example.com",
 					name:         "mockedUser2",
-					lastSignedIn: &now,
-					createdAt:    &now,
-					updatedAt:    &now,
+					lastSignedIn: ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+					createdAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+					updatedAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
 				},
 			},
 			shortLinkTableRows: []shortLinkTableRow{
@@ -188,9 +186,9 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
-				LastSignedInAt: &now,
-				CreatedAt:      &now,
-				UpdatedAt:      &now,
+				LastSignedInAt: ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+				CreatedAt:      ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+				UpdatedAt:      ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
 			},
 			expectIsFound: false,
 		},
@@ -201,9 +199,9 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 					id:           "test",
 					email:        "test@example.com",
 					name:         "mockedUser",
-					lastSignedIn: &now,
-					createdAt:    &now,
-					updatedAt:    &now,
+					lastSignedIn: ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+					createdAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+					updatedAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
 				},
 			},
 			shortLinkTableRows: []shortLinkTableRow{
@@ -222,9 +220,9 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 				ID:             "test",
 				Name:           "mockedUser",
 				Email:          "test@example.com",
-				LastSignedInAt: &now,
-				CreatedAt:      &now,
-				UpdatedAt:      &now,
+				LastSignedInAt: ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+				CreatedAt:      ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+				UpdatedAt:      ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
 			},
 			expectIsFound: true,
 		},
@@ -235,9 +233,9 @@ func TestListShortLinkSql_HasMapping(t *testing.T) {
 					id:           "test",
 					email:        "test@example.com",
 					name:         "mockedUser",
-					lastSignedIn: &now,
-					createdAt:    &now,
-					updatedAt:    &now,
+					lastSignedIn: ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+					createdAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
+					updatedAt:    ptr.Time(must.Time(t, "2019-05-01T08:02:16Z")),
 				},
 			},
 			shortLinkTableRows: []shortLinkTableRow{
