@@ -8,7 +8,9 @@ export class SearchService {
     });
   }
 
-  private async invokeSearchShortLinkApi(alias: String): Promise<Array<ShortLink>> {
+  private async invokeSearchShortLinkApi(
+    alias: String
+  ): Promise<Array<ShortLink>> {
     return new Promise<Array<ShortLink>>(
       (resolve, reject: (errCodes: Err[]) => any) => {
         if (alias === '') {
