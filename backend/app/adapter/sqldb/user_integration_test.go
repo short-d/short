@@ -13,6 +13,8 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/must"
+	"github.com/short-d/short/backend/app/fw/ptr"
 )
 
 var insertUserRowSQL = fmt.Sprintf(`
@@ -117,8 +119,6 @@ func TestUserSql_IsEmailExist(t *testing.T) {
 }
 
 func TestUserSql_GetUserByID(t *testing.T) {
-	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
-
 	testCases := []struct {
 		name      string
 		tableRows []userTableRow
@@ -140,9 +140,9 @@ func TestUserSql_GetUserByID(t *testing.T) {
 					id:           "alpha",
 					email:        "alpha@example.com",
 					name:         "Alpha",
-					lastSignedIn: &twoYearsAgo,
-					createdAt:    &twoYearsAgo,
-					updatedAt:    &twoYearsAgo,
+					lastSignedIn: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					createdAt:    ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					updatedAt:    ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
 				},
 			},
 			hasErr: false,
@@ -150,9 +150,9 @@ func TestUserSql_GetUserByID(t *testing.T) {
 				ID:             "alpha",
 				Name:           "Alpha",
 				Email:          "alpha@example.com",
-				LastSignedInAt: &twoYearsAgo,
-				CreatedAt:      &twoYearsAgo,
-				UpdatedAt:      &twoYearsAgo,
+				LastSignedInAt: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+				CreatedAt:      ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+				UpdatedAt:      ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
 			},
 		},
 		{
@@ -204,8 +204,6 @@ func TestUserSql_GetUserByID(t *testing.T) {
 }
 
 func TestUserSql_GetUserByEmail(t *testing.T) {
-	twoYearsAgo := mustParseTime(t, "2017-05-01T08:02:16-07:00")
-
 	testCases := []struct {
 		name      string
 		tableRows []userTableRow
@@ -227,9 +225,9 @@ func TestUserSql_GetUserByEmail(t *testing.T) {
 					id:           "alpha",
 					email:        "alpha@example.com",
 					name:         "Alpha",
-					lastSignedIn: &twoYearsAgo,
-					createdAt:    &twoYearsAgo,
-					updatedAt:    &twoYearsAgo,
+					lastSignedIn: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					createdAt:    ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+					updatedAt:    ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
 				},
 			},
 			hasErr: false,
@@ -237,9 +235,9 @@ func TestUserSql_GetUserByEmail(t *testing.T) {
 				ID:             "alpha",
 				Name:           "Alpha",
 				Email:          "alpha@example.com",
-				LastSignedInAt: &twoYearsAgo,
-				CreatedAt:      &twoYearsAgo,
-				UpdatedAt:      &twoYearsAgo,
+				LastSignedInAt: ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+				CreatedAt:      ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
+				UpdatedAt:      ptr.Time(must.Time(t, "2017-05-01T08:02:16-07:00")),
 			},
 		},
 		{
