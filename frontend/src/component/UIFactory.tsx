@@ -13,7 +13,6 @@ import { FacebookSignInButton } from './pages/shared/sign-in/FacebookSignInButto
 import { Store } from 'redux';
 import { IAppState } from '../state/reducers';
 import { ErrorService } from '../service/Error.service';
-import { UrlService } from '../service/Url.service';
 import { SearchService } from '../service/Search.service';
 import { SearchBar } from './ui/SearchBar';
 import { ViewChangeLogButton } from './ui/ViewChangeLogButton';
@@ -44,7 +43,6 @@ export class UIFactory {
     private authService: AuthService,
     private clipboardService: IClipboardService,
     private extensionService: IBrowserExtensionService,
-    private urlService: UrlService,
     private qrCodeService: QrCodeService,
     private versionService: VersionService,
     private errorService: ErrorService,
@@ -124,7 +122,6 @@ export class UIFactory {
         extensionService={this.extensionService}
         qrCodeService={this.qrCodeService}
         versionService={this.versionService}
-        urlService={this.urlService}
         errorService={this.errorService}
         searchService={this.searchService}
         changeLogService={this.changeLogService}
@@ -186,6 +183,6 @@ export class UIFactory {
   }
 
   public createApp(): ReactElement {
-    return <App uiFactory={this} urlService={this.urlService} />;
+    return <App uiFactory={this} shortLinkService={this.shortLinkService} />;
   }
 }
