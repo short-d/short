@@ -9,7 +9,11 @@ import {
   IShortGraphQLShortLink,
   IShortGraphQLShortLinkInput
 } from './schema';
-import {CaptchaService, CREATE_SHORT_LINK, UPDATE_SHORT_LINK} from '../Captcha.service';
+import {
+  CaptchaService,
+  CREATE_SHORT_LINK,
+  UPDATE_SHORT_LINK
+} from '../Captcha.service';
 
 export class ShortLinkGraphQLApi {
   private readonly baseURL: string;
@@ -53,8 +57,8 @@ export class ShortLinkGraphQLApi {
   }
 
   async createShortLink(
-      shortLink: ShortLink,
-      isPublic: boolean
+    shortLink: ShortLink,
+    isPublic: boolean
   ): Promise<ShortLink> {
     const gqlCreateShortLink = `
       mutation params(
@@ -80,58 +84,47 @@ export class ShortLinkGraphQLApi {
       return Promise.reject(err);
     }
 
-    const variables = this.gqlCreateShortLinkVariable(
-        captchaResponse,
-        shortLink,
-        isPublic
-    );
+    const variables = {
+      captchaResponse: captchaResponse,
+      authToken: this.authService.getAuthToken(),
+      shortLinkInput: {
+        longLink: shortLink.originalUrl,
+        customAlias: shortLink.alias
+      },
+      isPublic
+    };
+
     return new Promise<ShortLink>(
-        (
-            resolve: (createdShortLink: ShortLink) => void,
-            // TODO(task#h6V56gf9): change the string type to Err for this function and all callers
-            reject: (errCode: string) => any
-        ) => {
-          this.graphQLService
-              .mutate<IShortGraphQLMutation>(this.baseURL, {
-                mutation: gqlCreateShortLink,
-                variables: variables
-              })
-              .then((res: IShortGraphQLMutation) => {
-                const shortLink = this.getShortLinkFromCreatedShortLink(
-                    res.authMutation.createShortLink
-                );
-                resolve(shortLink);
-              })
-              .catch((err: IGraphQLRequestError) => {
-                const errCodes = getErrorCodes(err);
-                reject(errCodes[0]);
-              });
-        }
+      (
+        resolve: (createdShortLink: ShortLink) => void,
+        // TODO(task#h6V56gf9): change the string type to Err for this function and all callers
+        reject: (errCode: string) => any
+      ) => {
+        this.graphQLService
+          .mutate<IShortGraphQLMutation>(this.baseURL, {
+            mutation: gqlCreateShortLink,
+            variables: variables
+          })
+          .then((res: IShortGraphQLMutation) => {
+            const shortLink = this.getShortLinkFromCreatedShortLink(
+              res.authMutation.createShortLink
+            );
+            resolve(shortLink);
+          })
+          .catch((err: IGraphQLRequestError) => {
+            const errCodes = getErrorCodes(err);
+            reject(errCodes[0]);
+          });
+      }
     );
   }
 
   private getShortLinkFromCreatedShortLink(
-      createdShortLink: IShortGraphQLShortLink
+    createdShortLink: IShortGraphQLShortLink
   ): ShortLink {
     return {
       originalUrl: createdShortLink.longLink,
       alias: createdShortLink.alias
-    };
-  }
-
-  private gqlCreateShortLinkVariable(
-      captchaResponse: string,
-      link: ShortLink,
-      isPublic: boolean = false
-  ) {
-    return {
-      captchaResponse: captchaResponse,
-      authToken: this.authService.getAuthToken(),
-      shortLinkInput: {
-        longLink: link.originalUrl,
-        customAlias: link.alias
-      },
-      isPublic
     };
   }
 

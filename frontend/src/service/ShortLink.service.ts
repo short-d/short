@@ -1,22 +1,10 @@
-import { ShortLink } from '../entity/ShortLink';
-import { Err, ErrorService } from './Error.service';
-import { ShortLinkGraphQLApi } from './shortGraphQL/ShortLinkGraphQL.api';
-import { IErr } from '../entity/Err';
-import { AuthService } from './Auth.service';
-import { EnvService } from './Env.service';
-import { getErrorCodes } from './GraphQLError';
-import { CaptchaService, CREATE_SHORT_LINK } from './Captcha.service';
-import {
-  GraphQLService,
-  IGraphQLError,
-  IGraphQLRequestError
-} from './GraphQL.service';
-import { validateLongLinkFormat } from '../validators/LongLink.validator';
-import { validateCustomAliasFormat } from '../validators/CustomAlias.validator';
-import {
-  IShortGraphQLMutation,
-  IShortGraphQLShortLink
-} from './shortGraphQL/schema';
+import {ShortLink} from '../entity/ShortLink';
+import {Err, ErrorService} from './Error.service';
+import {ShortLinkGraphQLApi} from './shortGraphQL/ShortLinkGraphQL.api';
+import {IErr} from '../entity/Err';
+import {EnvService} from './Env.service';
+import {validateLongLinkFormat} from '../validators/LongLink.validator';
+import {validateCustomAliasFormat} from '../validators/CustomAlias.validator';
 
 export interface IPagedShortLinks {
   shortLinks: ShortLink[];
@@ -31,14 +19,11 @@ interface ICreateShortLinkErrs {
 }
 
 export class ShortLinkService {
-
   constructor(
-    private authService: AuthService,
     private envService: EnvService,
     private shortLinkGraphQLApi: ShortLinkGraphQLApi,
     private errorService: ErrorService
-  ) {
-  }
+  ) {}
 
   createShortLink(
     editingShortLink: ShortLink,
