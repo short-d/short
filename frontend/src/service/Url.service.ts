@@ -2,6 +2,7 @@ import { Url } from '../entity/Url';
 import { EnvService } from './Env.service';
 import { AuthService } from './Auth.service';
 import { CaptchaService, CREATE_SHORT_LINK } from './Captcha.service';
+import { getErrorCodes } from './GraphQLError';
 import { validateLongLinkFormat } from '../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../validators/CustomAlias.validator';
 import { Err, ErrorService } from './Error.service';
@@ -135,7 +136,7 @@ export class UrlService {
       isPublic
     );
     return new Promise<Url>( // TODO(issue#599): simplify business logic below to improve readability
-      (resolve: (createdURL: Url) => void, reject: (errCode: Err) => any) => {
+      (resolve: (createdURL: Url) => void, reject: (errCode: string) => any) => {
         this.graphQLService
           .mutate<IShortGraphQLMutation>(this.graphQLBaseURL, {
             mutation: gqlCreateURL,
@@ -148,20 +149,7 @@ export class UrlService {
             resolve(url);
           })
           .catch((err: IGraphQLRequestError) => {
-            if (err.networkError) {
-              reject(Err.NetworkError);
-              return;
-            }
-            if (!err.graphQLErrors || err.graphQLErrors.length === 0) {
-              reject(Err.Unknown);
-              return;
-            }
-            const errCodes = err.graphQLErrors.map(
-              (graphQLError: IGraphQLError) =>
-                graphQLError.extensions
-                  ? (graphQLError.extensions.code as Err)
-                  : Err.Unknown
-            );
+            const errCodes = getErrorCodes(err);
             reject(errCodes[0]);
           });
       }
