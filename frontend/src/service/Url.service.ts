@@ -135,7 +135,7 @@ export class UrlService {
       shortLink,
       isPublic
     );
-    return new Promise<Url>( // TODO(issue#599): simplify business logic below to improve readability
+    return new Promise<Url>(
       (resolve: (createdURL: Url) => void, reject: (errCode: string) => any) => {
         this.graphQLService
           .mutate<IShortGraphQLMutation>(this.graphQLBaseURL, {
