@@ -30,36 +30,14 @@ interface ICreateShortLinkErrs {
   createShortLinkErr?: IErr;
 }
 
-const gqlCreateShortLink = `
-  mutation params(
-    $captchaResponse: String!
-    $authToken: String!
-    $shortLinkInput: ShortLinkInput!
-    $isPublic: Boolean!
-  ) {
-    authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
-      createShortLink(shortLink: $shortLinkInput, isPublic: $isPublic) {
-        alias
-        longLink
-      }
-    }
-  }
-`;
-
 export class ShortLinkService {
-  private readonly graphQLBaseURL: string;
 
   constructor(
     private authService: AuthService,
     private envService: EnvService,
-    private captchaService: CaptchaService,
-    private graphQLService: GraphQLService,
     private shortLinkGraphQLApi: ShortLinkGraphQLApi,
     private errorService: ErrorService
   ) {
-    this.graphQLBaseURL = `${this.envService.getVal(
-      'GRAPHQL_API_BASE_URL'
-    )}/graphql`;
   }
 
   createShortLink(
@@ -77,7 +55,7 @@ export class ShortLinkService {
       }
 
       try {
-        const shortLink = await this.invokeCreateShortLinkApi(
+        const shortLink = await this.shortLinkGraphQLApi.createShortLink(
           editingShortLink,
           isPublic
         );
@@ -131,72 +109,6 @@ export class ShortLinkService {
       };
     }
     return null;
-  }
-
-  private async invokeCreateShortLinkApi(
-    shortLink: ShortLink,
-    isPublic: boolean
-  ): Promise<ShortLink> {
-    let captchaResponse = '';
-
-    try {
-      captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
-    } catch (err) {
-      return Promise.reject(err);
-    }
-
-    let variables = this.gqlCreateShortLinkVariable(
-      captchaResponse,
-      shortLink,
-      isPublic
-    );
-    return new Promise<ShortLink>(
-      (
-        resolve: (createdShortLink: ShortLink) => void,
-        reject: (errCode: string) => any
-      ) => {
-        this.graphQLService
-          .mutate<IShortGraphQLMutation>(this.graphQLBaseURL, {
-            mutation: gqlCreateShortLink,
-            variables: variables
-          })
-          .then((res: IShortGraphQLMutation) => {
-            const shortLink = this.getShortLinkFromCreatedShortLink(
-              res.authMutation.createShortLink
-            );
-            resolve(shortLink);
-          })
-          .catch((err: IGraphQLRequestError) => {
-            const errCodes = getErrorCodes(err);
-            reject(errCodes[0]);
-          });
-      }
-    );
-  }
-
-  private getShortLinkFromCreatedShortLink(
-    createdShortLink: IShortGraphQLShortLink
-  ): ShortLink {
-    return {
-      originalUrl: createdShortLink.longLink,
-      alias: createdShortLink.alias
-    };
-  }
-
-  private gqlCreateShortLinkVariable(
-    captchaResponse: string,
-    link: ShortLink,
-    isPublic: boolean = false
-  ) {
-    return {
-      captchaResponse: captchaResponse,
-      authToken: this.authService.getAuthToken(),
-      shortLinkInput: {
-        longLink: link.originalUrl,
-        customAlias: link.alias
-      },
-      isPublic
-    };
   }
 
   getUserCreatedShortLinks(
