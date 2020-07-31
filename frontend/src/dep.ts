@@ -73,10 +73,7 @@ export function initUIFactory(
     captchaService
   );
   const shortLinkService = new ShortLinkService(
-    authService,
     envService,
-    captchaService,
-    graphQLService,
     shortLinkGraphQLApi,
     errorService
   );
