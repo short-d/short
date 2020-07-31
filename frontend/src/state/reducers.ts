@@ -1,4 +1,4 @@
-import { Url } from '../entity/Url';
+import { ShortLink } from '../entity/ShortLink';
 import { IErr } from '../entity/Err';
 import {
   CLEAR_ERROR,
@@ -13,8 +13,8 @@ import {
 import { Reducer } from 'redux';
 
 export interface IAppState {
-  editingUrl: Url;
-  createdUrl?: Url;
+  editingUrl: ShortLink;
+  createdUrl?: ShortLink;
   qrCodeUrl?: string;
   err?: IErr;
   inputErr?: string;

@@ -1,7 +1,7 @@
 import { AuthService } from '../Auth.service';
 import { EnvService } from '../Env.service';
 import { GraphQLService, IGraphQLRequestError } from '../GraphQL.service';
-import { Url } from '../../entity/Url';
+import { ShortLink } from '../../entity/ShortLink';
 import { getErrorCodes } from '../GraphQLError';
 import {
   IShortGraphQLQuery,
@@ -22,7 +22,7 @@ export class ShortLinkGraphQLApi {
     this.baseURL = `${this.envService.getVal('GRAPHQL_API_BASE_URL')}/graphql`;
   }
 
-  getUserShortLinks(offset: number, pageSize: number): Promise<Url[]> {
+  getUserShortLinks(offset: number, pageSize: number): Promise<ShortLink[]> {
     const getUserShortLinksQuery = `
       query params($authToken: String!) {
         authQuery(authToken: $authToken) {
@@ -42,7 +42,7 @@ export class ShortLinkGraphQLApi {
         })
         .then((res: IShortGraphQLQuery) => {
           const { shortLinks } = res.authQuery;
-          resolve(shortLinks.map(this.parseUrl));
+          resolve(shortLinks.map(this.parseShortLink));
         })
         .catch((err: IGraphQLRequestError) => {
           const errCodes = getErrorCodes(err);
@@ -51,7 +51,7 @@ export class ShortLinkGraphQLApi {
     });
   }
 
-  async updateShortLink(oldAlias: string, shortLink: Partial<Url>) {
+  async updateShortLink(oldAlias: string, shortLink: Partial<ShortLink>) {
     let captchaResponse;
     try {
       captchaResponse = await this.captchaService.execute(UPDATE_SHORT_LINK);
@@ -94,17 +94,19 @@ export class ShortLinkGraphQLApi {
     });
   }
 
-  private toShortLinkInput(url: Partial<Url>): IShortGraphQLShortLinkInput {
+  private toShortLinkInput(
+    shortLink: Partial<ShortLink>
+  ): IShortGraphQLShortLinkInput {
     return {
-      customAlias: url.alias,
-      longLink: url.originalUrl
+      customAlias: shortLink.alias,
+      longLink: shortLink.originalUrl
     };
   }
 
-  private parseUrl(url: IShortGraphQLShortLink): Url {
+  private parseShortLink(shortLink: IShortGraphQLShortLink): ShortLink {
     return {
-      originalUrl: url.longLink,
-      alias: url.alias
+      originalUrl: shortLink.longLink,
+      alias: shortLink.alias
     };
   }
 }

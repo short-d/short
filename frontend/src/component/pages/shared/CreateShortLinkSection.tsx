@@ -5,20 +5,20 @@ import { TextField } from '../../form/TextField';
 import { Button } from '../../ui/Button';
 import { ShortLinkUsage } from './ShortLinkUsage';
 import { Section } from '../../ui/Section';
-import { Url } from '../../../entity/Url';
+import { ShortLink } from '../../../entity/ShortLink';
 import { UIFactory } from '../../UIFactory';
 import { validateLongLinkFormat } from '../../../validators/LongLink.validator';
 import { validateCustomAliasFormat } from '../../../validators/CustomAlias.validator';
 import { raiseCreateShortLinkError } from '../../../state/actions';
 import { IAppState } from '../../../state/reducers';
 import { Store } from 'redux';
-import { UrlService } from '../../../service/Url.service';
+import { ShortLinkService } from '../../../service/ShortLink.service';
 import { QrCodeService } from '../../../service/QrCode.service';
 
 interface IProps {
   store: Store<IAppState>;
   uiFactory: UIFactory;
-  urlService: UrlService;
+  shortLinkService: ShortLinkService;
   qrCodeService: QrCodeService;
   onShortLinkCreated?: (shortLink: string) => void;
   onAuthenticationFailed?: () => void;
@@ -145,14 +145,14 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
 
   handleCreateShortLinkClick = () => {
     const { alias, longLink } = this.state;
-    const shortLink: Url = {
+    const shortLink: ShortLink = {
       originalUrl: longLink,
       alias: alias || ''
     };
-    this.props.urlService
+    this.props.shortLinkService
       .createShortLink(shortLink, this.state.isShortLinkPublic)
-      .then(async (createdShortLink: Url) => {
-        const shortLink = this.props.urlService.aliasToFrontendLink(
+      .then(async (createdShortLink: ShortLink) => {
+        const shortLink = this.props.shortLinkService.aliasToFrontendLink(
           createdShortLink.alias!
         );
 

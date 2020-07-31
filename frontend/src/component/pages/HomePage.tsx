@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './HomePage.scss';
 
 import { Header } from './shared/Header';
-import { Url } from '../../entity/Url';
+import { ShortLink } from '../../entity/ShortLink';
 import { Footer } from './shared/Footer';
 import { SignInModal } from './shared/sign-in/SignInModal';
 import { ExtPromo } from './shared/promos/ExtPromo';
@@ -19,7 +19,6 @@ import {
   raiseGetChangeLogError
 } from '../../state/actions';
 import { ErrorService } from '../../service/Error.service';
-import { UrlService } from '../../service/Url.service';
 import { SearchService } from '../../service/Search.service';
 import { ChangeLogModal } from '../ui/ChangeLogModal';
 import { ChangeLogService } from '../../service/ChangeLog.service';
@@ -38,7 +37,6 @@ import { ErrorModal } from './shared/ErrorModal';
 interface Props {
   uiFactory: UIFactory;
   featureDecisionService: IFeatureDecisionService;
-  urlService: UrlService;
   authService: AuthService;
   clipboardService: IClipboardService;
   extensionService: IBrowserExtensionService;
@@ -58,7 +56,7 @@ interface State {
   isUserSignedIn?: boolean;
   shouldShowAdminButton?: boolean;
   shouldShowPromo?: boolean;
-  autoCompleteSuggestions?: Array<Url>;
+  autoCompleteSuggestions?: Array<ShortLink>;
   changeLog?: Array<Change>;
   currentPagedShortLinks?: IPagedShortLinks;
 }
@@ -93,7 +91,7 @@ export class HomePage extends Component<Props, State> {
         <div className={'main'}>
           <CreateShortLinkSection
             store={this.props.store}
-            urlService={this.props.urlService}
+            shortLinkService={this.props.shortLinkService}
             qrCodeService={this.props.qrCodeService}
             uiFactory={this.props.uiFactory}
             ref={this.createShortLinkSection}

@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Button } from '../../ui/Button';
-import { Url } from '../../../entity/Url';
+import { ShortLink } from '../../../entity/ShortLink';
 import { UIFactory } from '../../UIFactory';
 import './Header.scss';
 
 interface Props {
   uiFactory: UIFactory;
   onSearchBarInputChange: (searchBarInput: String) => void;
-  autoCompleteSuggestions?: Array<Url>;
+  autoCompleteSuggestions?: Array<ShortLink>;
   shouldShowSignOutButton?: boolean;
   shouldShowAdminButton?: boolean;
   onSignOutButtonClick: () => void;
