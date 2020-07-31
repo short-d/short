@@ -4,6 +4,7 @@ import { ShortLinkGraphQLApi } from './shortGraphQL/ShortLinkGraphQL.api';
 import { IErr } from '../entity/Err';
 import { AuthService } from './Auth.service';
 import { EnvService } from './Env.service';
+import { getErrorCodes } from './GraphQLError';
 import { CaptchaService, CREATE_SHORT_LINK } from './Captcha.service';
 import {
   GraphQLService,
@@ -149,10 +150,10 @@ export class ShortLinkService {
       shortLink,
       isPublic
     );
-    return new Promise<ShortLink>( // TODO(issue#599): simplify business logic below to improve readability
+    return new Promise<ShortLink>(
       (
         resolve: (createdShortLink: ShortLink) => void,
-        reject: (errCode: Err) => any
+        reject: (errCode: string) => any
       ) => {
         this.graphQLService
           .mutate<IShortGraphQLMutation>(this.graphQLBaseURL, {
@@ -166,20 +167,7 @@ export class ShortLinkService {
             resolve(shortLink);
           })
           .catch((err: IGraphQLRequestError) => {
-            if (err.networkError) {
-              reject(Err.NetworkError);
-              return;
-            }
-            if (!err.graphQLErrors || err.graphQLErrors.length === 0) {
-              reject(Err.Unknown);
-              return;
-            }
-            const errCodes = err.graphQLErrors.map(
-              (graphQLError: IGraphQLError) =>
-                graphQLError.extensions
-                  ? (graphQLError.extensions.code as Err)
-                  : Err.Unknown
-            );
+            const errCodes = getErrorCodes(err);
             reject(errCodes[0]);
           });
       }
