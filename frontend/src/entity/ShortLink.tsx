@@ -1,4 +1,4 @@
 export interface ShortLink {
-  originalUrl: string;
+  longLink: string;
   alias: string;
 }

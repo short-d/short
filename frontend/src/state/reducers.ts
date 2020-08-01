@@ -22,7 +22,7 @@ export interface IAppState {
 
 export const initialAppState = {
   editingUrl: {
-    originalUrl: '',
+    longLink: '',
     alias: ''
   }
 };

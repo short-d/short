@@ -18,15 +18,15 @@ export class SearchService {
         }
         resolve([
           {
-            originalUrl: 'https://www.google.com/',
+            longLink: 'https://www.google.com/',
             alias: 'google'
           },
           {
-            originalUrl: 'https://github.com/short-d/short/',
+            longLink: 'https://github.com/short-d/short/',
             alias: 'short'
           },
           {
-            originalUrl: 'https://developer.mozilla.org/en-US/',
+            longLink: 'https://developer.mozilla.org/en-US/',
             alias: 'mozilla'
           }
         ]);

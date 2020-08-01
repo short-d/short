@@ -30,7 +30,7 @@ export class ShortLinkService {
     isPublic: boolean = false
   ): Promise<ShortLink> {
     return new Promise(async (resolve, reject) => {
-      const longLink = editingShortLink.originalUrl;
+      const longLink = editingShortLink.longLink;
       const customAlias = editingShortLink.alias;
 
       const err = this.validateInputs(longLink, customAlias);

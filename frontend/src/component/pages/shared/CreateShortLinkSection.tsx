@@ -86,7 +86,7 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
           <div className={'short-link-usage-wrapper'}>
             <ShortLinkUsage
               shortLink={this.state.createdShortLink}
-              originalUrl={this.state.createdLongLink}
+              longLink={this.state.createdLongLink}
               qrCodeUrl={this.state.qrCodeURL}
             />
           </div>
@@ -146,7 +146,7 @@ export class CreateShortLinkSection extends Component<IProps, IState> {
   handleCreateShortLinkClick = () => {
     const { alias, longLink } = this.state;
     const shortLink: ShortLink = {
-      originalUrl: longLink,
+      longLink: longLink,
       alias: alias || ''
     };
     this.props.shortLinkService
