@@ -43,6 +43,16 @@ export const red = () => {
   );
 };
 
+export const green = () => {
+  return (
+    <Toggle
+      styles={['green']}
+      defaultIsEnabled={false}
+      onClick={action('click')}
+    ></Toggle>
+  );
+};
+
 export const shadow = () => {
   return (
     <Toggle
