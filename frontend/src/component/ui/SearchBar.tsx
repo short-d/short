@@ -57,7 +57,7 @@ export class SearchBar extends Component<Props, State> {
       >
         {this.props.autoCompleteSuggestions.map(e => (
           <li key={e.alias}>
-            <a href={e.originalUrl}>{e.alias}</a>
+            <a href={e.longLink}>{e.alias}</a>
           </li>
         ))}
       </ul>

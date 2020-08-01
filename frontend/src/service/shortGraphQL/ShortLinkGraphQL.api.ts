@@ -88,7 +88,7 @@ export class ShortLinkGraphQLApi {
       captchaResponse: captchaResponse,
       authToken: this.authService.getAuthToken(),
       shortLinkInput: {
-        longLink: shortLink.originalUrl,
+        longLink: shortLink.longLink,
         customAlias: shortLink.alias
       },
       isPublic
@@ -123,7 +123,7 @@ export class ShortLinkGraphQLApi {
     createdShortLink: IShortGraphQLShortLink
   ): ShortLink {
     return {
-      originalUrl: createdShortLink.longLink,
+      longLink: createdShortLink.longLink,
       alias: createdShortLink.alias
     };
   }
@@ -176,13 +176,13 @@ export class ShortLinkGraphQLApi {
   ): IShortGraphQLShortLinkInput {
     return {
       customAlias: shortLink.alias,
-      longLink: shortLink.originalUrl
+      longLink: shortLink.longLink
     };
   }
 
   private parseShortLink(shortLink: IShortGraphQLShortLink): ShortLink {
     return {
-      originalUrl: shortLink.longLink,
+      longLink: shortLink.longLink,
       alias: shortLink.alias
     };
   }
