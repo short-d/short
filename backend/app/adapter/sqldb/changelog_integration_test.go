@@ -13,6 +13,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/ptr"
 )
 
 var insertChangeLogRowSQL = fmt.Sprintf(`
@@ -33,9 +34,6 @@ type changeLogTableRow struct {
 }
 
 func TestChangeLogSql_GetChangeLog(t *testing.T) {
-	summaryMarkdown1 := "summary 1"
-	summaryMarkdown2 := "summary 2"
-
 	testCases := []struct {
 		name              string
 		tableRows         []changeLogTableRow
@@ -47,23 +45,23 @@ func TestChangeLogSql_GetChangeLog(t *testing.T) {
 				{
 					id:              "12346",
 					title:           "title 2",
-					summaryMarkdown: summaryMarkdown2,
+					summaryMarkdown: "summary 2",
 				}, {
 					id:              "12345",
 					title:           "title 1",
-					summaryMarkdown: summaryMarkdown1,
+					summaryMarkdown: "summary 1",
 				},
 			},
 			expectedChangeLog: []entity.Change{
 				{
 					ID:              "12346",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 			},
 		},
@@ -95,10 +93,6 @@ func TestChangeLogSql_GetChangeLog(t *testing.T) {
 }
 
 func TestChangeLogSql_CreateChange(t *testing.T) {
-	summaryMarkdown1 := "summary 1"
-	summaryMarkdown2 := "summary 2"
-	summaryMarkdown3 := "summary 3"
-
 	testCases := []struct {
 		name                  string
 		tableRows             []changeLogTableRow
@@ -112,24 +106,24 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 				{
 					id:              "12345",
 					title:           "title 1",
-					summaryMarkdown: summaryMarkdown1,
+					summaryMarkdown: "summary 1",
 				},
 				{
 					id:              "12346",
 					title:           "title 2",
-					summaryMarkdown: summaryMarkdown2,
+					summaryMarkdown: "summary 2",
 				},
 			},
 			change: entity.Change{
 				ID:              "23456",
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 			expectedChangeLogSize: 3,
 			expectedChange: entity.Change{
 				ID:              "23456",
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 		}, {
 			name: "create a change with nil summary",
@@ -137,12 +131,12 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 				{
 					id:              "12345",
 					title:           "title 1",
-					summaryMarkdown: summaryMarkdown1,
+					summaryMarkdown: "summary 1",
 				},
 				{
 					id:              "12346",
 					title:           "title 2",
-					summaryMarkdown: summaryMarkdown2,
+					summaryMarkdown: "summary 2",
 				},
 			},
 			change: entity.Change{
@@ -183,8 +177,6 @@ func TestChangeLogSql_CreateChange(t *testing.T) {
 }
 
 func TestChangeLogSql_DeleteChange(t *testing.T) {
-	summaryMarkdown1 := "summary 1"
-	summaryMarkdown2 := "summary 2"
 
 	testCases := []struct {
 		name                  string
@@ -199,12 +191,12 @@ func TestChangeLogSql_DeleteChange(t *testing.T) {
 				{
 					id:              "12345",
 					title:           "title 1",
-					summaryMarkdown: summaryMarkdown1,
+					summaryMarkdown: "summary 1",
 				},
 				{
 					id:              "67890",
 					title:           "title 2",
-					summaryMarkdown: summaryMarkdown2,
+					summaryMarkdown: "summary 2",
 				},
 			},
 			deleteChangeId:        "67890",
@@ -213,7 +205,7 @@ func TestChangeLogSql_DeleteChange(t *testing.T) {
 				{
 					ID:              "12346",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 			},
 		}, {
@@ -222,12 +214,12 @@ func TestChangeLogSql_DeleteChange(t *testing.T) {
 				{
 					id:              "12345",
 					title:           "title 1",
-					summaryMarkdown: summaryMarkdown1,
+					summaryMarkdown: "summary 1",
 				},
 				{
 					id:              "67890",
 					title:           "title 2",
-					summaryMarkdown: summaryMarkdown2,
+					summaryMarkdown: "summary 2",
 				},
 			},
 			deleteChangeId:        "34567",
@@ -236,12 +228,12 @@ func TestChangeLogSql_DeleteChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "67890",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 		},
@@ -270,10 +262,6 @@ func TestChangeLogSql_DeleteChange(t *testing.T) {
 }
 
 func TestChangeLogSql_UpdateChange(t *testing.T) {
-	summaryMarkdown1 := "summary 1"
-	summaryMarkdown2 := "summary 2"
-	summaryMarkdown3 := "summary 3"
-
 	testCases := []struct {
 		name              string
 		tableRows         []changeLogTableRow
@@ -286,29 +274,29 @@ func TestChangeLogSql_UpdateChange(t *testing.T) {
 				{
 					id:              "12345",
 					title:           "title 1",
-					summaryMarkdown: summaryMarkdown1,
+					summaryMarkdown: "summary 1",
 				},
 				{
 					id:              "12346",
 					title:           "title 2",
-					summaryMarkdown: summaryMarkdown2,
+					summaryMarkdown: "summary 2",
 				},
 			},
 			change: entity.Change{
 				ID:              "12345",
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 			expectedChangeLog: []entity.Change{
 				{
 					ID:              "12345",
 					Title:           "title 3",
-					SummaryMarkdown: &summaryMarkdown3,
+					SummaryMarkdown: ptr.String("summary 3"),
 				},
 				{
 					ID:              "12346",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 		}, {
@@ -317,29 +305,29 @@ func TestChangeLogSql_UpdateChange(t *testing.T) {
 				{
 					id:              "12345",
 					title:           "title 1",
-					summaryMarkdown: summaryMarkdown1,
+					summaryMarkdown: "summary 1",
 				},
 				{
 					id:              "12346",
 					title:           "title 2",
-					summaryMarkdown: summaryMarkdown2,
+					summaryMarkdown: "summary 2",
 				},
 			},
 			change: entity.Change{
 				ID:              "23456",
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 			expectedChangeLog: []entity.Change{
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "12346",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 		},
