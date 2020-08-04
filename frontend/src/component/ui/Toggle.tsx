@@ -44,11 +44,7 @@ export class Toggle extends Component<Props, State> {
   render() {
     const { enabled } = this.state;
     return (
-      <div
-        className={`${withCSSModule(this.props.styles, styles)} ${
-          styles.toggle
-        }`}
-      >
+      <div className={styles.toggle}>
         <div
           className={`${withCSSModule(this.props.styles, styles)} ${classNames({
             [styles.background]: true,
@@ -57,13 +53,10 @@ export class Toggle extends Component<Props, State> {
           onClick={this.handleClick}
         >
           <div
-            className={`${withCSSModule(
-              this.props.styles,
-              styles
-            )} ${classNames({
+            className={classNames({
               [styles.knob]: true,
               [styles.active]: enabled
-            })}`}
+            })}
           />
         </div>
       </div>
