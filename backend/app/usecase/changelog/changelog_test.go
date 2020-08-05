@@ -9,6 +9,7 @@ import (
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/ptr"
 	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
 	"github.com/short-d/short/backend/app/usecase/authorizer/rbac/role"
@@ -20,9 +21,6 @@ func TestPersist_CreateChange(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now().UTC()
-	summaryMarkdown1 := "summary 1"
-	summaryMarkdown2 := "summary 2"
-	summaryMarkdown3 := "summary 3"
 	testCases := []struct {
 		name                  string
 		changeLog             []entity.Change
@@ -40,22 +38,22 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			change: entity.Change{
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 			expectedChange: entity.Change{
 				ID:              "test",
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 				ReleasedAt:      now,
 			},
 			availableKeys: []keygen.Key{"test"},
@@ -73,17 +71,17 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			change: entity.Change{
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 			expectedChange: entity.Change{},
 			availableKeys:  []keygen.Key{},
@@ -101,17 +99,17 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			change: entity.Change{
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 			expectedChange: entity.Change{},
 			availableKeys:  []keygen.Key{"12345"},
@@ -129,12 +127,12 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			change: entity.Change{
@@ -162,17 +160,17 @@ func TestPersist_CreateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			change: entity.Change{
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 			availableKeys: []keygen.Key{"test"},
 			roles: map[string][]role.Role{
@@ -230,8 +228,6 @@ func TestPersist_GetChangeLog(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now()
-	summaryMarkdown1 := "summary 1"
-	summaryMarkdown2 := "summary 2"
 	testCases := []struct {
 		name          string
 		changeLog     []entity.Change
@@ -245,12 +241,12 @@ func TestPersist_GetChangeLog(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			availableKeys: []keygen.Key{},
@@ -452,8 +448,6 @@ func TestPersist_GetAllChanges(t *testing.T) {
 	t.Parallel()
 
 	now := time.Now()
-	summaryMarkdown1 := "summary 1"
-	summaryMarkdown2 := "summary 2"
 	testCases := []struct {
 		name            string
 		changes         []entity.Change
@@ -469,24 +463,24 @@ func TestPersist_GetAllChanges(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			expectedChanges: []entity.Change{
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			availableKeys: []keygen.Key{},
@@ -503,12 +497,12 @@ func TestPersist_GetAllChanges(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			expectedChanges: []entity.Change{},
@@ -561,8 +555,6 @@ func TestPersist_GetAllChanges(t *testing.T) {
 func TestPersist_DeleteChange(t *testing.T) {
 	t.Parallel()
 
-	summaryMarkdown1 := "summary 1"
-	summaryMarkdown2 := "summary 2"
 	testCases := []struct {
 		name                  string
 		changeLog             []entity.Change
@@ -579,12 +571,12 @@ func TestPersist_DeleteChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			deleteChangeId: "12345",
@@ -592,7 +584,7 @@ func TestPersist_DeleteChange(t *testing.T) {
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			expectedChangeLogSize: 1,
@@ -610,12 +602,12 @@ func TestPersist_DeleteChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			deleteChangeId: "34567",
@@ -623,12 +615,12 @@ func TestPersist_DeleteChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			expectedChangeLogSize: 2,
@@ -646,12 +638,12 @@ func TestPersist_DeleteChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			deleteChangeId:        "12345",
@@ -708,9 +700,6 @@ func TestPersist_DeleteChange(t *testing.T) {
 func TestPersist_UpdateChange(t *testing.T) {
 	t.Parallel()
 
-	summaryMarkdown1 := "summary 1"
-	summaryMarkdown2 := "summary 2"
-	summaryMarkdown3 := "summary 3"
 	testCases := []struct {
 		name              string
 		changeLog         []entity.Change
@@ -726,18 +715,18 @@ func TestPersist_UpdateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			change: entity.Change{
 				ID:              "54321",
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 			roles: map[string][]role.Role{
 				"alpha": {role.Admin},
@@ -749,12 +738,12 @@ func TestPersist_UpdateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 3",
-					SummaryMarkdown: &summaryMarkdown3,
+					SummaryMarkdown: ptr.String("summary 3"),
 				},
 			},
 			hasErr: false,
@@ -765,18 +754,18 @@ func TestPersist_UpdateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			change: entity.Change{
 				ID:              "34567",
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 			roles: map[string][]role.Role{
 				"alpha": {role.Admin},
@@ -788,12 +777,12 @@ func TestPersist_UpdateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			hasErr: false,
@@ -804,18 +793,18 @@ func TestPersist_UpdateChange(t *testing.T) {
 				{
 					ID:              "12345",
 					Title:           "title 1",
-					SummaryMarkdown: &summaryMarkdown1,
+					SummaryMarkdown: ptr.String("summary 1"),
 				},
 				{
 					ID:              "54321",
 					Title:           "title 2",
-					SummaryMarkdown: &summaryMarkdown2,
+					SummaryMarkdown: ptr.String("summary 2"),
 				},
 			},
 			change: entity.Change{
 				ID:              "54321",
 				Title:           "title 3",
-				SummaryMarkdown: &summaryMarkdown3,
+				SummaryMarkdown: ptr.String("summary 3"),
 			},
 			roles: map[string][]role.Role{
 				"alpha": {role.Basic},
