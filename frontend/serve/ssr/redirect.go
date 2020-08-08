@@ -15,12 +15,12 @@ type RedirectPage struct {
 // Render renders a page as a string given meta tags
 func (r RedirectPage) Render(openGraphTags entity.OpenGraphTags, twitterTags entity.TwitterTags) (string, error) {
 	ssrVars := map[string]string{
-		"OG_TITLE":            openGraphTags.Title,
-		"OG_DESCRIPTION":      openGraphTags.Description,
-		"OG_IMAGE":            openGraphTags.ImageURL,
-		"TWITTER_TITLE":       twitterTags.Title,
-		"TWITTER_DESCRIPTION": twitterTags.Description,
-		"TWITTER_IMAGE":       twitterTags.ImageURL,
+		"OPEN_GRAPH_TITLE":       openGraphTags.Title,
+		"OPEN_GRAPH_DESCRIPTION": openGraphTags.Description,
+		"OPEN_GRAPH_IMAGE":       openGraphTags.ImageURL,
+		"TWITTER_TITLE":          twitterTags.Title,
+		"TWITTER_DESCRIPTION":    twitterTags.Description,
+		"TWITTER_IMAGE":          twitterTags.ImageURL,
 	}
 	buf, err := ioutil.ReadFile(filepath.Join(r.pageRootDir, "index.html"))
 	if err != nil {

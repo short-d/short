@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+../scripts/build
+go run main.go

@@ -9,11 +9,11 @@ import (
 func TestRenderPage(t *testing.T) {
 	testPage := `
 jkas'x'n'j'kkj
-{{SSR_OG_TITLE}}
+{{SSR_OPEN_GRAPH_TITLE}}
 nnm'zxc;nkkas
-{{SSR_OG_DESCRIPTION}}
+{{SSR_OPEN_GRAPH_DESCRIPTION}}
 pqwepc['xzmkm
-{{SSR_OG_IMAGE}}
+{{SSR_OPEN_GRAPH_IMAGE}}
 llasdm21k.asda2
 {{SSR_TWITTER_TITLE}}
 023elksdlmcs;
@@ -23,28 +23,28 @@ lzxckmzcxmkm23
 [;sd-p32er2l,csdc
 `
 	ssrVars := map[string]string{
-		"OG_TITLE":            "Title",
-		"OG_DESCRIPTION":      "Description",
-		"OG_IMAGE":            "ImageURL",
-		"TWITTER_TITLE":       "Title",
-		"TWITTER_DESCRIPTION": "Description",
-		"TWITTER_IMAGE":       "ImageURL",
+		"OPEN_GRAPH_TITLE":       "OpenGraphTitle",
+		"OPEN_GRAPH_DESCRIPTION": "OpenGraphDescription",
+		"OPEN_GRAPH_IMAGE":       "OpenGraphImageURL",
+		"TWITTER_TITLE":          "TwitterTitle",
+		"TWITTER_DESCRIPTION":    "TwitterDescription",
+		"TWITTER_IMAGE":          "TwitterImageURL",
 	}
-	pageRetrieved := renderPage(ssrVars, testPage)
+	pageGot := renderPage(ssrVars, testPage)
 	expectedPage := `
 jkas'x'n'j'kkj
-Title
+OpenGraphTitle
 nnm'zxc;nkkas
-Description
+OpenGraphDescription
 pqwepc['xzmkm
-ImageURL
+OpenGraphImageURL
 llasdm21k.asda2
-Title
+TwitterTitle
 023elksdlmcs;
-Description
+TwitterDescription
 lzxckmzcxmkm23
-ImageURL
+TwitterImageURL
 [;sd-p32er2l,csdc
 `
-	assert.Equal(t, pageRetrieved, expectedPage)
+	assert.Equal(t, pageGot, expectedPage)
 }

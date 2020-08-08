@@ -1,7 +1,11 @@
 package main
 
 import (
+	"github.com/short-d/app/fw/env"
+	"github.com/short-d/app/fw/envconfig"
 	"net/http"
+
+	"github.com/short-d/short/frontend/serve/handle"
 
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/service"
@@ -10,7 +14,21 @@ import (
 )
 
 func main() {
-	gRPC, err := shortapi.NewGRPC("localhost", 8081)
+	goDotEnv := env.NewGoDotEnv()
+	envConfig := envconfig.NewEnvConfig(goDotEnv)
+
+	config := struct {
+		GRPCHostName       string        `env:"GRPC_HOST_NAME" default:"localhost"`
+		GRPCPort           int           `env:"GRPC_PORT" default:"8081"`
+		HTTPPort           int           `env:"HTTP_PORT" default:"3000"`
+	}{}
+
+	err := envConfig.ParseConfigFromEnv(&config)
+	if err != nil {
+		panic(err)
+	}
+
+	gRPC, err := shortapi.NewGRPC(config.GRPCHostName, config.GRPCPort)
 	if err != nil {
 		panic(err)
 	}
@@ -21,43 +39,18 @@ func main() {
 		{
 			Method: http.MethodGet,
 			Path:   "/r/:alias",
-			Handle: func(w http.ResponseWriter, r *http.Request, params router.Params) {
-				alias := params["alias"]
-				openGraphTags, err := gRPC.GetOpenGraphTags(alias)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
-
-				twitterTags, err := gRPC.GetTwitterTags(alias)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
-
-				page, err := redirectPage.Render(openGraphTags, twitterTags)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
-
-				w.WriteHeader(http.StatusOK)
-				w.Write([]byte(page))
-			},
+			Handle: handle.Redirect(redirectPage, gRPC),
 		},
 		{
 			Method:      http.MethodGet,
 			Path:        "/",
 			MatchPrefix: true,
-			Handle: func(w http.ResponseWriter, r *http.Request, params router.Params) {
-				fs := http.FileServer(http.Dir(rootDir))
-				fs.ServeHTTP(w, r)
-			},
+			Handle:      handle.File(rootDir),
 		},
 	}
 	routingService := service.
 		NewRoutingBuilder("Short").
 		Routes(routes).
 		Build()
-	routingService.StartAndWait(3000)
+	routingService.StartAndWait(config.HTTPPort)
 }
