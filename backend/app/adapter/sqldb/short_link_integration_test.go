@@ -715,11 +715,6 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 }
 
 func TestShortLinkSql_DeleteShortLink(t *testing.T) {
-	var (
-		createdAt = mustParseTime(t, "2018-05-01T08:02:16-07:00")
-		now       = mustParseTime(t, "2020-05-01T08:02:16-07:00")
-	)
-
 	testCases := []struct {
 		name           string
 		tableRows      []shortLinkTableRow
@@ -733,8 +728,8 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 				{
 					alias:              "short_is_great",
 					longLink:           "https://short-d.com",
-					createdAt:          &createdAt,
-					expireAt:           &now,
+					createdAt:          ptr.Time(must.Time(t, "2018-05-01T08:02:16-07:00")),
+					expireAt:           ptr.Time(must.Time(t, "2020-05-01T08:02:16-07:00")),
 					ogTitle:            nil,
 					ogDescription:      nil,
 					ogImageURL:         nil,
@@ -752,8 +747,8 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 				{
 					alias:              "i_luv_short",
 					longLink:           "https://short-d.com",
-					createdAt:          &createdAt,
-					expireAt:           &now,
+					createdAt:          ptr.Time(must.Time(t, "2018-05-01T08:02:16-07:00")),
+					expireAt:           ptr.Time(must.Time(t, "2020-05-01T08:02:16-07:00")),
 					ogTitle:            nil,
 					ogDescription:      nil,
 					ogImageURL:         nil,
