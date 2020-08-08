@@ -17,9 +17,9 @@ func main() {
 	envConfig := envconfig.NewEnvConfig(goDotEnv)
 
 	config := struct {
-		ShortRPCAPIHost     string `env:"SHORT_RPC_API_HOST" default:"localhost"`
-		ShortRPCAPIPort     int    `env:"SHORT_RPC_API_PORT" default:"8081"`
-		HTTPPort    	    int    `env:"HTTP_PORT" default:"3000"`
+		ShortRPCAPIHost string `env:"SHORT_RPC_API_HOST" default:"localhost"`
+		ShortRPCAPIPort int    `env:"SHORT_RPC_API_PORT" default:"8081"`
+		HTTPPort        int    `env:"HTTP_PORT" default:"3000"`
 	}{}
 
 	err := envConfig.ParseConfigFromEnv(&config)
