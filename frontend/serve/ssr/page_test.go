@@ -30,7 +30,7 @@ lzxckmzcxmkm23
 		"TWITTER_DESCRIPTION":    "TwitterDescription",
 		"TWITTER_IMAGE":          "TwitterImageURL",
 	}
-	pageGot := renderPage(ssrVars, testPage)
+	gotPage := renderPage(ssrVars, testPage)
 	expectedPage := `
 jkas'x'n'j'kkj
 OpenGraphTitle
@@ -46,5 +46,5 @@ lzxckmzcxmkm23
 TwitterImageURL
 [;sd-p32er2l,csdc
 `
-	assert.Equal(t, pageGot, expectedPage)
+	assert.Equal(t, gotPage, expectedPage)
 }

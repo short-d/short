@@ -17,9 +17,9 @@ func main() {
 	envConfig := envconfig.NewEnvConfig(goDotEnv)
 
 	config := struct {
-		GRPCHostName string `env:"GRPC_HOST_NAME" default:"localhost"`
-		GRPCPort     int    `env:"GRPC_PORT" default:"8081"`
-		HTTPPort     int    `env:"HTTP_PORT" default:"3000"`
+		ShortRPCAPIHost     string `env:"SHORT_RPC_API_HOST" default:"localhost"`
+		ShortRPCAPIPort     int    `env:"SHORT_RPC_API_PORT" default:"8081"`
+		HTTPPort    	    int    `env:"HTTP_PORT" default:"3000"`
 	}{}
 
 	err := envConfig.ParseConfigFromEnv(&config)
@@ -27,12 +27,12 @@ func main() {
 		panic(err)
 	}
 
-	gRPC, err := shortapi.NewGRPC(config.GRPCHostName, config.GRPCPort)
+	gRPC, err := shortapi.NewGRPC(config.ShortRPCAPIHost, config.ShortRPCAPIPort)
 	if err != nil {
 		panic(err)
 	}
 
-	rootDir := "../build"
+	rootDir := "public"
 	redirectPage := ssr.NewRedirectPage(rootDir)
 	routes := []router.Route{
 		{
