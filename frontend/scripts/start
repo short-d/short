@@ -1,3 +1,0 @@
-./scripts/build
-cd serve
-go run main.go
