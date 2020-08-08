@@ -1,6 +1,6 @@
 package entity
 
-// OpenGraphTags represents OpenGraph Meta Tags for a ShortLink.
+// OpenGraphTags represents OpenGraph meta tags for a short link.
 type OpenGraphTags struct {
 	Title       string
 	Description string

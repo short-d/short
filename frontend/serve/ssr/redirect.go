@@ -7,12 +7,12 @@ import (
 	"github.com/short-d/short/frontend/serve/entity"
 )
 
-// RedirectPage represents a redirect page with render method
+// RedirectPage renders redirect page on the server side.
 type RedirectPage struct {
 	pageRootDir string
 }
 
-// Render renders redirect page with provided variables.
+// Render renders redirect page with Open Graph & Twitter meta tags.
 func (r RedirectPage) Render(openGraphTags entity.OpenGraphTags, twitterTags entity.TwitterTags) (string, error) {
 	ssrVars := map[string]string{
 		"OPEN_GRAPH_TITLE":       openGraphTags.Title,
