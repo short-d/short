@@ -4,7 +4,7 @@ import './ShortLinkUsage.scss';
 
 interface Props {
   shortLink: string;
-  originalUrl: string;
+  longLink: string;
   qrCodeUrl: string;
 }
 
@@ -17,7 +17,7 @@ export class ShortLinkUsage extends Component<Props> {
           <a target={'_blank'} href={this.props.shortLink}>
             {this.props.shortLink}
           </a>
-          &nbsp;in your browser to visit {this.props.originalUrl}.
+          &nbsp;in your browser to visit {this.props.longLink}.
         </div>
         <div className={'qr-code'}>
           <img alt={this.props.shortLink} src={this.props.qrCodeUrl} />

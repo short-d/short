@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+../scripts/build
+cp -a ../build/. public/
+go run main.go

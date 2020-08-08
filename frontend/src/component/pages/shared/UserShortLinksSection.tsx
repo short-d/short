@@ -55,7 +55,7 @@ export class UserShortLinksSection extends Component<IProps> {
     const { shortLinks } = this.props.pagedShortLinks!;
     return shortLinks.map((shortLink: ShortLink) => {
       return [
-        this.renderLongLink(shortLink.originalUrl),
+        this.renderLongLink(shortLink.longLink),
         this.renderAlias(shortLink.alias)
       ];
     });
