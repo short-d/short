@@ -775,6 +775,7 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 					err := shortLinkRepo.DeleteShortLink(testCase.alias)
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
+						return
 					}
 					assert.Equal(t, nil, err)
 				},
