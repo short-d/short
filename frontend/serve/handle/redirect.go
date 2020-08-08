@@ -8,6 +8,7 @@ import (
 	"github.com/short-d/short/frontend/serve/ssr"
 )
 
+// Redirect returns a route handler for URL redirection
 func Redirect(redirectPage ssr.RedirectPage, gRPC shortapi.GRPC) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
 		alias := params["alias"]
