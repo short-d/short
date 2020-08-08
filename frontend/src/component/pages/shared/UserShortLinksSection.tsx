@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { PageControl } from '../../ui/PageControl';
 import { Table } from '../../ui/Table';
-import { Url } from '../../../entity/Url';
+import { ShortLink } from '../../../entity/ShortLink';
 import { IPagedShortLinks } from '../../../service/ShortLink.service';
 import './UserShortLinksSection.scss';
 import { Section } from '../../ui/Section';
@@ -53,9 +53,9 @@ export class UserShortLinksSection extends Component<IProps> {
 
   private createTableRows = () => {
     const { shortLinks } = this.props.pagedShortLinks!;
-    return shortLinks.map((shortLink: Url) => {
+    return shortLinks.map((shortLink: ShortLink) => {
       return [
-        this.renderLongLink(shortLink.originalUrl),
+        this.renderLongLink(shortLink.longLink),
         this.renderAlias(shortLink.alias)
       ];
     });

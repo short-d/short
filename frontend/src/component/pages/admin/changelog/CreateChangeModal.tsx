@@ -21,10 +21,7 @@ export class CreateChangeModal extends Component<IProps> {
     return (
       <Modal ref={this.modalRef} canClose={true}>
         <div className={styles.modalCloseIcon}>
-          <Icon
-            defaultIconID={IconID.Close}
-            onClick={this.handleOnModalCloseClick}
-          />
+          <Icon iconID={IconID.Close} onClick={this.handleOnModalCloseClick} />
         </div>
         <div className={styles.content}>
           <CreateChangeSection

@@ -4,7 +4,9 @@ package permission
 type Permission int
 
 const (
-	CreateShortLink Permission = iota
+	ViewAdminPanel Permission = iota
+
+	CreateShortLink
 	ViewShortLink
 	EditShortLink
 	DisableShortLink
@@ -20,5 +22,5 @@ const (
 	DisableUser
 	DeleteUser
 
-	ViewAdminPanel
+	CreateAPIKey
 )

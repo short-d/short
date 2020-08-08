@@ -1,6 +1,7 @@
 import { Err } from './Error.service';
 import { IGraphQLError, IGraphQLRequestError } from './GraphQL.service';
 
+// TODO(task#h6V56gf9): change the string type to Err for this function and all callers
 export function getErrorCodes(errors: IGraphQLRequestError): string[] {
   const { networkError, graphQLErrors } = errors;
   if (networkError) {

@@ -12,7 +12,7 @@ type RedirectPage struct {
 	pageRootDir string
 }
 
-// Render renders a page as a string given meta tags
+// Render renders redirect page with provided variables.
 func (r RedirectPage) Render(openGraphTags entity.OpenGraphTags, twitterTags entity.TwitterTags) (string, error) {
 	ssrVars := map[string]string{
 		"OPEN_GRAPH_TITLE":       openGraphTags.Title,
@@ -31,7 +31,7 @@ func (r RedirectPage) Render(openGraphTags entity.OpenGraphTags, twitterTags ent
 	return renderPage(ssrVars, page), nil
 }
 
-// NewRedirectPage initializes a RedirectPage
+// NewRedirectPage initializes RedirectPage
 func NewRedirectPage(rootDir string) RedirectPage {
 	return RedirectPage{pageRootDir: rootDir}
 }

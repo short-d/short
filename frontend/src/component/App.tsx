@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import { UrlService } from '../service/Url.service';
+import { ShortLinkService } from '../service/ShortLink.service';
 import { UIFactory } from './UIFactory';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 interface IProps {
-  urlService: UrlService;
+  shortLinkService: ShortLinkService;
   uiFactory: UIFactory;
 }
 
@@ -33,7 +33,7 @@ export class App extends Component<IProps> {
             path={'/r/:alias'}
             render={({ match }) => {
               let alias = match.params['alias'];
-              window.location.href = this.props.urlService.aliasToBackendLink(
+              window.location.href = this.props.shortLinkService.aliasToBackendLink(
                 alias
               );
               return <div />;

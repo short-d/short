@@ -8,27 +8,12 @@ import (
 	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/short/backend/app/entity"
 	"github.com/short-d/short/backend/app/entity/metatag"
+	"github.com/short-d/short/backend/app/fw/ptr"
 	"github.com/short-d/short/backend/app/usecase/repository"
 )
 
 func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 	t.Parallel()
-
-	title1 := "title1"
-	description1 := "description1"
-	imageURL1 := "imageURL1"
-
-	title2 := "title2"
-	description2 := "description2"
-	imageURL2 := "imageURL2"
-
-	title3 := "title3"
-	description3 := "description3"
-	imageURL3 := "imageURL3"
-
-	defaultTitle := defaultTitle
-	defaultDesc := defaultDesc
-	defaultImageURL := defaultImageURL
 
 	testCases := []struct {
 		name                  string
@@ -44,36 +29,36 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 					Alias:    "12345",
 					LongLink: "www.google.com",
 					OpenGraphTags: metatag.OpenGraph{
-						Title:       &title1,
-						Description: &description1,
-						ImageURL:    &imageURL1,
+						Title:       ptr.String("title1"),
+						Description: ptr.String("description1"),
+						ImageURL:    ptr.String("imageURL1"),
 					},
 					TwitterTags: metatag.Twitter{
-						Title:       &title2,
-						Description: &description2,
-						ImageURL:    &imageURL2,
+						Title:       ptr.String("title2"),
+						Description: ptr.String("description2"),
+						ImageURL:    ptr.String("imageURL2"),
 					},
 				},
 				"54321": entity.ShortLink{
 					Alias:    "54321",
 					LongLink: "www.facebook.com",
 					OpenGraphTags: metatag.OpenGraph{
-						Title:       &title2,
-						Description: &description2,
-						ImageURL:    &imageURL2,
+						Title:       ptr.String("title2"),
+						Description: ptr.String("description2"),
+						ImageURL:    ptr.String("imageURL2"),
 					},
 					TwitterTags: metatag.Twitter{
-						Title:       &title3,
-						Description: &description3,
-						ImageURL:    &imageURL3,
+						Title:       ptr.String("title3"),
+						Description: ptr.String("description3"),
+						ImageURL:    ptr.String("imageURL3"),
 					},
 				},
 			},
 			alias: "54321",
 			expectedOpenGraphTags: metatag.OpenGraph{
-				Title:       &title2,
-				Description: &description2,
-				ImageURL:    &imageURL2,
+				Title:       ptr.String("title2"),
+				Description: ptr.String("description2"),
+				ImageURL:    ptr.String("imageURL2"),
 			},
 		},
 		{
@@ -84,31 +69,31 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 					Alias:    "12345",
 					LongLink: "www.google.com",
 					OpenGraphTags: metatag.OpenGraph{
-						Title:       &title1,
-						Description: &description1,
-						ImageURL:    &imageURL1,
+						Title:       ptr.String("title1"),
+						Description: ptr.String("description1"),
+						ImageURL:    ptr.String("imageURL1"),
 					},
 					TwitterTags: metatag.Twitter{
-						Title:       &title2,
-						Description: &description2,
-						ImageURL:    &imageURL2,
+						Title:       ptr.String("title2"),
+						Description: ptr.String("description2"),
+						ImageURL:    ptr.String("imageURL2"),
 					},
 				},
 				"54321": entity.ShortLink{
 					Alias:    "54321",
 					LongLink: "www.facebook.com",
 					TwitterTags: metatag.Twitter{
-						Title:       &title3,
-						Description: &description3,
-						ImageURL:    &imageURL3,
+						Title:       ptr.String("title3"),
+						Description: ptr.String("description3"),
+						ImageURL:    ptr.String("imageURL3"),
 					},
 				},
 			},
 			alias: "54321",
 			expectedOpenGraphTags: metatag.OpenGraph{
-				Title:       &defaultTitle,
-				Description: &defaultDesc,
-				ImageURL:    &defaultImageURL,
+				Title:       ptr.String(defaultTitle),
+				Description: ptr.String(defaultDesc),
+				ImageURL:    ptr.String(defaultImageURL),
 			},
 		},
 		{
@@ -143,22 +128,6 @@ func TestMetaTagPersist_GetOpenGraphTags(t *testing.T) {
 func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 	t.Parallel()
 
-	title1 := "title1"
-	description1 := "description1"
-	imageURL1 := "imageURL1"
-
-	title2 := "title2"
-	description2 := "description2"
-	imageURL2 := "imageURL2"
-
-	title3 := "title3"
-	description3 := "description3"
-	imageURL3 := "imageURL3"
-
-	defaultTitle := defaultTitle
-	defaultDesc := defaultDesc
-	defaultImageURL := defaultImageURL
-
 	testCases := []struct {
 		name                string
 		shortLinks          shortLinks
@@ -173,36 +142,36 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 					Alias:    "12345",
 					LongLink: "www.google.com",
 					OpenGraphTags: metatag.OpenGraph{
-						Title:       &title1,
-						Description: &description1,
-						ImageURL:    &imageURL1,
+						Title:       ptr.String("title1"),
+						Description: ptr.String("description1"),
+						ImageURL:    ptr.String("imageURL1"),
 					},
 					TwitterTags: metatag.Twitter{
-						Title:       &title2,
-						Description: &description2,
-						ImageURL:    &imageURL2,
+						Title:       ptr.String("title2"),
+						Description: ptr.String("description2"),
+						ImageURL:    ptr.String("imageURL2"),
 					},
 				},
 				"54321": entity.ShortLink{
 					Alias:    "54321",
 					LongLink: "www.facebook.com",
 					OpenGraphTags: metatag.OpenGraph{
-						Title:       &title2,
-						Description: &description2,
-						ImageURL:    &imageURL2,
+						Title:       ptr.String("title2"),
+						Description: ptr.String("description2"),
+						ImageURL:    ptr.String("imageURL2"),
 					},
 					TwitterTags: metatag.Twitter{
-						Title:       &title3,
-						Description: &description3,
-						ImageURL:    &imageURL3,
+						Title:       ptr.String("title3"),
+						Description: ptr.String("description3"),
+						ImageURL:    ptr.String("imageURL3"),
 					},
 				},
 			},
 			alias: "54321",
 			expectedTwitterTags: metatag.Twitter{
-				Title:       &title3,
-				Description: &description3,
-				ImageURL:    &imageURL3,
+				Title:       ptr.String("title3"),
+				Description: ptr.String("description3"),
+				ImageURL:    ptr.String("imageURL3"),
 			},
 		},
 		{
@@ -212,31 +181,31 @@ func TestMetaTagPersist_GetTwitterTags(t *testing.T) {
 					Alias:    "12345",
 					LongLink: "www.google.com",
 					OpenGraphTags: metatag.OpenGraph{
-						Title:       &title1,
-						Description: &description1,
-						ImageURL:    &imageURL1,
+						Title:       ptr.String("title1"),
+						Description: ptr.String("description1"),
+						ImageURL:    ptr.String("imageURL1"),
 					},
 					TwitterTags: metatag.Twitter{
-						Title:       &title2,
-						Description: &description2,
-						ImageURL:    &imageURL2,
+						Title:       ptr.String("title2"),
+						Description: ptr.String("description2"),
+						ImageURL:    ptr.String("imageURL2"),
 					},
 				},
 				"54321": entity.ShortLink{
 					Alias:    "54321",
 					LongLink: "www.facebook.com",
 					OpenGraphTags: metatag.OpenGraph{
-						Title:       &title2,
-						Description: &description2,
-						ImageURL:    &imageURL2,
+						Title:       ptr.String("title2"),
+						Description: ptr.String("description2"),
+						ImageURL:    ptr.String("imageURL2"),
 					},
 				},
 			},
 			alias: "54321",
 			expectedTwitterTags: metatag.Twitter{
-				Title:       &defaultTitle,
-				Description: &defaultDesc,
-				ImageURL:    &defaultImageURL,
+				Title:       ptr.String(defaultTitle),
+				Description: ptr.String(defaultDesc),
+				ImageURL:    ptr.String(defaultImageURL),
 			},
 		},
 		{

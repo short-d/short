@@ -2,7 +2,7 @@ import React, { ChangeEvent, Component } from 'react';
 import classNames from 'classnames';
 
 import './SearchBar.scss';
-import { Url } from '../../entity/Url';
+import { ShortLink } from '../../entity/ShortLink';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { Icon, IconID } from './Icon';
@@ -13,7 +13,7 @@ interface State {
 
 interface Props {
   onChange: (text: String) => void;
-  autoCompleteSuggestions?: Array<Url>;
+  autoCompleteSuggestions?: Array<ShortLink>;
 }
 
 const DEBOUNCE_DURATION: number = 300;
@@ -57,7 +57,7 @@ export class SearchBar extends Component<Props, State> {
       >
         {this.props.autoCompleteSuggestions.map(e => (
           <li key={e.alias}>
-            <a href={e.originalUrl}>{e.alias}</a>
+            <a href={e.longLink}>{e.alias}</a>
           </li>
         ))}
       </ul>
@@ -91,7 +91,7 @@ export class SearchBar extends Component<Props, State> {
             onBlur={this.hideAutoCompleteBox}
           />
           <div className={'search-icon'}>
-            <Icon defaultIconID={IconID.Search} />
+            <Icon iconID={IconID.Search} />
           </div>
         </div>
         {this.createAutoCompleteBox()}

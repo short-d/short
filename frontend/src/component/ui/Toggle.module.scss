@@ -2,6 +2,7 @@
 @import '../styles/color';
 @import '../styles/font';
 @import '../styles/layouts';
+@import '../styles/shadow';
 
 $toggle-width: 100px / 1.5;
 $toggle-height: 50px / 1.5;
@@ -22,10 +23,32 @@ $toggle-shrink-size: 4px;
     border-radius: $toggle-radius;
     cursor: pointer;
     transition: background-color 0.3s;
+
+    &.shadow {
+      box-shadow: $shadow-toggle;
+    }
   }
 
   .background.active {
-    background-color: $color-primary;
+    &.pink {
+      background-color: $color-primary;
+    }
+
+    &.blue {
+      background-color: #385c8e;
+    }
+
+    &.black {
+      background-color: #343434;
+    }
+
+    &.red {
+      background-color: #c1423d;
+    }
+
+    &.green {
+      background-color: $color-medium-green;
+    }
   }
 
   .knob {

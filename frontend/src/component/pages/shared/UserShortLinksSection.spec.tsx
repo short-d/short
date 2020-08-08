@@ -66,9 +66,9 @@ describe('UserShortLinksSection component', () => {
   test('should render short links correctly', () => {
     const pagedShortLinks: IPagedShortLinks = {
       shortLinks: [
-        { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
-        { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
-        { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
+        { longLink: 'https://longurl.com/1', alias: 'alias1' },
+        { longLink: 'https://longurl.com/2', alias: 'alias2' },
+        { longLink: 'https://longurl.com/3', alias: 'alias3' }
       ],
       totalCount: 12,
       offset: 0,
@@ -88,7 +88,7 @@ describe('UserShortLinksSection component', () => {
 
     for (let urlIdx = 0; urlIdx < pagedShortLinks.shortLinks.length; urlIdx++) {
       const shortLink = pagedShortLinks.shortLinks[urlIdx];
-      expect(container.textContent).toContain(shortLink.originalUrl);
+      expect(container.textContent).toContain(shortLink.longLink);
       expect(container.textContent).toContain(shortLink.alias);
     }
   });
@@ -96,9 +96,9 @@ describe('UserShortLinksSection component', () => {
   test('should render short links correctly when the short links does not fill the full page', () => {
     const pagedShortLinks: IPagedShortLinks = {
       shortLinks: [
-        { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
-        { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
-        { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
+        { longLink: 'https://longurl.com/1', alias: 'alias1' },
+        { longLink: 'https://longurl.com/2', alias: 'alias2' },
+        { longLink: 'https://longurl.com/3', alias: 'alias3' }
       ],
       totalCount: 3,
       offset: 0,
@@ -121,11 +121,11 @@ describe('UserShortLinksSection component', () => {
     const pageSize = 5;
     const pagedShortLinks: IPagedShortLinks = {
       shortLinks: [
-        { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
-        { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
-        { originalUrl: 'https://longurl.com/3', alias: 'alias3' },
-        { originalUrl: 'https://longurl.com/4', alias: 'alias4' },
-        { originalUrl: 'https://longurl.com/5', alias: 'alias5' }
+        { longLink: 'https://longurl.com/1', alias: 'alias1' },
+        { longLink: 'https://longurl.com/2', alias: 'alias2' },
+        { longLink: 'https://longurl.com/3', alias: 'alias3' },
+        { longLink: 'https://longurl.com/4', alias: 'alias4' },
+        { longLink: 'https://longurl.com/5', alias: 'alias5' }
       ],
       totalCount: 5,
       offset: 0,
@@ -162,9 +162,9 @@ describe('UserShortLinksSection component', () => {
     const pageSize = 3;
     const initialPagedShortLinks: IPagedShortLinks = {
       shortLinks: [
-        { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
-        { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
-        { originalUrl: 'https://longurl.com/3', alias: 'alias3' }
+        { longLink: 'https://longurl.com/1', alias: 'alias1' },
+        { longLink: 'https://longurl.com/2', alias: 'alias2' },
+        { longLink: 'https://longurl.com/3', alias: 'alias3' }
       ],
       totalCount: 12,
       offset: 0,
@@ -193,8 +193,8 @@ describe('UserShortLinksSection component', () => {
 
     expect(onPageLoad).toHaveBeenLastCalledWith(0, pageSize);
     initialPagedShortLinks.shortLinks.forEach(shortLink => {
-      expect(container.textContent).toContain(shortLink.originalUrl);
-      expect(container.textContent).toContain(shortLink.originalUrl);
+      expect(container.textContent).toContain(shortLink.longLink);
+      expect(container.textContent).toContain(shortLink.longLink);
     });
     jest.clearAllTimers();
   });
@@ -202,18 +202,18 @@ describe('UserShortLinksSection component', () => {
   test('should load correct short links when page changed', () => {
     const pageSize = 3;
     let shortLinks = [
-      { originalUrl: 'https://longurl.com/1', alias: 'alias1' },
-      { originalUrl: 'https://longurl.com/2', alias: 'alias2' },
-      { originalUrl: 'https://longurl.com/3', alias: 'alias3' },
-      { originalUrl: 'https://longurl.com/4', alias: 'alias4' },
-      { originalUrl: 'https://longurl.com/5', alias: 'alias5' },
-      { originalUrl: 'https://longurl.com/6', alias: 'alias6' },
-      { originalUrl: 'https://longurl.com/7', alias: 'alias7' },
-      { originalUrl: 'https://longurl.com/8', alias: 'alias8' },
-      { originalUrl: 'https://longurl.com/9', alias: 'alias9' },
-      { originalUrl: 'https://longurl.com/10', alias: 'alias10' },
-      { originalUrl: 'https://longurl.com/11', alias: 'alias11' },
-      { originalUrl: 'https://longurl.com/12', alias: 'alias12' }
+      { longLink: 'https://longurl.com/1', alias: 'alias1' },
+      { longLink: 'https://longurl.com/2', alias: 'alias2' },
+      { longLink: 'https://longurl.com/3', alias: 'alias3' },
+      { longLink: 'https://longurl.com/4', alias: 'alias4' },
+      { longLink: 'https://longurl.com/5', alias: 'alias5' },
+      { longLink: 'https://longurl.com/6', alias: 'alias6' },
+      { longLink: 'https://longurl.com/7', alias: 'alias7' },
+      { longLink: 'https://longurl.com/8', alias: 'alias8' },
+      { longLink: 'https://longurl.com/9', alias: 'alias9' },
+      { longLink: 'https://longurl.com/10', alias: 'alias10' },
+      { longLink: 'https://longurl.com/11', alias: 'alias11' },
+      { longLink: 'https://longurl.com/12', alias: 'alias12' }
     ];
 
     let rerender: any;
@@ -258,8 +258,8 @@ describe('UserShortLinksSection component', () => {
 
     expect(onPageLoad).toHaveBeenLastCalledWith(offset, pageSize);
     shortLinks.slice(offset, pageSize).forEach(link => {
-      expect(container.textContent).toContain(link.originalUrl);
-      expect(container.textContent).toContain(link.originalUrl);
+      expect(container.textContent).toContain(link.longLink);
+      expect(container.textContent).toContain(link.longLink);
     });
     jest.clearAllTimers();
   });

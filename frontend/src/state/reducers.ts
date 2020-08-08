@@ -1,4 +1,4 @@
-import { Url } from '../entity/Url';
+import { ShortLink } from '../entity/ShortLink';
 import { IErr } from '../entity/Err';
 import {
   CLEAR_ERROR,
@@ -6,13 +6,15 @@ import {
   RAISE_CREATE_SHORT_LINK_ERROR,
   RAISE_GET_USER_SHORT_LINKS_ERROR,
   RAISE_GET_CHANGELOG_ERROR,
-  RAISE_CREATE_CHANGE_ERROR
+  RAISE_CREATE_CHANGE_ERROR,
+  RAISE_GET_ALL_CHANGES_ERROR,
+  RAISE_DELETE_CHANGE_ERROR
 } from './actions';
 import { Reducer } from 'redux';
 
 export interface IAppState {
-  editingUrl: Url;
-  createdUrl?: Url;
+  editingUrl: ShortLink;
+  createdUrl?: ShortLink;
   qrCodeUrl?: string;
   err?: IErr;
   inputErr?: string;
@@ -20,7 +22,7 @@ export interface IAppState {
 
 export const initialAppState = {
   editingUrl: {
-    originalUrl: '',
+    longLink: '',
     alias: ''
   }
 };
@@ -46,6 +48,16 @@ export const reducers: Reducer<IAppState> = (
         err: action.payload
       };
     case RAISE_CREATE_CHANGE_ERROR:
+      return {
+        ...state,
+        err: action.payload
+      };
+    case RAISE_DELETE_CHANGE_ERROR:
+      return {
+        ...state,
+        err: action.payload
+      };
+    case RAISE_GET_ALL_CHANGES_ERROR:
       return {
         ...state,
         err: action.payload

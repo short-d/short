@@ -5,6 +5,12 @@ import { IAppState } from '../../../../state/reducers';
 import { ChangeLogService } from '../../../../service/ChangeLog.service';
 import styles from './ChangeLogTab.module.scss';
 import { CreateChangeModal } from './CreateChangeModal';
+import { Change } from '../../../../entity/Change';
+import {
+  raiseDeleteChangeError,
+  raiseGetAllChangesError
+} from '../../../../state/actions';
+import { ManageChangeLogsSection } from './ManageChangeLogsSection';
 
 interface IProps {
   changeLogService: ChangeLogService;
@@ -13,8 +19,24 @@ interface IProps {
   onAuthenticationFailed: () => void;
 }
 
-export class ChangeLogTab extends Component<IProps> {
+interface IStates {
+  changes: Change[];
+}
+
+export class ChangeLogTab extends Component<IProps, IStates> {
   private createChangeModalRef = React.createRef<CreateChangeModal>();
+
+  constructor(props: IProps) {
+    super(props);
+
+    this.state = {
+      changes: []
+    };
+  }
+
+  componentDidMount() {
+    this.fetchChanges();
+  }
 
   render() {
     return (
@@ -29,6 +51,12 @@ export class ChangeLogTab extends Component<IProps> {
               + Change
             </Button>
           </div>
+        </div>
+        <div className={styles.manageChangeLogsContainer}>
+          <ManageChangeLogsSection
+            changes={this.state.changes}
+            onChangeDelete={this.handleOnChangeDelete}
+          />
         </div>
         <CreateChangeModal
           ref={this.createChangeModalRef}
@@ -45,8 +73,25 @@ export class ChangeLogTab extends Component<IProps> {
     this.createChangeModalRef.current!.close();
     this.refreshChanges();
 
-    const changeCreatedMessage = 'Change log created successfully';
+    const changeCreatedMessage = 'Change created successfully';
     this.props.notifyToast(changeCreatedMessage);
+  };
+
+  private handleOnChangeDelete = (changeId: string) => {
+    this.props.changeLogService
+      .deleteChange(changeId)
+      .then(_ => {
+        this.refreshChanges();
+
+        const changeDeletedMessage = 'Change deleted successfully';
+        this.props.notifyToast(changeDeletedMessage);
+      })
+      .catch(({ authenticationErr, changeErr }) => {
+        if (authenticationErr) {
+          this.props.onAuthenticationFailed();
+        }
+        this.props.store.dispatch(raiseDeleteChangeError(changeErr));
+      });
   };
 
   private handleOnCreateChangeClick = () => {
@@ -54,7 +99,20 @@ export class ChangeLogTab extends Component<IProps> {
   };
 
   private refreshChanges = () => {
-    // call to refresh the changes list while displaying the changes
-    this.props.changeLogService.getAllChanges().then(console.log);
+    this.fetchChanges();
+  };
+
+  private fetchChanges = () => {
+    this.props.changeLogService
+      .getAllChanges()
+      .then(changes => {
+        this.setState({ changes });
+      })
+      .catch(({ authenticationErr, changeErr }) => {
+        if (authenticationErr) {
+          this.props.onAuthenticationFailed();
+        }
+        this.props.store.dispatch(raiseGetAllChangesError(changeErr));
+      });
   };
 }

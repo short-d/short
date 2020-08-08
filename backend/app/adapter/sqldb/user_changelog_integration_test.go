@@ -13,6 +13,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/must"
 )
 
 var insertUserChangeLogRowSQL = fmt.Sprintf(`
@@ -29,9 +30,6 @@ type userChangeLogTableRow struct {
 }
 
 func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
-	now := mustParseTime(t, "2020-04-04T08:02:16-07:00")
-	monthAgo := now.AddDate(0, -1, 0)
-
 	testCases := []struct {
 		name                   string
 		userTableRows          []userTableRow
@@ -57,11 +55,11 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
-					lastViewedAt: now,
+					lastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00"),
 				},
 				{
 					userID:       "12345",
-					lastViewedAt: monthAgo,
+					lastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00").AddDate(0, -1, 0),
 				},
 			},
 			user: entity.User{
@@ -69,7 +67,7 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 				Name:  "Test User",
 				Email: "test@gmail.com",
 			},
-			expectedLastViewedAt: monthAgo,
+			expectedLastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00").AddDate(0, -1, 0),
 			hasErr:               false,
 		},
 		{
@@ -89,7 +87,7 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
-					lastViewedAt: now,
+					lastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00"),
 				},
 			},
 			user: entity.User{
@@ -129,9 +127,6 @@ func TestUserChangeLogSQL_GetLastViewedAt(t *testing.T) {
 }
 
 func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
-	now := mustParseTime(t, "2020-04-04T08:02:16-07:00")
-	monthAgo := now.AddDate(0, -1, 0)
-
 	testCases := []struct {
 		name                   string
 		userTableRows          []userTableRow
@@ -157,7 +152,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
-					lastViewedAt: monthAgo,
+					lastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00").AddDate(0, -1, 0),
 				},
 			},
 			user: entity.User{
@@ -185,7 +180,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12345",
-					lastViewedAt: monthAgo,
+					lastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00").AddDate(0, -1, 0),
 				},
 			},
 			user: entity.User{
@@ -193,7 +188,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 				Name:  "Test User",
 				Email: "test@gmail.com",
 			},
-			expectedLastViewedAt: now,
+			expectedLastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00"),
 			hasErr:               false,
 		},
 	}
@@ -211,7 +206,7 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 
 					userChangeLogRepo := sqldb.NewUserChangeLogSQL(sqlDB)
 
-					_, err := userChangeLogRepo.UpdateLastViewedAt(testCase.user, now)
+					_, err := userChangeLogRepo.UpdateLastViewedAt(testCase.user, must.Time(t, "2020-04-04T08:02:16-07:00"))
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 						return
@@ -229,10 +224,6 @@ func TestUserChangeLogSQL_UpdateLastViewedAt(t *testing.T) {
 }
 
 func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
-	now := mustParseTime(t, "2020-04-04T08:02:16-07:00")
-	monthAgo := now.AddDate(0, -1, 0)
-	twoMonthsAgo := monthAgo.AddDate(0, -1, 0)
-
 	testCases := []struct {
 		name                   string
 		userTableRows          []userTableRow
@@ -258,7 +249,7 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
-					lastViewedAt: monthAgo,
+					lastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00").AddDate(0, -1, 0),
 				},
 			},
 			user: entity.User{
@@ -266,7 +257,7 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 				Name:  "Test User",
 				Email: "test@gmail.com",
 			},
-			expectedLastViewedAt: now,
+			expectedLastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00"),
 			hasErr:               false,
 		},
 		{
@@ -286,11 +277,11 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 			userChangeLogTableRows: []userChangeLogTableRow{
 				{
 					userID:       "12346",
-					lastViewedAt: twoMonthsAgo,
+					lastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00").AddDate(0, -2, 0),
 				},
 				{
 					userID:       "12345",
-					lastViewedAt: monthAgo,
+					lastViewedAt: must.Time(t, "2020-04-04T08:02:16-07:00").AddDate(0, -1, 0),
 				},
 			},
 			user: entity.User{
@@ -315,7 +306,7 @@ func TestUserChangeLogSQL_CreateRelation(t *testing.T) {
 					insertUserChangeLogTableRows(t, sqlDB, testCase.userChangeLogTableRows)
 
 					userChangeLogRepo := sqldb.NewUserChangeLogSQL(sqlDB)
-					err := userChangeLogRepo.CreateRelation(testCase.user, now)
+					err := userChangeLogRepo.CreateRelation(testCase.user, must.Time(t, "2020-04-04T08:02:16-07:00"))
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 						return

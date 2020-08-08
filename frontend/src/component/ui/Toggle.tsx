@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 
 import styles from './Toggle.module.scss';
 import classNames from 'classnames';
+import { Styling, withCSSModule } from './styling';
 
-interface Props {
+interface Props extends Styling {
   defaultIsEnabled: boolean;
   onClick?: (enabled: boolean) => void;
 }
@@ -12,12 +13,11 @@ interface State {
   enabled: boolean;
 }
 
-const DEFAULT_PROPS = {
-  defaultIsEnabled: false
-};
-
 export class Toggle extends Component<Props, State> {
-  static defaultProps: Partial<Props> = DEFAULT_PROPS;
+  static defaultProps: Partial<Props> = {
+    defaultIsEnabled: false,
+    styles: ['pink']
+  };
 
   constructor(props: Props) {
     super(props);
@@ -46,10 +46,10 @@ export class Toggle extends Component<Props, State> {
     return (
       <div className={styles.toggle}>
         <div
-          className={classNames({
+          className={`${withCSSModule(this.props.styles, styles)} ${classNames({
             [styles.background]: true,
             [styles.active]: enabled
-          })}
+          })}`}
           onClick={this.handleClick}
         >
           <div

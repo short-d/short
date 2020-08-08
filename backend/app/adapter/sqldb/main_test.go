@@ -4,9 +4,7 @@ package sqldb_test
 
 import (
 	"testing"
-	"time"
 
-	"github.com/short-d/app/fw/assert"
 	"github.com/short-d/app/fw/db"
 	"github.com/short-d/app/fw/envconfig"
 	"github.com/short-d/short/backend/dep"
@@ -49,10 +47,4 @@ func TestMain(m *testing.M) {
 	dbMigrationTool = dep.InjectDBMigrationTool()
 
 	m.Run()
-}
-
-func mustParseTime(t *testing.T, timeString string) time.Time {
-	parsedTime, err := time.Parse(time.RFC3339, timeString)
-	assert.Equal(t, nil, err)
-	return parsedTime.UTC()
 }

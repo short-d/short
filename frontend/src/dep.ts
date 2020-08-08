@@ -9,7 +9,6 @@ import { createStore, Store } from 'redux';
 import { IAppState, initialAppState, reducers } from './state/reducers';
 import { ErrorService } from './service/Error.service';
 import { RoutingService } from './service/Routing.service';
-import { UrlService } from './service/Url.service';
 import { SearchService } from './service/Search.service';
 import { BrowserExtensionFactory } from './service/extensionService/BrowserExtension.factory';
 import { ChangeLogService } from './service/ChangeLog.service';
@@ -50,13 +49,6 @@ export function initUIFactory(
   const dynamicDecisionService = new DynamicDecisionService(shortHTTPApi);
 
   const graphQLService = new GraphQLService(httpService);
-  const urlService = new UrlService(
-    authService,
-    envService,
-    errorService,
-    captchaService,
-    graphQLService
-  );
   const versionService = new VersionService(envService);
   const store = initStore();
   const searchService = new SearchService();
@@ -81,6 +73,7 @@ export function initUIFactory(
     captchaService
   );
   const shortLinkService = new ShortLinkService(
+    envService,
     shortLinkGraphQLApi,
     errorService
   );
@@ -90,7 +83,6 @@ export function initUIFactory(
     authService,
     clipboardService,
     extensionService,
-    urlService,
     qrCodeService,
     versionService,
     errorService,

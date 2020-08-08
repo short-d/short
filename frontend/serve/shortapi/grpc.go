@@ -8,12 +8,12 @@ import (
 	"github.com/short-d/short/frontend/serve/entity"
 )
 
-// GRPC helps retrieve meta tags for a given short link using a gRPC client.
+// GRPC retrieves meta tags for a given short link from GRPC api.
 type GRPC struct {
 	client proto.MetaTagServiceClient
 }
 
-// GetOpenGraphTags returns opengraph tags given an alias.
+// GetOpenGraphTags retrieves Open Graph SEO tags  for a short link.
 func (g *GRPC) GetOpenGraphTags(alias string) (entity.OpenGraphTags, error) {
 	openGraphTags, err := g.client.GetOpenGraphTags(context.Background(), &proto.GetOpenGraphTagsRequest{Alias: alias})
 	if err != nil {
@@ -27,7 +27,7 @@ func (g *GRPC) GetOpenGraphTags(alias string) (entity.OpenGraphTags, error) {
 	}, nil
 }
 
-// GetTwitterTags returns twitter tags given an alias.
+// GetTwitterTags retrieves Twitter SEO tags for a short link.
 func (g *GRPC) GetTwitterTags(alias string) (entity.TwitterTags, error) {
 	twitterTags, err := g.client.GetTwitterTags(context.Background(), &proto.GetTwitterTagsRequest{Alias: alias})
 	if err != nil {

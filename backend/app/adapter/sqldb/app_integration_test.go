@@ -13,6 +13,7 @@ import (
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/adapter/sqldb/table"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/must"
 )
 
 var insertAppRowSQL = fmt.Sprintf(`
@@ -31,7 +32,6 @@ type appTableRow struct {
 }
 
 func TestAppSQL_FindAppByID(t *testing.T) {
-	createdAt := mustParseTime(t, "2017-05-01T08:02:16-07:00")
 	testCases := []struct {
 		name        string
 		tableRows   []appTableRow
@@ -51,7 +51,7 @@ func TestAppSQL_FindAppByID(t *testing.T) {
 				{
 					id:        "emotic",
 					name:      "Feedback Widget",
-					createdAt: createdAt,
+					createdAt: must.Time(t, "2017-05-01T08:02:16-07:00"),
 				},
 			},
 			appID:  "emotic",
@@ -59,7 +59,7 @@ func TestAppSQL_FindAppByID(t *testing.T) {
 			expectedApp: entity.App{
 				ID:        "emotic",
 				Name:      "Feedback Widget",
-				CreatedAt: createdAt,
+				CreatedAt: must.Time(t, "2017-05-01T08:02:16-07:00"),
 			},
 		},
 	}
