@@ -10,6 +10,7 @@ import (
 	"github.com/short-d/app/fw/logger"
 	"github.com/short-d/app/fw/timer"
 	"github.com/short-d/short/backend/app/entity"
+	"github.com/short-d/short/backend/app/fw/ptr"
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 	"github.com/short-d/short/backend/app/usecase/authorizer"
 	"github.com/short-d/short/backend/app/usecase/authorizer/rbac"
@@ -29,7 +30,6 @@ func TestQuery_AuthQuery(t *testing.T) {
 	}
 	authToken, err := auth.GenerateToken(user)
 	assert.Equal(t, nil, err)
-	randomToken := "random_token"
 
 	testCases := []struct {
 		name      string
@@ -47,7 +47,7 @@ func TestQuery_AuthQuery(t *testing.T) {
 		},
 		{
 			name:      "with invalid auth token",
-			authToken: &randomToken,
+			authToken: ptr.String("random_token"),
 			expHasErr: false,
 		},
 		{

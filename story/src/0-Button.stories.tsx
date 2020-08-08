@@ -40,6 +40,14 @@ export const red = () => {
   );
 };
 
+export const green = () => {
+  return (
+    <Button styles={['green']} onClick={action('click')}>
+      {text('Label', 'Button')}
+    </Button>
+  );
+};
+
 export const fullWidth = () => {
   return (
     <Button styles={['pink', 'full-width']} onClick={action('click')}>

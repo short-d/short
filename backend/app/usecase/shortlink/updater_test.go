@@ -360,7 +360,6 @@ func TestShortLinkUpdaterPersist_UpdateShortLink(t *testing.T) {
 				testCase.relationShortLinks,
 			)
 			shortLinkRepo := repository.NewShortLinkFake(&userShortLinkRepo, testCase.shortlinks)
-
 			longLinkValidator := validator.NewLongLink()
 			aliasValidator := validator.NewCustomAlias()
 			blacklist := risk.NewBlackListFake(testCase.blockedLongLinks)

@@ -8,30 +8,17 @@ export enum IconID {
   Close,
   Search,
   Edit,
-  Check
+  Check,
+  Delete,
+  RightArrow
 }
 
 interface IProps {
-  defaultIconID: IconID;
+  iconID: IconID;
   onClick?: () => void;
 }
 
-interface IStates {
-  iconID: IconID;
-}
-
-export class Icon extends Component<IProps, IStates> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      iconID: props.defaultIconID
-    };
-  }
-
-  setIcon(iconID: IconID) {
-    this.setState({ iconID: iconID });
-  }
-
+export class Icon extends Component<IProps> {
   render() {
     return (
       <i className={'icon'} onClick={this.handleClick}>
@@ -48,7 +35,7 @@ export class Icon extends Component<IProps, IStates> {
   };
 
   private renderSVG() {
-    const { iconID } = this.state;
+    const { iconID } = this.props;
 
     switch (iconID) {
       case IconID.Menu:
@@ -63,6 +50,10 @@ export class Icon extends Component<IProps, IStates> {
         return this.renderEditIcon();
       case IconID.Check:
         return this.renderCheckIcon();
+      case IconID.Delete:
+        return this.renderDeleteIcon();
+      case IconID.RightArrow:
+        return this.renderRightArrowIcon();
     }
   }
 
@@ -118,21 +109,54 @@ export class Icon extends Component<IProps, IStates> {
     );
   };
 
-  private renderEditIcon() {
+  private renderEditIcon = () => {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M0 0h24v24H0z" fill="none" />
         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
       </svg>
     );
-  }
+  };
 
-  private renderCheckIcon() {
+  private renderCheckIcon = () => {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M0 0h24v24H0z" fill="none" />
         <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
       </svg>
     );
-  }
+  };
+
+  private renderDeleteIcon = () => {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+        <path d="M0 0h20v20H0z" fill="none" />
+        <path
+          fill={'#e41919'}
+          d="M0,10 C0,4.5 4.5,0 10,0 C15.5,0 20,4.5 20,10 C20,15.5 15.5,20 10,20 C4.5,20 0,15.5 0,10 Z"
+        />
+        <line
+          stroke="#ffffff"
+          strokeWidth="2.5"
+          x1="4.5"
+          y1="10.5"
+          x2="15.5"
+          y2="10.5"
+          fillOpacity="1"
+          strokeOpacity="1"
+        />
+      </svg>
+    );
+  };
+
+  private renderRightArrowIcon = () => {
+    return (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          d="M 18.144531 11.523438 L 6.820312 0.199219 C 6.554688 -0.0664062 6.128906 -0.0664062 5.859375 0.199219 C 5.59375 0.464844 5.59375 0.894531 5.859375 1.160156 L 16.699219 12 L 5.859375 22.839844 C 5.59375 23.105469 5.59375 23.53125 5.859375 23.796875 C 5.992188 23.929688 6.167969 24 6.339844 24 C 6.511719 24 6.6875 23.933594 6.816406 23.796875 L 18.136719 12.476562 C 18.40625 12.214844 18.40625 11.78125 18.144531 11.523438 Z M 18.144531 11.523438 "
+          fill="#000000"
+        />
+      </svg>
+    );
+  };
 }

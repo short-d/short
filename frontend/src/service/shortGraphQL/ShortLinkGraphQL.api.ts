@@ -1,14 +1,19 @@
 import { AuthService } from '../Auth.service';
 import { EnvService } from '../Env.service';
 import { GraphQLService, IGraphQLRequestError } from '../GraphQL.service';
-import { Url } from '../../entity/Url';
+import { ShortLink } from '../../entity/ShortLink';
 import { getErrorCodes } from '../GraphQLError';
 import {
+  IShortGraphQLMutation,
   IShortGraphQLQuery,
   IShortGraphQLShortLink,
   IShortGraphQLShortLinkInput
 } from './schema';
-import { CaptchaService, UPDATE_SHORT_LINK } from '../Captcha.service';
+import {
+  CaptchaService,
+  CREATE_SHORT_LINK,
+  UPDATE_SHORT_LINK
+} from '../Captcha.service';
 
 export class ShortLinkGraphQLApi {
   private readonly baseURL: string;
@@ -22,7 +27,7 @@ export class ShortLinkGraphQLApi {
     this.baseURL = `${this.envService.getVal('GRAPHQL_API_BASE_URL')}/graphql`;
   }
 
-  getUserShortLinks(offset: number, pageSize: number): Promise<Url[]> {
+  getUserShortLinks(offset: number, pageSize: number): Promise<ShortLink[]> {
     const getUserShortLinksQuery = `
       query params($authToken: String!) {
         authQuery(authToken: $authToken) {
@@ -42,7 +47,7 @@ export class ShortLinkGraphQLApi {
         })
         .then((res: IShortGraphQLQuery) => {
           const { shortLinks } = res.authQuery;
-          resolve(shortLinks.map(this.parseUrl));
+          resolve(shortLinks.map(this.parseShortLink));
         })
         .catch((err: IGraphQLRequestError) => {
           const errCodes = getErrorCodes(err);
@@ -51,7 +56,79 @@ export class ShortLinkGraphQLApi {
     });
   }
 
-  async updateShortLink(oldAlias: string, shortLink: Partial<Url>) {
+  async createShortLink(
+    shortLink: ShortLink,
+    isPublic: boolean
+  ): Promise<ShortLink> {
+    const gqlCreateShortLink = `
+      mutation params(
+        $captchaResponse: String!
+        $authToken: String!
+        $shortLinkInput: ShortLinkInput!
+        $isPublic: Boolean!
+      ) {
+        authMutation(authToken: $authToken, captchaResponse: $captchaResponse) {
+          createShortLink(shortLink: $shortLinkInput, isPublic: $isPublic) {
+            alias
+            longLink
+          }
+        }
+      }
+    `;
+
+    let captchaResponse = '';
+
+    try {
+      captchaResponse = await this.captchaService.execute(CREATE_SHORT_LINK);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+
+    const variables = {
+      captchaResponse: captchaResponse,
+      authToken: this.authService.getAuthToken(),
+      shortLinkInput: {
+        longLink: shortLink.longLink,
+        customAlias: shortLink.alias
+      },
+      isPublic
+    };
+
+    return new Promise<ShortLink>(
+      (
+        resolve: (createdShortLink: ShortLink) => void,
+        // TODO(task#h6V56gf9): change the string type to Err for this function and all callers
+        reject: (errCode: string) => any
+      ) => {
+        this.graphQLService
+          .mutate<IShortGraphQLMutation>(this.baseURL, {
+            mutation: gqlCreateShortLink,
+            variables: variables
+          })
+          .then((res: IShortGraphQLMutation) => {
+            const shortLink = this.getShortLinkFromCreatedShortLink(
+              res.authMutation.createShortLink
+            );
+            resolve(shortLink);
+          })
+          .catch((err: IGraphQLRequestError) => {
+            const errCodes = getErrorCodes(err);
+            reject(errCodes[0]);
+          });
+      }
+    );
+  }
+
+  private getShortLinkFromCreatedShortLink(
+    createdShortLink: IShortGraphQLShortLink
+  ): ShortLink {
+    return {
+      longLink: createdShortLink.longLink,
+      alias: createdShortLink.alias
+    };
+  }
+
+  async updateShortLink(oldAlias: string, shortLink: Partial<ShortLink>) {
     let captchaResponse;
     try {
       captchaResponse = await this.captchaService.execute(UPDATE_SHORT_LINK);
@@ -94,17 +171,19 @@ export class ShortLinkGraphQLApi {
     });
   }
 
-  private toShortLinkInput(url: Partial<Url>): IShortGraphQLShortLinkInput {
+  private toShortLinkInput(
+    shortLink: Partial<ShortLink>
+  ): IShortGraphQLShortLinkInput {
     return {
-      customAlias: url.alias,
-      longLink: url.originalUrl
+      customAlias: shortLink.alias,
+      longLink: shortLink.longLink
     };
   }
 
-  private parseUrl(url: IShortGraphQLShortLink): Url {
+  private parseShortLink(shortLink: IShortGraphQLShortLink): ShortLink {
     return {
-      originalUrl: url.longLink,
-      alias: url.alias
+      longLink: shortLink.longLink,
+      alias: shortLink.alias
     };
   }
 }
