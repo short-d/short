@@ -106,9 +106,7 @@ func (s ShortLinkFake) UpdateShortLink(oldAlias string, shortLinkInput entity.Sh
 }
 
 // DeleteShortLink deletes an existing user short link.
-func (s ShortLinkFake) DeleteShortLink(input entity.ShortLinkInput) error {
-	alias := input.GetCustomAlias("")
-
+func (s ShortLinkFake) DeleteShortLink(alias string) error {
 	if alias == "" {
 		return errors.New("empty alias")
 	}

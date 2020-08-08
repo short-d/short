@@ -718,14 +718,12 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 	var (
 		createdAt = mustParseTime(t, "2018-05-01T08:02:16-07:00")
 		now       = mustParseTime(t, "2020-05-01T08:02:16-07:00")
-
-		longLink    = "https://short-d.com/"
-		customAlias = "short_is_great"
 	)
 
 	testCases := []struct {
 		name           string
 		tableRows      []shortLinkTableRow
+		alias          string
 		shortLinkInput entity.ShortLinkInput
 		hasErr         bool
 	}{
@@ -745,11 +743,7 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 					twitterImageURL:    nil,
 				},
 			},
-			shortLinkInput: entity.ShortLinkInput{
-				LongLink:    &longLink,
-				CustomAlias: &customAlias,
-				CreatedAt:   nil,
-			},
+			alias:  "short_is_great",
 			hasErr: false,
 		},
 		{
@@ -768,11 +762,7 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 					twitterImageURL:    nil,
 				},
 			},
-			shortLinkInput: entity.ShortLinkInput{
-				LongLink:    &longLink,
-				CustomAlias: &customAlias,
-				CreatedAt:   nil,
-			},
+			alias:  "short_is_great",
 			hasErr: true,
 		},
 	}
@@ -787,7 +777,7 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
 
 					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
-					err := shortLinkRepo.DeleteShortLink(testCase.shortLinkInput)
+					err := shortLinkRepo.DeleteShortLink(testCase.alias)
 					if testCase.hasErr {
 						assert.NotEqual(t, nil, err)
 					}

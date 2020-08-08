@@ -10,6 +10,6 @@ type ShortLink interface {
 	GetShortLinkByAlias(alias string) (entity.ShortLink, error)
 	CreateShortLink(shortLinkInput entity.ShortLinkInput) error
 	UpdateShortLink(oldAlias string, shortLinkInput entity.ShortLinkInput) (entity.ShortLink, error)
-	DeleteShortLink(shortLinkInput entity.ShortLinkInput) error
+	DeleteShortLink(alias string) error
 	GetShortLinksByAliases(aliases []string) ([]entity.ShortLink, error)
 }
