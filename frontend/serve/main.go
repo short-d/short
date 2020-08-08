@@ -1,14 +1,13 @@
 package main
 
 import (
-	"github.com/short-d/app/fw/env"
-	"github.com/short-d/app/fw/envconfig"
 	"net/http"
 
-	"github.com/short-d/short/frontend/serve/handle"
-
+	"github.com/short-d/app/fw/env"
+	"github.com/short-d/app/fw/envconfig"
 	"github.com/short-d/app/fw/router"
 	"github.com/short-d/app/fw/service"
+	"github.com/short-d/short/frontend/serve/handle"
 	"github.com/short-d/short/frontend/serve/shortapi"
 	"github.com/short-d/short/frontend/serve/ssr"
 )
@@ -18,9 +17,9 @@ func main() {
 	envConfig := envconfig.NewEnvConfig(goDotEnv)
 
 	config := struct {
-		GRPCHostName       string        `env:"GRPC_HOST_NAME" default:"localhost"`
-		GRPCPort           int           `env:"GRPC_PORT" default:"8081"`
-		HTTPPort           int           `env:"HTTP_PORT" default:"3000"`
+		GRPCHostName string `env:"GRPC_HOST_NAME" default:"localhost"`
+		GRPCPort     int    `env:"GRPC_PORT" default:"8081"`
+		HTTPPort     int    `env:"HTTP_PORT" default:"3000"`
 	}{}
 
 	err := envConfig.ParseConfigFromEnv(&config)
