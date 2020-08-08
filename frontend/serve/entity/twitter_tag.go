@@ -1,6 +1,6 @@
 package entity
 
-// TwitterTags represents Twitter Meta Tags for a ShortLink.
+// TwitterTags represents Twitter meta tags for a short link.
 type TwitterTags struct {
 	Title       string
 	Description string

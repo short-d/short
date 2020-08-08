@@ -13,7 +13,7 @@ type GRPC struct {
 	client proto.MetaTagServiceClient
 }
 
-// GetOpenGraphTags retrieves Open Graph SEO tags  for a short link.
+// GetOpenGraphTags retrieves Open Graph SEO tags for a short link.
 func (g *GRPC) GetOpenGraphTags(alias string) (entity.OpenGraphTags, error) {
 	openGraphTags, err := g.client.GetOpenGraphTags(context.Background(), &proto.GetOpenGraphTagsRequest{Alias: alias})
 	if err != nil {

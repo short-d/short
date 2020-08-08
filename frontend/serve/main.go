@@ -48,7 +48,7 @@ func main() {
 		},
 	}
 	routingService := service.
-		NewRoutingBuilder("Short").
+		NewRoutingBuilder("Short Frontend").
 		Routes(routes).
 		Build()
 	routingService.StartAndWait(config.HTTPPort)
