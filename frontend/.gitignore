@@ -10,6 +10,7 @@
 
 # production
 build/
+serve/public/
 
 # development
 .env.development
