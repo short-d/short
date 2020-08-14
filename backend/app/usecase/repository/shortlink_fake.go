@@ -112,7 +112,7 @@ func (s ShortLinkFake) DeleteShortLink(alias string) error {
 	}
 	_, ok := s.shortLinks[alias]
 	if !ok {
-		return errors.New("alias does not exist")
+		return ErrAliasNotFound{Alias: alias}
 	}
 	delete(s.shortLinks, alias)
 

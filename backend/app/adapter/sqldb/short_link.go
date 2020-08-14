@@ -306,7 +306,7 @@ func (s ShortLinkSQL) DeleteShortLink(alias string) error {
 		return err
 	}
 	if affectedRowCount == 0 {
-		return repository.ErrShortLinkDeletionFailure{Alias: alias}
+		return repository.ErrAliasNotFound{Alias: alias}
 	}
 
 	return nil
