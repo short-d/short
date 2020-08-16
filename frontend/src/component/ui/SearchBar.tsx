@@ -1,7 +1,7 @@
 import React, { ChangeEvent, Component } from 'react';
 import classNames from 'classnames';
 
-import './SearchBar.scss';
+import styles from './SearchBar.module.scss';
 import { ShortLink } from '../../entity/ShortLink';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -51,8 +51,8 @@ export class SearchBar extends Component<Props, State> {
 
     return (
       <ul
-        className={classNames('suggestions', {
-          show: this.state.showAutoCompleteBox
+        className={classNames(styles.suggestions, {
+          [styles.show]: this.state.showAutoCompleteBox
         })}
       >
         {this.props.autoCompleteSuggestions.map(e => (
@@ -80,8 +80,8 @@ export class SearchBar extends Component<Props, State> {
 
   render() {
     return (
-      <div className="search-box">
-        <div className="search-input">
+      <div className={`${styles['search-box']}`}>
+        <div className={`${styles['search-input']}`}>
           <input
             minLength={2}
             maxLength={50}
@@ -90,7 +90,7 @@ export class SearchBar extends Component<Props, State> {
             onFocus={this.showAutoCompleteBox}
             onBlur={this.hideAutoCompleteBox}
           />
-          <div className={'search-icon'}>
+          <div className={`${styles['search-icon']}`}>
             <Icon iconID={IconID.Search} />
           </div>
         </div>
