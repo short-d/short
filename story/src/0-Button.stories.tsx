@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '../../frontend/src/component/ui/Button';
 import { action } from '@storybook/addon-actions';
-import { text, withKnobs } from '@storybook/addon-knobs';
+import { text } from '@storybook/addon-knobs';
 import { withInfo } from '@storybook/addon-info';
 
 import styles from './0-Button.stories.module.scss';
@@ -9,7 +9,7 @@ import styles from './0-Button.stories.module.scss';
 export default {
   title: 'UI/Button',
   component: <Button />,
-  decorators: [withKnobs, withInfo({ header: false, inline: true })]
+  decorators: [withInfo({ header: false, inline: true })]
 };
 
 export const pink = () => {
