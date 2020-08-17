@@ -15,7 +15,7 @@ servers:
   - url: https://api.short-d.com
   - url: https://api-staging.short-d.com
   - url: https://api-testing.short-d.com
-  - url: https://localhost.com
+  - url: http://localhost.com
 tags:
   - name: short
     description: The foundamental web APIs for short-d.com.
