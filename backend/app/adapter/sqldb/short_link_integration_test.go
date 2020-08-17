@@ -714,6 +714,64 @@ func TestShortLinkSql_GetShortLinkByAliases(t *testing.T) {
 	}
 }
 
+func TestShortLinkSql_DeleteShortLink(t *testing.T) {
+	testCases := []struct {
+		name           string
+		tableRows      []shortLinkTableRow
+		alias          string
+		shortLinkInput entity.ShortLinkInput
+		hasErr         bool
+	}{
+		{
+			name: "delete exisiting shortlink",
+			tableRows: []shortLinkTableRow{
+				{
+					alias:              "short_is_great",
+					longLink:           "https://short-d.com",
+					createdAt:          ptr.Time(must.Time(t, "2018-05-01T08:02:16-07:00")),
+					expireAt:           ptr.Time(must.Time(t, "2020-05-01T08:02:16-07:00")),
+				},
+			},
+			alias:  "short_is_great",
+			hasErr: false,
+		},
+		{
+			name: "shortlink does not exist",
+			tableRows: []shortLinkTableRow{
+				{
+					alias:              "i_luv_short",
+					longLink:           "https://short-d.com",
+					createdAt:          ptr.Time(must.Time(t, "2018-05-01T08:02:16-07:00")),
+					expireAt:           ptr.Time(must.Time(t, "2020-05-01T08:02:16-07:00")),
+				},
+			},
+			alias:  "short_is_great",
+			hasErr: true,
+		},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			dbtest.AccessTestDB(
+				dbConnector,
+				dbMigrationTool,
+				dbMigrationRoot,
+				dbConfig,
+				func(sqlDB *sql.DB) {
+					insertShortLinkTableRows(t, sqlDB, testCase.tableRows)
+
+					shortLinkRepo := sqldb.NewShortLinkSQL(sqlDB)
+					err := shortLinkRepo.DeleteShortLink(testCase.alias)
+					if testCase.hasErr {
+						assert.NotEqual(t, nil, err)
+						return
+					}
+					assert.Equal(t, nil, err)
+				},
+			)
+		})
+	}
+}
+
 func insertShortLinkTableRows(t *testing.T, sqlDB *sql.DB, tableRows []shortLinkTableRow) {
 	for _, tableRow := range tableRows {
 		_, err := sqlDB.Exec(
