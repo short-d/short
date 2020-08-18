@@ -25,17 +25,13 @@
     "@storybook/addon-knobs": "^6.0.10",
     "@storybook/addon-links": "^6.0.10",
     "@storybook/addons": "^6.0.10",
-    "@storybook/preset-typescript": "^3.0.0",
     "@storybook/react": "^6.0.10",
     "@types/react": "^16.9.42",
     "@types/react-dom": "^16.9.8",
     "babel-loader": "^8.1.0",
-    "fork-ts-checker-webpack-plugin": "^5.0.7",
     "node-sass": "^4.14.1",
     "prettier": "^2.0.5",
-    "react-docgen-typescript-loader": "^3.7.2",
     "sass-loader": "^9.0.2",
-    "ts-loader": "^8.0.0",
     "typescript": "^3.9.6"
   }
 }
