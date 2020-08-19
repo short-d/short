@@ -16,21 +16,22 @@
   "license": "ISC",
   "dependencies": {
     "emotic": "link:../widget/emotic",
-    "react": "^16.0.0"
+    "react": "^16.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",
-    "@storybook/addon-actions": "^6.0.10",
-    "@storybook/addon-info": "^5.3.19",
-    "@storybook/addon-knobs": "^6.0.10",
-    "@storybook/addon-links": "^6.0.10",
-    "@storybook/addons": "^6.0.10",
-    "@storybook/react": "^6.0.10",
+    "@storybook/addon-actions": "^6.0.12",
+    "@storybook/addon-docs": "^6.0.12",
+    "@storybook/addon-knobs": "^6.0.12",
+    "@storybook/addon-links": "^6.0.12",
+    "@storybook/addons": "^6.0.12",
+    "@storybook/react": "^6.0.12",
     "@types/react": "^16.9.42",
     "@types/react-dom": "^16.9.8",
     "babel-loader": "^8.1.0",
     "node-sass": "^4.14.1",
     "prettier": "^2.0.5",
+    "react-is": "^16.13.1",
     "sass-loader": "^9.0.2",
     "typescript": "^3.9.6"
   }
