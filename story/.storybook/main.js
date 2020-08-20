@@ -19,7 +19,7 @@ module.exports = {
         'sass-loader'
       ]
     });
-    config.resolve.extensions.push('.ts', '.tsx', '.scss');
+    config.resolve.extensions.push('.scss');
     return config;
   }
 };
