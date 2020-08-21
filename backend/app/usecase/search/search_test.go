@@ -30,18 +30,33 @@ func TestSearch(t *testing.T) {
 		expHasErr bool
 	}{
 		{
-			name:       "search without user",
-			shortLinks: shortLinks{},
+			name: "search without user",
+			shortLinks: shortLinks{
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+			},
 			Query: Query{
 				Query: "http google",
 			},
-			maxResults:         2,
-			resources:          []Resource{ShortLink},
-			orders:             []order.By{order.ByCreatedTimeASC},
-			relationUsers:      []entity.User{},
-			relationShortLinks: []entity.ShortLink{},
-			expectedResult:     ResourceResult{},
-			expHasErr:          true,
+			maxResults: 1,
+			resources:  []Resource{ShortLink},
+			orders:     []order.By{order.ByCreatedTimeASC},
+			relationUsers: []entity.User{
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+			},
+			expectedResult: ResourceResult{},
+			expHasErr:      true,
 		},
 		{
 			name: "search without query",
