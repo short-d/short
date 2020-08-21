@@ -66,7 +66,7 @@ func (s Search) Search(query Query, filter Filter) (ResourceResult, error) {
 			}
 			resultCh <- Result{
 				Resources: result,
-				Err: nil,
+				Err:       nil,
 			}
 		}()
 	}
