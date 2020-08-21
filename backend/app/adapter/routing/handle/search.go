@@ -168,7 +168,7 @@ func (f *Filter) resourcesString() []string {
 	return resources
 }
 
-func newSearchResponse(result search.Result) SearchResponse {
+func newSearchResponse(result search.ResourceResult) SearchResponse {
 	shortLinks := make([]ShortLink, len(result.ShortLinks))
 	for i := 0; i < len(result.ShortLinks); i++ {
 		shortLinks[i] = newShortLink(result.ShortLinks[i])

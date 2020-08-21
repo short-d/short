@@ -1,7 +1,6 @@
 package search
 
 import (
-	"errors"
 	"strings"
 	"time"
 
@@ -22,12 +21,32 @@ type Search struct {
 
 // Result represents the result of a search query.
 type Result struct {
+	Resources ResourceResult
+	Err       error
+}
+
+// ResourceResult represents the resources obtained from a search query.
+type ResourceResult struct {
 	ShortLinks []entity.ShortLink
 	Users      []entity.User
 }
 
+// ErrUnknownResource represents unknown search resource error.
+type ErrUnknownResource string
+
+func (e ErrUnknownResource) Error() string {
+	return string(e)
+}
+
+// ErrUserNotProvided represents user not provided for search query.
+type ErrUserNotProvided string
+
+func (e ErrUserNotProvided) Error() string {
+	return string(e)
+}
+
 // Search finds resources based on specified criteria.
-func (s Search) Search(query Query, filter Filter) (Result, error) {
+func (s Search) Search(query Query, filter Filter) (ResourceResult, error) {
 	resultCh := make(chan Result)
 	defer close(resultCh)
 
@@ -38,50 +57,63 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 		go func() {
 			result, err := s.searchResource(filter.resources[i], orders[i], query, filter)
 			if err != nil {
-				// TODO(issue#865): Handle errors of Search API
 				s.logger.Error(err)
-				resultCh <- Result{}
+				resultCh <- Result{
+					Resources: ResourceResult{},
+					Err:       err,
+				}
 				return
 			}
-			resultCh <- result
+			resultCh <- Result{
+				Resources: result,
+				Err: nil,
+			}
 		}()
 	}
 
 	timeout := time.After(s.timeout)
-	var results []Result
+	var results []ResourceResult
+	var resultErr error
 	for i := 0; i < len(filter.resources); i++ {
 		select {
 		case result := <-resultCh:
-			results = append(results, result)
+			// Only return the first error encountered
+			if resultErr == nil {
+				resultErr = result.Err
+			}
+			results = append(results, result.Resources)
 		case <-timeout:
 			return mergeResults(results), nil
 		}
 	}
 
-	return mergeResults(results), nil
+	return mergeResults(results), resultErr
 }
 
-func (s Search) searchResource(resource Resource, orderBy order.Order, query Query, filter Filter) (Result, error) {
+func (s Search) searchResource(resource Resource, orderBy order.Order, query Query, filter Filter) (ResourceResult, error) {
 	switch resource {
 	case ShortLink:
 		return s.searchShortLink(query, orderBy, filter)
 	case User:
 		return s.searchUser(query, orderBy, filter)
 	default:
-		return Result{}, errors.New("unknown resource")
+		// TODO add tests for unknown resource
+		return ResourceResult{}, ErrUnknownResource("unknown resource")
 	}
 }
 
 // TODO(issue#866): Simplify searchShortLink function
-func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (Result, error) {
+func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (ResourceResult, error) {
 	if query.User == nil {
-		s.logger.Error(errors.New("user not provided"))
-		return Result{}, nil
+		// TODO add a test for user not provided
+		err := ErrUserNotProvided("user not provided")
+		s.logger.Error(err)
+		return ResourceResult{}, err
 	}
 
 	shortLinks, err := s.getShortLinkByUser(*query.User)
 	if err != nil {
-		return Result{}, err
+		return ResourceResult{}, err
 	}
 
 	var matchedAliasByAll, matchedAliasByAny, matchedLongLinkByAll, matchedLongLinkByAny []entity.ShortLink
@@ -115,14 +147,14 @@ func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter)
 
 	filteredShortLinks := filterShortLinks(mergedShortLinks, filter)
 
-	return Result{
+	return ResourceResult{
 		ShortLinks: filteredShortLinks,
 		Users:      nil,
 	}, nil
 }
 
-func (s Search) searchUser(query Query, orderBy order.Order, filter Filter) (Result, error) {
-	return Result{}, nil
+func (s Search) searchUser(query Query, orderBy order.Order, filter Filter) (ResourceResult, error) {
+	return ResourceResult{}, nil
 }
 
 func (s Search) getShortLinkByUser(user entity.User) ([]entity.ShortLink, error) {
@@ -171,8 +203,8 @@ func toOrders(ordersBy []order.By) []order.Order {
 	return orders
 }
 
-func mergeResults(results []Result) Result {
-	var mergedResult Result
+func mergeResults(results []ResourceResult) ResourceResult {
+	var mergedResult ResourceResult
 
 	for _, result := range results {
 		mergedResult.ShortLinks = append(mergedResult.ShortLinks, result.ShortLinks...)

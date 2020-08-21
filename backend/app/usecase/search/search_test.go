@@ -25,7 +25,7 @@ func TestSearch(t *testing.T) {
 		orders             []order.By
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
-		expectedResult     Result
+		expectedResult     ResourceResult
 	}{
 		{
 			name: "search without user",
@@ -97,7 +97,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: Result{},
+			expectedResult: ResourceResult{},
 		},
 		{
 			name: "search without query",
@@ -172,7 +172,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: Result{
+			expectedResult: ResourceResult{
 				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "facebook",
@@ -259,7 +259,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: Result{
+			expectedResult: ResourceResult{
 				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "google",
@@ -347,7 +347,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: Result{
+			expectedResult: ResourceResult{
 				ShortLinks: nil,
 				Users:      nil,
 			},
@@ -426,7 +426,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: Result{
+			expectedResult: ResourceResult{
 				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "short",
@@ -510,7 +510,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: Result{
+			expectedResult: ResourceResult{
 				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "short",
