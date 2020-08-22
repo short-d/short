@@ -32,10 +32,10 @@ type ResourceResult struct {
 }
 
 // ErrUnknownResource represents unknown search resource error.
-type ErrUnknownResource string
+type ErrUnknownResource struct{}
 
 func (e ErrUnknownResource) Error() string {
-	return string(e)
+	return "unknown resource"
 }
 
 // ErrUserNotProvided represents user not provided for search query.
@@ -97,16 +97,14 @@ func (s Search) searchResource(resource Resource, orderBy order.Order, query Que
 	case User:
 		return s.searchUser(query, orderBy, filter)
 	default:
-		// TODO add tests for unknown resource
-		return ResourceResult{}, ErrUnknownResource("unknown resource")
+		return ResourceResult{}, ErrUnknownResource{}
 	}
 }
 
 // TODO(issue#866): Simplify searchShortLink function
 func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (ResourceResult, error) {
 	if query.User == nil {
-		// TODO add a test for user not provided
-		err := ErrUserNotProvided("user not provided")
+		err := ErrUserNotProvided{}
 		s.logger.Error(err)
 		return ResourceResult{}, err
 	}
