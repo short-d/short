@@ -29,6 +29,7 @@ type Instrumentation struct {
 	searchFailedCh                  chan ctx.ExecutionContext
 	madeFeatureDecisionCh           chan ctx.ExecutionContext
 	trackCh                         chan ctx.ExecutionContext
+	ssoSignIn                       chan ctx.ExecutionContext
 }
 
 // RedirectingAliasToLongLink tracks RedirectingAliasToLongLink event.
@@ -56,6 +57,11 @@ func (i Instrumentation) RedirectedAliasToLongLink(shortLink entity.ShortLink) {
 		}
 		i.analytics.Track("RedirectedAliasToLongLink", props, userID, c)
 	}()
+}
+
+func (i Instrumentation) SSOSignIn(metric string) {
+	c := <-i.ssoSignIn
+	i.metrics.Count(metric, 1, 1, c)
 }
 
 // LongLinkRetrievalSucceed tracks the successes when retrieving long links.
@@ -180,6 +186,7 @@ func NewInstrumentation(
 	searchFailedCh := make(chan ctx.ExecutionContext)
 	madeFeatureDecisionCh := make(chan ctx.ExecutionContext)
 	trackCh := make(chan ctx.ExecutionContext)
+	ssoSignIn := make(chan ctx.ExecutionContext)
 
 	ins := &Instrumentation{
 		logger:                          logger,
@@ -197,6 +204,7 @@ func NewInstrumentation(
 		searchFailedCh:                  searchFailedCh,
 		madeFeatureDecisionCh:           madeFeatureDecisionCh,
 		trackCh:                         trackCh,
+		ssoSignIn:                       ssoSignIn,
 	}
 	go func() {
 		c := <-ctxCh
@@ -210,6 +218,7 @@ func NewInstrumentation(
 		go func() { searchFailedCh <- c }()
 		go func() { madeFeatureDecisionCh <- c }()
 		go func() { trackCh <- c }()
+		go func() { ssoSignIn <- c }()
 		close(ctxCh)
 	}()
 	return *ins

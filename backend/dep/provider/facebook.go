@@ -47,6 +47,7 @@ func NewFacebookSSO(
 		ssoFactory.NewSingleSignOn(
 			identityProvider,
 			account,
-			sso.AccountLinker(linker)),
+			sso.AccountLinker(linker),
+			facebook.NewInstrumentation()),
 	)
 }

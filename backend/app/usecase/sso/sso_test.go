@@ -4,6 +4,7 @@ package sso
 
 import (
 	"encoding/json"
+	"github.com/short-d/short/backend/app/usecase/instrumentation"
 	"testing"
 	"time"
 
@@ -119,7 +120,7 @@ func TestSingleSignOn_SignIn(t *testing.T) {
 			linker := linkerFactory.NewAccountLinker(&ssoMap)
 			factory := NewFactory(auth)
 
-			singleSignOn := factory.NewSingleSignOn(identityProvider, profileService, linker)
+			singleSignOn := factory.NewSingleSignOn(identityProvider, profileService, linker, instrumentation.SSO{})
 			gotAuthToken, err := singleSignOn.SignIn(testCase.authorizationCode)
 			if testCase.hasErr {
 				assert.NotEqual(t, nil, err)

@@ -41,6 +41,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
 			Handle: handle.SSOSignIn(
+				instrumentationFactory,
 				sso.SingleSignOn(githubSSO),
 				webFrontendURL,
 			),
@@ -57,6 +58,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in",
 			Handle: handle.SSOSignIn(
+				instrumentationFactory,
 				sso.SingleSignOn(facebookSSO),
 				webFrontendURL,
 			),
@@ -73,6 +75,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/google/sign-in",
 			Handle: handle.SSOSignIn(
+				instrumentationFactory,
 				sso.SingleSignOn(googleSSO),
 				webFrontendURL,
 			),
@@ -122,7 +125,8 @@ func NewShort(
 			Method:      "GET",
 			Path:        "/api",
 			MatchPrefix: true,
-			Handle:      handle.ServeFile(openAPISpecPath),
+			Handle: handle.ServeFile(instrumentationFactory,
+				openAPISpecPath),
 		},
 		{
 			Method:      "GET",

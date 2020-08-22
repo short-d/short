@@ -1,6 +1,7 @@
 package handle
 
 import (
+	"github.com/short-d/short/backend/app/adapter/request"
 	"net/http"
 	"net/url"
 
@@ -10,10 +11,14 @@ import (
 
 // SSOSignIn redirects user to the sign in page.
 func SSOSignIn(
+	instrumentationFactory request.InstrumentationFactory,
 	singleSignOn sso.SingleSignOn,
 	webFrontendURL string,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
+		i := instrumentationFactory.NewRequest()
+		i.SSOSignIn(singleSignOn.GetMetricName())
+
 		token := getToken(params)
 		if singleSignOn.IsSignedIn(token) {
 			http.Redirect(w, r, webFrontendURL, http.StatusSeeOther)
