@@ -213,8 +213,8 @@ func newUser(user entity.User) User {
 }
 
 func emitSearchError(w http.ResponseWriter, err error) {
-	var code = http.StatusInternalServerError
 	var (
+	       code http.StatusInternalServerError
 		u search.ErrUserNotProvided
 		r search.ErrUnknownResource
 	)

@@ -39,10 +39,10 @@ func (e ErrUnknownResource) Error() string {
 }
 
 // ErrUserNotProvided represents user not provided for search query.
-type ErrUserNotProvided string
+type ErrUserNotProvided struct{}
 
 func (e ErrUserNotProvided) Error() string {
-	return string(e)
+	return "user not provided"
 }
 
 // Search finds resources based on specified criteria.
