@@ -2,7 +2,6 @@ import React, { Component, ReactChild } from 'react';
 
 import styles from './Table.module.scss';
 import { TextAlignProperty } from 'csstype';
-import { Styling, withCSSModule } from './styling';
 
 interface IProps {
   headers?: ReactChild[];

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table } from '../../frontend/src/component/ui/Table';
-import { action } from '@storybook/addon-actions';
-import { text } from '@storybook/addon-knobs';
+import { array, number } from '@storybook/addon-knobs';
 
 export default {
   title: 'UI/Table',
@@ -9,13 +8,13 @@ export default {
 };
 
 export const table = () => {
+  const headers = array('Header Columns', ['Long Link', 'Alias']);
   return (
     <Table
-      headers={['Long Link', 'Alias']}
-      rows={[
-        ['http://www.google.com', 'google'],
-        ['http://www.facebook.com', 'facebook']
-      ]}
+      headers={headers}
+      rows={new Array(number('Number of rows', 2))
+        .fill(0)
+        .map((_, i) => headers.map((_, j) => `data ${i}-${j}`))}
     />
   );
 };
