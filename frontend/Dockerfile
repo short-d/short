@@ -1,9 +1,47 @@
-FROM nginx:1.17.5-alpine
+# FROM golang:1.13.1-alpine AS production
 
-WORKDIR /usr/share/nginx/html
+# RUN apk add --no-cache git bash
 
-COPY build/ .
+# COPY serve/go.mod serve/go.sum ./
 
-RUN rm -rf /etc/nginx/conf.d/default.conf
+# RUN go mod download
 
-COPY default.conf /etc/nginx/conf.d/
+# RUN go mod verify
+
+# COPY serve .
+
+# COPY ./build ./public
+
+# CMD 
+
+# ENTRYPOINT ./scripts/start
+
+
+FROM golang:1.13.1-alpine AS builder
+
+WORKDIR /short
+
+RUN apk add --no-cache git bash
+
+# Install dependencies
+COPY serve/go.mod serve/go.sum ./
+RUN go mod download
+
+# Verify dependencies
+RUN go mod verify
+
+COPY serve .
+
+RUN go build -o app main.go
+
+FROM alpine:3.10 as production
+
+WORKDIR /short
+
+RUN apk add --no-cache bash
+
+COPY ./build ./public
+
+COPY --from=builder /short/app ./app
+
+ENTRYPOINT ./app
