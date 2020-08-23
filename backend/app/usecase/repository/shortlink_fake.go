@@ -105,6 +105,20 @@ func (s ShortLinkFake) UpdateShortLink(oldAlias string, shortLinkInput entity.Sh
 	}, nil
 }
 
+// DeleteShortLink deletes an existing user short link from in memory data store.
+func (s ShortLinkFake) DeleteShortLink(alias string) error {
+	if alias == "" {
+		return errors.New("empty alias")
+	}
+	_, ok := s.shortLinks[alias]
+	if !ok {
+		return ErrAliasNotFound{Alias: alias}
+	}
+	delete(s.shortLinks, alias)
+
+	return nil
+}
+
 // NewShortLinkFake creates in memory ShortLink repository
 func NewShortLinkFake(userShortLinkRepoFake *UserShortLinkFake, shortLinks map[string]entity.ShortLink) ShortLinkFake {
 	return ShortLinkFake{

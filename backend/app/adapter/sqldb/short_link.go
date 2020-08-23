@@ -286,6 +286,32 @@ func (s ShortLinkSQL) composeParamList(numParams int) string {
 	return parameterStr
 }
 
+// DeleteShortLink deletes an existing user short link.
+func (s ShortLinkSQL) DeleteShortLink(alias string) error {
+	query := fmt.Sprintf(`
+	DELETE FROM %s
+	WHERE %s=$1
+	`,
+		table.ShortLink.TableName,
+		table.ShortLink.ColumnAlias,
+	)
+
+	result, err := s.db.Exec(query, alias)
+	if err != nil {
+		return err
+	}
+
+	affectedRowCount, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affectedRowCount == 0 {
+		return repository.ErrAliasNotFound{Alias: alias}
+	}
+
+	return nil
+}
+
 // NewShortLinkSQL creates ShortLinkSQL
 func NewShortLinkSQL(db *sql.DB) ShortLinkSQL {
 	return ShortLinkSQL{
