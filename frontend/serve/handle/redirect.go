@@ -16,13 +16,13 @@ func Redirect(redirectPage ssr.RedirectPage, gRPC shortapi.GRPC, rootDir string)
 		alias := params["alias"]
 		openGraphTags, err := gRPC.GetOpenGraphTags(alias)
 		if err != nil {
-			serveIndex(rootDir, w, r)			
+			serveIndex(rootDir, w, r)
 			return
 		}
 
 		twitterTags, err := gRPC.GetTwitterTags(alias)
 		if err != nil {
-			serveIndex(rootDir, w, r)			
+			serveIndex(rootDir, w, r)
 			return
 		}
 
