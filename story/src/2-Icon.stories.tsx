@@ -5,7 +5,7 @@ import { withInfo } from '@storybook/addon-info';
 import styles from './2-Icon.stories.module.scss'
 export default {
   title: 'UI/Icon',
-  component: <Icon iconID={IconID.Menu} />,
+  component: Icon,
   decorators: [withInfo({ header: false, inline: true })]
 }
 
