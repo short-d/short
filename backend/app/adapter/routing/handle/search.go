@@ -214,9 +214,9 @@ func newUser(user entity.User) User {
 
 func emitSearchError(w http.ResponseWriter, err error) {
 	var (
-	       code http.StatusInternalServerError
-		u search.ErrUserNotProvided
-		r search.ErrUnknownResource
+		code = http.StatusInternalServerError
+		u    search.ErrUserNotProvided
+		r    search.ErrUnknownResource
 	)
 	if errors.As(err, &u) {
 		code = http.StatusUnauthorized
