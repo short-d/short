@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 
-import './Spinner.scss';
+import styles from './Spinner.module.scss';
 
 export class Spinner extends Component {
   render() {
     return (
-      <div className={'spinner'}>
-        <div className={'solar-system'}>
-          <div className={'earth-orbit orbit'}>
-            <div className={'planet earth'} />
-            <div className={'venus-orbit orbit'}>
-              <div className={'planet venus'} />
-              <div className={'mercury-orbit orbit'}>
-                <div className={'planet mercury'} />
-                <div className={'sun'} />
+      <div className={styles['spinner']}>
+        <div className={styles['solar-system']}>
+          <div className={`${styles['earth-orbit']} ${styles['orbit']}`}>
+            <div className={`${styles['planet']} ${styles['earth']}`} />
+            <div className={`${styles['venus-orbit']} ${styles['orbit']}`}>
+              <div className={`${styles['planet']} ${styles['venus']}`} />
+              <div className={`${styles['mercury-orbit']} ${styles['orbit']}`}>
+                <div className={`${styles['planet']} ${styles['mercury']}`} />
+                <div className={styles['sun']} />
               </div>
             </div>
           </div>
