@@ -5,7 +5,7 @@ import styles from './Spinner.module.scss';
 export class Spinner extends Component {
   render() {
     return (
-      <div className={styles['spinner']}>
+      <div className={styles.spinner}>
         <div className={styles['solar-system']}>
           <div className={`${styles['earth-orbit']} ${styles['orbit']}`}>
             <div className={`${styles['planet']} ${styles['earth']}`} />
