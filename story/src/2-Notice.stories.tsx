@@ -13,7 +13,7 @@ export const notice = () => {
   return (
     <Notice>
       <div className={styles.content}>
-        {text('Notice Message', 'Welcome to Short')}
+        {text('Message', 'Welcome to Short')}
       </div>
     </Notice>
   );
