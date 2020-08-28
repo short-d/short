@@ -38,7 +38,7 @@ func main() {
 		{
 			Method: http.MethodGet,
 			Path:   "/r/:alias",
-			Handle: handle.Redirect(redirectPage, gRPC),
+			Handle: handle.Redirect(redirectPage, gRPC, rootDir),
 		},
 		{
 			Method:      http.MethodGet,
