@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import './Notice.scss';
+import styles from './Notice.module.scss';
 
 interface Props {
   styleName?: string;
@@ -9,7 +9,7 @@ interface Props {
 export class Notice extends Component<Props> {
   render() {
     return (
-      <div className={`notice ${this.props.styleName}`}>
+      <div className={`${styles.notice} ${this.props.styleName}`}>
         {this.props.children}
       </div>
     );
