@@ -42,7 +42,7 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
 			Handle: handle.SSOSignIn(
-				ssoInstrumentationFactory("github"),
+				instrumentationFactory,
 				sso.SingleSignOn(githubSSO),
 				webFrontendURL,
 				github.ProviderName,
@@ -54,7 +54,6 @@ func NewShort(
 			Handle: handle.SSOSignInCallback(
 				sso.SingleSignOn(githubSSO),
 				*frontendURL,
-				github.ProviderName,
 			),
 		},
 		{
