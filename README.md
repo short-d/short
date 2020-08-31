@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/short-d/short/branch/master/graph/badge.svg)](https://codecov.io/gh/short-d/short)
 [![Maintainability](https://api.codeclimate.com/v1/badges/910f974653f1b3495534/maintainability)](https://codeclimate.com/github/short-d/short/maintainability)
 [![Go Report Card](https://goreportcard.com/badge/github.com/short-d/short)](https://goreportcard.com/report/github.com/short-d/short)
-[![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)](https://github.com/byliuyang/short)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/byliuyang/short)
 [![Floobits Status](https://floobits.com/byliuyang/short.svg)](https://floobits.com/byliuyang/short/redirect)
 
 ![Demo](promo/marquee.png)
