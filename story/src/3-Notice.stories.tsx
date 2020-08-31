@@ -2,7 +2,7 @@ import React from 'react';
 import { Notice } from '../../frontend/src/component/ui/Notice';
 import { text } from '@storybook/addon-knobs';
 
-import styles from './2-Notice.stories.module.scss';
+import styles from './3-Notice.stories.module.scss';
 
 export default {
   title: 'UI/Notice',
