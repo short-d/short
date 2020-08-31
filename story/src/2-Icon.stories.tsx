@@ -56,7 +56,7 @@ export const check = () => {
   )
 }
 
-export const deleteIcon = () => {
+export const deleteItem = () => {
   return (
     <div className={styles.icon}>
       <Icon iconID={IconID.Delete} onClick={action('click')}/>
