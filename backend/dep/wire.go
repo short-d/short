@@ -72,6 +72,7 @@ var observabilitySet = wire.NewSet(
 	network.NewProxy,
 	request.NewClient,
 	request.NewInstrumentationFactory,
+	request.NewSSOInstrumentationFactory,
 )
 
 var githubAPISet = wire.NewSet(

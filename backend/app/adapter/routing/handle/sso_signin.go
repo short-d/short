@@ -14,17 +14,16 @@ func SSOSignIn(
 	instrumentationFactory request.InstrumentationFactory,
 	singleSignOn sso.SingleSignOn,
 	webFrontendURL string,
+	provider string,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
-		i := instrumentationFactory.NewRequest()
-		i.SSOSignIn(singleSignOn.GetMetricName())
-
 		token := getToken(params)
 		if singleSignOn.IsSignedIn(token) {
 			http.Redirect(w, r, webFrontendURL, http.StatusSeeOther)
 			return
 		}
 		signInLink := singleSignOn.GetSignInLink()
+		//insert instrumentation
 		http.Redirect(w, r, signInLink, http.StatusSeeOther)
 	}
 }

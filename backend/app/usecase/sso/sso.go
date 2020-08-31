@@ -2,8 +2,6 @@ package sso
 
 import (
 	"errors"
-	"github.com/short-d/short/backend/app/usecase/instrumentation"
-
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 )
 
@@ -14,7 +12,6 @@ type SingleSignOn struct {
 	account          Account
 	accountLinker    AccountLinker
 	authenticator    authenticator.Authenticator
-	instrumentation  instrumentation.SSO
 }
 
 // SignIn generates access token for a user using authorization code obtained
@@ -63,10 +60,6 @@ func (o SingleSignOn) GetSignInLink() string {
 	return o.identityProvider.GetAuthorizationURL()
 }
 
-func (o SingleSignOn) GetMetricName() string {
-	return o.instrumentation.GetMetricName()
-}
-
 // Factory makes SingleSignOn.
 type Factory struct {
 	authenticator authenticator.Authenticator
@@ -77,14 +70,12 @@ func (s Factory) NewSingleSignOn(
 	identityProvider IdentityProvider,
 	account Account,
 	accountLinker AccountLinker,
-	instrumentation instrumentation.SSO,
 ) SingleSignOn {
 	return SingleSignOn{
 		identityProvider: identityProvider,
 		account:          account,
 		accountLinker:    accountLinker,
 		authenticator:    s.authenticator,
-		instrumentation:  instrumentation,
 	}
 }
 

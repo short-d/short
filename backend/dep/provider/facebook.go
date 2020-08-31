@@ -3,6 +3,7 @@ package provider
 import (
 	"github.com/short-d/app/fw/webreq"
 	"github.com/short-d/short/backend/app/adapter/facebook"
+	"github.com/short-d/short/backend/app/adapter/request"
 	"github.com/short-d/short/backend/app/adapter/sqldb"
 	"github.com/short-d/short/backend/app/usecase/sso"
 )
@@ -34,6 +35,10 @@ func NewFacebookAccountLinker(
 	facebookSSORepo sqldb.FacebookSSOSql,
 ) facebook.AccountLinker {
 	return facebook.AccountLinker(factory.NewAccountLinker(facebookSSORepo))
+}
+
+func NewInstrumentationFactory() request.InstrumentationFactory {
+
 }
 
 // NewFacebookSSO creates FacebookSingleSignOn.
