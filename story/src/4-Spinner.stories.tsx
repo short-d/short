@@ -7,5 +7,13 @@ export default {
 };
 
 export const spinner = () => {
-  return <Spinner />;
+  return (
+    <div
+      style={{
+        backgroundColor: '#000'
+      }}
+    >
+      <Spinner />
+    </div>
+  );
 };
