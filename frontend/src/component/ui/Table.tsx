@@ -1,6 +1,6 @@
 import React, { Component, ReactChild } from 'react';
 
-import './Table.scss';
+import styles from './Table.module.scss';
 import { TextAlignProperty } from 'csstype';
 
 interface IProps {
@@ -67,8 +67,8 @@ export class Table extends Component<IProps> {
 
   render() {
     return (
-      <div className="table-container">
-        <table className="table">
+      <div className={styles['table-container']}>
+        <table className={styles['table']}>
           <thead>{this.createHeaders()}</thead>
           <tbody>{this.createBody()}</tbody>
         </table>

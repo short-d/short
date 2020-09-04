@@ -3,7 +3,8 @@ module.exports = {
   addons: [
     '@storybook/addon-knobs',
     '@storybook/addon-actions',
-    '@storybook/addon-docs'
+    '@storybook/addon-docs',
+    '@storybook/addon-backgrounds'
   ],
   webpackFinal: async (config) => {
     config.module.rules.push({
