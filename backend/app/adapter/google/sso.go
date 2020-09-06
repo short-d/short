@@ -2,6 +2,8 @@ package google
 
 import "github.com/short-d/short/backend/app/usecase/sso"
 
+const ProviderName = "google"
+
 // AccountLinker links user's Google account with Short account.
 type AccountLinker sso.AccountLinker
 

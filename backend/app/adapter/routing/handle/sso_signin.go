@@ -1,6 +1,7 @@
 package handle
 
 import (
+	"github.com/short-d/short/backend/app/adapter/request"
 	"net/http"
 	"net/url"
 
@@ -10,8 +11,10 @@ import (
 
 // SSOSignIn redirects user to the sign in page.
 func SSOSignIn(
+	instrumentationFactory request.InstrumentationFactory,
 	singleSignOn sso.SingleSignOn,
 	webFrontendURL string,
+	provider string,
 ) router.Handle {
 	return func(w http.ResponseWriter, r *http.Request, params router.Params) {
 		token := getToken(params)
@@ -20,6 +23,7 @@ func SSOSignIn(
 			return
 		}
 		signInLink := singleSignOn.GetSignInLink()
+		//insert instrumentation
 		http.Redirect(w, r, signInLink, http.StatusSeeOther)
 	}
 }

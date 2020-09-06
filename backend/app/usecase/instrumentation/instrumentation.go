@@ -180,6 +180,7 @@ func NewInstrumentation(
 	searchFailedCh := make(chan ctx.ExecutionContext)
 	madeFeatureDecisionCh := make(chan ctx.ExecutionContext)
 	trackCh := make(chan ctx.ExecutionContext)
+	ssoSignIn := make(chan ctx.ExecutionContext)
 
 	ins := &Instrumentation{
 		logger:                          logger,
@@ -210,6 +211,7 @@ func NewInstrumentation(
 		go func() { searchFailedCh <- c }()
 		go func() { madeFeatureDecisionCh <- c }()
 		go func() { trackCh <- c }()
+		go func() { ssoSignIn <- c }()
 		close(ctxCh)
 	}()
 	return *ins

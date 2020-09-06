@@ -2,7 +2,6 @@ package sso
 
 import (
 	"errors"
-
 	"github.com/short-d/short/backend/app/usecase/authenticator"
 )
 

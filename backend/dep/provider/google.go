@@ -47,7 +47,8 @@ func NewGoogleSSO(
 		ssoFactory.NewSingleSignOn(
 			identityProvider,
 			account,
-			sso.AccountLinker(linker)),
+			sso.AccountLinker(linker),
+			google.NewInstrumentationFactory()),
 	)
 }
 

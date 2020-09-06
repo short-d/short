@@ -44,6 +44,7 @@ func NewGithubSSO(
 			identityProvider,
 			account,
 			sso.AccountLinker(accountLinker),
+			github.NewInstrumentationFactory(),
 		),
 	)
 }

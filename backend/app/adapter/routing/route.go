@@ -20,6 +20,7 @@ import (
 // NewShort creates HTTP routing table.
 func NewShort(
 	instrumentationFactory request.InstrumentationFactory,
+	ssoInstrumentationFactory request.SSOInstrumentationFactory,
 	webFrontendURL string,
 	timer timer.Timer,
 	shortLinkRetriever shortlink.Retriever,
@@ -41,8 +42,10 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/github/sign-in",
 			Handle: handle.SSOSignIn(
+				instrumentationFactory,
 				sso.SingleSignOn(githubSSO),
 				webFrontendURL,
+				github.ProviderName,
 			),
 		},
 		{
@@ -57,8 +60,10 @@ func NewShort(
 			Method: "GET",
 			Path:   "/oauth/facebook/sign-in",
 			Handle: handle.SSOSignIn(
+				instrumentationFactory,
 				sso.SingleSignOn(facebookSSO),
 				webFrontendURL,
+				facebook.ProviderName,
 			),
 		},
 		{
@@ -67,14 +72,17 @@ func NewShort(
 			Handle: handle.SSOSignInCallback(
 				sso.SingleSignOn(facebookSSO),
 				*frontendURL,
+				facebook.ProviderName,
 			),
 		},
 		{
 			Method: "GET",
 			Path:   "/oauth/google/sign-in",
 			Handle: handle.SSOSignIn(
+				instrumentationFactory,
 				sso.SingleSignOn(googleSSO),
 				webFrontendURL,
+				google.ProviderName,
 			),
 		},
 		{
