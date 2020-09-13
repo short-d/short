@@ -25,7 +25,7 @@ func TestSearch(t *testing.T) {
 		orders             []order.By
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
-		expectedResult     ResourceResult
+		expectedResult     Result
 		// TODO(issue#803): Check error types in tests.
 		expHasErr bool
 	}{
@@ -55,7 +55,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://short-d.com",
 				},
 			},
-			expectedResult: ResourceResult{},
+			expectedResult: Result{},
 			expHasErr:      true,
 		},
 		{
@@ -131,7 +131,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: ResourceResult{
+			expectedResult: Result{
 				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "facebook",
@@ -218,7 +218,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: ResourceResult{
+			expectedResult: Result{
 				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "google",
@@ -306,7 +306,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: ResourceResult{
+			expectedResult: Result{
 				//ShortLinks: nil,
 				//Users:      nil,
 			},
@@ -385,7 +385,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: ResourceResult{
+			expectedResult: Result{
 				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "short",
@@ -469,7 +469,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://facebook.com",
 				},
 			},
-			expectedResult: ResourceResult{
+			expectedResult: Result{
 				ShortLinks: []entity.ShortLink{
 					{
 						Alias:    "short",
@@ -509,7 +509,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://short-d.com",
 				},
 			},
-			expectedResult: ResourceResult{},
+			expectedResult: Result{},
 			expHasErr:      true,
 		},
 		{
@@ -542,7 +542,7 @@ func TestSearch(t *testing.T) {
 					LongLink: "https://short-d.com",
 				},
 			},
-			expectedResult: ResourceResult{},
+			expectedResult: Result{},
 			expHasErr:      true,
 		},
 	}
