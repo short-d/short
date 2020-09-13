@@ -117,6 +117,28 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/User'
+        '401':
+          description: unauthorized user
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: unknown resource
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
       security:
         - web_api: []
   /oauth/github/sign-in:

@@ -1,7 +1,6 @@
 package search
 
 import (
-	"errors"
 	"strings"
 	"time"
 
@@ -26,10 +25,26 @@ type Result struct {
 	Users      []entity.User
 }
 
+// ErrUnknownResource represents unknown search resource error.
+type ErrUnknownResource struct{}
+
+func (e ErrUnknownResource) Error() string {
+	return "unknown resource"
+}
+
+// ErrUserNotProvided represents user not provided for search query.
+type ErrUserNotProvided struct{}
+
+func (e ErrUserNotProvided) Error() string {
+	return "user not provided"
+}
+
 // Search finds resources based on specified criteria.
 func (s Search) Search(query Query, filter Filter) (Result, error) {
 	resultCh := make(chan Result)
+	errCh := make(chan error)
 	defer close(resultCh)
+	defer close(errCh)
 
 	orders := toOrders(filter.orders)
 
@@ -38,17 +53,19 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 		go func() {
 			result, err := s.searchResource(filter.resources[i], orders[i], query, filter)
 			if err != nil {
-				// TODO(issue#865): Handle errors of Search API
 				s.logger.Error(err)
 				resultCh <- Result{}
+				errCh <- err
 				return
 			}
 			resultCh <- result
+			errCh <- nil
 		}()
 	}
 
 	timeout := time.After(s.timeout)
 	var results []Result
+	var resultErr error
 	for i := 0; i < len(filter.resources); i++ {
 		select {
 		case result := <-resultCh:
@@ -56,9 +73,16 @@ func (s Search) Search(query Query, filter Filter) (Result, error) {
 		case <-timeout:
 			return mergeResults(results), nil
 		}
+		select {
+		case err := <-errCh:
+			// Only return the first error encountered
+			if resultErr == nil {
+				resultErr = err
+			}
+		}
 	}
 
-	return mergeResults(results), nil
+	return mergeResults(results), resultErr
 }
 
 func (s Search) searchResource(resource Resource, orderBy order.Order, query Query, filter Filter) (Result, error) {
@@ -68,15 +92,14 @@ func (s Search) searchResource(resource Resource, orderBy order.Order, query Que
 	case User:
 		return s.searchUser(query, orderBy, filter)
 	default:
-		return Result{}, errors.New("unknown resource")
+		return Result{}, ErrUnknownResource{}
 	}
 }
 
 // TODO(issue#866): Simplify searchShortLink function
 func (s Search) searchShortLink(query Query, orderBy order.Order, filter Filter) (Result, error) {
 	if query.User == nil {
-		s.logger.Error(errors.New("user not provided"))
-		return Result{}, nil
+		return Result{}, ErrUserNotProvided{}
 	}
 
 	shortLinks, err := s.getShortLinkByUser(*query.User)

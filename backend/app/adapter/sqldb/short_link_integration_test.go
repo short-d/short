@@ -726,10 +726,10 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 			name: "delete exisiting shortlink",
 			tableRows: []shortLinkTableRow{
 				{
-					alias:              "short_is_great",
-					longLink:           "https://short-d.com",
-					createdAt:          ptr.Time(must.Time(t, "2018-05-01T08:02:16-07:00")),
-					expireAt:           ptr.Time(must.Time(t, "2020-05-01T08:02:16-07:00")),
+					alias:     "short_is_great",
+					longLink:  "https://short-d.com",
+					createdAt: ptr.Time(must.Time(t, "2018-05-01T08:02:16-07:00")),
+					expireAt:  ptr.Time(must.Time(t, "2020-05-01T08:02:16-07:00")),
 				},
 			},
 			alias:  "short_is_great",
@@ -739,10 +739,10 @@ func TestShortLinkSql_DeleteShortLink(t *testing.T) {
 			name: "shortlink does not exist",
 			tableRows: []shortLinkTableRow{
 				{
-					alias:              "i_luv_short",
-					longLink:           "https://short-d.com",
-					createdAt:          ptr.Time(must.Time(t, "2018-05-01T08:02:16-07:00")),
-					expireAt:           ptr.Time(must.Time(t, "2020-05-01T08:02:16-07:00")),
+					alias:     "i_luv_short",
+					longLink:  "https://short-d.com",
+					createdAt: ptr.Time(must.Time(t, "2018-05-01T08:02:16-07:00")),
+					expireAt:  ptr.Time(must.Time(t, "2020-05-01T08:02:16-07:00")),
 				},
 			},
 			alias:  "short_is_great",

@@ -26,31 +26,21 @@ func TestSearch(t *testing.T) {
 		relationUsers      []entity.User
 		relationShortLinks []entity.ShortLink
 		expectedResult     Result
+		// TODO(issue#803): Check error types in tests.
+		expHasErr bool
 	}{
 		{
 			name: "search without user",
 			shortLinks: shortLinks{
-				"git-google": entity.ShortLink{
-					Alias:    "git-google",
-					LongLink: "http://github.com/google",
-				},
-				"google": entity.ShortLink{
-					Alias:    "google",
-					LongLink: "https://google.com",
-				},
 				"short": entity.ShortLink{
 					Alias:    "short",
 					LongLink: "https://short-d.com",
-				},
-				"facebook": entity.ShortLink{
-					Alias:    "facebook",
-					LongLink: "https://facebook.com",
 				},
 			},
 			Query: Query{
 				Query: "http google",
 			},
-			maxResults: 2,
+			maxResults: 1,
 			resources:  []Resource{ShortLink},
 			orders:     []order.By{order.ByCreatedTimeASC},
 			relationUsers: []entity.User{
@@ -58,46 +48,15 @@ func TestSearch(t *testing.T) {
 					ID:    "alpha",
 					Email: "alpha@example.com",
 				},
-				{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-				},
-				{
-					ID:    "beta",
-					Email: "beta@example.com",
-				},
-				{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-				},
-				{
-					ID:    "alpha",
-					Email: "alpha@example.com",
-				},
 			},
 			relationShortLinks: []entity.ShortLink{
-				{
-					Alias:    "git-google",
-					LongLink: "http://github.com/google",
-				},
-				{
-					Alias:    "google",
-					LongLink: "https://google.com",
-				},
-				{
-					Alias:    "google",
-					LongLink: "https://google.com",
-				},
 				{
 					Alias:    "short",
 					LongLink: "https://short-d.com",
 				},
-				{
-					Alias:    "facebook",
-					LongLink: "https://facebook.com",
-				},
 			},
 			expectedResult: Result{},
+			expHasErr:      true,
 		},
 		{
 			name: "search without query",
@@ -348,8 +307,8 @@ func TestSearch(t *testing.T) {
 				},
 			},
 			expectedResult: Result{
-				ShortLinks: nil,
-				Users:      nil,
+				//ShortLinks: nil,
+				//Users:      nil,
 			},
 		},
 		{
@@ -464,8 +423,8 @@ func TestSearch(t *testing.T) {
 				},
 			},
 			maxResults: 2,
-			resources:  []Resource{ShortLink, User, Unknown},
-			orders:     []order.By{order.ByCreatedTimeASC, order.ByUnsorted, order.ByCreatedTimeASC},
+			resources:  []Resource{ShortLink, User},
+			orders:     []order.By{order.ByCreatedTimeASC, order.ByUnsorted},
 			relationUsers: []entity.User{
 				{
 					ID:    "alpha",
@@ -520,6 +479,72 @@ func TestSearch(t *testing.T) {
 				Users: nil,
 			},
 		},
+		{
+			name: "unknown resource query",
+			shortLinks: shortLinks{
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+			},
+			Query: Query{
+				Query: "short",
+				User: &entity.User{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			maxResults: 1,
+			resources:  []Resource{Unknown},
+			orders:     []order.By{order.ByCreatedTimeASC},
+			relationUsers: []entity.User{
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+			},
+			expectedResult: Result{},
+			expHasErr:      true,
+		},
+		{
+			name: "both known and unknown resource queries",
+			shortLinks: shortLinks{
+				"short": entity.ShortLink{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+			},
+			Query: Query{
+				Query: "short",
+				User: &entity.User{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			maxResults: 1,
+			resources:  []Resource{ShortLink, Unknown},
+			orders:     []order.By{order.ByCreatedTimeASC, order.ByUnsorted},
+			relationUsers: []entity.User{
+				{
+					ID:    "alpha",
+					Email: "alpha@example.com",
+				},
+			},
+			relationShortLinks: []entity.ShortLink{
+				{
+					Alias:    "short",
+					LongLink: "https://short-d.com",
+				},
+			},
+			expectedResult: Result{},
+			expHasErr:      true,
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -540,6 +565,10 @@ func TestSearch(t *testing.T) {
 			assert.Equal(t, nil, err)
 
 			result, err := search.Search(testCase.Query, filter)
+			if testCase.expHasErr {
+				assert.NotEqual(t, nil, err)
+				return
+			}
 
 			assert.Equal(t, nil, err)
 			assert.Equal(t, testCase.expectedResult, result)

@@ -2,6 +2,7 @@ package handle
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -47,6 +48,11 @@ type SearchResponse struct {
 	Users      []User      `json:"users,omitempty"`
 }
 
+// SearchError represents an error with the Search API request.
+type SearchError struct {
+	Message string `json:"message"`
+}
+
 // ShortLink represents the short_link field of Search API respond.
 type ShortLink struct {
 	Alias     string     `json:"alias,omitempty"`
@@ -79,7 +85,7 @@ func Search(
 		defer r.Body.Close()
 		if err != nil {
 			i.SearchFailed(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			emitSearchError(w, err)
 			return
 		}
 
@@ -87,7 +93,7 @@ func Search(
 		err = json.Unmarshal(buf, &body)
 		if err != nil {
 			i.SearchFailed(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			emitSearchError(w, err)
 			return
 		}
 
@@ -99,14 +105,14 @@ func Search(
 		filter, err := search.NewFilter(body.Filter.MaxResults, body.Filter.Resources, body.Filter.Orders)
 		if err != nil {
 			i.SearchFailed(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			emitSearchError(w, err)
 			return
 		}
 
 		results, err := searcher.Search(query, filter)
 		if err != nil {
 			i.SearchFailed(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			emitSearchError(w, err)
 			return
 		}
 
@@ -114,7 +120,7 @@ func Search(
 		respBody, err := json.Marshal(&response)
 		if err != nil {
 			i.SearchFailed(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			emitSearchError(w, err)
 			return
 		}
 
@@ -204,4 +210,25 @@ func newUser(user entity.User) User {
 		CreatedAt:      user.CreatedAt,
 		UpdatedAt:      user.UpdatedAt,
 	}
+}
+
+func emitSearchError(w http.ResponseWriter, err error) {
+	var (
+		code = http.StatusInternalServerError
+		u    search.ErrUserNotProvided
+		r    search.ErrUnknownResource
+	)
+	if errors.As(err, &u) {
+		code = http.StatusUnauthorized
+	}
+	if errors.As(err, &r) {
+		code = http.StatusNotFound
+	}
+	errResp, err := json.Marshal(SearchError{
+		Message: err.Error(),
+	})
+	if err != nil {
+		return
+	}
+	http.Error(w, string(errResp), code)
 }
