@@ -1,8 +1,10 @@
 @import '../styles/color.scss';
 @import '../styles/shadow.scss';
 @import '../styles/layer';
+@import '../styles/font';
 
 .search-box {
+  @include default-font;
   display: flex;
   position: relative;
   margin: 0 30px;
